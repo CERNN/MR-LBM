@@ -366,57 +366,347 @@ __global__ void gpuMomCollisionStream(
     
     //write populations of the interface
 
-if(tx == 0){ //check if is on west face of the block
-        /*
-        fPopWest[idxPopX(ty,tz,1,indexBlock)] = fStream[ 1];
-        fPopWest[idxPopX(ty,tz,2,indexBlock)] = fStream[ 7];
-        fPopWest[idxPopX(ty,tz,3,indexBlock)] = fStream[ 9];
-        fPopWest[idxPopX(ty,tz,4,indexBlock)] = fStream[13];
-        fPopWest[idxPopX(ty,tz,5,indexBlock)] = fStream[15];
-        */
-    }else if (tx == BLOCK_NX-1){ // check if is on east face
-        /*
-        fPopEast[idxPopX(ty,tz,1,indexBlock)] = fStream[ 2];
-        fPopEast[idxPopX(ty,tz,2,indexBlock)] = fStream[ 8];
-        fPopEast[idxPopX(ty,tz,3,indexBlock)] = fStream[10];
-        fPopEast[idxPopX(ty,tz,4,indexBlock)] = fStream[14];
-        fPopEast[idxPopX(ty,tz,5,indexBlock)] = fStream[16];
-        */
-    }
-    if(ty == 0){ //check if is on south face of the block
-        /*
-        fPopSouth[idxPopY(tx,tz,1,indexBlock)] = fStream[ 3];
-        fPopSouth[idxPopY(tx,tz,2,indexBlock)] = fStream[ 7];
-        fPopSouth[idxPopY(tx,tz,3,indexBlock)] = fStream[11];
-        fPopSouth[idxPopY(tx,tz,4,indexBlock)] = fStream[14];
-        fPopSouth[idxPopY(tx,tz,5,indexBlock)] = fStream[17];
-        */
-    }else if (ty == BLOCK_NY-1){ // check if is on north face
-        /*
-        fPopNorth[idxPopX(tx,tz,1,indexBlock)] = fStream[ 4];
-        fPopNorth[idxPopX(tx,tz,2,indexBlock)] = fStream[ 8];
-        fPopNorth[idxPopX(tx,tz,3,indexBlock)] = fStream[12];
-        fPopNorth[idxPopX(tx,tz,4,indexBlock)] = fStream[13];
-        fPopNorth[idxPopX(tx,tz,5,indexBlock)] = fStream[18];
-        */
-    }
-    if(tz == 0){ //check if is on back face of the block
-    /*
-        fPopBack[idxPopZ(tx,ty,1,indexBlock)] = fStream[ 5];
-        fPopBack[idxPopZ(tx,ty,2,indexBlock)] = fStream[ 9];
-        fPopBack[idxPopZ(tx,ty,3,indexBlock)] = fStream[11];
-        fPopBack[idxPopZ(tx,ty,4,indexBlock)] = fStream[16];
-        fPopBack[idxPopZ(tx,ty,5,indexBlock)] = fStream[18];
-    */
-    }else if (tz == BLOCK_NZ-1){ // check if is on front face
-            /*
-        fPopFront[idxPopZ(tx,ty,1,indexBlock)] = fStream[ 6];
-        fPopFront[idxPopZ(tx,ty,2,indexBlock)] = fStream[10];
-        fPopFront[idxPopZ(tx,ty,3,indexBlock)] = fStream[12];
-        fPopFront[idxPopZ(tx,ty,4,indexBlock)] = fStream[15];
-        fPopFront[idxPopZ(tx,ty,5,indexBlock)] = fStream[17];
-        */
-    }
-    
-    
+        if(      ty == 0            && tx == 0              && tz == 0)             {//swb
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by+cy[ 2]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 2]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        
+        pop.y[idxPopY(tx,tz,5,(bx+cx[ 4]+BLOCK_NX)%BLOCK_NX,(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 4]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+         
+        pop.z[idxPopZ(tx,ty,5,(bx+cx[ 6]+BLOCK_NX)%BLOCK_NX,(by+cy[ 6]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(ty == 0            && tx == 0              && tz == (BLOCK_NZ-1))  {//swf
+        
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by+cy[ 2]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 2]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        
+        pop.y[idxPopY(tx,tz,5,(bx+cx[ 4]+BLOCK_NX)%BLOCK_NX,(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 4]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+        
+        pop.z[idxPopZ(tx,ty,0,(bx+cx[ 5]+BLOCK_NX)%BLOCK_NX,(by+cy[ 5]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    }else if(ty == 0            && tx == (BLOCK_NX-1)   && tz == 0)             {//seb
+        
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by+cy[ 1]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 1]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        
+        pop.y[idxPopY(tx,tz,5,(bx+cx[ 4]+BLOCK_NX)%BLOCK_NX,(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 4]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+        
+        pop.z[idxPopZ(tx,ty,5,(bx+cx[ 6]+BLOCK_NX)%BLOCK_NX,(by+cy[ 6]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(ty == 0            && tx == (BLOCK_NX-1)   && tz == (BLOCK_NZ-1))  {//sef
+        
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by+cy[ 1]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 1]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        
+        pop.y[idxPopY(tx,tz,5,(bx+cx[ 4]+BLOCK_NX)%BLOCK_NX,(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 4]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+        
+        pop.z[idxPopZ(tx,ty,0,(bx+cx[ 5]+BLOCK_NX)%BLOCK_NX,(by+cy[ 5]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    }else if(ty == (BLOCK_NY-1) && tx == 0              && tz == 0)             {//nwb
+        
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by+cy[ 2]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 2]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        
+        pop.y[idxPopY(tx,tz,0,(bx+cx[ 3]+BLOCK_NX)%BLOCK_NX,(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 3]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+        
+        pop.z[idxPopZ(tx,ty,5,(bx+cx[ 6]+BLOCK_NX)%BLOCK_NX,(by+cy[ 6]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(ty == (BLOCK_NY-1) && tx == 0              && tz == (BLOCK_NZ-1))  {//nwf
+        
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by+cy[ 2]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 2]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        
+        pop.y[idxPopY(tx,tz,0,(bx+cx[ 3]+BLOCK_NX)%BLOCK_NX,(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 3]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+        
+        pop.z[idxPopZ(tx,ty,0,(bx+cx[ 5]+BLOCK_NX)%BLOCK_NX,(by+cy[ 5]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    }else if(ty == (BLOCK_NY-1) && tx == (BLOCK_NX-1)   && tz == 0)             {//neb
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by+cy[ 1]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 1]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        
+        pop.y[idxPopY(tx,tz,0,(bx+cx[ 3]+BLOCK_NX)%BLOCK_NX,(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 3]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+        
+        pop.z[idxPopZ(tx,ty,5,(bx+cx[ 6]+BLOCK_NX)%BLOCK_NX,(by+cy[ 6]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(ty == (BLOCK_NY-1) && tx == (BLOCK_NX-1)   && tz == (BLOCK_NZ-1))  {//nef
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by+cy[ 1]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 1]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+
+        pop.y[idxPopY(tx,tz,0,(bx+cx[ 3]+BLOCK_NX)%BLOCK_NX,(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 3]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+
+        pop.z[idxPopZ(tx,ty,0,(bx+cx[ 5]+BLOCK_NX)%BLOCK_NX,(by+cy[ 5]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+
+
+
+/* ------------------------------ EDGE ------------------------------ */
+
+
+    }else if(ty == 0            && tx == 0)             {//sw
+        
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by+cy[ 2]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[16];        
+        pop.y[idxPopY(tx,tz,5,(bx+cx[ 4]+BLOCK_NX)%BLOCK_NX,(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[18];
+    }else if(ty == 0            && tx == (BLOCK_NX-1))  {//se
+        
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by+cy[ 1]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[15];        
+        pop.y[idxPopY(tx,tz,5,(bx+cx[ 4]+BLOCK_NX)%BLOCK_NX,(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[18];
+    }else if(ty == (BLOCK_NY-1) && tx == 0)             {//nw
+        
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by+cy[ 2]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[16];        
+        pop.y[idxPopY(tx,tz,0,(bx+cx[ 3]+BLOCK_NX)%BLOCK_NX,(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[17];
+    }else if(ty == (BLOCK_NY-1) && tx == (BLOCK_NX-1))  {//ne
+        
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by+cy[ 1]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[15];        
+        pop.y[idxPopY(tx,tz,0,(bx+cx[ 3]+BLOCK_NX)%BLOCK_NX,(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[17];
+    }else if(ty == 0            && tz == 0)             {//sb
+        pop.y[idxPopY(tx,tz,5,(bx),(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 4]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx),(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx),(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx),(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx),(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];        
+        pop.z[idxPopZ(tx,ty,5,(bx),(by+cy[ 6]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx),(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx),(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx),(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx),(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+
+    }else if(ty == 0            && tz == (BLOCK_NZ-1))  {//sf
+        
+        pop.y[idxPopY(tx,tz,5,(bx),(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 4]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx),(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx),(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx),(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx),(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];        
+        pop.z[idxPopZ(tx,ty,0,(bx),(by+cy[ 5]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx),(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx),(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx),(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx),(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    }else if(ty == (BLOCK_NY-1) && tz == 0)             {//nb
+        
+        pop.y[idxPopY(tx,tz,0,(bx),(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 3]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx),(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx),(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx),(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx),(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];        
+        pop.z[idxPopZ(tx,ty,5,(bx),(by+cy[ 6]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx),(by+cy[10]+BLOCK_NY)%BLOCK_NY,(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx),(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx),(by+cy[15]+BLOCK_NY)%BLOCK_NY,(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx),(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(ty == (BLOCK_NY-1) && tz == (BLOCK_NZ-1))  {//nf
+        
+        pop.y[idxPopY(tx,tz,0,(bx),(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 3]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx),(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx),(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx),(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx),(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];        
+        pop.z[idxPopZ(tx,ty,0,(bx),(by+cy[ 5]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx),(by+cy[ 9]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx),(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx),(by+cy[16]+BLOCK_NY)%BLOCK_NY,(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx),(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    }else if(tx == 0            && tz == 0)             {//wb
+        
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 2]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];        
+        pop.z[idxPopZ(tx,ty,5,(bx+cx[ 6]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(tx == 0            && tz == (BLOCK_NZ-1))  {//wf
+        
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 2]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[14]+BLOCK_NZ)%BLOCK_NZ)] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];        
+        pop.z[idxPopZ(tx,ty,0,(bx+cx[ 5]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    }else if(tx == (BLOCK_NX-1) && tz == 0)             {//eb
+        
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 1]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];        
+        pop.z[idxPopZ(tx,ty,5,(bx+cx[ 6]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx+cx[12]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx+cx[17]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(tx == (BLOCK_NX-1) && tz == (BLOCK_NZ-1))  {//ef
+        
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 1]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 7]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[13]+BLOCK_NZ)%BLOCK_NZ)] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];        
+        pop.z[idxPopZ(tx,ty,0,(bx+cx[ 5]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx+cx[11]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx+cx[18]+BLOCK_NX)%BLOCK_NX,(by),(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+
+
+
+/* ------------------------------ FACE ------------------------------ */
+
+
+
+    }else if(ty == 0)             {//s
+        pop.y[idxPopY(tx,tz,5,(bx),(by+cy[ 4]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx),(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx),(by+cy[12]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx),(by+cy[13]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx),(by+cy[18]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[18];
+    }else if(ty == (BLOCK_NY-1))  {//n
+        pop.y[idxPopY(tx,tz,0,(bx),(by+cy[ 3]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx),(by+cy[ 7]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx),(by+cy[11]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx),(by+cy[14]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx),(by+cy[17]+BLOCK_NY)%BLOCK_NY,(bz))] = fStream[17];
+    }else if(tx == 0)             {//w
+        pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx+cx[10]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx+cx[14]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx+cx[16]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[16];
+    }else if(tx == (BLOCK_NX-1))  {//e
+        pop.x[idxPopX(ty,tz,0,(bx+cx[ 1]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx+cx[ 7]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx+cx[ 9]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx+cx[13]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx+cx[15]+BLOCK_NX)%BLOCK_NX,(by),(bz))] = fStream[15];
+    }else if(tz == 0)             {//b
+        pop.z[idxPopZ(tx,ty,5,(bx),(by),(bz+cz[ 6]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx),(by),(bz+cz[10]+BLOCK_NZ)%BLOCK_NZ)] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx),(by),(bz+cz[12]+BLOCK_NZ)%BLOCK_NZ)] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx),(by),(bz+cz[15]+BLOCK_NZ)%BLOCK_NZ)] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx),(by),(bz+cz[17]+BLOCK_NZ)%BLOCK_NZ)] = fStream[17];
+    }else if(tz == (BLOCK_NZ-1))  {//f
+        pop.z[idxPopZ(tx,ty,0,(bx),(by),(bz+cz[ 5]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx),(by),(bz+cz[ 9]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx),(by),(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx),(by),(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx),(by),(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    } 
 }
