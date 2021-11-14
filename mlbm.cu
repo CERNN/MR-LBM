@@ -1,7 +1,8 @@
 #include "mlbm.cuh"
 
 __global__ void gpuMomCollisionStream(
-    Moments mom)
+    Moments mom,
+    Populations pop)
 {
     int x = threadIdx.x + blockDim.x * blockIdx.x;
     int y = threadIdx.y + blockDim.y * blockIdx.y;
@@ -29,7 +30,7 @@ __global__ void gpuMomCollisionStream(
 
     dfloat fNodeEq[Q];
     dfloat fNodeNeq[Q];
-    dfloat pop[Q];
+    dfloat fPop[Q];
     dfloat fStream[Q];
 
     // CALCULATE EQUILIBRIUM
@@ -106,34 +107,34 @@ __global__ void gpuMomCollisionStream(
     }
 
     //CALCULATE COLLISION POPULATIONS
-    pop[0 ] = fNodeEq[0 ] + fNodeNeq[0 ];
-    pop[1 ] = fNodeEq[1 ] + fNodeNeq[1 ];
-    pop[2 ] = fNodeEq[2 ] + fNodeNeq[2 ];
-    pop[3 ] = fNodeEq[3 ] + fNodeNeq[3 ];
-    pop[4 ] = fNodeEq[4 ] + fNodeNeq[4 ];
-    pop[5 ] = fNodeEq[5 ] + fNodeNeq[5 ];
-    pop[6 ] = fNodeEq[6 ] + fNodeNeq[6 ];
-    pop[7 ] = fNodeEq[7 ] + fNodeNeq[7 ];
-    pop[8 ] = fNodeEq[8 ] + fNodeNeq[8 ];
-    pop[9 ] = fNodeEq[9 ] + fNodeNeq[9 ];
-    pop[10] = fNodeEq[10] + fNodeNeq[10];
-    pop[11] = fNodeEq[11] + fNodeNeq[11];
-    pop[12] = fNodeEq[12] + fNodeNeq[12];
-    pop[13] = fNodeEq[13] + fNodeNeq[13];
-    pop[14] = fNodeEq[14] + fNodeNeq[14];
-    pop[15] = fNodeEq[15] + fNodeNeq[15];
-    pop[16] = fNodeEq[16] + fNodeNeq[16];
-    pop[17] = fNodeEq[17] + fNodeNeq[17];
-    pop[18] = fNodeEq[18] + fNodeNeq[18];
+    fPop[0 ] = fNodeEq[0 ] + fNodeNeq[0 ];
+    fPop[1 ] = fNodeEq[1 ] + fNodeNeq[1 ];
+    fPop[2 ] = fNodeEq[2 ] + fNodeNeq[2 ];
+    fPop[3 ] = fNodeEq[3 ] + fNodeNeq[3 ];
+    fPop[4 ] = fNodeEq[4 ] + fNodeNeq[4 ];
+    fPop[5 ] = fNodeEq[5 ] + fNodeNeq[5 ];
+    fPop[6 ] = fNodeEq[6 ] + fNodeNeq[6 ];
+    fPop[7 ] = fNodeEq[7 ] + fNodeNeq[7 ];
+    fPop[8 ] = fNodeEq[8 ] + fNodeNeq[8 ];
+    fPop[9 ] = fNodeEq[9 ] + fNodeNeq[9 ];
+    fPop[10] = fNodeEq[10] + fNodeNeq[10];
+    fPop[11] = fNodeEq[11] + fNodeNeq[11];
+    fPop[12] = fNodeEq[12] + fNodeNeq[12];
+    fPop[13] = fNodeEq[13] + fNodeNeq[13];
+    fPop[14] = fNodeEq[14] + fNodeNeq[14];
+    fPop[15] = fNodeEq[15] + fNodeNeq[15];
+    fPop[16] = fNodeEq[16] + fNodeNeq[16];
+    fPop[17] = fNodeEq[17] + fNodeNeq[17];
+    fPop[18] = fNodeEq[18] + fNodeNeq[18];
     #ifdef D3Q27
-    pop[19] = fNodeEq[19] + fNodeNeq[19];
-    pop[20] = fNodeEq[20] + fNodeNeq[20];
-    pop[21] = fNodeEq[21] + fNodeNeq[21];
-    pop[22] = fNodeEq[22] + fNodeNeq[22];
-    pop[23] = fNodeEq[23] + fNodeNeq[23];
-    pop[24] = fNodeEq[24] + fNodeNeq[24];
-    pop[25] = fNodeEq[25] + fNodeNeq[25];
-    pop[26] = fNodeEq[26] + fNodeNeq[26];
+    fPop[19] = fNodeEq[19] + fNodeNeq[19];
+    fPop[20] = fNodeEq[20] + fNodeNeq[20];
+    fPop[21] = fNodeEq[21] + fNodeNeq[21];
+    fPop[22] = fNodeEq[22] + fNodeNeq[22];
+    fPop[23] = fNodeEq[23] + fNodeNeq[23];
+    fPop[24] = fNodeEq[24] + fNodeNeq[24];
+    fPop[25] = fNodeEq[25] + fNodeNeq[25];
+    fPop[26] = fNodeEq[26] + fNodeNeq[26];
     #endif
 
 
@@ -142,7 +143,7 @@ __global__ void gpuMomCollisionStream(
     //save populations in shared memory
     #pragma unroll
     for (int i = 0; i < Q; i++){
-        stream_population[idxPopBlock(threadIdx.x,threadIdx.y,threadIdx.z,i)] = pop[i];
+        stream_population[idxPopBlock(threadIdx.x,threadIdx.y,threadIdx.z,i)] = fPop[i];
     }
 
 
@@ -154,6 +155,10 @@ __global__ void gpuMomCollisionStream(
     const unsigned short int tx = threadIdx.x;
     const unsigned short int ty = threadIdx.y;
     const unsigned short int tz = threadIdx.z;
+
+    const unsigned short int bx = blockIdx.x;
+    const unsigned short int by = blockIdx.y;
+    const unsigned short int bz = blockIdx.z;
 
     // it is added the block size to get the populations from the other side, 
     //it will later be replaced with the populations from the interfarce
@@ -200,55 +205,54 @@ __global__ void gpuMomCollisionStream(
 
     
     if(tx == 0){ //check if is on west face of the block
-        /*
-        fStream[ 1] = fPopWest[idxPopX(ty,tz,1,indexBlock)];
-        fStream[ 7] = fPopWest[idxPopX(ty,tz,2,indexBlock)];
-        fStream[ 9] = fPopWest[idxPopX(ty,tz,3,indexBlock)];
-        fStream[13] = fPopWest[idxPopX(ty,tz,4,indexBlock)];
-        fStream[15] = fPopWest[idxPopX(ty,tz,5,indexBlock)];
-        */
+        
+        fStream[ 1] = pop.x[idxPopX(ty,tz,0,bx,by,bz)];
+        fStream[ 7] = pop.x[idxPopX(ty,tz,1,bx,by,bz)];
+        fStream[ 9] = pop.x[idxPopX(ty,tz,2,bx,by,bz)];
+        fStream[13] = pop.x[idxPopX(ty,tz,3,bx,by,bz)];
+        fStream[15] = pop.x[idxPopX(ty,tz,4,bx,by,bz)];
+        
     }else if (tx == BLOCK_NX-1){ // check if is on east face
-        /*
-        fStream[ 2] = fPopEast[idxPopX(ty,tz,1,indexBlock)];
-        fStream[ 8] = fPopEast[idxPopX(ty,tz,2,indexBlock)];
-        fStream[10] = fPopEast[idxPopX(ty,tz,3,indexBlock)];
-        fStream[14] = fPopEast[idxPopX(ty,tz,4,indexBlock)];
-        fStream[16] = fPopEast[idxPopX(ty,tz,5,indexBlock)];
-        */
+
+        fStream[ 2] = pop.x[idxPopX(ty,tz,5,bx,by,bz)];
+        fStream[ 8] = pop.x[idxPopX(ty,tz,6,bx,by,bz)];
+        fStream[10] = pop.x[idxPopX(ty,tz,7,bx,by,bz)];
+        fStream[14] = pop.x[idxPopX(ty,tz,8,bx,by,bz)];
+        fStream[16] = pop.x[idxPopX(ty,tz,9,bx,by,bz)];
     }
     if(ty == 0){ //check if is on south face of the block
-        /*
-        fStream[ 3] = fPopSouth[idxPopY(tx,tz,1,indexBlock)];
-        fStream[ 7] = fPopSouth[idxPopY(tx,tz,2,indexBlock)];
-        fStream[11] = fPopSouth[idxPopY(tx,tz,3,indexBlock)];
-        fStream[14] = fPopSouth[idxPopY(tx,tz,4,indexBlock)];
-        fStream[17] = fPopSouth[idxPopY(tx,tz,5,indexBlock)];
-        */
+
+        fStream[ 3] = pop.y[idxPopY(tx,tz,0,bx,by,bz)];
+        fStream[ 7] = pop.y[idxPopY(tx,tz,1,bx,by,bz)];
+        fStream[11] = pop.y[idxPopY(tx,tz,2,bx,by,bz)];
+        fStream[14] = pop.y[idxPopY(tx,tz,3,bx,by,bz)];
+        fStream[17] = pop.y[idxPopY(tx,tz,4,bx,by,bz)];
+
     }else if (ty == BLOCK_NY-1){ // check if is on north face
-        /*
-        fStream[ 4] = fPopNorth[idxPopX(tx,tz,1,indexBlock)];
-        fStream[ 8] = fPopNorth[idxPopX(tx,tz,2,indexBlock)];
-        fStream[12] = fPopNorth[idxPopX(tx,tz,3,indexBlock)];
-        fStream[13] = fPopNorth[idxPopX(tx,tz,4,indexBlock)];
-        fStream[18] = fPopNorth[idxPopX(tx,tz,5,indexBlock)];
-        */
+        
+        fStream[ 4] = pop.y[idxPopX(tx,tz,5,bx,by,bz)];
+        fStream[ 8] = pop.y[idxPopX(tx,tz,6,bx,by,bz)];
+        fStream[12] = pop.y[idxPopX(tx,tz,7,bx,by,bz)];
+        fStream[13] = pop.y[idxPopX(tx,tz,8,bx,by,bz)];
+        fStream[18] = pop.y[idxPopX(tx,tz,9,bx,by,bz)];
+        
     }
     if(tz == 0){ //check if is on back face of the block
-    /*
-        fStream[ 5] = fPopBack[idxPopZ(tx,ty,1,indexBlock)];
-        fStream[ 9] = fPopBack[idxPopZ(tx,ty,2,indexBlock)];
-        fStream[11] = fPopBack[idxPopZ(tx,ty,3,indexBlock)];
-        fStream[16] = fPopBack[idxPopZ(tx,ty,4,indexBlock)];
-        fStream[18] = fPopBack[idxPopZ(tx,ty,5,indexBlock)];
-    */
+    
+        fStream[ 5] = pop.z[idxPopZ(tx,ty,0,bx,by,bz)];
+        fStream[ 9] = pop.z[idxPopZ(tx,ty,1,bx,by,bz)];
+        fStream[11] = pop.z[idxPopZ(tx,ty,2,bx,by,bz)];
+        fStream[16] = pop.z[idxPopZ(tx,ty,3,bx,by,bz)];
+        fStream[18] = pop.z[idxPopZ(tx,ty,4,bx,by,bz)];
+    
     }else if (tz == BLOCK_NZ-1){ // check if is on front face
-            /*
-        fStream[ 6] = fPopFront[idxPopZ(tx,ty,1,indexBlock)];
-        fStream[10] = fPopFront[idxPopZ(tx,ty,2,indexBlock)];
-        fStream[12] = fPopFront[idxPopZ(tx,ty,3,indexBlock)];
-        fStream[15] = fPopFront[idxPopZ(tx,ty,4,indexBlock)];
-        fStream[17] = fPopFront[idxPopZ(tx,ty,5,indexBlock)];
-        */
+            
+        fStream[ 6] = pop.z[idxPopZ(tx,ty,5,bx,by,bz)];
+        fStream[10] = pop.z[idxPopZ(tx,ty,6,bx,by,bz)];
+        fStream[12] = pop.z[idxPopZ(tx,ty,7,bx,by,bz)];
+        fStream[15] = pop.z[idxPopZ(tx,ty,8,bx,by,bz)];
+        fStream[17] = pop.z[idxPopZ(tx,ty,9,bx,by,bz)];
+        
     }
 
 

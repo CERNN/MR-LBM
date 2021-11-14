@@ -40,6 +40,7 @@ int main() {
 
     /* ------------------------- LBM INITIALIZATION ------------------------- */
     gpuInitialization_mom << <gridBlock, threadBlock >> >(mom[0]);
+    checkCudaErrors(cudaDeviceSynchronize());
     gpuInitialization_pop << <gridBlock, threadBlock >> >(mom[0],pop[0]);
     checkCudaErrors(cudaDeviceSynchronize());
 
@@ -56,7 +57,7 @@ int main() {
     
     size_t step;
     for (step=0; step<N_STEPS;step++){
-        gpuMomCollisionStream << <gridBlock, threadBlock >> > (mom[0]);
+        gpuMomCollisionStream << <gridBlock, threadBlock >> > (mom[0],pop[0]);
     }
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */

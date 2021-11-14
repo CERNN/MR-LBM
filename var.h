@@ -20,7 +20,7 @@
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-constexpr int N_STEPS = 1000;
+constexpr int N_STEPS = 100;
 constexpr int SCALE = 1;
 constexpr int N = 128 * SCALE;
 constexpr int NX = N * SCALE;        // size x of the grid 
@@ -45,7 +45,7 @@ constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
 /* ------------------------------ VELOCITY SET ------------------------------ */
 #ifdef D3Q19
 constexpr unsigned char Q = 19;        // number of velocities
-constexpr unsigned char QF = 5;         // number of velocities on each face
+constexpr unsigned char QF = 5*2;         // number of velocities on each face
 constexpr dfloat W0 = 1.0 / 3;         // population 0 weight (0, 0, 0)
 constexpr dfloat W1 = 1.0 / 18;        // adjacent populations (1, 0, 0)
 constexpr dfloat W2 = 1.0 / 36;        // diagonal populations (1, 1, 0)
@@ -67,7 +67,7 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
 
 #ifdef D3Q27
 constexpr unsigned char Q = 27;         // number of velocities
-constexpr unsigned char QF = 9;         // number of velocities on each face
+constexpr unsigned char QF = 9*2;         // number of velocities on each face
 constexpr dfloat W0 = 8.0 / 27;        // weight dist 0 population (0, 0, 0)
 constexpr dfloat W1 = 2.0 / 27;        // weight dist 1 populations (1, 0, 0)
 constexpr dfloat W2 = 1.0 / 54;        // weight dist 2 populations (1, 1, 0)
@@ -101,10 +101,7 @@ const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;
 const size_t BLOCK_FACE_XZ = BLOCK_NX * BLOCK_NZ;
 const size_t BLOCK_FACE_YZ = BLOCK_NY * BLOCK_NZ;
-const size_t BLOCK_COLLUM_X = BLOCK_NX;
-const size_t BLOCK_COLLUM_Y = BLOCK_NY;
-const size_t BLOCK_COLLUM_Z = BLOCK_NZ;
-const size_t BLOCK_GHOST_SIZE = BLOCK_FACE_XY + BLOCK_FACE_XZ + BLOCK_FACE_YZ + BLOCK_COLLUM_X + BLOCK_COLLUM_Y + BLOCK_COLLUM_Z + 1;
+const size_t BLOCK_GHOST_SIZE = BLOCK_FACE_XY + BLOCK_FACE_XZ + BLOCK_FACE_YZ;
 
 const size_t BLOCK_SIZE = BLOCK_LBM_SIZE + BLOCK_GHOST_SIZE;
 //const size_t BLOCK_SIZE = (BLOCK_NX + 1) * (BLOCK_NY + 1) * (BLOCK_NZ + 1);
@@ -115,8 +112,9 @@ const size_t NUM_BLOCK_Z = NZ / BLOCK_NZ;
 const size_t NUM_BLOCK = NUM_BLOCK_X * NUM_BLOCK_Y * NUM_BLOCK_Z;
 
 const size_t NUMBER_LBM_NODES = NUM_BLOCK * BLOCK_LBM_SIZE;
-const size_t NUMBER_GHOST_NODES = NUM_BLOCK * BLOCK_GHOST_SIZE;
-const size_t TOTAL_NUM_NODES = NUMBER_LBM_NODES + NUMBER_GHOST_NODES;
+const size_t NUMBER_GHOST_FACE_XY = BLOCK_NX*BLOCK_NY*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
+const size_t NUMBER_GHOST_FACE_XZ = BLOCK_NX*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
+const size_t NUMBER_GHOST_FACE_YZ = BLOCK_NY*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 
 #define MOMENT_ORDER 3
 const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6;

@@ -9,10 +9,12 @@
 #include <builtin_types.h>
 #include "globalFunctions.h"
 #include "moments.h"
+#include "populations.h"
 
 __global__
 void gpuMomCollisionStream(
-    Moments mom
+    Moments mom,
+    Populations pop
 );
 
 
