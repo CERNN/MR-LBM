@@ -365,7 +365,7 @@ __global__ void gpuMomCollisionStream(
     mom.pzz[indexNodeLBM] = pzzVar;
     
     //write populations of the interface
-
+/*
         if(      ty == 0            && tx == 0              && tz == 0)             {//swb
         pop.x[idxPopX(ty,tz,5,(bx+cx[ 2]+BLOCK_NX)%BLOCK_NX,(by+cy[ 2]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 2]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 2];
         pop.x[idxPopX(ty,tz,6,(bx+cx[ 8]+BLOCK_NX)%BLOCK_NX,(by+cy[ 8]+BLOCK_NY)%BLOCK_NY,(bz+cz[ 8]+BLOCK_NZ)%BLOCK_NZ)] = fStream[ 8];
@@ -518,7 +518,7 @@ __global__ void gpuMomCollisionStream(
 
 
 
-/* ------------------------------ EDGE ------------------------------ */
+
 
 
     }else if(ty == 0            && tx == 0)             {//sw
@@ -668,8 +668,6 @@ __global__ void gpuMomCollisionStream(
 
 
 
-/* ------------------------------ FACE ------------------------------ */
-
 
 
     }else if(ty == 0)             {//s
@@ -708,5 +706,45 @@ __global__ void gpuMomCollisionStream(
         pop.z[idxPopZ(tx,ty,2,(bx),(by),(bz+cz[11]+BLOCK_NZ)%BLOCK_NZ)] = fStream[11];
         pop.z[idxPopZ(tx,ty,3,(bx),(by),(bz+cz[16]+BLOCK_NZ)%BLOCK_NZ)] = fStream[16];
         pop.z[idxPopZ(tx,ty,4,(bx),(by),(bz+cz[18]+BLOCK_NZ)%BLOCK_NZ)] = fStream[18];
+    } */
+
+    if(ty == 0)             {//s
+        pop.y[idxPopY(tx,tz,5,(bx),(by),(bz))] = fStream[ 4];
+        pop.y[idxPopY(tx,tz,6,(bx),(by),(bz))] = fStream[ 8];
+        pop.y[idxPopY(tx,tz,7,(bx),(by),(bz))] = fStream[12];
+        pop.y[idxPopY(tx,tz,8,(bx),(by),(bz))] = fStream[13];
+        pop.y[idxPopY(tx,tz,9,(bx),(by),(bz))] = fStream[18];
+    }else if(ty == (BLOCK_NY-1))  {//n
+        pop.y[idxPopY(tx,tz,0,(bx),(by),(bz))] = fStream[ 3];
+        pop.y[idxPopY(tx,tz,1,(bx),(by),(bz))] = fStream[ 7];
+        pop.y[idxPopY(tx,tz,2,(bx),(by),(bz))] = fStream[11];
+        pop.y[idxPopY(tx,tz,3,(bx),(by),(bz))] = fStream[14];
+        pop.y[idxPopY(tx,tz,4,(bx),(by),(bz))] = fStream[17];
+    }
+    if(tx == 0)             {//w
+        pop.x[idxPopX(ty,tz,5,(bx),(by),(bz))] = fStream[ 2];
+        pop.x[idxPopX(ty,tz,6,(bx),(by),(bz))] = fStream[ 8];
+        pop.x[idxPopX(ty,tz,7,(bx),(by),(bz))] = fStream[10];
+        pop.x[idxPopX(ty,tz,8,(bx),(by),(bz))] = fStream[14];
+        pop.x[idxPopX(ty,tz,9,(bx),(by),(bz))] = fStream[16];
+    }else if(tx == (BLOCK_NX-1))  {//e
+        pop.x[idxPopX(ty,tz,0,(bx),(by),(bz))] = fStream[ 1];
+        pop.x[idxPopX(ty,tz,1,(bx),(by),(bz))] = fStream[ 7];
+        pop.x[idxPopX(ty,tz,2,(bx),(by),(bz))] = fStream[ 9];
+        pop.x[idxPopX(ty,tz,3,(bx),(by),(bz))] = fStream[13];
+        pop.x[idxPopX(ty,tz,4,(bx),(by),(bz))] = fStream[15];
+    }
+    if(tz == 0)             {//b
+        pop.z[idxPopZ(tx,ty,5,(bx),(by),(bz))] = fStream[ 6];
+        pop.z[idxPopZ(tx,ty,6,(bx),(by),(bz))] = fStream[10];
+        pop.z[idxPopZ(tx,ty,7,(bx),(by),(bz))] = fStream[12];
+        pop.z[idxPopZ(tx,ty,8,(bx),(by),(bz))] = fStream[15];
+        pop.z[idxPopZ(tx,ty,9,(bx),(by),(bz))] = fStream[17];
+    }else if(tz == (BLOCK_NZ-1))  {//f
+        pop.z[idxPopZ(tx,ty,0,(bx),(by),(bz))] = fStream[ 5];
+        pop.z[idxPopZ(tx,ty,1,(bx),(by),(bz))] = fStream[ 9];
+        pop.z[idxPopZ(tx,ty,2,(bx),(by),(bz))] = fStream[11];
+        pop.z[idxPopZ(tx,ty,3,(bx),(by),(bz))] = fStream[16];
+        pop.z[idxPopZ(tx,ty,4,(bx),(by),(bz))] = fStream[18];
     } 
 }

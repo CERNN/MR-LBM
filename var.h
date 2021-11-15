@@ -20,7 +20,7 @@
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-constexpr int N_STEPS = 100;
+constexpr int N_STEPS = 1000;
 constexpr int SCALE = 1;
 constexpr int N = 128 * SCALE;
 constexpr int NX = N * SCALE;        // size x of the grid 
