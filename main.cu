@@ -14,6 +14,7 @@
 //#include "globalFunctions.h"
 #include "lbmInitialization.cuh"
 #include "mlbm.cuh"
+#include "saveData.cuh"
 
 using namespace std;
 
@@ -27,7 +28,24 @@ int main() {
     dfloat* fGhostZ_0; 
     dfloat* fGhostZ_1;
 
+
+
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
+    dfloat* h_fMom;
+    dfloat* rho;
+    dfloat* ux;
+    dfloat* uy;
+    dfloat* uz;
+
+    checkCudaErrors(cudaMallocHost((void**)&(h_fMom), MEM_SIZE_MOM));
+    checkCudaErrors(cudaMallocHost((void**)&(rho), MEM_SIZE_SCALAR));
+    checkCudaErrors(cudaMallocHost((void**)&(ux), MEM_SIZE_SCALAR));
+    checkCudaErrors(cudaMallocHost((void**)&(uy), MEM_SIZE_SCALAR));
+    checkCudaErrors(cudaMallocHost((void**)&(uz), MEM_SIZE_SCALAR));
+
+
+    // Setup saving folder
+    folderSetup();
 
     /* -------------- ALLOCATION AND CONFIGURATION FOR EACH GPU ------------- */
 
@@ -67,8 +85,23 @@ int main() {
     /* ------------------------------ LBM LOOP ------------------------------ */
     
     size_t step;
-    for (step=0; step<N_STEPS;step++){
+    bool save = false;
+    for (step=1; step<N_STEPS;step++){
+        save =false;
+
+        if(MACR_SAVE)
+            save = !(step % MACR_SAVE);
+
         gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
+
+
+        //save macroscopics
+        if(save){
+            checkCudaErrors(cudaDeviceSynchronize());
+            checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+            linearMacr(h_fMom,rho,ux,uy,uz);
+            saveMacr(rho,ux,uy,uz,step);
+        }
     }
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */

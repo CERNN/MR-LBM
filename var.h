@@ -16,11 +16,17 @@
 
 #define D3Q19
 
+/* ----------------------------- OUTPUT DEFINES ---------------------------- */
+
+#define ID_SIM "000"            // prefix for simulation's files
+#define PATH_FILES "TEST"  // path to save simulation's files
 
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
 constexpr int N_STEPS = 20000;
+#define MACR_SAVE (5000)
+
 constexpr int SCALE = 1;
 constexpr int N = 128 * SCALE;
 constexpr int NX = N * SCALE;        // size x of the grid 
@@ -130,7 +136,6 @@ const size_t NUMBER_LBM_POP_NODES = NX * NY * NZ;
 const size_t MEM_SIZE_SCALAR = sizeof(dfloat) * NUMBER_LBM_NODES;
 const size_t MEM_SIZE_POP = sizeof(dfloat) * NUMBER_LBM_POP_NODES * Q;
 const size_t MEM_SIZE_MOM = sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS;
-
 
 
 /* --------------------------- AUXILIARY DEFINES --------------------------- */

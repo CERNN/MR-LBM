@@ -14,7 +14,7 @@ __host__ __device__
     return (rhow * (p1_muu + uc3 * (1.0 + uc3 * 0.5)));
 }
 
-__device__
+__host__ __device__
     size_t __forceinline__
     idxMom(
         const int tx,
