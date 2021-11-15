@@ -20,7 +20,7 @@
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-constexpr int N_STEPS = 1000;
+constexpr int N_STEPS = 20000;
 constexpr int SCALE = 1;
 constexpr int N = 128 * SCALE;
 constexpr int NX = N * SCALE;        // size x of the grid 
@@ -45,7 +45,7 @@ constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
 /* ------------------------------ VELOCITY SET ------------------------------ */
 #ifdef D3Q19
 constexpr unsigned char Q = 19;        // number of velocities
-constexpr unsigned char QF = 5*2;         // number of velocities on each face
+constexpr unsigned char QF = 5;         // number of velocities on each face
 constexpr dfloat W0 = 1.0 / 3;         // population 0 weight (0, 0, 0)
 constexpr dfloat W1 = 1.0 / 18;        // adjacent populations (1, 0, 0)
 constexpr dfloat W2 = 1.0 / 36;        // diagonal populations (1, 1, 0)

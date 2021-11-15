@@ -8,13 +8,13 @@
 #include <cuda_runtime.h>
 #include <builtin_types.h>
 #include "globalFunctions.h"
-#include "moments.h"
-#include "populations.h"
 
 __global__
 void gpuMomCollisionStream(
-    Moments mom,
-    Populations pop
+    dfloat* fMom, 
+    dfloat* fGhostX_0, dfloat* fGhostX_1,
+    dfloat* fGhostY_0, dfloat* fGhostY_1,
+    dfloat* fGhostZ_0, dfloat* fGhostZ_1
 );
 
 

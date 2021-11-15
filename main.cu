@@ -10,8 +10,6 @@
 // FILES INCLUDES
 #include "var.h"
 #include "errorDef.h"
-#include "moments.h"
-#include "populations.h"
 //#include "structs.h"
 //#include "globalFunctions.h"
 #include "lbmInitialization.cuh"
@@ -20,18 +18,31 @@
 using namespace std;
 
 int main() {
-    Moments* mom;
-    Populations* pop;
+
+    dfloat* fMom;
+    dfloat* fGhostX_0;
+    dfloat* fGhostX_1;
+    dfloat* fGhostY_0; 
+    dfloat* fGhostY_1;
+    dfloat* fGhostZ_0; 
+    dfloat* fGhostZ_1;
+
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
-    mom = (Moments*)malloc(sizeof(Moments));
-    pop = (Populations*)malloc(sizeof(Populations));
 
     /* -------------- ALLOCATION AND CONFIGURATION FOR EACH GPU ------------- */
+
+    cudaMalloc((void**)&fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS);    
+    cudaMalloc((void**)&fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
+    cudaMalloc((void**)&fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
+    cudaMalloc((void**)&fGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
+    cudaMalloc((void**)&fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
+    cudaMalloc((void**)&fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
+    cudaMalloc((void**)&fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
+
+
     cudaStream_t streamsLBM[1];
     checkCudaErrors(cudaSetDevice(0));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
-    mom[0].momAllocation(IN_VIRTUAL);
-    pop[0].popAllocation(IN_VIRTUAL);
     checkCudaErrors(cudaDeviceSynchronize());
 
     /* ----------------- GRID AND THREADS DEFINITION FOR LBM ---------------- */
@@ -39,9 +50,9 @@ int main() {
     dim3 gridBlock(NUM_BLOCK_X, NUM_BLOCK_Y, NUM_BLOCK_Z);
 
     /* ------------------------- LBM INITIALIZATION ------------------------- */
-    gpuInitialization_mom << <gridBlock, threadBlock >> >(mom[0]);
+    gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom);
     checkCudaErrors(cudaDeviceSynchronize());
-    gpuInitialization_pop << <gridBlock, threadBlock >> >(mom[0],pop[0]);
+    gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
     checkCudaErrors(cudaDeviceSynchronize());
 
     checkCudaErrors(cudaSetDevice(0));
@@ -57,7 +68,7 @@ int main() {
     
     size_t step;
     for (step=0; step<N_STEPS;step++){
-        gpuMomCollisionStream << <gridBlock, threadBlock >> > (mom[0],pop[0]);
+        gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
     }
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */
