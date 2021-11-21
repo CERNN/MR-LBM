@@ -61,7 +61,7 @@ __device__ void gpuInterfaceSpread(
         fGhostY_1[idxPopY(txp1, tzp1, 7, bxp1, bym1, bzp1)] = pop[23];
         fGhostY_1[idxPopY(txp1, tzm1, 8, bxp1, bym1, bzm1)] = pop[26];
         #endif //D3Q27                                                                                                           
-    }else if (threadIdx.y == (NUM_BLOCK_Y - 1)){                                                                                                                                                                        
+    }else if (threadIdx.y == (BLOCK_NY - 1)){                                                                                                                                                                        
         fGhostY_0[idxPopY(tx, tz, 0, bx, byp1, bz)] = pop[ 3];
         fGhostY_0[idxPopY(txp1, tz, 1, bxp1, byp1, bz)] = pop[ 7];
         fGhostY_0[idxPopY(tx, tzp1, 2, bx, byp1, bzp1)] = pop[11];
@@ -87,7 +87,7 @@ __device__ void gpuInterfaceSpread(
         fGhostX_1[idxPopX(typ1, tzm1, 7, bxm1, byp1, bzm1)] = pop[24];
         fGhostX_1[idxPopX(typ1, tzp1, 8, bxm1, byp1, bzp1)] = pop[25];
         #endif //D3Q27                                                                                                           
-    }else if (threadIdx.x == (NUM_BLOCK_X - 1)){                                                                                                                                                                               
+    }else if (threadIdx.x == (BLOCK_NX - 1)){                                                                                                                                                                               
         fGhostX_0[idxPopX(ty, tz, 0, bxp1, by, bz)] = pop[ 1];
         fGhostX_0[idxPopX(typ1, tz, 1, bxp1, byp1, bz)] = pop[ 7];
         fGhostX_0[idxPopX(ty, tzp1, 2, bxp1, by, bzp1)] = pop[ 9];
@@ -105,24 +105,24 @@ __device__ void gpuInterfaceSpread(
         fGhostZ_1[idxPopZ(txm1, ty, 1, bxm1, by, bzm1)] = pop[10];
         fGhostZ_1[idxPopZ(tx, tym1, 2, bx, bym1, bzm1)] = pop[12];
         fGhostZ_1[idxPopZ(txp1, ty, 3, bxp1, by, bzm1)] = pop[15];
-        fGhostZ_1[idxPopZ(txp1, ty, 4, bxp1, by, bzm1)] = pop[17];
+        fGhostZ_1[idxPopZ(tx, typ1, 4, bx, byp1, bzm1)] = pop[17];
         #ifdef D3Q27                                                                                                           
         fGhostZ_1[idxPopZ(txm1, tym1, 5, bxm1, bym1, bzm1)] = pop[20];
         fGhostZ_1[idxPopZ(txp1, typ1, 6, bxp1, byp1, bzm1)] = pop[21];
         fGhostZ_1[idxPopZ(txm1, typ1, 7, bxm1, byp1, bzm1)] = pop[24];
         fGhostZ_1[idxPopZ(txp1, tym1, 8, bxp1, bym1, bzm1)] = pop[26];
         #endif //D3Q27                                                                                                           
-    }else if (threadIdx.z == (NUM_BLOCK_Z - 1)){                                                                                                               
+    }else if (threadIdx.z == (BLOCK_NZ - 1)){                                                                                                               
         fGhostZ_0[idxPopZ(tx, ty, 0, bx, by, bzp1)] = pop[ 5];
         fGhostZ_0[idxPopZ(txp1, ty, 1, bxp1, by, bzp1)] = pop[ 9];
         fGhostZ_0[idxPopZ(tx, typ1, 2, bx, byp1, bzp1)] = pop[11];
         fGhostZ_0[idxPopZ(txm1, ty, 3, bxm1, by, bzp1)] = pop[16];
         fGhostZ_0[idxPopZ(tx, tym1, 4, bx, bym1, bzp1)] = pop[18];
         #ifdef D3Q27                                                                                                           
-        fGhostX_0[idxPopZ(txp1, typ1, 5, bxp1, byp1, bzp1)] = pop[19];
-        fGhostX_0[idxPopZ(txm1, tym1, 6, bxm1, bym1, bzp1)] = pop[22];
-        fGhostX_0[idxPopZ(txp1, tym1, 7, bxp1, bym1, bzp1)] = pop[23];
-        fGhostX_0[idxPopZ(txm1, typ1, 8, bxm1, byp1, bzp1)] = pop[25];
+        fGhostZ_0[idxPopZ(txp1, typ1, 5, bxp1, byp1, bzp1)] = pop[19];
+        fGhostZ_0[idxPopZ(txm1, tym1, 6, bxm1, bym1, bzp1)] = pop[22];
+        fGhostZ_0[idxPopZ(txp1, tym1, 7, bxp1, bym1, bzp1)] = pop[23];
+        fGhostZ_0[idxPopZ(txm1, typ1, 8, bxm1, byp1, bzp1)] = pop[25];
         #endif //D3Q27                                                                                                                                                                                                                    
     }
 

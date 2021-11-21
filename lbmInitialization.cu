@@ -23,9 +23,9 @@ __global__ void gpuInitialization_mom(
     //Taylor Green
     dfloat P = N/(2.0*M_PI);
 
-    //ux = 0.1*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
-    //uy = 0.1*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
-    //uz = 0.0;
+    ux = 0.1*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
+    uy = 0.1*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
+    uz = 0.0;
     
 
 
@@ -164,109 +164,7 @@ __global__ void gpuInitialization_pop(
     pop[25] = gpu_f_eq(rhoW3, -ux3 + uy3 + uz3, p1_muu15);
     pop[26] = gpu_f_eq(rhoW3, ux3 - uy3 - uz3, p1_muu15);
 #endif
-    /* ------------------------------ CORNER ------------------------------ */
-    /*
-    if(      threadIdx.y == 0            && threadIdx.x == 0              && threadIdx.z == 0)             {//swb
-    }else if(threadIdx.y == 0            && threadIdx.x == 0              && threadIdx.z == (NUM_BLOCK_Z-1))  {//swf
-    }else if(threadIdx.y == 0            && threadIdx.x == (NUM_BLOCK_X-1)   && threadIdx.z == 0)             {//seb
-    }else if(threadIdx.y == 0            && threadIdx.x == (NUM_BLOCK_X-1)   && threadIdx.z == (NUM_BLOCK_Z-1))  {//sef
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.x == 0              && threadIdx.z == 0)             {//nwb
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.x == 0              && threadIdx.z == (NUM_BLOCK_Z-1))  {//nwf
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.x == (NUM_BLOCK_X-1)   && threadIdx.z == 0)             {//neb
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.x == (NUM_BLOCK_X-1)   && threadIdx.z == (NUM_BLOCK_Z-1))  {//nef
-
-/* ------------------------------ EDGE ------------------------------ */
-    /*
-    }else if(threadIdx.y == 0            && threadIdx.x == 0)             {//sw
-    }else if(threadIdx.y == 0            && threadIdx.x == (NUM_BLOCK_X-1))  {//se
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.x == 0)             {//nw
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.x == (NUM_BLOCK_X-1))  {//ne
-    }else if(threadIdx.y == 0            && threadIdx.z == 0)             {//sb
-    }else if(threadIdx.y == 0            && threadIdx.z == (NUM_BLOCK_Z-1))  {//sf
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.z == 0)             {//nb
-    }else if(threadIdx.y == (NUM_BLOCK_Y-1) && threadIdx.z == (NUM_BLOCK_Z-1))  {//nf
-    }else if(threadIdx.x == 0            && threadIdx.z == 0)             {//wb
-    }else if(threadIdx.x == 0            && threadIdx.z == (NUM_BLOCK_Z-1))  {//wf
-    }else if(threadIdx.x == (NUM_BLOCK_X-1) && threadIdx.z == 0)             {//eb
-    }else if(threadIdx.x == (NUM_BLOCK_X-1) && threadIdx.z == (NUM_BLOCK_Z-1))  {//ef
-   
-
-/* ------------------------------ FACE ------------------------------ */
 
 gpuInterfaceSpread(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
-/*
-    if (threadIdx.x == 0) { //w
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 0, (blockIdx.x + cx[ 2] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 2] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 2] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 2];// 1;
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 1, (blockIdx.x + cx[ 8] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 8] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 8] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 8];// 2;
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 2, (blockIdx.x + cx[10] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[10] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[10] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[10];// 3;
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 3, (blockIdx.x + cx[14] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[14] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[14] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[14];// 4;
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 4, (blockIdx.x + cx[16] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[16] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[16] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[16];// 5;
-        #ifdef D3Q27
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 5, (blockIdx.x + cx[20] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[20] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[20] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[20];
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 6, (blockIdx.x + cx[22] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[22] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[22] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[22];
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 7, (blockIdx.x + cx[24] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[24] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[24] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[24];
-        fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 8, (blockIdx.x + cx[25] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[25] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[25] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[25];
-        #endif //D3Q27
-    }else if (threadIdx.x == (NUM_BLOCK_X - 1)){ //e                                                                
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 0, (blockIdx.x + cx[ 1] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 1] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 1] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 1];// 6;
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 1, (blockIdx.x + cx[ 7] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 7] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 7] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 7];// 7;
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 2, (blockIdx.x + cx[ 9] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 9] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 9] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 9];// 8;
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 3, (blockIdx.x + cx[13] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[13] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[13] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[13];// 9;
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 4, (blockIdx.x + cx[15] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[15] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[15] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[15];//10;
-        #ifdef D3Q27
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 5, (blockIdx.x + cx[19] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[19] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[19] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[19];
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 6, (blockIdx.x + cx[21] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[21] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[21] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[21];
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 7, (blockIdx.x + cx[23] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[23] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[23] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[23];
-        fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 8, (blockIdx.x + cx[26] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[26] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[26] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[26];
-        #endif //D3Q27
-    }if (threadIdx.y == 0)  { //s                                                                             
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 0, (blockIdx.x + cx[ 4] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 4] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 4] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 4];//11;
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 1, (blockIdx.x + cx[ 8] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 8] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 8] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 8];//12;
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 2, (blockIdx.x + cx[12] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[12] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[12] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[12];//13;
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 3, (blockIdx.x + cx[13] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[13] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[13] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[13];//14;
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 4, (blockIdx.x + cx[18] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[18] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[18] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[18];//15;
-        #ifdef D3Q27
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 5, (blockIdx.x + cx[20] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[20] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[20] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[20];
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 6, (blockIdx.x + cx[22] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[22] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[22] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[22];
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 7, (blockIdx.x + cx[23] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[23] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[23] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[23];
-        fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 8, (blockIdx.x + cx[26] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[26] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[26] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[26];
-        #endif //D3Q27
-    }else if (threadIdx.y == (NUM_BLOCK_Y - 1)){ //n                                                         
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 0, (blockIdx.x + cx[ 3] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 3] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 3] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 3];//16;
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 1, (blockIdx.x + cx[ 7] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 7] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 7] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 7];//17;
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 2, (blockIdx.x + cx[11] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[11] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[11] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[11];//18;
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 3, (blockIdx.x + cx[14] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[14] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[14] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[14];//19;
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 4, (blockIdx.x + cx[17] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[17] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[17] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[17];//20;
-        #ifdef D3Q27
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 5, (blockIdx.x + cx[19] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[19] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[19] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[19];
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 6, (blockIdx.x + cx[21] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[21] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[21] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[21];
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 7, (blockIdx.x + cx[24] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[24] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[24] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[24];
-        fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 8, (blockIdx.x + cx[25] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[25] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[25] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[25];
-        #endif //D3Q27
-    }if (threadIdx.z == 0){ //b                                                                           
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 0, (blockIdx.x + cx[ 6] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 6] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 6] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 6];//21;
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 1, (blockIdx.x + cx[10] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[10] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[10] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[10];//22;
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 2, (blockIdx.x + cx[12] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[12] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[12] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[12];//23;
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 3, (blockIdx.x + cx[15] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[15] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[15] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[15];//24;
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 4, (blockIdx.x + cx[17] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[17] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[17] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[17];//25;
-        #ifdef D3Q27
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.z, 5, (blockIdx.x + cx[20] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[20] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[20] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[20];
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.z, 6, (blockIdx.x + cx[21] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[21] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[21] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[21];
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.z, 7, (blockIdx.x + cx[24] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[24] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[24] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[24];
-        fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.z, 8, (blockIdx.x + cx[26] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[26] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[26] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[26];
-        #endif //D3Q27
-    } else if (threadIdx.z == (NUM_BLOCK_Z - 1)) { //f
-        fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 0, (blockIdx.x + cx[ 5] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 5] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 5] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 5];//26;
-        fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 1, (blockIdx.x + cx[ 9] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[ 9] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[ 9] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[ 9];//26;
-        fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 2, (blockIdx.x + cx[11] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[11] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[11] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[11];//27;
-        fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 3, (blockIdx.x + cx[16] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[16] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[16] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[16];//28;
-        fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 4, (blockIdx.x + cx[18] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[18] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[18] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[18];//29;
-        #ifdef D3Q27
-        fGhostX_0[idxPopZ(threadIdx.x, threadIdx.y, 5, (blockIdx.x + cx[19] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[19] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[19] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[19];
-        fGhostX_0[idxPopZ(threadIdx.x, threadIdx.y, 6, (blockIdx.x + cx[22] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[22] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[22] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[22];
-        fGhostX_0[idxPopZ(threadIdx.x, threadIdx.y, 7, (blockIdx.x + cx[23] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[23] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[23] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[23];
-        fGhostX_0[idxPopZ(threadIdx.x, threadIdx.y, 8, (blockIdx.x + cx[25] + NUM_BLOCK_X)%NUM_BLOCK_X, (blockIdx.y + cy[25] + NUM_BLOCK_Y)%NUM_BLOCK_Y, (blockIdx.z + cz[25] + NUM_BLOCK_Z)%NUM_BLOCK_Z)] = pop[25];
-        #endif //D3Q27
-        
-    }*/
+
 }
