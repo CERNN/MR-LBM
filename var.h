@@ -5,6 +5,8 @@
 #include <builtin_types.h>  // for devices variables
 #include <stdint.h>         // for uint32_t
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 #define SINGLE_PRECISION 
 #ifdef SINGLE_PRECISION
@@ -24,11 +26,11 @@
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-constexpr int N_STEPS = 20000;
-#define MACR_SAVE (5000)
+constexpr int N_STEPS = 200;
+#define MACR_SAVE (1)
 
 constexpr int SCALE = 1;
-constexpr int N = 128 * SCALE;
+constexpr int N = 64 * SCALE;
 constexpr int NX = N * SCALE;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N * SCALE;        // size y of the grid
@@ -146,7 +148,6 @@ constexpr size_t BYTES_PER_GB = (1 << 30);
 constexpr size_t BYTES_PER_MB = (1 << 20);
 
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
-
 
 
 

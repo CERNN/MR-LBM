@@ -1,5 +1,5 @@
-#ifndef __LBM_INITIALIZATION_CUH
-#define __LBM_INITIALIZATION_CUH
+#ifndef __INTERFACE_SPREAD_CUH
+#define __INTERFACE_SPREAD_CUH
 
 #include <string>
 #include <math.h>
@@ -10,15 +10,12 @@
 #include "globalFunctions.h"
 #include "errorDef.h"
 #include "var.h"
-#include "interfaceSpread.cuh"
 
-__global__ void gpuInitialization_mom(
-    dfloat *fMom);
 
-__global__ void gpuInitialization_pop(
-    dfloat *fMom,
+__device__ void gpuInterfaceSpread(
+    dim3 threadIdx, dim3 blockIdx, dfloat pop[Q],
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1);
 
-#endif // !__LBM_INITIALIZATION_CUH
+#endif // !__LBM_INITIALIZATION_H

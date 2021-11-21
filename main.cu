@@ -84,8 +84,12 @@ int main() {
     checkCudaErrors(cudaEventRecord(start_step, 0));
     /* ------------------------------ LBM LOOP ------------------------------ */
     
-    size_t step;
+    size_t step = 0;
     bool save = false;
+            checkCudaErrors(cudaDeviceSynchronize());
+            checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+            linearMacr(h_fMom,rho,ux,uy,uz);
+            //saveMacr(rho,ux,uy,uz,step);
     for (step=1; step<N_STEPS;step++){
         save =false;
 
@@ -93,10 +97,12 @@ int main() {
             save = !(step % MACR_SAVE);
 
         gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
-
+        fflush(stdout);
 
         //save macroscopics
         if(save){
+            //printf("step %d \n",step);
+            //printf("------------------------------------------------------------------------\n");
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             linearMacr(h_fMom,rho,ux,uy,uz);
@@ -116,5 +122,26 @@ int main() {
     dfloat MLUPS = (nodesUpdatedSync / 1e6) / elapsedTime;
 
     printf("MLUPS: %f\n",MLUPS);
+
+
+
+    /* ------------------------------ FREE ------------------------------ */
+    cudaFree(fMom);
+    cudaFree(fGhostX_0);
+    cudaFree(fGhostX_1);
+    cudaFree(fGhostY_0);
+    cudaFree(fGhostY_1);
+    cudaFree(fGhostZ_0);
+    cudaFree(fGhostZ_1);
+
+    cudaFree(h_fMom);
+    cudaFree(rho);
+    cudaFree(ux);
+    cudaFree(uy);
+    cudaFree(uz);
+
     return 0;
+
+
+
 }
