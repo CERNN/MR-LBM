@@ -48,10 +48,10 @@ __global__ void gpuMomCollisionStream(
     dfloat W1t9d2 = W1t3d2 * 3.0;
     dfloat W2t9d2 = W2t3d2 * 3.0;
 
-#ifdef D3Q27
+    #ifdef D3Q27
     dfloat rhoW3 = rhoVar * W3;
     dfloat W3t9d2 = W3 * 9 / 2;
-#endif
+    #endif
     dfloat ux3 = 3 * uxVar;
     dfloat uy3 = 3 * uyVar;
     dfloat uz3 = 3 * uzVar;
@@ -92,26 +92,26 @@ __global__ void gpuMomCollisionStream(
     for (int i = 0; i < Q; i++)
     {
         fNodeNeq[i] = rhoVar * 1.5 * w[i] *
-                      (((cx[i] * cx[i] - cs2) * (pixx - pixx_eq) + //Q-iab*(m_ab - m_ab^eq)
-                        2 * (cx[i] * cy[i])   * (pixy - pixy_eq) +
-                        2 * (cx[i] * cz[i])   * (pixz - pixz_eq) +
-                        (cy[i] * cy[i] - cs2) * (piyy - piyy_eq) +
-                        2 * (cy[i] * cz[i])   * (piyz - piyz_eq) +
-                        (cz[i] * cz[i] - cs2) * (pizz - pizz_eq)) -
+                          (((cx[i] * cx[i] - cs2) * (pixx - pixx_eq) + //Q-iab*(m_ab - m_ab^eq)
+                        2 * (cx[i] * cy[i])       * (pixy - pixy_eq) +
+                        2 * (cx[i] * cz[i])       * (pixz - pixz_eq) +
+                            (cy[i] * cy[i] - cs2) * (piyy - piyy_eq) +
+                        2 * (cy[i] * cz[i])       * (piyz - piyz_eq) +
+                            (cz[i] * cz[i] - cs2) * (pizz - pizz_eq)) -
                        cs2 * (cx[i] * FX + cy[i] * FY + cz[i] * FZ)); //force term
     }
 
     //CALCULATE COLLISION POPULATIONS
-    pop[0] = fNodeEq[0] + fNodeNeq[0];
-    pop[1] = fNodeEq[1] + fNodeNeq[1];
-    pop[2] = fNodeEq[2] + fNodeNeq[2];
-    pop[3] = fNodeEq[3] + fNodeNeq[3];
-    pop[4] = fNodeEq[4] + fNodeNeq[4];
-    pop[5] = fNodeEq[5] + fNodeNeq[5];
-    pop[6] = fNodeEq[6] + fNodeNeq[6];
-    pop[7] = fNodeEq[7] + fNodeNeq[7];
-    pop[8] = fNodeEq[8] + fNodeNeq[8];
-    pop[9] = fNodeEq[9] + fNodeNeq[9];
+    pop[ 0] = fNodeEq[ 0] + fNodeNeq[ 0];
+    pop[ 1] = fNodeEq[ 1] + fNodeNeq[ 1];
+    pop[ 2] = fNodeEq[ 2] + fNodeNeq[ 2];
+    pop[ 3] = fNodeEq[ 3] + fNodeNeq[ 3];
+    pop[ 4] = fNodeEq[ 4] + fNodeNeq[ 4];
+    pop[ 5] = fNodeEq[ 5] + fNodeNeq[ 5];
+    pop[ 6] = fNodeEq[ 6] + fNodeNeq[ 6];
+    pop[ 7] = fNodeEq[ 7] + fNodeNeq[ 7];
+    pop[ 8] = fNodeEq[ 8] + fNodeNeq[ 8];
+    pop[ 9] = fNodeEq[ 9] + fNodeNeq[ 9];
     pop[10] = fNodeEq[10] + fNodeNeq[10];
     pop[11] = fNodeEq[11] + fNodeNeq[11];
     pop[12] = fNodeEq[12] + fNodeNeq[12];
@@ -225,7 +225,7 @@ __global__ void gpuMomCollisionStream(
         pop[26] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
         #endif //D3Q27
     }
-    else if (threadIdx.x == blockDim.x - 1)
+    else if (threadIdx.x == BLOCK_NX - 1)
     {
         pop[ 2] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
         pop[ 8] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -253,7 +253,7 @@ __global__ void gpuMomCollisionStream(
         pop[25] = fGhostY_0[idxPopX(threadIdx.x, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
         #endif //D3Q27
     }
-    else if (threadIdx.y == blockDim.y - 1)
+    else if (threadIdx.y == BLOCK_NY - 1)
     {
         pop[ 4] = fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
         pop[ 8] = fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -281,7 +281,7 @@ __global__ void gpuMomCollisionStream(
         pop[25] = fGhostZ_0[idxPopX(threadIdx.x, threadIdx.y, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
         #endif //D3Q27
     }
-    else if (threadIdx.z == blockDim.z - 1)
+    else if (threadIdx.z == BLOCK_NZ - 1)
     {
         pop[ 6] = fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
         pop[10] = fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -315,6 +315,9 @@ __global__ void gpuMomCollisionStream(
         uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
         uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
     #endif
+
+
+    //NOTE : STREAMING DONE, NOW COLLIDE
 
     //Collide Moments
     //Equiblibrium momements
@@ -359,16 +362,16 @@ __global__ void gpuMomCollisionStream(
     uz3 = 3 * uzVar;
 
     // Calculate equilibrium fNodeEq
-    fNodeEq[0] = gpu_f_eq(rhoW0, 0, p1_muu15);
-    fNodeEq[1] = gpu_f_eq(rhoW1, ux3, p1_muu15);
-    fNodeEq[2] = gpu_f_eq(rhoW1, -ux3, p1_muu15);
-    fNodeEq[3] = gpu_f_eq(rhoW1, uy3, p1_muu15);
-    fNodeEq[4] = gpu_f_eq(rhoW1, -uy3, p1_muu15);
-    fNodeEq[5] = gpu_f_eq(rhoW1, uz3, p1_muu15);
-    fNodeEq[6] = gpu_f_eq(rhoW1, -uz3, p1_muu15);
-    fNodeEq[7] = gpu_f_eq(rhoW2, ux3 + uy3, p1_muu15);
-    fNodeEq[8] = gpu_f_eq(rhoW2, -ux3 - uy3, p1_muu15);
-    fNodeEq[9] = gpu_f_eq(rhoW2, ux3 + uz3, p1_muu15);
+    fNodeEq[ 0] = gpu_f_eq(rhoW0, 0, p1_muu15);
+    fNodeEq[ 1] = gpu_f_eq(rhoW1, ux3, p1_muu15);
+    fNodeEq[ 2] = gpu_f_eq(rhoW1, -ux3, p1_muu15);
+    fNodeEq[ 3] = gpu_f_eq(rhoW1, uy3, p1_muu15);
+    fNodeEq[ 4] = gpu_f_eq(rhoW1, -uy3, p1_muu15);
+    fNodeEq[ 5] = gpu_f_eq(rhoW1, uz3, p1_muu15);
+    fNodeEq[ 6] = gpu_f_eq(rhoW1, -uz3, p1_muu15);
+    fNodeEq[ 7] = gpu_f_eq(rhoW2, ux3 + uy3, p1_muu15);
+    fNodeEq[ 8] = gpu_f_eq(rhoW2, -ux3 - uy3, p1_muu15);
+    fNodeEq[ 9] = gpu_f_eq(rhoW2, ux3 + uz3, p1_muu15);
     fNodeEq[10] = gpu_f_eq(rhoW2, -ux3 - uz3, p1_muu15);
     fNodeEq[11] = gpu_f_eq(rhoW2, uy3 + uz3, p1_muu15);
     fNodeEq[12] = gpu_f_eq(rhoW2, -uy3 - uz3, p1_muu15);
@@ -394,26 +397,26 @@ __global__ void gpuMomCollisionStream(
     for (int i = 0; i < Q; i++)
     {
         fNodeNeq[i] = rhoVar * 1.5 * w[i] *
-                      (((cx[i] * cx[i] - cs2) * (pixx - pixx_eq) + //Q-iab*(m_ab - m_ab^eq)
-                        2 * (cx[i] * cy[i]) * (pixy - pixy_eq) +
-                        2 * (cx[i] * cz[i]) * (pixz - pixz_eq) +
-                        (cy[i] * cy[i] - cs2) * (piyy - piyy_eq) +
-                        2 * (cy[i] * cz[i]) * (piyz - piyz_eq) +
-                        (cz[i] * cz[i] - cs2) * (pizz - pizz_eq)) -
+                          (((cx[i] * cx[i] - cs2) * (pixx - pixx_eq) + //Q-iab*(m_ab - m_ab^eq)
+                        2 * (cx[i] * cy[i])       * (pixy - pixy_eq) +
+                        2 * (cx[i] * cz[i])       * (pixz - pixz_eq) +
+                            (cy[i] * cy[i] - cs2) * (piyy - piyy_eq) +
+                        2 * (cy[i] * cz[i])       * (piyz - piyz_eq) +
+                            (cz[i] * cz[i] - cs2) * (pizz - pizz_eq)) -
                        cs2 * (cx[i] * FX + cy[i] * FY + cz[i] * FZ)); //force term
     }
 
     //CALCULATE COLLISION POPULATIONS
-    pop[0] = fNodeEq[0] + fNodeNeq[0];
-    pop[1] = fNodeEq[1] + fNodeNeq[1];
-    pop[2] = fNodeEq[2] + fNodeNeq[2];
-    pop[3] = fNodeEq[3] + fNodeNeq[3];
-    pop[4] = fNodeEq[4] + fNodeNeq[4];
-    pop[5] = fNodeEq[5] + fNodeNeq[5];
-    pop[6] = fNodeEq[6] + fNodeNeq[6];
-    pop[7] = fNodeEq[7] + fNodeNeq[7];
-    pop[8] = fNodeEq[8] + fNodeNeq[8];
-    pop[9] = fNodeEq[9] + fNodeNeq[9];
+    pop[ 0] = fNodeEq[ 0] + fNodeNeq[ 0];
+    pop[ 1] = fNodeEq[ 1] + fNodeNeq[ 1];
+    pop[ 2] = fNodeEq[ 2] + fNodeNeq[ 2];
+    pop[ 3] = fNodeEq[ 3] + fNodeNeq[ 3];
+    pop[ 4] = fNodeEq[ 4] + fNodeNeq[ 4];
+    pop[ 5] = fNodeEq[ 5] + fNodeNeq[ 5];
+    pop[ 6] = fNodeEq[ 6] + fNodeNeq[ 6];
+    pop[ 7] = fNodeEq[ 7] + fNodeNeq[ 7];
+    pop[ 8] = fNodeEq[ 8] + fNodeNeq[ 8];
+    pop[ 9] = fNodeEq[ 9] + fNodeNeq[ 9];
     pop[10] = fNodeEq[10] + fNodeNeq[10];
     pop[11] = fNodeEq[11] + fNodeNeq[11];
     pop[12] = fNodeEq[12] + fNodeNeq[12];

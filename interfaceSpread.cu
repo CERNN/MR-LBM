@@ -99,8 +99,9 @@ __device__ void gpuInterfaceSpread(
         fGhostX_0[idxPopX(tym1, tzp1, 7, bxp1, bym1, bzp1)] = pop[23];
         fGhostX_0[idxPopX(tym1, tzm1, 8, bxp1, bym1, bzm1)] = pop[26];
         #endif //D3Q27       
+    }
 
-    }if (threadIdx.z == 0){ //b                                                                                                                                                                                     
+    if (threadIdx.z == 0){ //b                                                                                                                                                                                     
         fGhostZ_1[idxPopZ(tx, ty, 0, bx, by, bzm1)] = pop[ 6];
         fGhostZ_1[idxPopZ(txm1, ty, 1, bxm1, by, bzm1)] = pop[10];
         fGhostZ_1[idxPopZ(tx, tym1, 2, bx, bym1, bzm1)] = pop[12];
@@ -126,4 +127,4 @@ __device__ void gpuInterfaceSpread(
         #endif //D3Q27                                                                                                                                                                                                                    
     }
 
-    }
+}

@@ -51,8 +51,8 @@ std::string getVarFilename(
 
 void folderSetup();
 
-std::string getSimInfoString();
+std::string getSimInfoString(int step);
 
-void saveSimInfo();
+void saveSimInfo(int step);
 
 #endif __SAVE_DATA_H

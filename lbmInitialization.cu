@@ -27,6 +27,10 @@ __global__ void gpuInitialization_mom(
     uy = U_MAX*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
     uz = 0.0;
     
+    //ux =  U_MAX*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*sin(z/P)*2.0/sqrt(3.0);
+    //uy = -U_MAX*sin(-2.0*M_PI/3.0)*sin(x/P)*cos(y/P)*sin(z/P)*2.0/sqrt(3.0);
+    //uz = 0.0;
+    
 
 
     // zeroth moment
@@ -37,9 +41,9 @@ __global__ void gpuInitialization_mom(
 
     //second moments
     //define equilibrium populations
-    //dfloat feq[Q];
-    //dfloat meq[3][3] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    /*char c1, c2;
+    /*dfloat feq[Q];
+    dfloat meq[3][3] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+    char c1, c2;
     for (int i = 0; i < Q; i++)
     {
         feq[i] = gpu_f_eq(w[i] * RHO_0,
@@ -84,12 +88,12 @@ __global__ void gpuInitialization_mom(
             }
         }
     }*/
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*ux*ux+RHO_0*cs2;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*ux*uy;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*ux*uz;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*uy*uy+RHO_0*cs2;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*uy*uz;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*uz*uz+RHO_0*cs2;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*ux*ux+RHO_0*cs2;  //= meq[1][1];*/           
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*ux*uy;            //= meq[1][2];*/   
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*ux*uz;            //= meq[1][3];*/   
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*uy*uy+RHO_0*cs2;  //= meq[2][2];*/           
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*uy*uz;            //= meq[2][3];*/   
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0*uz*uz+RHO_0*cs2;  //= meq[3][3];           
 }
 
 __global__ void gpuInitialization_pop(

@@ -88,6 +88,7 @@ int main() {
     bool save = false;
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+            checkCudaErrors(cudaDeviceSynchronize());
             linearMacr(h_fMom,rho,ux,uy,uz);
             //saveMacr(rho,ux,uy,uz,step);
     for (step=1; step<N_STEPS;step++){
@@ -105,6 +106,7 @@ int main() {
             //printf("------------------------------------------------------------------------\n");
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+            checkCudaErrors(cudaDeviceSynchronize());
             linearMacr(h_fMom,rho,ux,uy,uz);
             saveMacr(rho,ux,uy,uz,step);
         }
@@ -124,7 +126,7 @@ int main() {
     printf("MLUPS: %f\n",MLUPS);
 
     //save info file
-    saveSimInfo();
+    saveSimInfo(step);
 
 
     /* ------------------------------ FREE ------------------------------ */

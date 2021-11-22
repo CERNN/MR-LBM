@@ -115,14 +115,16 @@ __host__ __device__
     size_t __forceinline__
     idxPopBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int pop)
 {
-    return BLOCK_NX * (BLOCK_NY * (BLOCK_NZ * pop + tz) + ty) + tx;
+    //return BLOCK_NX * (BLOCK_NY * (BLOCK_NZ * pop + tz) + ty) + tx;
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(pop)) );
 }
 
 __host__ __device__
     size_t __forceinline__
     idxScalarGlobal(unsigned int x, unsigned int y, unsigned int z)
 {
-    return NX * (NY * z + y) + x;
+    //return NX * (NY * z + y) + x;
+    return x + NX * (y + NY*(z));
 }
 
 #endif // !__GLOBAL_FUNCTIONS_H

@@ -150,7 +150,7 @@ std::string getVarFilename(
     return strFile;
 }
 
-std::string getSimInfoString()
+std::string getSimInfoString(int step)
 {
     std::ostringstream strSimInfo("");
     
@@ -181,12 +181,13 @@ std::string getSimInfoString()
     strSimInfo << "                 FY: " << FY << "\n";
     strSimInfo << "                 FZ: " << FZ << "\n";
     strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
+    strSimInfo << "             Nsteps: " << step << "\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
     return strSimInfo.str();
 }
 
-void saveSimInfo()
+void saveSimInfo(int step)
 {
     std::string strInf = PATH_FILES;
     strInf += "/";
@@ -199,7 +200,7 @@ void saveSimInfo()
     outFile = fopen(strInf.c_str(), "w");
     if(outFile != nullptr)
     {
-        std::string strSimInfo = getSimInfoString();
+        std::string strSimInfo = getSimInfoString(step);
         fprintf(outFile, strSimInfo.c_str());
         fclose(outFile);
     }

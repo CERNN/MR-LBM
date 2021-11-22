@@ -26,7 +26,7 @@
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-constexpr int N_STEPS = 200;
+constexpr int N_STEPS = 100;
 #define MACR_SAVE (1)
 
 constexpr int SCALE = 1;
@@ -103,7 +103,7 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
 
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
-const size_t BLOCK_NX = 4;
+const size_t BLOCK_NX = 8;
 const size_t BLOCK_NY = 8;
 const size_t BLOCK_NZ = 8;
 const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;
