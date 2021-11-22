@@ -1,5 +1,5 @@
-#ifndef __INTERFACE_SPREAD_CUH
-#define __INTERFACE_SPREAD_CUH
+#ifndef __INTERFACE_TRANSFER_CUH
+#define __INTERFACE_TRANSFER_CUH
 
 #include <string>
 #include <math.h>
@@ -12,7 +12,14 @@
 #include "var.h"
 
 
-__device__ void gpuInterfaceSpread(
+__device__ void gpuInterfacePush(
+    dim3 threadIdx, dim3 blockIdx, dfloat pop[Q],
+    dfloat *fGhostX_0, dfloat *fGhostX_1,
+    dfloat *fGhostY_0, dfloat *fGhostY_1,
+    dfloat *fGhostZ_0, dfloat *fGhostZ_1);
+
+
+__device__ void gpuInterfacePull(
     dim3 threadIdx, dim3 blockIdx, dfloat pop[Q],
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,

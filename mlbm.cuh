@@ -8,7 +8,7 @@
 #include <cuda_runtime.h>
 #include <builtin_types.h>
 #include "globalFunctions.h"
-#include "interfaceSpread.cuh"
+#include "interfaceTransfer.cuh"
 
 __global__
 void gpuMomCollisionStream(

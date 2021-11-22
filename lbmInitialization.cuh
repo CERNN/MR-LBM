@@ -10,7 +10,7 @@
 #include "globalFunctions.h"
 #include "errorDef.h"
 #include "var.h"
-#include "interfaceSpread.cuh"
+#include "interfaceTransfer.cuh"
 
 __global__ void gpuInitialization_mom(
     dfloat *fMom);
