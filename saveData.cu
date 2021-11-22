@@ -14,10 +14,11 @@ void linearMacr(
     size_t idxMom0;
 
     for(int z = 0; z< NZ;z++){
+        ///printf("z %d \n", z);
         for(int y = 0; y< NY;y++){
             for(int x = 0; x< NX;x++){
                 indexMacr = idxScalarGlobal(x,y,z);
-                /*tx = x%BLOCK_NX;
+                tx = x%BLOCK_NX;
                 ty = y%BLOCK_NY;
                 tz = z%BLOCK_NZ;
 
@@ -27,13 +28,16 @@ void linearMacr(
 
                 idxMom0 = idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ);
 
-                printf("%d xyz %d %d %d  ||t: %d %d %d || b: %d %d %d || %d\n",indexMacr,x,y,z,tx,ty,tz,bx,by,bz,idxMom0);
-                fflush(stdout);*/
+                //printf("%d xyz %d %d %d  ||t: %d %d %d || b: %d %d %d || %d\n",indexMacr,x,y,z,tx,ty,tz,bx,by,bz,idxMom0);
+                //fflush(stdout);
                 rho[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 ux[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+
+                //printf("%f \t",h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]);
             }
+            //printf("\n");
         }
     }
 }
@@ -144,4 +148,64 @@ std::string getVarFilename(
     strFile += ext;
 
     return strFile;
+}
+
+std::string getSimInfoString()
+{
+    std::ostringstream strSimInfo("");
+    
+    strSimInfo << std::scientific;
+    strSimInfo << std::setprecision(6);
+    
+    strSimInfo << "---------------------------- SIMULATION INFORMATION ----------------------------\n";
+    strSimInfo << "      Simulation ID: " << ID_SIM << "\n";
+    #ifdef D3Q19
+    strSimInfo << "       Velocity set: D3Q19\n";
+    #endif // !D3Q19
+    #ifdef D3Q27
+    strSimInfo << "       Velocity set: D3Q27\n";
+    #endif // !D3Q27
+    #ifdef SINGLE_PRECISION
+        strSimInfo << "          Precision: float\n";
+    #else
+        strSimInfo << "          Precision: double\n";
+    #endif
+    strSimInfo << "                 NX: " << NX << "\n";
+    strSimInfo << "                 NY: " << NY << "\n";
+    strSimInfo << "                 NZ: " << NZ << "\n";
+    strSimInfo << "           NZ_TOTAL: " << NZ_TOTAL << "\n";
+    strSimInfo << std::scientific << std::setprecision(6);
+    strSimInfo << "                Tau: " << TAU << "\n";
+    strSimInfo << "               Umax: " << U_MAX << "\n";
+    strSimInfo << "                 FX: " << FX << "\n";
+    strSimInfo << "                 FY: " << FY << "\n";
+    strSimInfo << "                 FZ: " << FZ << "\n";
+    strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+
+    return strSimInfo.str();
+}
+
+void saveSimInfo()
+{
+    std::string strInf = PATH_FILES;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += "_info.txt"; // generate file name (with path)
+    FILE* outFile = nullptr;
+
+    outFile = fopen(strInf.c_str(), "w");
+    if(outFile != nullptr)
+    {
+        std::string strSimInfo = getSimInfoString();
+        fprintf(outFile, strSimInfo.c_str());
+        fclose(outFile);
+    }
+    else
+    {
+        printf("Error saving \"%s\" \nProbably wrong path!\n", strInf.c_str());
+    }
+    
 }

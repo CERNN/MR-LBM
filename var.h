@@ -44,6 +44,8 @@ constexpr dfloat TT_OMEGA = 1.0 -0.5*OMEGA;
 
 constexpr dfloat RHO_0 = 1;         // initial rho
 
+constexpr dfloat U_MAX = 0.05;  
+
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
 constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
@@ -67,7 +69,7 @@ __device__ const dfloat w[Q] = { W0,
 constexpr dfloat inv_cs2 = 3.0;
 constexpr dfloat cs2 = 1.0/inv_cs2;
 
-// populations velocities vector
+// populations velocities vector 0 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18  
 __device__ const char cx[Q] = { 0, 1,-1, 0, 0, 0, 0, 1,-1, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0 };
 __device__ const char cy[Q] = { 0, 0, 0, 1,-1, 0, 0, 1,-1, 0, 0, 1,-1,-1, 1, 0, 0, 1,-1 };
 __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 1,-1, 1 };
@@ -101,7 +103,7 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
 
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
-const size_t BLOCK_NX = 8;
+const size_t BLOCK_NX = 4;
 const size_t BLOCK_NY = 8;
 const size_t BLOCK_NZ = 8;
 const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;

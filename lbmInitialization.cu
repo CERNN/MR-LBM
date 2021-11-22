@@ -21,10 +21,10 @@ __global__ void gpuInitialization_mom(
     uz = 0.05;
     
     //Taylor Green
-    dfloat P = N/(2.0*M_PI);
+    dfloat P = N/(4.0*M_PI);
 
-    ux = 0.1*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
-    uy = 0.1*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
+    ux = U_MAX*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
+    uy = U_MAX*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*cos(z/P)*2.0/sqrt(3.0);
     uz = 0.0;
     
 

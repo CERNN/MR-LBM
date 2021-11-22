@@ -123,6 +123,8 @@ int main() {
 
     printf("MLUPS: %f\n",MLUPS);
 
+    //save info file
+    saveSimInfo();
 
 
     /* ------------------------------ FREE ------------------------------ */

@@ -7,6 +7,13 @@
 #include <curand.h>
 #include <cuda_runtime.h>
 #include <builtin_types.h>
+
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <iostream>     // std::cout, std::fixed
+#include <iomanip>      // std::setprecision
+
 #include "globalFunctions.h"
 
 
@@ -44,6 +51,8 @@ std::string getVarFilename(
 
 void folderSetup();
 
+std::string getSimInfoString();
 
+void saveSimInfo();
 
 #endif __SAVE_DATA_H
