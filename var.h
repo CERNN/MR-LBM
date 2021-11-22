@@ -66,8 +66,8 @@ __device__ const dfloat w[Q] = { W0,
     W2, W2, W2, W2, W2, W2, W2, W2, W2, W2, W2, W2
 };
 
-constexpr dfloat inv_cs2 = 3.0;
-constexpr dfloat cs2 = 1.0/inv_cs2;
+constexpr dfloat as2 = 3.0;
+constexpr dfloat cs2 = 1.0/as2;
 
 // populations velocities vector 0 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18  
 __device__ const char cx[Q] = { 0, 1,-1, 0, 0, 0, 0, 1,-1, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0 };
@@ -94,7 +94,7 @@ __device__ const dfloat w[Q] = { W0,
 constexpr dfloat inv_cs2 = 3.0;
 constexpr dfloat cs2 = 1.0/inv_cs2;
 
-// populations velocities vector
+// populations velocities vector 0 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
 __device__ const char cx[Q] = { 0, 1,-1, 0, 0, 0, 0, 1,-1, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0, 1,-1, 1,-1, 1,-1,-1, 1};
 __device__ const char cy[Q] = { 0, 0, 0, 1,-1, 0, 0, 1,-1, 0, 0, 1,-1,-1, 1, 0, 0, 1,-1, 1,-1, 1,-1,-1, 1, 1,-1};
 __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 1,-1, 1, 1,-1,-1, 1, 1,-1, 1,-1};

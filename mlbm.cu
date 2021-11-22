@@ -26,145 +26,52 @@ __global__ void gpuMomCollisionStream(
     dfloat piyz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pizz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-    dfloat fNodeEq[Q];
-    dfloat fNodeNeq[Q];
-
-    // Moments
-
-    dfloat pixx_eq = rhoVar * (uxVar * uxVar + cs2);
-    dfloat pixy_eq = rhoVar * (uxVar * uyVar);
-    dfloat pixz_eq = rhoVar * (uxVar * uzVar);
-    dfloat piyy_eq = rhoVar * (uyVar * uyVar + cs2);
-    dfloat piyz_eq = rhoVar * (uyVar * uzVar);
-    dfloat pizz_eq = rhoVar * (uzVar * uzVar + cs2);
-
-    // Calculate temporary variables
-    dfloat p1_muu15 = 1 - 1.5 * (uxVar * uxVar + uyVar * uyVar + uzVar * uzVar);
-    dfloat rhoW0 = rhoVar * W0;
-    dfloat rhoW1 = rhoVar * W1;
-    dfloat rhoW2 = rhoVar * W2;
-    dfloat W1t3d2 = W1 * 3.0 / 2.0;
-    dfloat W2t3d2 = W2 * 3.0 / 2.0;
-    dfloat W1t9d2 = W1t3d2 * 3.0;
-    dfloat W2t9d2 = W2t3d2 * 3.0;
-
-    #ifdef D3Q27
-    dfloat rhoW3 = rhoVar * W3;
-    dfloat W3t9d2 = W3 * 9 / 2;
-    #endif
-    dfloat ux3 = 3 * uxVar;
-    dfloat uy3 = 3 * uyVar;
-    dfloat uz3 = 3 * uzVar;
-
-    // Calculate equilibrium fNodeEq
-    fNodeEq[ 0] = gpu_f_eq(rhoW0, 0, p1_muu15);
-    fNodeEq[ 1] = gpu_f_eq(rhoW1, ux3, p1_muu15);
-    fNodeEq[ 2] = gpu_f_eq(rhoW1, -ux3, p1_muu15);
-    fNodeEq[ 3] = gpu_f_eq(rhoW1, uy3, p1_muu15);
-    fNodeEq[ 4] = gpu_f_eq(rhoW1, -uy3, p1_muu15);
-    fNodeEq[ 5] = gpu_f_eq(rhoW1, uz3, p1_muu15);
-    fNodeEq[ 6] = gpu_f_eq(rhoW1, -uz3, p1_muu15);
-    fNodeEq[ 7] = gpu_f_eq(rhoW2, ux3 + uy3, p1_muu15);
-    fNodeEq[ 8] = gpu_f_eq(rhoW2, -ux3 - uy3, p1_muu15);
-    fNodeEq[ 9] = gpu_f_eq(rhoW2, ux3 + uz3, p1_muu15);
-    fNodeEq[10] = gpu_f_eq(rhoW2, -ux3 - uz3, p1_muu15);
-    fNodeEq[11] = gpu_f_eq(rhoW2, uy3 + uz3, p1_muu15);
-    fNodeEq[12] = gpu_f_eq(rhoW2, -uy3 - uz3, p1_muu15);
-    fNodeEq[13] = gpu_f_eq(rhoW2, ux3 - uy3, p1_muu15);
-    fNodeEq[14] = gpu_f_eq(rhoW2, -ux3 + uy3, p1_muu15);
-    fNodeEq[15] = gpu_f_eq(rhoW2, ux3 - uz3, p1_muu15);
-    fNodeEq[16] = gpu_f_eq(rhoW2, -ux3 + uz3, p1_muu15);
-    fNodeEq[17] = gpu_f_eq(rhoW2, uy3 - uz3, p1_muu15);
-    fNodeEq[18] = gpu_f_eq(rhoW2, -uy3 + uz3, p1_muu15);
-#ifdef D3Q27
-    fNodeEq[19] = gpu_f_eq(rhoW3, ux3 + uy3 + uz3, p1_muu15);
-    fNodeEq[20] = gpu_f_eq(rhoW3, -ux3 - uy3 - uz3, p1_muu15);
-    fNodeEq[21] = gpu_f_eq(rhoW3, ux3 + uy3 - uz3, p1_muu15);
-    fNodeEq[22] = gpu_f_eq(rhoW3, -ux3 - uy3 + uz3, p1_muu15);
-    fNodeEq[23] = gpu_f_eq(rhoW3, ux3 - uy3 + uz3, p1_muu15);
-    fNodeEq[24] = gpu_f_eq(rhoW3, -ux3 + uy3 - uz3, p1_muu15);
-    fNodeEq[25] = gpu_f_eq(rhoW3, -ux3 + uy3 + uz3, p1_muu15);
-    fNodeEq[26] = gpu_f_eq(rhoW3, ux3 - uy3 - uz3, p1_muu15);
-#endif
-
-// CALCULATE NON-EQUILIBRIUM POPULATIONS
-#pragma unroll
+    #pragma unroll //equation 6
     for (int i = 0; i < Q; i++)
     {
-        fNodeNeq[i] = rhoVar * 1.5 * w[i] *
-                          (((cx[i] * cx[i] - cs2) * (pixx - pixx_eq) + //Q-iab*(m_ab - m_ab^eq)
-                        2 * (cx[i] * cy[i])       * (pixy - pixy_eq) +
-                        2 * (cx[i] * cz[i])       * (pixz - pixz_eq) +
-                            (cy[i] * cy[i] - cs2) * (piyy - piyy_eq) +
-                        2 * (cy[i] * cz[i])       * (piyz - piyz_eq) +
-                            (cz[i] * cz[i] - cs2) * (pizz - pizz_eq)) -
-                       cs2 * (cx[i] * FX + cy[i] * FY + cz[i] * FZ)); //force term
+        pop[i] = rhoVar * w[i] * (1 
+        + as2 * (uxVar * cx[i] + uyVar * cy[i] + uzVar * cz[i]) 
+        + 0.5 * as2 * as2 * (
+            pixx * (cx[i] * cx[i] - cs2) + 
+            pixy * (cx[i] * cy[i]) + 
+            pixz * (cx[i] * cz[i]) + 
+            piyy * (cy[i] * cy[i] - cs2) + 
+            piyz * (cy[i] * cz[i]) + 
+            pizz * (cz[i] * cz[i] - cs2))
+        );
     }
 
-    //CALCULATE COLLISION POPULATIONS
-    pop[ 0] = fNodeEq[ 0] + fNodeNeq[ 0];
-    pop[ 1] = fNodeEq[ 1] + fNodeNeq[ 1];
-    pop[ 2] = fNodeEq[ 2] + fNodeNeq[ 2];
-    pop[ 3] = fNodeEq[ 3] + fNodeNeq[ 3];
-    pop[ 4] = fNodeEq[ 4] + fNodeNeq[ 4];
-    pop[ 5] = fNodeEq[ 5] + fNodeNeq[ 5];
-    pop[ 6] = fNodeEq[ 6] + fNodeNeq[ 6];
-    pop[ 7] = fNodeEq[ 7] + fNodeNeq[ 7];
-    pop[ 8] = fNodeEq[ 8] + fNodeNeq[ 8];
-    pop[ 9] = fNodeEq[ 9] + fNodeNeq[ 9];
-    pop[10] = fNodeEq[10] + fNodeNeq[10];
-    pop[11] = fNodeEq[11] + fNodeNeq[11];
-    pop[12] = fNodeEq[12] + fNodeNeq[12];
-    pop[13] = fNodeEq[13] + fNodeNeq[13];
-    pop[14] = fNodeEq[14] + fNodeNeq[14];
-    pop[15] = fNodeEq[15] + fNodeNeq[15];
-    pop[16] = fNodeEq[16] + fNodeNeq[16];
-    pop[17] = fNodeEq[17] + fNodeNeq[17];
-    pop[18] = fNodeEq[18] + fNodeNeq[18];
-
-#ifdef D3Q27
-    pop[19] = fNodeEq[19] + fNodeNeq[19];
-    pop[20] = fNodeEq[20] + fNodeNeq[20];
-    pop[21] = fNodeEq[21] + fNodeNeq[21];
-    pop[22] = fNodeEq[22] + fNodeNeq[22];
-    pop[23] = fNodeEq[23] + fNodeNeq[23];
-    pop[24] = fNodeEq[24] + fNodeNeq[24];
-    pop[25] = fNodeEq[25] + fNodeNeq[25];
-    pop[26] = fNodeEq[26] + fNodeNeq[26];
-#endif
-
-    __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q-1)];
+    __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q - 1)];
 
     //save populations in shared memory
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 0)] = pop[ 1];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 1)] = pop[ 2];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 2)] = pop[ 3];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 3)] = pop[ 4];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 4)] = pop[ 5];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 5)] = pop[ 6];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 6)] = pop[ 7];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 7)] = pop[ 8];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 8)] = pop[ 9];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 0)] = pop[1];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 1)] = pop[2];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 2)] = pop[3];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 3)] = pop[4];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 4)] = pop[5];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 5)] = pop[6];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 6)] = pop[7];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 7)] = pop[8];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 8)] = pop[9];
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 9)] = pop[10];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,10)] = pop[11];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,11)] = pop[12];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,12)] = pop[13];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,13)] = pop[14];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,14)] = pop[15];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,15)] = pop[16];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,16)] = pop[17];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,17)] = pop[18];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10)] = pop[11];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11)] = pop[12];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12)] = pop[13];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13)] = pop[14];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14)] = pop[15];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15)] = pop[16];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16)] = pop[17];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17)] = pop[18];
     #ifdef D3Q27
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,18)] = pop[19];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,19)] = pop[20];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,20)] = pop[21];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,21)] = pop[22];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,22)] = pop[23];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,23)] = pop[24];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,24)] = pop[25];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,25)] = pop[26];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18)] = pop[19];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 19)] = pop[20];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20)] = pop[21];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 21)] = pop[22];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22)] = pop[23];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23)] = pop[24];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 24)] = pop[25];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 25)] = pop[26];
     #endif //D3Q27
-
 
     //sync threads of the block so all populations are saved
     __syncthreads();
@@ -296,17 +203,23 @@ __global__ void gpuMomCollisionStream(
         #endif //D3Q27
     }
 
-    //if( x == 0 && y==0 && z ==0)
-    //    printf("\n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f \n%f\n%f \n", 
-    //    pop[0] , pop[1] , pop[2] , pop[3] , pop[4] , pop[5] , pop[6] , 
-    //    pop[7] , pop[8] , pop[9] , pop[10] , pop[11] , pop[12] , pop[13] , pop[14] , pop[15] , pop[16] , pop[17] , pop[18]);
-
+//calculate streaming moments
     #ifdef D3Q19
         rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
         dfloat invRho = 1 / rhoVar;
         uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15]) - (pop[2] + pop[8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
         uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
         uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
+
+        pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] - rhoVar * cs2) * invRho;
+        pixy = ((pop[7] + pop[8]) - (pop[13] + pop[14])) / invRho;
+        pixz = ((pop[9] + pop[10]) - (pop[15] - pop[16])) / invRho;
+
+        piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] - rhoVar * cs2) * invRho;
+        piyz = ((pop[11]+pop[12])-(pop[17]+pop[18]))/invRho;
+
+        pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] - rhoVar * cs2) * invRho;
+
     #endif
     #ifdef D3Q27
         rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
@@ -314,130 +227,42 @@ __global__ void gpuMomCollisionStream(
         uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26]) - (pop[2] + pop[8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
         uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
         uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
-    #endif
 
+        pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
+        pixy = ((pop[7] + pop[8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) / invRho;
+        pixz = ((pop[9] + pop[10]+ pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] - pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) / invRho;
+
+        piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
+        piyz = ((pop[11]+pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24]))/invRho;
+
+        pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
+    #endif
 
     //NOTE : STREAMING DONE, NOW COLLIDE
 
     //Collide Moments
     //Equiblibrium momements
-    dfloat mNodeEq[6];
-    mNodeEq[0] = rhoVar * (uxVar * uxVar + cs2);
-    mNodeEq[1] = rhoVar * (uxVar * uyVar);
-    mNodeEq[2] = rhoVar * (uxVar * uzVar);
-    mNodeEq[3] = rhoVar * (uyVar * uyVar + cs2);
-    mNodeEq[4] = rhoVar * (uyVar * uzVar);
-    mNodeEq[5] = rhoVar * (uzVar * uzVar + cs2);
 
-    pixx = pixx - OMEGA * (pixx - mNodeEq[0]) + TT_OMEGA * (FX * uxVar + FX * uxVar);
-    pixy = pixy - OMEGA * (pixy - mNodeEq[1]) + TT_OMEGA * (FX * uyVar + FY * uxVar);
-    pixz = pixz - OMEGA * (pixz - mNodeEq[2]) + TT_OMEGA * (FX * uzVar + FZ * uxVar);
-    piyy = piyy - OMEGA * (piyy - mNodeEq[3]) + TT_OMEGA * (FY * uyVar + FY * uyVar);
-    piyz = piyz - OMEGA * (piyz - mNodeEq[4]) + TT_OMEGA * (FY * uzVar + FZ * uyVar);
-    pizz = pizz - OMEGA * (pizz - mNodeEq[5]) + TT_OMEGA * (FZ * uzVar + FZ * uzVar);
+    pixx = pixx + OMEGA * (rhoVar * uxVar * uxVar -  pixx)  + TT_OMEGA * (FX * uxVar + FX * uxVar);
+    pixy = pixy + OMEGA * (rhoVar * uxVar * uyVar -  pixy)  + TT_OMEGA * (FX * uyVar + FY * uxVar);
+    pixz = pixz + OMEGA * (rhoVar * uxVar * uzVar -  pixz)  + TT_OMEGA * (FX * uzVar + FZ * uxVar);
+    piyy = piyy + OMEGA * (rhoVar * uyVar * uyVar -  piyy)  + TT_OMEGA * (FY * uyVar + FY * uyVar);
+    piyz = piyz + OMEGA * (rhoVar * uyVar * uzVar -  piyz)  + TT_OMEGA * (FY * uzVar + FZ * uyVar);
+    pizz = pizz + OMEGA * (rhoVar * uzVar * uzVar -  pizz)  + TT_OMEGA * (FZ * uzVar + FZ * uzVar);
 
-    pixx_eq = rhoVar * (uxVar * uxVar + cs2);
-    pixy_eq = rhoVar * (uxVar * uyVar);
-    pixz_eq = rhoVar * (uxVar * uzVar);
-    piyy_eq = rhoVar * (uyVar * uyVar + cs2);
-    piyz_eq = rhoVar * (uyVar * uzVar);
-    pizz_eq = rhoVar * (uzVar * uzVar + cs2);
-
-    // Calculate temporary variables
-    p1_muu15 = 1 - 1.5 * (uxVar * uxVar + uyVar * uyVar + uzVar * uzVar);
-    rhoW0 = rhoVar * W0;
-    rhoW1 = rhoVar * W1;
-    rhoW2 = rhoVar * W2;
-    W1t3d2 = W1 * 3.0 / 2.0;
-    W2t3d2 = W2 * 3.0 / 2.0;
-    W1t9d2 = W1t3d2 * 3.0;
-    W2t9d2 = W2t3d2 * 3.0;
-
-#ifdef D3Q27
-    rhoW3 = rhoVar * W3;
-    W3t9d2 = W3 * 9 / 2;
-#endif
-    ux3 = 3 * uxVar;
-    uy3 = 3 * uyVar;
-    uz3 = 3 * uzVar;
-
-    // Calculate equilibrium fNodeEq
-    fNodeEq[ 0] = gpu_f_eq(rhoW0, 0, p1_muu15);
-    fNodeEq[ 1] = gpu_f_eq(rhoW1, ux3, p1_muu15);
-    fNodeEq[ 2] = gpu_f_eq(rhoW1, -ux3, p1_muu15);
-    fNodeEq[ 3] = gpu_f_eq(rhoW1, uy3, p1_muu15);
-    fNodeEq[ 4] = gpu_f_eq(rhoW1, -uy3, p1_muu15);
-    fNodeEq[ 5] = gpu_f_eq(rhoW1, uz3, p1_muu15);
-    fNodeEq[ 6] = gpu_f_eq(rhoW1, -uz3, p1_muu15);
-    fNodeEq[ 7] = gpu_f_eq(rhoW2, ux3 + uy3, p1_muu15);
-    fNodeEq[ 8] = gpu_f_eq(rhoW2, -ux3 - uy3, p1_muu15);
-    fNodeEq[ 9] = gpu_f_eq(rhoW2, ux3 + uz3, p1_muu15);
-    fNodeEq[10] = gpu_f_eq(rhoW2, -ux3 - uz3, p1_muu15);
-    fNodeEq[11] = gpu_f_eq(rhoW2, uy3 + uz3, p1_muu15);
-    fNodeEq[12] = gpu_f_eq(rhoW2, -uy3 - uz3, p1_muu15);
-    fNodeEq[13] = gpu_f_eq(rhoW2, ux3 - uy3, p1_muu15);
-    fNodeEq[14] = gpu_f_eq(rhoW2, -ux3 + uy3, p1_muu15);
-    fNodeEq[15] = gpu_f_eq(rhoW2, ux3 - uz3, p1_muu15);
-    fNodeEq[16] = gpu_f_eq(rhoW2, -ux3 + uz3, p1_muu15);
-    fNodeEq[17] = gpu_f_eq(rhoW2, uy3 - uz3, p1_muu15);
-    fNodeEq[18] = gpu_f_eq(rhoW2, -uy3 + uz3, p1_muu15);
-#ifdef D3Q27
-    fNodeEq[19] = gpu_f_eq(rhoW3, ux3 + uy3 + uz3, p1_muu15);
-    fNodeEq[20] = gpu_f_eq(rhoW3, -ux3 - uy3 - uz3, p1_muu15);
-    fNodeEq[21] = gpu_f_eq(rhoW3, ux3 + uy3 - uz3, p1_muu15);
-    fNodeEq[22] = gpu_f_eq(rhoW3, -ux3 - uy3 + uz3, p1_muu15);
-    fNodeEq[23] = gpu_f_eq(rhoW3, ux3 - uy3 + uz3, p1_muu15);
-    fNodeEq[24] = gpu_f_eq(rhoW3, -ux3 + uy3 - uz3, p1_muu15);
-    fNodeEq[25] = gpu_f_eq(rhoW3, -ux3 + uy3 + uz3, p1_muu15);
-    fNodeEq[26] = gpu_f_eq(rhoW3, ux3 - uy3 - uz3, p1_muu15);
-#endif
-
-// CALCULATE NON-EQUILIBRIUM POPULATIONS
-#pragma unroll
     for (int i = 0; i < Q; i++)
     {
-        fNodeNeq[i] = rhoVar * 1.5 * w[i] *
-                          (((cx[i] * cx[i] - cs2) * (pixx - pixx_eq) + //Q-iab*(m_ab - m_ab^eq)
-                        2 * (cx[i] * cy[i])       * (pixy - pixy_eq) +
-                        2 * (cx[i] * cz[i])       * (pixz - pixz_eq) +
-                            (cy[i] * cy[i] - cs2) * (piyy - piyy_eq) +
-                        2 * (cy[i] * cz[i])       * (piyz - piyz_eq) +
-                            (cz[i] * cz[i] - cs2) * (pizz - pizz_eq)) -
-                       cs2 * (cx[i] * FX + cy[i] * FY + cz[i] * FZ)); //force term
+        pop[i] = rhoVar * w[i] * (1 
+        + as2 * (uxVar * cx[i] + uyVar * cy[i] + uzVar * cz[i]) 
+        + 0.5 * as2 * as2 * (
+            pixx * (cx[i] * cx[i] - cs2) + 
+            pixy * (cx[i] * cy[i]) + 
+            pixz * (cx[i] * cz[i]) + 
+            piyy * (cy[i] * cy[i] - cs2) + 
+            piyz * (cy[i] * cz[i]) + 
+            pizz * (cz[i] * cz[i] - cs2))
+        );
     }
-
-    //CALCULATE COLLISION POPULATIONS
-    pop[ 0] = fNodeEq[ 0] + fNodeNeq[ 0];
-    pop[ 1] = fNodeEq[ 1] + fNodeNeq[ 1];
-    pop[ 2] = fNodeEq[ 2] + fNodeNeq[ 2];
-    pop[ 3] = fNodeEq[ 3] + fNodeNeq[ 3];
-    pop[ 4] = fNodeEq[ 4] + fNodeNeq[ 4];
-    pop[ 5] = fNodeEq[ 5] + fNodeNeq[ 5];
-    pop[ 6] = fNodeEq[ 6] + fNodeNeq[ 6];
-    pop[ 7] = fNodeEq[ 7] + fNodeNeq[ 7];
-    pop[ 8] = fNodeEq[ 8] + fNodeNeq[ 8];
-    pop[ 9] = fNodeEq[ 9] + fNodeNeq[ 9];
-    pop[10] = fNodeEq[10] + fNodeNeq[10];
-    pop[11] = fNodeEq[11] + fNodeNeq[11];
-    pop[12] = fNodeEq[12] + fNodeNeq[12];
-    pop[13] = fNodeEq[13] + fNodeNeq[13];
-    pop[14] = fNodeEq[14] + fNodeNeq[14];
-    pop[15] = fNodeEq[15] + fNodeNeq[15];
-    pop[16] = fNodeEq[16] + fNodeNeq[16];
-    pop[17] = fNodeEq[17] + fNodeNeq[17];
-    pop[18] = fNodeEq[18] + fNodeNeq[18];
-#ifdef D3Q27
-    pop[19] = fNodeEq[19] + fNodeNeq[19];
-    pop[20] = fNodeEq[20] + fNodeNeq[20];
-    pop[21] = fNodeEq[21] + fNodeNeq[21];
-    pop[22] = fNodeEq[22] + fNodeNeq[22];
-    pop[23] = fNodeEq[23] + fNodeNeq[23];
-    pop[24] = fNodeEq[24] + fNodeNeq[24];
-    pop[25] = fNodeEq[25] + fNodeNeq[25];
-    pop[26] = fNodeEq[26] + fNodeNeq[26];
-#endif
-
-    
 
     /* compute rho and u */
 
@@ -470,5 +295,5 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz;
 
     /* write to global pop */
-    gpuInterfaceSpread(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
+    gpuInterfaceSpread(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
 }
