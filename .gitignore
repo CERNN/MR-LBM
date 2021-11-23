@@ -27,3 +27,4 @@ src/CUDA/x64
 *.test
 ./bin
 
+bin/001sim_D3Q19_sm86.exe

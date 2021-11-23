@@ -19,6 +19,7 @@ __global__ void gpuMomCollisionStream(
     dfloat uxVar  = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat uyVar  = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat uzVar  = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
+
     dfloat pixx   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pixy   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pixz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -26,7 +27,7 @@ __global__ void gpuMomCollisionStream(
     dfloat piyz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pizz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-    #pragma unroll //equation 6
+    #pragma unroll //equation 10
     for (int i = 0; i < Q; i++)
     {
         pop[i] = rhoVar * w[i] * (1 
@@ -118,106 +119,26 @@ __global__ void gpuMomCollisionStream(
 
     /* load pop from global in cover nodes */
 
-    if (threadIdx.x == 0)
-    {
-        pop[ 1] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[ 7] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[ 9] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[13] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[15] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #ifdef D3Q27
-        pop[19] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[21] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[23] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[26] = fGhostX_0[idxPopX(threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #endif //D3Q27
-    }
-    else if (threadIdx.x == BLOCK_NX - 1)
-    {
-        pop[ 2] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[ 8] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[10] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[14] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[16] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #ifdef D3Q27
-        pop[20] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[22] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[24] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[25] = fGhostX_1[idxPopX(threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #endif //D3Q27
-    }
-    if (threadIdx.y == 0)
-    {
-        pop[ 3] = fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[ 7] = fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[11] = fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[14] = fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[17] = fGhostY_0[idxPopY(threadIdx.x, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #ifdef D3Q27
-        pop[19] = fGhostY_0[idxPopX(threadIdx.x, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[21] = fGhostY_0[idxPopX(threadIdx.x, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[24] = fGhostY_0[idxPopX(threadIdx.x, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[25] = fGhostY_0[idxPopX(threadIdx.x, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #endif //D3Q27
-    }
-    else if (threadIdx.y == BLOCK_NY - 1)
-    {
-        pop[ 4] = fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[ 8] = fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[12] = fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[13] = fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[18] = fGhostY_1[idxPopY(threadIdx.x, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #ifdef D3Q27
-        pop[20] = fGhostY_1[idxPopX(threadIdx.x, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[22] = fGhostY_1[idxPopX(threadIdx.x, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[23] = fGhostY_1[idxPopX(threadIdx.x, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[26] = fGhostY_1[idxPopX(threadIdx.x, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #endif //D3Q27
-    }
-    if (threadIdx.z == 0)
-    {
-        pop[ 5] = fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[ 9] = fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[11] = fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[16] = fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[18] = fGhostZ_0[idxPopZ(threadIdx.x, threadIdx.y, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #ifdef D3Q27
-        pop[19] = fGhostZ_0[idxPopX(threadIdx.x, threadIdx.y, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[22] = fGhostZ_0[idxPopX(threadIdx.x, threadIdx.y, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[23] = fGhostZ_0[idxPopX(threadIdx.x, threadIdx.y, 7, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[25] = fGhostZ_0[idxPopX(threadIdx.x, threadIdx.y, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #endif //D3Q27
-    }
-    else if (threadIdx.z == BLOCK_NZ - 1)
-    {
-        pop[ 6] = fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[10] = fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[12] = fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[15] = fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[17] = fGhostZ_1[idxPopZ(threadIdx.x, threadIdx.y, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #ifdef D3Q27
-        pop[20] = fGhostZ_1[idxPopX(threadIdx.x, threadIdx.y, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[21] = fGhostZ_1[idxPopX(threadIdx.x, threadIdx.y, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[24] = fGhostZ_1[idxPopX(threadIdx.x, threadIdx.y, 7, blockIdx.x, blockIdx.y, blockIdx.z)];
-        pop[26] = fGhostZ_1[idxPopX(threadIdx.x, threadIdx.y, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #endif //D3Q27
-    }
+    //gpuInterfacePullOffset(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    gpuInterfacePullCentered(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+
 
 //calculate streaming moments
     #ifdef D3Q19
+        //equation3
         rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
         dfloat invRho = 1 / rhoVar;
+        //equation4 + force correction
         uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15]) - (pop[2] + pop[8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
         uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
         uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
 
+        //equation5
         pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] - rhoVar * cs2) * invRho;
-        pixy = ((pop[7] + pop[8]) - (pop[13] + pop[14])) / invRho;
-        pixz = ((pop[9] + pop[10]) - (pop[15] - pop[16])) / invRho;
-
+        pixy = ((pop[7] + pop[8]) - (pop[13] + pop[14])) * invRho;
+        pixz = ((pop[9] + pop[10]) - (pop[15] + pop[16])) * invRho;
         piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] - rhoVar * cs2) * invRho;
-        piyz = ((pop[11]+pop[12])-(pop[17]+pop[18]))/invRho;
-
+        piyz = ((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho;
         pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] - rhoVar * cs2) * invRho;
 
     #endif
@@ -229,11 +150,11 @@ __global__ void gpuMomCollisionStream(
         uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
 
         pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
-        pixy = ((pop[7] + pop[8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) / invRho;
-        pixz = ((pop[9] + pop[10]+ pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] - pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) / invRho;
+        pixy = ((pop[7] + pop[8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) * invRho;
+        pixz = ((pop[9] + pop[10]+ pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] - pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) * invRho;
 
         piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
-        piyz = ((pop[11]+pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24]))/invRho;
+        piyz = ((pop[11]+pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24]))*invRho;
 
         pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
     #endif
@@ -242,7 +163,7 @@ __global__ void gpuMomCollisionStream(
 
     //Collide Moments
     //Equiblibrium momements
-
+    //equation 9
     pixx = pixx + OMEGA * (rhoVar * uxVar * uxVar -  pixx)  + TT_OMEGA * (FX * uxVar + FX * uxVar);
     pixy = pixy + OMEGA * (rhoVar * uxVar * uyVar -  pixy)  + TT_OMEGA * (FX * uyVar + FY * uxVar);
     pixz = pixz + OMEGA * (rhoVar * uxVar * uzVar -  pixz)  + TT_OMEGA * (FX * uzVar + FZ * uxVar);
@@ -295,5 +216,6 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz;
 
     /* write to global pop */
-    gpuInterfacePush(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    //gpuInterfacePushCentered(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    gpuInterfacePushOffset(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
 }

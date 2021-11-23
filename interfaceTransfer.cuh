@@ -12,15 +12,27 @@
 #include "var.h"
 
 
-__device__ void gpuInterfacePush(
+__device__ void gpuInterfacePushOffset(
+    dim3 threadIdx, dim3 blockIdx, dfloat pop[Q],
+    dfloat *fGhostX_0, dfloat *fGhostX_1,
+    dfloat *fGhostY_0, dfloat *fGhostY_1,
+    dfloat *fGhostZ_0, dfloat *fGhostZ_1);
+
+__device__ void gpuInterfacePushCentered(
     dim3 threadIdx, dim3 blockIdx, dfloat pop[Q],
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1);
 
 
-__device__ void gpuInterfacePull(
-    dim3 threadIdx, dim3 blockIdx, dfloat pop[Q],
+__device__ void gpuInterfacePullOffset(
+    dim3 threadIdx, dim3 blockIdx, dfloat *pop,
+    dfloat *fGhostX_0, dfloat *fGhostX_1,
+    dfloat *fGhostY_0, dfloat *fGhostY_1,
+    dfloat *fGhostZ_0, dfloat *fGhostZ_1);
+
+__device__ void gpuInterfacePullCentered(
+    dim3 threadIdx, dim3 blockIdx, dfloat *pop,
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1);
