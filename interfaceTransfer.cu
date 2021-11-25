@@ -179,6 +179,7 @@ __device__ void gpuInterfacePushCentered(
         fGhostX_1[idxPopX(ty, tz, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27       
     }
+
     if (threadIdx.y == 0)  { //s                                                                                                                                                                                        
         fGhostY_0[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 4];
         fGhostY_0[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 8];
@@ -204,6 +205,7 @@ __device__ void gpuInterfacePushCentered(
         fGhostY_1[idxPopY(tx, tz, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27                                                                                                           
     }
+    
     if (threadIdx.z == 0){ //b                                                                                                                                                                                     
         fGhostZ_0[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 6];
         fGhostZ_0[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[10];
@@ -255,6 +257,7 @@ __device__ void gpuInterfacePullOffset(
 
 
     /* ------------------------------ CORNER ------------------------------ */
+    /*
     if(      ty == 0            && tx == 0              && tz == 0)             {//swb
         pop[ 1] = fGhostX_1[idxPopX(ty, tz, 0,   (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
         pop[ 3] = fGhostY_1[idxPopY(tx,   tz, 0, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];    
@@ -377,6 +380,7 @@ __device__ void gpuInterfacePullOffset(
         pop[18] = fGhostY_0[idxPopY(tx, tz-1, 4, bx, (by+1)%NUM_BLOCK_Y, bz)]; 
 
 /* ------------------------------ EDGE ------------------------------ */
+/*
     }else if(ty == 0            && tx == 0)                     {//sw
         pop[ 1] = fGhostX_1[idxPopX(ty, tz, 0,   (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
         pop[ 3] = fGhostY_1[idxPopY(tx,   tz, 0, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];  
@@ -510,49 +514,53 @@ __device__ void gpuInterfacePullOffset(
         //
         pop[15] = fGhostZ_0[idxPopZ(tx-1, ty, 3, bx, by, (bz+1)%NUM_BLOCK_Z)];
         pop[16] = fGhostX_0[idxPopX(ty, tz-1, 4, (bx+1)%NUM_BLOCK_X, by, bz)];
+    }
 
 /* ------------------------------ FACE ------------------------------ */
-    }else if (tx == 0) { //w
-        pop[ 1] = fGhostX_1[idxPopX(ty, tz, 0,   (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
-        pop[ 7] = fGhostX_1[idxPopX(ty-1, tz, 1, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
-        pop[ 9] = fGhostX_1[idxPopX(ty, tz-1, 2, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
-        pop[13] = fGhostX_1[idxPopX(ty+1, tz, 3, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
-        pop[15] = fGhostX_1[idxPopX(ty, tz+1, 4, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
+    ;
+
+    if (tx == 0) { //w
+        pop[ 1] = fGhostX_1[idxPopX(ty                      , tz                        , 0, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, bz)];
+        pop[ 7] = fGhostX_1[idxPopX((ty-1+BLOCK_NY)%BLOCK_NY, tz                        , 1, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, ((ty == 0)?(by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y:by), bz)];
+        pop[ 9] = fGhostX_1[idxPopX(ty                      , (tz-1+BLOCK_NZ)%BLOCK_NZ  , 2, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, ((tz == 0)?(bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z:bz))];
+        pop[13] = fGhostX_1[idxPopX((ty+1)%BLOCK_NY         , tz                        , 3, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, ((ty == (BLOCK_NY-1))?(by+1)%NUM_BLOCK_Y:by), bz)];
+        pop[15] = fGhostX_1[idxPopX(ty                      , (tz+1)%BLOCK_NZ           , 4, (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X, by, ((tz == (BLOCK_NZ-1))?(bz+1)%NUM_BLOCK_Z:bz))];
     }else if (tx == (BLOCK_NX - 1)){ //e 
-        pop[ 2] = fGhostX_0[idxPopX(ty,   tz, 0, (bx+1)%NUM_BLOCK_X, by, bz)]; 
-        pop[ 8] = fGhostX_0[idxPopX(ty+1, tz, 1, (bx+1)%NUM_BLOCK_X, by, bz)];
-        pop[10] = fGhostX_0[idxPopX(ty, tz+1, 2, (bx+1)%NUM_BLOCK_X, by, bz)];
-        pop[14] = fGhostX_0[idxPopX(ty-1, tz, 3, (bx+1)%NUM_BLOCK_X, by, bz)];
-        pop[16] = fGhostX_0[idxPopX(ty, tz-1, 4, (bx+1)%NUM_BLOCK_X, by, bz)];
-
-
-    }else if (ty == 0)  { //s  
-        pop[ 3] = fGhostY_1[idxPopY(tx,   tz, 0, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];    
-        pop[ 7] = fGhostY_1[idxPopY(tx-1, tz, 1, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];
-        pop[11] = fGhostY_1[idxPopY(tx, tz-1, 2, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];
-        pop[14] = fGhostY_1[idxPopY(tx+1, tz, 3, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];
-        pop[17] = fGhostY_1[idxPopY(tx, tz+1, 4, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];
-    }else if (ty == (BLOCK_NY - 1)){ //n  
-        pop[ 4] = fGhostY_0[idxPopY(tx,   tz, 0, bx, (by+1)%NUM_BLOCK_Y, bz)]; 
-        pop[ 8] = fGhostY_0[idxPopY(tx+1, tz, 1, bx, (by+1)%NUM_BLOCK_Y, bz)]; 
-        pop[12] = fGhostY_0[idxPopY(tx, tz+1, 2, bx, (by+1)%NUM_BLOCK_Y, bz)]; 
-        pop[13] = fGhostY_0[idxPopY(tx-1, tz, 3, bx, (by+1)%NUM_BLOCK_Y, bz)]; 
-        pop[18] = fGhostY_0[idxPopY(tx, tz-1, 4, bx, (by+1)%NUM_BLOCK_Y, bz)]; 
-
-
-    }else if (tz == 0){ //b  
-        pop[ 5] = fGhostZ_1[idxPopZ(tx,   ty, 0, bx, by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
-        pop[ 9] = fGhostZ_1[idxPopZ(tx-1, ty, 1, bx, by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
-        pop[11] = fGhostZ_1[idxPopZ(tx, ty-1, 2, bx, by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
-        pop[16] = fGhostZ_1[idxPopZ(tx+1, ty, 3, bx, by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
-        pop[18] = fGhostZ_1[idxPopZ(tx, ty+1, 4, bx, by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];                                                                                  
-    }else if (tz == (BLOCK_NZ - 1)) { //f   
-        pop[ 6] = fGhostZ_0[idxPopZ(tx,   ty, 0, bx, by, (bz+1)%NUM_BLOCK_Z)];
-        pop[10] = fGhostZ_0[idxPopZ(tx+1, ty, 1, bx, by, (bz+1)%NUM_BLOCK_Z)];
-        pop[12] = fGhostZ_0[idxPopZ(tx, ty+1, 2, bx, by, (bz+1)%NUM_BLOCK_Z)];
-        pop[15] = fGhostZ_0[idxPopZ(tx-1, ty, 3, bx, by, (bz+1)%NUM_BLOCK_Z)];
-        pop[17] = fGhostZ_0[idxPopZ(tx, ty-1, 4, bx, by, (bz+1)%NUM_BLOCK_Z)];
+        pop[ 2] = fGhostX_0[idxPopX(ty                      , tz                        , 0, (bx+1)%NUM_BLOCK_X, by, bz)]; 
+        pop[ 8] = fGhostX_0[idxPopX((ty+1)%BLOCK_NY         , tz                        , 1, (bx+1)%NUM_BLOCK_X, ((ty == (BLOCK_NY-1))?(by+1)%NUM_BLOCK_Y:by), bz)];
+        pop[10] = fGhostX_0[idxPopX(ty                      , (tz+1)%BLOCK_NZ           , 2, (bx+1)%NUM_BLOCK_X, by, ((tz == (BLOCK_NZ-1))?(bz+1)%NUM_BLOCK_Z:bz))];
+        pop[14] = fGhostX_0[idxPopX((ty-1+BLOCK_NY)%BLOCK_NY, tz                        , 3, (bx+1)%NUM_BLOCK_X, ((ty == 0)?(by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y:by), bz)];
+        pop[16] = fGhostX_0[idxPopX(ty                      , (tz-1+BLOCK_NZ)%BLOCK_NZ  , 4, (bx+1)%NUM_BLOCK_X, by, ((tz == 0)?(bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z:bz))];
     }
+
+    if (ty == 0)  { //s  
+        pop[ 3] = fGhostY_1[idxPopY(tx                      , tz                        , 0, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];    
+        pop[ 7] = fGhostY_1[idxPopY((tx-1+BLOCK_NX)%BLOCK_NX, tz                        , 1, ((tx == 0)?(bx-1+NUM_BLOCK_X)%NUM_BLOCK_X:bx), (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];
+        pop[11] = fGhostY_1[idxPopY(tx                      , (tz-1+BLOCK_NZ)%BLOCK_NZ  , 2, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, ((tz == 0)?(bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z:bz))];
+        pop[14] = fGhostY_1[idxPopY((tx+1)%BLOCK_NX         , tz                        , 3, ((tx == (BLOCK_NX-1))?(bx+1)%NUM_BLOCK_X:bx), (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, bz)];
+        pop[17] = fGhostY_1[idxPopY(tx                      , (tz+1)%BLOCK_NZ           , 4, bx, (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y, ((tz == (BLOCK_NZ-1))?(bz+1)%NUM_BLOCK_Z:bz))];
+    }else if (ty == (BLOCK_NY - 1)){ //n  
+        pop[ 4] = fGhostY_0[idxPopY(tx                      , tz                        , 0, bx, (by+1)%NUM_BLOCK_Y, bz)]; 
+        pop[ 8] = fGhostY_0[idxPopY((tx+1)%BLOCK_NX         , tz                        , 1, ((tx == (BLOCK_NX-1))?(bx+1)%NUM_BLOCK_X:bx), (by+1)%NUM_BLOCK_Y, bz)]; 
+        pop[12] = fGhostY_0[idxPopY(tx                      , (tz+1)%BLOCK_NZ           , 2, bx, (by+1)%NUM_BLOCK_Y, ((tz == (BLOCK_NZ-1))?(bz+1)%NUM_BLOCK_Z:bz))]; 
+        pop[13] = fGhostY_0[idxPopY((tx-1+BLOCK_NX)%BLOCK_NX, tz                        , 3, ((tx == 0)?(bx-1+NUM_BLOCK_X)%NUM_BLOCK_X:bx), (by+1)%NUM_BLOCK_Y, bz)]; 
+        pop[18] = fGhostY_0[idxPopY(tx                      , (tz-1+BLOCK_NZ)%BLOCK_NZ  , 4, bx, (by+1)%NUM_BLOCK_Y, ((tz == 0)?(bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z:bz))]; 
+    }
+
+    if (tz == 0){ //b  
+        pop[ 5] = fGhostZ_1[idxPopZ(tx                      , ty                        , 0, bx, by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
+        pop[ 9] = fGhostZ_1[idxPopZ((tx-1+BLOCK_NX)%BLOCK_NX, ty                        , 1, ((tx == 0)?(bx-1+NUM_BLOCK_X)%NUM_BLOCK_X:bx), by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
+        pop[11] = fGhostZ_1[idxPopZ(tx                      , (ty-1+BLOCK_NY)%BLOCK_NY  , 2, bx, ((ty == 0)?(by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y:by), (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
+        pop[16] = fGhostZ_1[idxPopZ((tx+1)%BLOCK_NX         , ty                        , 3, ((tx == (BLOCK_NX-1))?(bx+1)%NUM_BLOCK_X:bx), by, (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];
+        pop[18] = fGhostZ_1[idxPopZ(tx                      , (ty+1)%BLOCK_NY           , 4, bx, ((ty == (BLOCK_NY-1))?(by+1)%NUM_BLOCK_Y:by), (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z)];                                                                                  
+    }else if (tz == (BLOCK_NZ - 1)) { //f   
+        pop[ 6] = fGhostZ_0[idxPopZ(tx                      , ty                        , 0, bx, by, (bz+1)%NUM_BLOCK_Z)];
+        pop[10] = fGhostZ_0[idxPopZ((tx+1)%BLOCK_NX         , ty                        , 1, ((tx == (BLOCK_NX-1))?(bx+1)%NUM_BLOCK_X:bx), by, (bz+1)%NUM_BLOCK_Z)];
+        pop[12] = fGhostZ_0[idxPopZ(tx                      , (ty+1)%BLOCK_NY           , 2, bx, ((ty == (BLOCK_NY-1))?(by+1)%NUM_BLOCK_Y:by), (bz+1)%NUM_BLOCK_Z)];
+        pop[15] = fGhostZ_0[idxPopZ((tx-1+BLOCK_NX)%BLOCK_NX, ty                        , 3, ((tx == 0)?(bx-1+NUM_BLOCK_X)%NUM_BLOCK_X:bx), by, (bz+1)%NUM_BLOCK_Z)];
+        pop[17] = fGhostZ_0[idxPopZ(tx                      , (ty-1+BLOCK_NY)%BLOCK_NY  , 4, bx, ((ty == 0)?(by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y:by), (bz+1)%NUM_BLOCK_Z)];
+    }
+
 }
 __device__ void gpuInterfacePullCentered(
     dim3 threadIdx, dim3 blockIdx, dfloat* pop,

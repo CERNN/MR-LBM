@@ -4,7 +4,10 @@ __global__ void gpuMomCollisionStream(
     dfloat *fMom,
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1)
+    dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    dfloat *gGhostX_0, dfloat *gGhostX_1,
+    dfloat *gGhostY_0, dfloat *gGhostY_1,
+    dfloat *gGhostZ_0, dfloat *gGhostZ_1)
 {
     int x = threadIdx.x + blockDim.x * blockIdx.x;
     int y = threadIdx.y + blockDim.y * blockIdx.y;
@@ -45,16 +48,16 @@ __global__ void gpuMomCollisionStream(
     __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q - 1)];
 
     //save populations in shared memory
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 0)] = pop[1];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 1)] = pop[2];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 2)] = pop[3];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 3)] = pop[4];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 4)] = pop[5];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 5)] = pop[6];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 6)] = pop[7];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 7)] = pop[8];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 8)] = pop[9];
-    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 9)] = pop[10];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = pop[ 1];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1)] = pop[ 2];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2)] = pop[ 3];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3)] = pop[ 4];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4)] = pop[ 5];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5)] = pop[ 6];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6)] = pop[ 7];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7)] = pop[ 8];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8)] = pop[ 9];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9)] = pop[10];
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10)] = pop[11];
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11)] = pop[12];
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12)] = pop[13];
@@ -119,8 +122,8 @@ __global__ void gpuMomCollisionStream(
 
     /* load pop from global in cover nodes */
 
-    //gpuInterfacePullOffset(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
-    gpuInterfacePullCentered(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    gpuInterfacePullOffset(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    //gpuInterfacePullCentered(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
 
 
 //calculate streaming moments
@@ -216,6 +219,6 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz;
 
     /* write to global pop */
-    //gpuInterfacePushCentered(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
-    gpuInterfacePushOffset(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    gpuInterfacePushCentered(threadIdx, blockIdx, pop, gGhostX_0, gGhostX_1, gGhostY_0, gGhostY_1, gGhostZ_0, gGhostZ_1);
+    //gpuInterfacePushOffset(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
 }

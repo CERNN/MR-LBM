@@ -23,7 +23,8 @@ void linearMacr(
     dfloat* rho,
     dfloat* ux,
     dfloat* uy,
-    dfloat* uz
+    dfloat* uz,
+    unsigned int step
 );
 
 

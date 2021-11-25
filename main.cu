@@ -18,6 +18,15 @@
 
 using namespace std;
 
+__host__ __device__
+void interfaceSwap(dfloat *pt1, dfloat *pt2)
+{
+   dfloat *temp = &pt2[0];
+   pt2 = &pt1[0];
+   pt1 = &temp[0];
+   return;
+} 
+
 int main() {
 
     dfloat* fMom;
@@ -27,6 +36,13 @@ int main() {
     dfloat* fGhostY_1;
     dfloat* fGhostZ_0; 
     dfloat* fGhostZ_1;
+
+    dfloat* gGhostX_0;
+    dfloat* gGhostX_1;
+    dfloat* gGhostY_0; 
+    dfloat* gGhostY_1;
+    dfloat* gGhostZ_0; 
+    dfloat* gGhostZ_1;
 
 
 
@@ -55,7 +71,14 @@ int main() {
     cudaMalloc((void**)&fGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
-    cudaMalloc((void**)&fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
+    cudaMalloc((void**)&fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);
+
+    cudaMalloc((void**)&gGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
+    cudaMalloc((void**)&gGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
+    cudaMalloc((void**)&gGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
+    cudaMalloc((void**)&gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
+    cudaMalloc((void**)&gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
+    cudaMalloc((void**)&gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);        
 
 
     cudaStream_t streamsLBM[1];
@@ -71,6 +94,13 @@ int main() {
     gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom);
     checkCudaErrors(cudaDeviceSynchronize());
     gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
+    checkCudaErrors(cudaDeviceSynchronize());
+    checkCudaErrors(cudaMemcpy(gGhostX_0, fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(gGhostX_1, fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(gGhostY_0, fGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(gGhostY_1, fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(gGhostZ_0, fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(gGhostZ_1, fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaDeviceSynchronize());
 
     checkCudaErrors(cudaSetDevice(0));
@@ -89,7 +119,7 @@ int main() {
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
-            linearMacr(h_fMom,rho,ux,uy,uz);
+            linearMacr(h_fMom,rho,ux,uy,uz,step);
             //saveMacr(rho,ux,uy,uz,step);
     for (step=1; step<N_STEPS;step++){
         save =false;
@@ -97,8 +127,27 @@ int main() {
         if(MACR_SAVE)
             save = !(step % MACR_SAVE);
 
-        gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
-        fflush(stdout);
+        gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,
+        fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1,
+        gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1);
+
+        checkCudaErrors(cudaDeviceSynchronize());
+        checkCudaErrors(cudaMemcpy(fGhostX_0, gGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
+        checkCudaErrors(cudaMemcpy(fGhostX_1, gGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
+        checkCudaErrors(cudaMemcpy(fGhostY_0, gGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
+        checkCudaErrors(cudaMemcpy(fGhostY_1, gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
+        checkCudaErrors(cudaMemcpy(fGhostZ_0, gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
+        checkCudaErrors(cudaMemcpy(fGhostZ_1, gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
+        checkCudaErrors(cudaDeviceSynchronize());
+
+        //swap interface pointers
+        checkCudaErrors(cudaDeviceSynchronize());
+        /*interfaceSwap(fGhostX_0,gGhostX_0);
+        interfaceSwap(fGhostX_1,gGhostX_1);
+        interfaceSwap(fGhostY_0,gGhostY_0);
+        interfaceSwap(fGhostY_1,gGhostY_1);
+        interfaceSwap(fGhostZ_0,gGhostZ_0);
+        interfaceSwap(fGhostZ_1,gGhostZ_1);*/
 
         //save macroscopics
         if(save){
@@ -107,9 +156,10 @@ int main() {
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
-            linearMacr(h_fMom,rho,ux,uy,uz);
+            linearMacr(h_fMom,rho,ux,uy,uz,step);
             saveMacr(rho,ux,uy,uz,step);
         }
+
     }
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */
@@ -137,6 +187,13 @@ int main() {
     cudaFree(fGhostY_1);
     cudaFree(fGhostZ_0);
     cudaFree(fGhostZ_1);
+
+    cudaFree(gGhostX_0);
+    cudaFree(gGhostX_1);
+    cudaFree(gGhostY_0);
+    cudaFree(gGhostY_1);
+    cudaFree(gGhostZ_0);
+    cudaFree(gGhostZ_1);
 
     cudaFree(h_fMom);
     cudaFree(rho);

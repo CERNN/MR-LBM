@@ -15,20 +15,13 @@ __global__ void gpuInitialization_mom(
     //first moments
     dfloat ux, uy, uz;
 
-    ux = 0.05;
-    uy = 0.05;
-    uz = 0.05;
-    
     //Taylor Green
-    dfloat P = N / (4.0 * M_PI);
+    dfloat P = N / (2.0 * M_PI);
 
-    ux = U_MAX * sin(-2.0 * M_PI / 3.0) * cos(x / P) * sin(y / P) * cos(z / P) * 2.0 / sqrt(3.0);
+    ux = U_MAX * sin( 2.0 * M_PI / 3.0) * sin(x / P) * cos(y / P) * cos(z / P) * 2.0 / sqrt(3.0);
     uy = U_MAX * sin(-2.0 * M_PI / 3.0) * cos(x / P) * sin(y / P) * cos(z / P) * 2.0 / sqrt(3.0);
     uz = 0.0;
     
-    //ux =  U_MAX*sin(-2.0*M_PI/3.0)*cos(x/P)*sin(y/P)*sin(z/P)*2.0/sqrt(3.0);
-    //uy = -U_MAX*sin(-2.0*M_PI/3.0)*sin(x/P)*cos(y/P)*sin(z/P)*2.0/sqrt(3.0);
-    //uz = 0.0;
     
     // zeroth moment
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0;
@@ -111,6 +104,6 @@ __global__ void gpuInitialization_pop(
         );
     }
 
-    //gpuInterfacePushCentered(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
-    gpuInterfacePushOffset(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    gpuInterfacePushCentered(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    //gpuInterfacePushOffset(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
 }
