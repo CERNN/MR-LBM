@@ -16,11 +16,9 @@ __global__ void gpuInitialization_mom(
     dfloat rho, ux, uy, uz;
 
     //Taylor Green
-    dfloat P = (dfloat)N / (2.0 * M_PI);
-
-	rho = RHO_0 + (3.0/16.0)*RHO_0*U_MAX*U_MAX*(cos(2*(x+0.5) / L) + cos(2*(y+0.5) / L))*(cos(2*(z+0.5) / L) + 2.0);
-	ux =   U_MAX * sin((x+0.5) / L) * cos((y+0.5) / L) * cos((z+0.5) / L);
-	uy = - U_MAX * cos((x+0.5) / L) * sin((y+0.5) / L) * cos((z+0.5) / L);
+	rho = RHO_0 + (1.0/16.0)*RHO_0*U_MAX*U_MAX*(cos(2*(x) / L) + cos(2*(y) / L))*(cos(2*(z) / L) + 2.0);
+	ux =   U_MAX * sin((x) / L) * cos((y) / L) * cos((z) / L);
+	uy = - U_MAX * cos((x) / L) * sin((y) / L) * cos((z) / L);
     uz = 0.0;
     
     
@@ -33,7 +31,6 @@ __global__ void gpuInitialization_mom(
     //second moments
     //define equilibrium populations
     dfloat pop[Q];
-    char c1, c2;
     for (int i = 0; i < Q; i++)
     {
         pop[i] = gpu_f_eq(w[i] * RHO_0,
@@ -97,14 +94,13 @@ __global__ void gpuInitialization_pop(
         + as2 * (uxVar * cx[i] + uyVar * cy[i] + uzVar * cz[i]) 
         + 0.5 * as2 * as2 * (
             pixx * (cx[i] * cx[i] - cs2) + 
-            pixy * (cx[i] * cy[i]) + 
-            pixz * (cx[i] * cz[i]) + 
+            2.0*pixy * (cx[i] * cy[i]) + 
+            2.0*pixz * (cx[i] * cz[i]) + 
             piyy * (cy[i] * cy[i] - cs2) + 
-            piyz * (cy[i] * cz[i]) + 
+            2.0*piyz * (cy[i] * cz[i]) + 
             pizz * (cz[i] * cz[i] - cs2))
         );
     }
 
     gpuInterfacePushCentered(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
-    //gpuInterfacePushOffset(threadIdx, blockIdx, pop, fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
 }

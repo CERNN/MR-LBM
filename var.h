@@ -26,25 +26,31 @@
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-constexpr int N_STEPS = 100;
-#define MACR_SAVE (1)
+
+#define MACR_SAVE (250)
 
 constexpr int SCALE = 1;
-constexpr int N = 64 * SCALE;
+constexpr int N = 128 * SCALE;
 constexpr int NX = N * SCALE;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N * SCALE;        // size y of the grid
 constexpr int NZ = N * SCALE;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat TAU = 0.6;     // relaxation time
+constexpr dfloat U_MAX = 16.0/(125.0*M_PI);  
+constexpr dfloat RE = 1600.0;	
+constexpr dfloat L = (dfloat)N / (2.0 * M_PI);
+constexpr dfloat VISC = L*U_MAX / RE;
+
+constexpr int N_STEPS = 10000;
+
+
+constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
 constexpr dfloat T_OMEGA = 1.0 -OMEGA;
 constexpr dfloat TT_OMEGA = 1.0 -0.5*OMEGA;
 
-constexpr dfloat RHO_0 = 1;         // initial rho
-
-constexpr dfloat U_MAX = 0.05;  
+constexpr dfloat RHO_0 = 1.0;         // initial rho
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
@@ -77,7 +83,7 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
 
 #ifdef D3Q27
 constexpr unsigned char Q = 27;         // number of velocities
-constexpr unsigned char QF = 9*2;         // number of velocities on each face
+constexpr unsigned char QF = 9;         // number of velocities on each face
 constexpr dfloat W0 = 8.0 / 27;        // weight dist 0 population (0, 0, 0)
 constexpr dfloat W1 = 2.0 / 27;        // weight dist 1 populations (1, 0, 0)
 constexpr dfloat W2 = 1.0 / 54;        // weight dist 2 populations (1, 1, 0)
@@ -91,8 +97,8 @@ __device__ const dfloat w[Q] = { W0,
 };
 
 
-constexpr dfloat inv_cs2 = 3.0;
-constexpr dfloat cs2 = 1.0/inv_cs2;
+constexpr dfloat as2 = 3.0;
+constexpr dfloat cs2 = 1.0/as2;
 
 // populations velocities vector 0 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26
 __device__ const char cx[Q] = { 0, 1,-1, 0, 0, 0, 0, 1,-1, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0, 1,-1, 1,-1, 1,-1,-1, 1};
@@ -103,9 +109,9 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
 
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
-const size_t BLOCK_NX = 8;
-const size_t BLOCK_NY = 8;
-const size_t BLOCK_NZ = 8;
+const size_t BLOCK_NX = 4;
+const size_t BLOCK_NY = 4;
+const size_t BLOCK_NZ = 4;
 const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;
 
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;
