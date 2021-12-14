@@ -13,18 +13,19 @@ __global__ void gpuInitialization_mom(
     //printf("threadIdx.x % d threadIdx.y % d threadIdx.z % d  bix %d biy %d biz %d --  x: %d y: %d z: %d idx %d\n", threadIdx.x, threadIdx.y, threadIdx.z, blockIdx.x, blockIdx.y, blockIdx.z, x, y, z, index);
 
     //first moments
-    dfloat ux, uy, uz;
+    dfloat rho, ux, uy, uz;
 
     //Taylor Green
-    dfloat P = N / (2.0 * M_PI);
+    dfloat P = (dfloat)N / (2.0 * M_PI);
 
-    ux = U_MAX * sin( 2.0 * M_PI / 3.0) * sin(x / P) * cos(y / P) * cos(z / P) * 2.0 / sqrt(3.0);
-    uy = U_MAX * sin(-2.0 * M_PI / 3.0) * cos(x / P) * sin(y / P) * cos(z / P) * 2.0 / sqrt(3.0);
+	rho = RHO_0 + (3.0/16.0)*RHO_0*U_MAX*U_MAX*(cos(2*(x+0.5) / L) + cos(2*(y+0.5) / L))*(cos(2*(z+0.5) / L) + 2.0);
+	ux =   U_MAX * sin((x+0.5) / L) * cos((y+0.5) / L) * cos((z+0.5) / L);
+	uy = - U_MAX * cos((x+0.5) / L) * sin((y+0.5) / L) * cos((z+0.5) / L);
     uz = 0.0;
     
     
     // zeroth moment
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)] = RHO_0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)] = rho;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)] = ux;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)] = uy;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)] = uz;
@@ -40,12 +41,12 @@ __global__ void gpuInitialization_mom(
                           1 - 1.5 * (ux * ux + uy * uy + uz * uz));
     }
     
-    dfloat pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] - RHO_0 * cs2) / RHO_0;
+    dfloat pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] - cs2) / RHO_0;
     dfloat pixy = ((pop[7] + pop[8]) - (pop[13] + pop[14])) / RHO_0;
     dfloat pixz = ((pop[9] + pop[10]) - (pop[15] + pop[16])) / RHO_0;
-    dfloat piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] - RHO_0 * cs2) / RHO_0;
+    dfloat piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] -  cs2) / RHO_0;
     dfloat piyz = ((pop[11] + pop[12]) - (pop[17] + pop[18])) / RHO_0;
-    dfloat pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] - RHO_0 * cs2) / RHO_0;
+    dfloat pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] -  cs2) / RHO_0;
 
     //pixx = pixx + OMEGA * (RHO_0 * ux * ux -  pixx)  + TT_OMEGA * (FX * ux + FX * ux);
     //pixy = pixy + OMEGA * (RHO_0 * ux * uy -  pixy)  + TT_OMEGA * (FX * uy + FY * ux);

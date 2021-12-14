@@ -18,11 +18,13 @@ __global__ void gpuMomCollisionStream(
 
     // Load moments from global memory
 
+    //rho'
     dfloat rhoVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
+    //u'
     dfloat uxVar  = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat uyVar  = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat uzVar  = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)];
-
+    //m'
     dfloat pixx   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pixy   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pixz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -30,6 +32,7 @@ __global__ void gpuMomCollisionStream(
     dfloat piyz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pizz   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)];
 
+    //calculate post collision populations
     #pragma unroll //equation 10
     for (int i = 0; i < Q; i++)
     {
@@ -132,47 +135,47 @@ __global__ void gpuMomCollisionStream(
         rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
         dfloat invRho = 1 / rhoVar;
         //equation4 + force correction
-        uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15]) - (pop[2] + pop[8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
-        uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
-        uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
+        uxVar = ((pop[ 1] + pop[7] + pop[ 9] + pop[13] + pop[15]) - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
+        uyVar = ((pop[ 3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
+        uzVar = ((pop[ 5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
 
         //equation5
-        pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] - rhoVar * cs2) * invRho;
-        pixy = ((pop[7] + pop[8]) - (pop[13] + pop[14])) * invRho;
+        pixx =  (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] -  cs2) * invRho;
+        pixy = ((pop[7] + pop[ 8]) - (pop[13] + pop[14])) * invRho;
         pixz = ((pop[9] + pop[10]) - (pop[15] + pop[16])) * invRho;
-        piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] - rhoVar * cs2) * invRho;
+        piyy =  (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] - cs2) * invRho;
         piyz = ((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho;
-        pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] - rhoVar * cs2) * invRho;
+        pizz =  (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] - cs2) * invRho;
+
 
     #endif
     #ifdef D3Q27
         rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
         dfloat invRho = 1 / rhoVar;
-        uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26]) - (pop[2] + pop[8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
-        uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
-        uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
+        uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
+        uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
+        uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
 
-        pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
-        pixy = ((pop[7] + pop[8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) * invRho;
-        pixz = ((pop[9] + pop[10]+ pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] - pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) * invRho;
-
-        piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
-        piyz = ((pop[11]+pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24]))*invRho;
-
-        pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - rhoVar * cs2) * invRho;
+        pixx =  (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - cs2) * invRho;
+        pixy = ((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) * invRho;
+        pixz = ((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) * invRho;
+        piyy =  (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - cs2) * invRho;
+        piyz = ((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24]))*invRho;
+        pizz =  (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - cs2) * invRho;
     #endif
 
     //NOTE : STREAMING DONE, NOW COLLIDE
 
     //Collide Moments
     //Equiblibrium momements
-    //equation 9
-    pixx = pixx + OMEGA * (rhoVar * uxVar * uxVar -  pixx)  + TT_OMEGA * (FX * uxVar + FX * uxVar);
-    pixy = pixy + OMEGA * (rhoVar * uxVar * uyVar -  pixy)  + TT_OMEGA * (FX * uyVar + FY * uxVar);
-    pixz = pixz + OMEGA * (rhoVar * uxVar * uzVar -  pixz)  + TT_OMEGA * (FX * uzVar + FZ * uxVar);
-    piyy = piyy + OMEGA * (rhoVar * uyVar * uyVar -  piyy)  + TT_OMEGA * (FY * uyVar + FY * uyVar);
-    piyz = piyz + OMEGA * (rhoVar * uyVar * uzVar -  piyz)  + TT_OMEGA * (FY * uzVar + FZ * uyVar);
-    pizz = pizz + OMEGA * (rhoVar * uzVar * uzVar -  pizz)  + TT_OMEGA * (FZ * uzVar + FZ * uzVar);
+    
+    //equation 90
+    pixx = (T_OMEGA * rhoVar * (pixx) + OMEGA * rhoVar * (uxVar * uxVar) + TT_OMEGA * (FX * uxVar + FX * uxVar))*invRho;
+    pixy = (T_OMEGA * rhoVar * (pixy) + OMEGA * rhoVar * (uxVar * uyVar) + TT_OMEGA * (FX * uyVar + FY * uxVar))*invRho;
+    pixz = (T_OMEGA * rhoVar * (pixz) + OMEGA * rhoVar * (uxVar * uzVar) + TT_OMEGA * (FX * uzVar + FZ * uxVar))*invRho;
+    piyy = (T_OMEGA * rhoVar * (piyy) + OMEGA * rhoVar * (uyVar * uyVar) + TT_OMEGA * (FY * uyVar + FY * uyVar))*invRho;
+    piyz = (T_OMEGA * rhoVar * (piyz) + OMEGA * rhoVar * (uyVar * uzVar) + TT_OMEGA * (FY * uzVar + FZ * uyVar))*invRho;
+    pizz = (T_OMEGA * rhoVar * (pizz) + OMEGA * rhoVar * (uzVar * uzVar) + TT_OMEGA * (FZ * uzVar + FZ * uzVar))*invRho;
 
     for (int i = 0; i < Q; i++)
     {
@@ -188,29 +191,14 @@ __global__ void gpuMomCollisionStream(
         );
     }
 
-    /* compute rho and u */
-
-    #ifdef D3Q19
-        rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
-        invRho = 1 / rhoVar;
-        uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15]) - (pop[2] + pop[8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
-        uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
-        uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
-    #endif
-    #ifdef D3Q27
-        rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
-        invRho = 1 / rhoVar;
-        uxVar = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26]) - (pop[2] + pop[8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
-        uyVar = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[4] + pop[8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
-        uzVar = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
-    #endif
-
     /* write to global mom */
 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)] = rhoVar;
+
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)] = uxVar;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)] = uyVar;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z)] = uzVar;
+
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 4, blockIdx.x, blockIdx.y, blockIdx.z)] = pixx;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 5, blockIdx.x, blockIdx.y, blockIdx.z)] = pixy;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 6, blockIdx.x, blockIdx.y, blockIdx.z)] = pixz;
