@@ -19,12 +19,10 @@
 using namespace std;
 
 __host__ __device__
-void interfaceSwap(dfloat *pt1, dfloat *pt2)
-{
-   dfloat *temp = &pt2[0];
-   pt2 = &pt1[0];
-   pt1 = &temp[0];
-   return;
+void interfaceSwap(dfloat* &pt1, dfloat* &pt2){
+  dfloat *temp = pt1;
+  pt1 = pt2;
+  pt2 = temp;
 } 
 
 int main() {
@@ -120,7 +118,7 @@ int main() {
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
             linearMacr(h_fMom,rho,ux,uy,uz,step);
-            //saveMacr(rho,ux,uy,uz,step);
+
     for (step=1; step<N_STEPS;step++){
         save =false;
 
@@ -131,32 +129,29 @@ int main() {
         fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1,
         gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1);
 
-        checkCudaErrors(cudaDeviceSynchronize());
-        checkCudaErrors(cudaMemcpy(fGhostX_0, gGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
-        checkCudaErrors(cudaMemcpy(fGhostX_1, gGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
-        checkCudaErrors(cudaMemcpy(fGhostY_0, gGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
-        checkCudaErrors(cudaMemcpy(fGhostY_1, gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
-        checkCudaErrors(cudaMemcpy(fGhostZ_0, gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
-        checkCudaErrors(cudaMemcpy(fGhostZ_1, gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
-        checkCudaErrors(cudaDeviceSynchronize());
 
+        
         //swap interface pointers
         checkCudaErrors(cudaDeviceSynchronize());
-        /*interfaceSwap(fGhostX_0,gGhostX_0);
+        interfaceSwap(fGhostX_0,gGhostX_0);
         interfaceSwap(fGhostX_1,gGhostX_1);
         interfaceSwap(fGhostY_0,gGhostY_0);
         interfaceSwap(fGhostY_1,gGhostY_1);
         interfaceSwap(fGhostZ_0,gGhostZ_0);
-        interfaceSwap(fGhostZ_1,gGhostZ_1);*/
+        interfaceSwap(fGhostZ_1,gGhostZ_1);
+        
 
         //save macroscopics
+
         if(save){
-            //printf("step %d \n",step);
-            //printf("------------------------------------------------------------------------\n");
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
-            linearMacr(h_fMom,rho,ux,uy,uz,step);
+            
+            printf("step %d \n",step);
+            linearMacr(h_fMom,rho,ux,uy,uz,step); 
+            fflush(stdout);
+            printf("------------------------------------------------------------------------\n");
             saveMacr(rho,ux,uy,uz,step);
         }
 

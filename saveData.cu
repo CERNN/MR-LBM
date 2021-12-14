@@ -10,37 +10,30 @@ void linearMacr(
     unsigned int step
 ){
     size_t indexMacr;
-    int tx,ty,tz;
-    int bx,by,bz;
-    size_t idxMom0;
+
+    dfloat Ekin;
+    Ekin  =  0;
 
     for(int z = 0; z< NZ;z++){
         ///printf("z %d \n", z);
         for(int y = 0; y< NY;y++){
             for(int x = 0; x< NX;x++){
                 indexMacr = idxScalarGlobal(x,y,z);
-                tx = x%BLOCK_NX;
-                ty = y%BLOCK_NY;
-                tz = z%BLOCK_NZ;
 
-                bx = x / BLOCK_NX;
-                by = y / BLOCK_NY;
-                bz = z / BLOCK_NZ;
-
-                idxMom0 = idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ);
-
-                //printf("%d xyz %d %d %d  ||t: %d %d %d || b: %d %d %d || %d\n",indexMacr,x,y,z,tx,ty,tz,bx,by,bz,idxMom0);
-                //fflush(stdout);
                 rho[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 ux[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
-                //printf("%f \t",h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]);
+                Ekin += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
+                
+
+                
             }
-            //printf("\n");
         }
     }
+    Ekin = Ekin/(2*N*N*N);
+    printf("%0.7e \n",Ekin);
 }
 
 
