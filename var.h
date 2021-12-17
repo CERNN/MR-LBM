@@ -27,7 +27,7 @@
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
 
-#define MACR_SAVE (250)
+#define MACR_SAVE (100)
 
 constexpr int SCALE = 1;
 constexpr int N = 128 * SCALE;
@@ -47,6 +47,7 @@ constexpr int N_STEPS = 10000;
 
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
+constexpr dfloat OMEGA3 = OMEGA/3.0; 
 constexpr dfloat T_OMEGA = 1.0 -OMEGA;
 constexpr dfloat TT_OMEGA = 1.0 -0.5*OMEGA;
 
@@ -109,9 +110,9 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
 
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
-const size_t BLOCK_NX = 4;
-const size_t BLOCK_NY = 4;
-const size_t BLOCK_NZ = 4;
+const size_t BLOCK_NX = 8;
+const size_t BLOCK_NY = 8;
+const size_t BLOCK_NZ = 8;
 const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;
 
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;
