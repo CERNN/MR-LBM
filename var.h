@@ -47,7 +47,7 @@ constexpr int N_STEPS = 10000;
 
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
-constexpr dfloat OMEGA3 = OMEGA/3.0; 
+constexpr dfloat OMEGAd9 = OMEGA/9.0; 
 constexpr dfloat T_OMEGA = 1.0 -OMEGA;
 constexpr dfloat TT_OMEGA = 1.0 -0.5*OMEGA;
 
