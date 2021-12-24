@@ -146,7 +146,7 @@ __global__ void gpuMomCollisionStream(
 
     /* load pop from global in cover nodes */
 
-    gpuInterfacePullOffset(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+    gpuInterfacePull(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
 
 
 //calculate streaming moments
@@ -249,6 +249,6 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz/4.5;
 
     /* write to global pop */
-    gpuInterfacePushCentered(threadIdx, blockIdx, pop, gGhostX_0, gGhostX_1, gGhostY_0, gGhostY_1, gGhostZ_0, gGhostZ_1);
+    gpuInterfacePush(threadIdx, blockIdx, pop, gGhostX_0, gGhostX_1, gGhostY_0, gGhostY_1, gGhostZ_0, gGhostZ_1);
 
 }

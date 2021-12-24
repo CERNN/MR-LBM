@@ -12,9 +12,25 @@
 #include "var.h"
 #include "interfaceTransfer.cuh"
 
+/*
+*   @brief Initializes moments with equilibrium population, with density 
+*          and velocity defined in the function itself
+*   @param fMom: moments to be inialized to be initialized 
+*/
 __global__ void gpuInitialization_mom(
     dfloat *fMom);
 
+/*
+*   @brief Initializes populations in the intefaces based on the moments 
+*          defined in the gpuInitialization_mom
+*   @param fMom: moments used to initialize the interface populations
+*   @param fGhostX_0: populations for threadIdx.x == 0
+*   @param fGhostX_1: populations for threadIdx.x == NX-1
+*   @param fGhostY_0: populations for threadIdx.y == 0
+*   @param fGhostY_1: populations for threadIdx.y == NY-1
+*   @param fGhostZ_0: populations for threadIdx.z == 0
+*   @param fGhostZ_1: populations for threadIdx.z == NZ-1
+*/
 __global__ void gpuInitialization_pop(
     dfloat *fMom,
     dfloat *fGhostX_0, dfloat *fGhostX_1,

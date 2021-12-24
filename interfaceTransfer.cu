@@ -1,7 +1,15 @@
 #include "interfaceTransfer.cuh"
 
 
-__device__ void gpuInterfacePushCentered(
+
+   /*
+    OBS.
+    Write cost is higher than read cost, because of that gpuInterfacePush
+    is coalesced, and gpuInterfacePull is not
+    */
+
+
+__device__ void gpuInterfacePush(
     dim3 threadIdx, dim3 blockIdx, dfloat pop[Q],
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
@@ -99,17 +107,21 @@ __device__ void gpuInterfacePushCentered(
 }
 
 
-__device__ void gpuInterfacePullOffset(
+__device__ void gpuInterfacePull(
     dim3 threadIdx, dim3 blockIdx, dfloat* pop,
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1){
+
 
     //thread x/y/z
     int tx = threadIdx.x;
     int ty = threadIdx.y;
     int tz = threadIdx.z;
 
+    if ((tx>0 && tx<BLOCK_NX-1)&&(ty>0 && ty<BLOCK_NY-1)&&(tz>0 && tz<BLOCK_NZ-1))
+        return;
+    
     int bx = blockIdx.x;
     int by = blockIdx.y;
     int bz = blockIdx.z;
