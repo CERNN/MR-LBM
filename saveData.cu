@@ -25,15 +25,15 @@ void linearMacr(
                 uy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
-                Ekin += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
+                //Ekin += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
                 
 
                 
             }
         }
     }
-    Ekin = Ekin/(2*N*N*N);
-    printf("%0.7e \n",Ekin);
+    //Ekin = Ekin/(2*N*N*N);
+    //printf("%0.7e \n",Ekin);
 }
 
 
