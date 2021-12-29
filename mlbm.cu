@@ -146,10 +146,10 @@ __global__ void gpuMomCollisionStream(
 
     /* load pop from global in cover nodes */
 
-    // gpuBoundaryCondition(threadIdx,blockIdx,pop,s_pop);
+    
 
     gpuInterfacePull(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
-
+    gpuBoundaryCondition(threadIdx,blockIdx,pop,s_pop); 
 
 //calculate streaming moments
     #ifdef D3Q19

@@ -13,6 +13,6 @@
 
 
 __device__ void gpuBoundaryCondition(
-    dim3 threadIdx, dim3 blockIdx, dfloat *pop, dfloat *s_pop)
+    dim3 threadIdx, dim3 blockIdx, dfloat *pop, dfloat *s_pop);
 
 #endif //__BOUNDARY_CONDITION_CUH

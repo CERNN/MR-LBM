@@ -16,8 +16,8 @@ __device__ void gpuInterfacePush(
     dfloat *fGhostZ_0, dfloat *fGhostZ_1){
 
 
-    if ((threadIdx.x>0 && threadIdx.x<BLOCK_NX-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NY-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NZ-1))
-        return;
+    //if ((threadIdx.x>0 && threadIdx.x<BLOCK_NX-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NY-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NZ-1))
+    //    return;
     //thread x/y/z
     int tx = threadIdx.x;
     int ty = threadIdx.y;
@@ -116,8 +116,8 @@ __device__ void gpuInterfacePull(
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1){
 
-    if ((threadIdx.x>0 && threadIdx.x<BLOCK_NX-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NY-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NZ-1))
-        return;
+    //if ((threadIdx.x>0 && threadIdx.x<BLOCK_NX-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NY-1)&&(threadIdx.y>0 && threadIdx.y<BLOCK_NZ-1))
+    //    return;
 
     //thread x/y/z
     int tx = threadIdx.x;
