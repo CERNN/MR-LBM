@@ -18,6 +18,11 @@
 
 #define D3Q19
 
+/* ----------------------------- BC DEFINES ---------------------------- */
+
+//#define BC_POPULATION_BASED
+#define BC_MOMENT_BASED
+
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 
 #define ID_SIM "000"            // prefix for simulation's files

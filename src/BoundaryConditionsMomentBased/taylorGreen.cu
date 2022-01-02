@@ -1,7 +1,10 @@
 #include "boundaryCondition.cuh"
 
-__device__ void gpuBoundaryConditionMom(
-    dim3 threadIdx, dim3 blockIdx, dfloat *mom){
+__device__ void gpuBoundaryConditionMom(    
+    dim3 threadIdx, dim3 blockIdx, dfloat* rhoVar, 
+    dfloat* uxVar , dfloat* uyVar , dfloat* uzVar , 
+    dfloat* pixx  , dfloat* pixy  , dfloat* pixz  , 
+    dfloat* piyy  , dfloat* piyz  , dfloat* pizz ){
     /*
     int x = threadIdx.x + blockDim.x * blockIdx.x;
     int y = threadIdx.y + blockDim.y * blockIdx.y;

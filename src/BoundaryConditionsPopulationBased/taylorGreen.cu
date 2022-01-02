@@ -1,6 +1,6 @@
 #include "boundaryCondition.cuh"
 
-__device__ void gpuBoundaryCondition(
+__device__ void gpuBoundaryConditionPop(
     dim3 threadIdx, dim3 blockIdx, dfloat *pop,dfloat *s_pop){
     /*
     int x = threadIdx.x + blockDim.x * blockIdx.x;

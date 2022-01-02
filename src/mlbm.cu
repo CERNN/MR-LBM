@@ -149,7 +149,10 @@ __global__ void gpuMomCollisionStream(
     
 
     gpuInterfacePull(threadIdx,blockIdx,pop,fGhostX_0, fGhostX_1, fGhostY_0, fGhostY_1, fGhostZ_0, fGhostZ_1);
+
+    #ifdef BC_POPULATION_BASED
     gpuBoundaryCondition(threadIdx,blockIdx,pop,s_pop); 
+    #endif
 
 //calculate streaming moments
     #ifdef D3Q19
@@ -199,6 +202,10 @@ __global__ void gpuMomCollisionStream(
     piyy = (T_OMEGA * rhoVar * (piyy) + OMEGAd9 * rhoVar * (uyVar * uyVar) + TT_OMEGA * (FY * uyVar + FY * uyVar))*invRho*4.5;
     piyz = (T_OMEGA * rhoVar * (piyz) + OMEGAd9 * rhoVar * (uyVar * uzVar) + TT_OMEGA * (FY * uzVar + FZ * uyVar))*invRho*9.0;
     pizz = (T_OMEGA * rhoVar * (pizz) + OMEGAd9 * rhoVar * (uzVar * uzVar) + TT_OMEGA * (FZ * uzVar + FZ * uzVar))*invRho*4.5;
+
+    #ifdef BC_MOMENT_BASED
+    gpuBoundaryConditionMom(threadIdx,blockIdx,&rhoVar,&uxVar,&uyVar,&uzVar,&pixx,&pixy,&pixz,&piyy,&piyz,&pizz);
+    #endif
 
     //calculate post collision populations
     pics2 = 1 - (pixx + piyy + pizz)*cs2;
