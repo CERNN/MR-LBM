@@ -42,6 +42,7 @@ int main() {
     dfloat* gGhostZ_0; 
     dfloat* gGhostZ_1;
 
+    char* dNodeType;
 
 
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
@@ -63,7 +64,9 @@ int main() {
 
     /* -------------- ALLOCATION AND CONFIGURATION FOR EACH GPU ------------- */
 
-    cudaMalloc((void**)&fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS);    
+    cudaMalloc((void**)&fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS);  
+    cudaMalloc((void**)&dNodeType, sizeof(char) * NUMBER_LBM_NODES);  
+
     cudaMalloc((void**)&fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
     cudaMalloc((void**)&fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
     cudaMalloc((void**)&fGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
@@ -90,6 +93,7 @@ int main() {
 
     /* ------------------------- LBM INITIALIZATION ------------------------- */
     gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom);
+    gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
     checkCudaErrors(cudaDeviceSynchronize());
     gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
     checkCudaErrors(cudaDeviceSynchronize());
@@ -125,7 +129,7 @@ int main() {
         if(MACR_SAVE)
             save = !(step % MACR_SAVE);
 
-        gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,
+        gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,dNodeType,
         fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1,
         gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1);
 
@@ -176,6 +180,7 @@ int main() {
 
     /* ------------------------------ FREE ------------------------------ */
     cudaFree(fMom);
+    cudaFree(dNodeType);
     cudaFree(fGhostX_0);
     cudaFree(fGhostX_1);
     cudaFree(fGhostY_0);
