@@ -12,8 +12,19 @@ __host__ __device__
     // f_eq = rho_w * (1 - uu * 1.5 + uc * 3 + uc * uc * 4.5) ->
     // f_eq = rho_w * (1 - uu * 1.5 + uc * 3 * ( 1 + uc * 1.5)) ->
     return (rhow * (p1_muu + uc3 * (1.0 + uc3 * 0.5)));
-}
-
+}   
+/*
+* rhoVar 0
+* uxVar  1
+* uyVar  2
+* uzVar  3
+* pixx   4
+* pixy   5
+* pixz   6
+* piyy   7
+* piyz   8
+* pizz   9
+*/
 __host__ __device__
     size_t __forceinline__
     idxMom(
@@ -117,6 +128,20 @@ __host__ __device__
 {
     //return BLOCK_NX * (BLOCK_NY * (BLOCK_NZ * pop + tz) + ty) + tx;
     return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(pop)) );
+}
+
+__host__ __device__
+    size_t __forceinline__
+    idxNodeType(
+        const int tx,
+        const int ty,
+        const int tz,
+        const int bx,
+        const int by,
+        const int bz)
+{
+
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * (bz)))));
 }
 
 __host__ __device__
