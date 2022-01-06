@@ -195,7 +195,7 @@ __global__ void gpuMomCollisionStream(
     dfloat invRho;
     if(nodeType){
         gpuBoundaryConditionMom(pop,rhoVar,nodeType,uxVar,uyVar,uzVar,pixx,pixy,pixz,piyy,piyz,pizz);
-        invRho = 1 / rhoVar;
+        invRho = 1.0 / rhoVar;
     }else{
 
         //calculate streaming moments
