@@ -11,13 +11,14 @@
 #include "errorDef.h"
 #include "var.h"
 #include "nodeTypeMap.h"
+#include "./BoundaryConditionsSchemes/D3Q19_MomentBased.cuh"
 
 
 __device__ void gpuBoundaryConditionPop(
     dim3 threadIdx, dim3 blockIdx, dfloat *pop, dfloat *s_pop);
 
 __device__ void gpuBoundaryConditionMom(    
-    dim3 threadIdx, dim3 blockIdx , dfloat* pop, dfloat &rhoVar, char dNodeType,
+    dfloat* pop, dfloat &rhoVar, char dNodeType,
     dfloat &uxVar , dfloat &uyVar , dfloat &uzVar, 
     dfloat &pixx  , dfloat &pixy  , dfloat &pixz , 
     dfloat &piyy  , dfloat &piyz  , dfloat &pizz );
