@@ -194,7 +194,7 @@ __global__ void gpuMomCollisionStream(
     #ifdef BC_MOMENT_BASED
     dfloat invRho;
     if(nodeType){
-        gpuBoundaryConditionMom(threadIdx,blockIdx,pop,rhoVar,nodeType,uxVar,uyVar,uzVar,pixx,pixy,pixz,piyy,piyz,pizz);
+        gpuBoundaryConditionMom(pop,rhoVar,nodeType,uxVar,uyVar,uzVar,pixx,pixy,pixz,piyy,piyz,pizz);
         invRho = 1 / rhoVar;
     }else{
 
