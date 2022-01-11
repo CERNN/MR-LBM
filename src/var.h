@@ -25,7 +25,7 @@
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 
-#define ID_SIM "000"            // prefix for simulation's files
+#define ID_SIM "001"            // prefix for simulation's files
 #define PATH_FILES "TEST"  // path to save simulation's files
 
 
@@ -35,7 +35,7 @@
 #define MACR_SAVE (100)
 
 constexpr int SCALE = 1;
-constexpr int N = 128 * SCALE;
+constexpr int N = 64 * SCALE;
 constexpr int NX = N * SCALE;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N * SCALE;        // size y of the grid
@@ -50,17 +50,18 @@ constexpr dfloat VISC = L*U_MAX / RE;
 constexpr int N_STEPS = 10000;
 
 
-constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
+constexpr dfloat TAU = 0.9;//0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
 constexpr dfloat OMEGAd9 = OMEGA/9.0; 
 constexpr dfloat T_OMEGA = 1.0 -OMEGA;
 constexpr dfloat TT_OMEGA = 1.0 -0.5*OMEGA;
+constexpr dfloat OMEGA_P1 = 1.0 + OMEGA;
 
 constexpr dfloat RHO_0 = 1.0;         // initial rho
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
-constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
+constexpr dfloat FZ = 1.0e-5;        // force in z (flow direction in most cases)
 
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
 
@@ -113,6 +114,8 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
 
 #endif //D3Q27
 
+constexpr dfloat ONESIXTH = 1.0/6.0;
+constexpr dfloat ONETHIRD = 1.0/3.0;
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
 const size_t BLOCK_NX = 8;
