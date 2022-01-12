@@ -8,6 +8,8 @@
 #include <cuda_runtime.h>
 #include "../var.h"
 
+
+//FACES
 __device__ void 
 gpuBCMomentN(dfloat *pop, dfloat &rhoVar, char dNodeType,
              dfloat &uxVar, dfloat &uyVar, dfloat &uzVar,
@@ -44,6 +46,11 @@ gpuBCMomentB(dfloat *pop, dfloat &rhoVar, char dNodeType,
              dfloat &pixx, dfloat &pixy, dfloat &pixz,
              dfloat &piyy, dfloat &piyz, dfloat &pizz);
 
+
+
+
+
+//EDGES
 __device__ void 
 gpuBCMomentNW(dfloat *pop, dfloat &rhoVar, char dNodeType,
               dfloat &uxVar, dfloat &uyVar, dfloat &uzVar,
@@ -116,11 +123,17 @@ gpuBCMomentEB(dfloat *pop, dfloat &rhoVar, char dNodeType,
               dfloat &pixx, dfloat &pixy, dfloat &pixz,
               dfloat &piyy, dfloat &piyz, dfloat &pizz);
 
+
+
+
+
+//CORNERS
 __device__ void 
 gpuBCMomentNWF(dfloat *pop, dfloat &rhoVar, char dNodeType,
                dfloat &uxVar, dfloat &uyVar, dfloat &uzVar,
                dfloat &pixx, dfloat &pixy, dfloat &pixz,
                dfloat &piyy, dfloat &piyz, dfloat &pizz);
+               
 __device__ void 
 gpuBCMomentNWB(dfloat *pop, dfloat &rhoVar, char dNodeType,
                dfloat &uxVar, dfloat &uyVar, dfloat &uzVar,
