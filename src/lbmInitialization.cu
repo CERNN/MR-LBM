@@ -38,12 +38,13 @@ __global__ void gpuInitialization_mom(
                           1 - 1.5 * (ux * ux + uy * uy + uz * uz));
     }
     
-    dfloat pixx = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] - cs2) / RHO_0;
-    dfloat pixy = ((pop[7] + pop[8]) - (pop[13] + pop[14])) / RHO_0;
-    dfloat pixz = ((pop[9] + pop[10]) - (pop[15] + pop[16])) / RHO_0;
-    dfloat piyy = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] -  cs2) / RHO_0;
-    dfloat piyz = ((pop[11] + pop[12]) - (pop[17] + pop[18])) / RHO_0;
-    dfloat pizz = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] -  cs2) / RHO_0;
+    dfloat invRho = 1.0/rho;
+    dfloat pixx =  (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) * invRho - cs2;
+    dfloat pixy = ((pop[7] + pop[ 8]) - (pop[13] + pop[14])) * invRho;
+    dfloat pixz = ((pop[9] + pop[10]) - (pop[15] + pop[16])) * invRho;
+    dfloat piyy =  (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]) * invRho - cs2;
+    dfloat piyz = ((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho;
+    dfloat pizz =  (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]) * invRho - cs2;
 
     //pixx = pixx + OMEGA * (RHO_0 * ux * ux -  pixx)  + TT_OMEGA * (FX * ux + FX * ux);
     //pixy = pixy + OMEGA * (RHO_0 * ux * uy -  pixy)  + TT_OMEGA * (FX * uy + FY * ux);
