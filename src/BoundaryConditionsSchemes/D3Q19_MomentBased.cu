@@ -17,6 +17,12 @@
 */
 
 
+//TODO:
+/*
+inv_rho =  rho_I / rho;
+
+*/
+
 
 
 //FACES 
@@ -47,7 +53,7 @@ void gpuBCMomentN( dfloat* pop, dfloat& rhoVar, char dNodeType,
     dfloat rho = rho_I * (9.0 * T_OMEGA * (piyy_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uyVar * uyVar) - 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    piyy = inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH - 0.5 * rho * uyVar)); //A35
+    piyy = inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH - 0.5 * uyVar)); //A35
     pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
     pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
     pixy = inv_rho * (2.0 * rho_I * pixy_I - ONETHIRD*rho*uxVar); //A37
@@ -85,7 +91,7 @@ void gpuBCMomentS( dfloat* pop, dfloat& rhoVar, char dNodeType,
     dfloat rho = rho_I * (9.0 * T_OMEGA * (piyy_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uyVar * uyVar) + 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    piyy = inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH + 0.5 * rho * uyVar)); //A35
+    piyy = inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH + 0.5 * uyVar)); //A35
     pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
     pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
     pixy = inv_rho * (2.0 * rho_I * pixy_I + ONETHIRD*rho*uxVar); //A37
@@ -124,7 +130,7 @@ void gpuBCMomentW( dfloat* pop, dfloat& rhoVar, char dNodeType, // x = 0
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pixx_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uxVar * uxVar) + 3.0 * uxVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pixx = inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH + 0.5 * rho * uxVar)); //A35
+    pixx = inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH + 0.5 * uxVar)); //A35
     piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pizz_I); //A36
     pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - piyy_I); //A39
     pixy = inv_rho * (2.0 * rho_I * pixy_I + ONETHIRD*rho*uyVar); //A37
@@ -163,7 +169,7 @@ void gpuBCMomentE( dfloat* pop, dfloat& rhoVar, char dNodeType, //x = NX
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pixx_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uxVar * uxVar) - 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pixx = inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH - 0.5 * rho * uxVar)); //A35
+    pixx = inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH - 0.5 * uxVar)); //A35
     piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pizz_I); //A36
     pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - piyy_I); //A39
     pixy = inv_rho * (2.0 * rho_I * pixy_I - ONETHIRD*rho*uyVar); //A37
@@ -202,7 +208,7 @@ void gpuBCMomentB( dfloat* pop, dfloat& rhoVar, char dNodeType, // z = 0
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pizz_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uzVar * uzVar) + 3.0 * uzVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pizz = inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH + 0.5 * rho * uzVar)); //A35
+    pizz = inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH + 0.5 * uzVar)); //A35
     piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pixx_I); //A36
     pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - piyy_I); //A39
     pixz = inv_rho * (2.0 * rho_I * pixz_I + ONETHIRD*rho*uxVar); //A37
@@ -240,7 +246,7 @@ void gpuBCMomentF( dfloat* pop, dfloat& rhoVar, char dNodeType, //z = NZ
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pizz_I) + 12.0)/ (OMEGA * (1.0 - 6.0 * uzVar * uzVar) - 3.0 * uzVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pizz = inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH - 0.5 * rho * uzVar)); //A35
+    pizz = inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH - 0.5 * uzVar)); //A35
     piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pixx_I); //A36
     pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - piyy_I); //A39
     pixz = inv_rho * (2.0 * rho_I * pixz_I - ONETHIRD*rho*uxVar); //A37
