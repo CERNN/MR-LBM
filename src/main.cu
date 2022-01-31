@@ -117,6 +117,7 @@ int main() {
     /* ------------------------------ LBM LOOP ------------------------------ */
     
     size_t step = 0;
+    printf("%d,",step); fflush(stdout);
     bool save = false;
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));

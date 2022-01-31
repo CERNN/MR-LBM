@@ -46,8 +46,9 @@ constexpr dfloat U_MAX = 16.0/(125.0*M_PI);
 constexpr dfloat RE = 1600.0;	
 constexpr dfloat L = (dfloat)N / (2.0 * M_PI);
 constexpr dfloat VISC = L*U_MAX / RE;
+constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
 
-constexpr int N_STEPS = 10000;
+constexpr int N_STEPS = 10000; //(int)(20.0/Ct)+1;
 
 
 constexpr dfloat TAU = 0.9;//0.5 + 3.0*VISC;     // relaxation time
