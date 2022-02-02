@@ -153,7 +153,7 @@ __global__ void gpuMomCollisionStream(
 
     #ifdef BC_POPULATION_BASED
         if(nodeType)
-            gpuBoundaryCondition(threadIdx,blockIdx,pop,s_pop); 
+            gpuBoundaryConditionPop(threadIdx,blockIdx,pop,s_pop,nodeType); 
 
             //calculate streaming moments
         #ifdef D3Q19

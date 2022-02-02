@@ -80,10 +80,12 @@ int main() {
     cudaMalloc((void**)&gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
     cudaMalloc((void**)&gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);        
+    printf("Allocated memory \n");fflush(stdout);
+
 
 
     cudaStream_t streamsLBM[1];
-    checkCudaErrors(cudaSetDevice(0));
+    checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
 
@@ -92,10 +94,11 @@ int main() {
     dim3 gridBlock(NUM_BLOCK_X, NUM_BLOCK_Y, NUM_BLOCK_Z);
 
     /* ------------------------- LBM INITIALIZATION ------------------------- */
-    gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom);
+    printf("Moments initialized \n");fflush(stdout);
     gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
     checkCudaErrors(cudaDeviceSynchronize());
     gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
+    printf("Interface Populations initialized \n");fflush(stdout);
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaMemcpy(gGhostX_0, fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemcpy(gGhostX_1, fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
@@ -105,7 +108,18 @@ int main() {
     checkCudaErrors(cudaMemcpy(gGhostZ_1, fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaDeviceSynchronize());
 
-    checkCudaErrors(cudaSetDevice(0));
+    size_t step = 0;
+    printf("%d,",step); fflush(stdout);
+
+
+    bool save = false;
+    checkCudaErrors(cudaDeviceSynchronize());
+    checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaDeviceSynchronize());
+    linearMacr(h_fMom,rho,ux,uy,uz,step);
+
+    printf("Initializing loop \n");fflush(stdout);
+    checkCudaErrors(cudaSetDevice(GPU_INDEX));
     cudaEvent_t start, stop, start_step, stop_step;
     checkCudaErrors(cudaEventCreate(&start));
     checkCudaErrors(cudaEventCreate(&stop));
@@ -116,13 +130,6 @@ int main() {
     checkCudaErrors(cudaEventRecord(start_step, 0));
     /* ------------------------------ LBM LOOP ------------------------------ */
     
-    size_t step = 0;
-    printf("%d,",step); fflush(stdout);
-    bool save = false;
-            checkCudaErrors(cudaDeviceSynchronize());
-            checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-            checkCudaErrors(cudaDeviceSynchronize());
-            linearMacr(h_fMom,rho,ux,uy,uz,step);
 
     for (step=1; step<N_STEPS;step++){
         save =false;
@@ -164,7 +171,7 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */
     //Calculate MLUPS
-    checkCudaErrors(cudaSetDevice(0));
+    checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaEventRecord(stop_step, 0));
     checkCudaErrors(cudaEventSynchronize(stop_step));
     float elapsedTime;
