@@ -15,7 +15,9 @@
 
 
 __device__ void gpuBoundaryConditionPop(
-    dim3 threadIdx, dim3 blockIdx, dfloat *pop, dfloat *s_pop);
+    dim3 threadIdx, dim3 blockIdx, 
+    dfloat *pop, dfloat *s_pop,
+    char dNodeType);
 
 __device__ void gpuBoundaryConditionMom(    
     dfloat* pop, dfloat &rhoVar, char dNodeType,
