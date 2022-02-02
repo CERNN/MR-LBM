@@ -27,8 +27,10 @@
 
 #define ID_SIM "001"            // prefix for simulation's files
 #define PATH_FILES "TEST"  // path to save simulation's files
+#define RANDOM_NUMBERS true    // to generate random numbers 
+                                // (useful for turbulence)
 
-
+#define GPU_INDEX 0
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
 
@@ -156,6 +158,14 @@ const size_t NUMBER_LBM_POP_NODES = NX * NY * NZ;
 const size_t MEM_SIZE_SCALAR = sizeof(dfloat) * NUMBER_LBM_NODES;
 const size_t MEM_SIZE_POP = sizeof(dfloat) * NUMBER_LBM_POP_NODES * Q;
 const size_t MEM_SIZE_MOM = sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS;
+
+/* ------------------------------ GPU DEFINES ------------------------------ */
+const int N_THREADS = (NX%64?((NX%32||(NX<32))?NX:32):64); // NX or 32 or 64 
+                                    // multiple of 32 for better performance.
+const int CURAND_SEED = 0;          // seed for random numbers for CUDA
+constexpr float CURAND_STD_DEV = 0.5; // standard deviation for random numbers 
+                                    // in normal distribution
+/* ------------------------------------------------------------------------- */
 
 
 /* --------------------------- AUXILIARY DEFINES --------------------------- */
