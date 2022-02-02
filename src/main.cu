@@ -52,11 +52,15 @@ int main() {
     dfloat* uy;
     dfloat* uz;
 
+    float** randomNumbers = nullptr; // useful for turbulence
+
     checkCudaErrors(cudaMallocHost((void**)&(h_fMom), MEM_SIZE_MOM));
     checkCudaErrors(cudaMallocHost((void**)&(rho), MEM_SIZE_SCALAR));
     checkCudaErrors(cudaMallocHost((void**)&(ux), MEM_SIZE_SCALAR));
     checkCudaErrors(cudaMallocHost((void**)&(uy), MEM_SIZE_SCALAR));
     checkCudaErrors(cudaMallocHost((void**)&(uz), MEM_SIZE_SCALAR));
+    
+    randomNumbers = (float**)malloc(sizeof(float*));
 
 
     // Setup saving folder
@@ -79,9 +83,9 @@ int main() {
     cudaMalloc((void**)&gGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
-    cudaMalloc((void**)&gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);        
+    cudaMalloc((void**)&gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
     printf("Allocated memory \n");fflush(stdout);
-
+    
 
 
     cudaStream_t streamsLBM[1];
@@ -89,11 +93,23 @@ int main() {
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
 
+    if(RANDOM_NUMBERS)
+    {   
+        printf("Initializing random numbers\n");fflush(stdout);
+        checkCudaErrors(cudaMallocManaged((void**)&randomNumbers[0], 
+            sizeof(float)*NUMBER_LBM_NODES));
+        initializationRandomNumbers(randomNumbers[0], CURAND_SEED);
+        checkCudaErrors(cudaDeviceSynchronize());
+        getLastCudaError("random numbers transfer error");
+        printf("random numbers initialized \n");fflush(stdout);
+    }
+
     /* ----------------- GRID AND THREADS DEFINITION FOR LBM ---------------- */
     dim3 threadBlock(BLOCK_NX, BLOCK_NY, BLOCK_NZ);
     dim3 gridBlock(NUM_BLOCK_X, NUM_BLOCK_Y, NUM_BLOCK_Z);
 
     /* ------------------------- LBM INITIALIZATION ------------------------- */
+    gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom, randomNumbers[0]);
     printf("Moments initialized \n");fflush(stdout);
     gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
     checkCudaErrors(cudaDeviceSynchronize());
@@ -118,6 +134,13 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
     linearMacr(h_fMom,rho,ux,uy,uz,step);
 
+    // Free random numbers
+    if (RANDOM_NUMBERS) {
+        checkCudaErrors(cudaSetDevice(GPU_INDEX));
+        cudaFree(randomNumbers[0]);
+        free(randomNumbers);
+    }
+
     printf("Initializing loop \n");fflush(stdout);
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     cudaEvent_t start, stop, start_step, stop_step;
@@ -129,8 +152,8 @@ int main() {
     checkCudaErrors(cudaEventRecord(start, 0));
     checkCudaErrors(cudaEventRecord(start_step, 0));
     /* ------------------------------ LBM LOOP ------------------------------ */
-    
 
+    
     for (step=1; step<N_STEPS;step++){
         save =false;
 

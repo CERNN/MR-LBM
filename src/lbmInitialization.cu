@@ -1,7 +1,32 @@
 #include "lbmInitialization.cuh"
 
+
+
+__host__
+void initializationRandomNumbers(
+    float* randomNumbers, int seed)
+{
+    curandGenerator_t gen;
+
+    // Create pseudo-random number generator
+    checkCurandStatus(curandCreateGenerator(&gen,
+        CURAND_RNG_PSEUDO_DEFAULT));
+    
+    // Set generator seed
+    checkCurandStatus(curandSetPseudoRandomGeneratorSeed(gen,
+        CURAND_SEED));
+    
+    // Generate NX*NY*NZ floats on device, using normal distribution
+    // with mean=0 and std_dev=NORMAL_STD_DEV
+    checkCurandStatus(curandGenerateNormal(gen, randomNumbers, NUMBER_LBM_NODES,
+        0, CURAND_STD_DEV));
+
+    checkCurandStatus(curandDestroyGenerator(gen));
+}
+
+
 __global__ void gpuInitialization_mom(
-    dfloat *fMom)
+    dfloat *fMom, float* randomNumbers)
 {
     int x = threadIdx.x + blockDim.x * blockIdx.x;
     int y = threadIdx.y + blockDim.y * blockIdx.y;

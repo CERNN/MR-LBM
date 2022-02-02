@@ -13,12 +13,24 @@
 #include "interfaceTransfer.cuh"
 
 /*
+*   @brief Initializes random numbers (useful to initialize turbulence)
+*   @param randomNumbers: vector of random numbers (size is NX*NY*NZ)
+*   @param seed: seed to use for generation
+*/
+__host__
+void initializationRandomNumbers(
+    float* randomNumbers, 
+    int seed
+);
+
+
+/*
 *   @brief Initializes moments with equilibrium population, with density 
 *          and velocity defined in the function itself
 *   @param fMom: moments to be inialized to be initialized 
 */
 __global__ void gpuInitialization_mom(
-    dfloat *fMom);
+    dfloat *fMom, float* randomNumbers);
 
 /*
 *   @brief Initializes populations in the intefaces based on the moments 
