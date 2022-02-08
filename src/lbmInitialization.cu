@@ -41,11 +41,36 @@ __global__ void gpuInitialization_mom(
     dfloat rho, ux, uy, uz;
 
     //Taylor Green
-	rho = RHO_0;// + (1.0/16.0)*RHO_0*U_MAX*U_MAX*(cos(2*(x) / L) + cos(2*(y) / L))*(cos(2*(z) / L) + 2.0);
-	ux = 0.0;//  U_MAX * sin((x) / L) * cos((y) / L) * cos((z) / L);
-	uy = 0.0;//- U_MAX * cos((x) / L) * sin((y) / L) * cos((z) / L);
+	rho = RHO_0 + (1.0/(16.0*cs2))*RHO_0*U_MAX*U_MAX*(cos(2*(x) / L) + cos(2*(y) / L))*(cos(2*(z) / L) + 2.0);
+	ux =   U_MAX * sin((x) / L) * cos((y) / L) * cos((z) / L);
+	uy = - U_MAX * cos((x) / L) * sin((y) / L) * cos((z) / L);
     uz = 0.0;
+
     
+
+    /*
+    // Example of usage of random numbers for turbulence in parallel plates flow in z  
+        dfloat y_visc = 6.59, ub_f = 15.6, uc_f = 18.2;
+        // logaritimic velocity profile
+        dfloat uz_log; 
+        dfloat pos = (y < NY/2 ? y + 0.5 : NY - (y + 0.5));
+        uz_log = (uc_f*U_TAU)*(pos/del)*(pos/del);
+        
+        uz = uz_log;
+        ux = 0.0;
+        uy = 0.0;
+        rho = RHO_0;
+
+
+        // perturbation
+        dfloat pert = 0.1;
+        int l = idxScalarGlobal(x, y, z);
+        int Nt = NUMBER_LBM_NODES;
+        uz += (ub_f*U_TAU)*pert*randomNumbers[l + z - Nt*((l + z) / Nt)];
+        ux += (ub_f*U_TAU)*pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
+        uy += (ub_f*U_TAU)*pert*randomNumbers[l + y - Nt*((l + y) / Nt)];
+    */   
+
     
     // zeroth moment
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)] = rho;

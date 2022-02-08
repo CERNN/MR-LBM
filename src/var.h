@@ -25,23 +25,24 @@
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 
-#define ID_SIM "001"            // prefix for simulation's files
-#define PATH_FILES "TEST"  // path to save simulation's files
+#define ID_SIM "256"            // prefix for simulation's files
+#define PATH_FILES "TAYLOR"  // path to save simulation's files
 #define RANDOM_NUMBERS true    // to generate random numbers 
                                 // (useful for turbulence)
 
 #define GPU_INDEX 0
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-
-#define MACR_SAVE (100)
-
 constexpr int SCALE = 1;
-constexpr int N = 64 * SCALE;
-constexpr int NX = N * SCALE;        // size x of the grid 
+
+#define MACR_SAVE (200 * SCALE)
+
+
+constexpr int N = 256 * SCALE;
+constexpr int NX = N;        // size x of the grid 
                                     // (32 multiple for better performance)
-constexpr int NY = N * SCALE;        // size y of the grid
-constexpr int NZ = N * SCALE;        // size z of the grid in one GPU
+constexpr int NY = N;        // size y of the grid
+constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 16.0/(125.0*M_PI);  
@@ -49,11 +50,13 @@ constexpr dfloat RE = 1600.0;
 constexpr dfloat L = (dfloat)N / (2.0 * M_PI);
 constexpr dfloat VISC = L*U_MAX / RE;
 constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
+constexpr dfloat Cx = 1.0/L;
+constexpr dfloat Cp = 1.0/(Cx * Ct * Ct);
 
-constexpr int N_STEPS = 10000; //(int)(20.0/Ct)+1;
+constexpr int N_STEPS = (int)(20.0/Ct)+1;
 
 
-constexpr dfloat TAU = 0.9;//0.5 + 3.0*VISC;     // relaxation time
+constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
 constexpr dfloat OMEGAd9 = OMEGA/9.0; 
 constexpr dfloat T_OMEGA = 1.0 - OMEGA;
@@ -64,10 +67,10 @@ constexpr dfloat RHO_0 = 1.0;         // initial rho
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
-constexpr dfloat FZ = 1.0e-5;        // force in z (flow direction in most cases)
+constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
 
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
-
+    
 /* ------------------------------ VELOCITY SET ------------------------------ */
 #ifdef D3Q19
 constexpr unsigned char Q = 19;        // number of velocities

@@ -84,7 +84,7 @@ int main() {
     cudaMalloc((void**)&gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
     cudaMalloc((void**)&gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
-    printf("Allocated memory \n");fflush(stdout);
+    //printf("Allocated memory \n");fflush(stdout);
     
 
 
@@ -95,13 +95,13 @@ int main() {
 
     if(RANDOM_NUMBERS)
     {   
-        printf("Initializing random numbers\n");fflush(stdout);
+        //printf("Initializing random numbers\n");fflush(stdout);
         checkCudaErrors(cudaMallocManaged((void**)&randomNumbers[0], 
             sizeof(float)*NUMBER_LBM_NODES));
         initializationRandomNumbers(randomNumbers[0], CURAND_SEED);
         checkCudaErrors(cudaDeviceSynchronize());
         getLastCudaError("random numbers transfer error");
-        printf("random numbers initialized \n");fflush(stdout);
+        //printf("random numbers initialized \n");fflush(stdout);
     }
 
     /* ----------------- GRID AND THREADS DEFINITION FOR LBM ---------------- */
@@ -110,11 +110,11 @@ int main() {
 
     /* ------------------------- LBM INITIALIZATION ------------------------- */
     gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom, randomNumbers[0]);
-    printf("Moments initialized \n");fflush(stdout);
+    //printf("Moments initialized \n");fflush(stdout);
     gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
     checkCudaErrors(cudaDeviceSynchronize());
     gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
-    printf("Interface Populations initialized \n");fflush(stdout);
+    //printf("Interface Populations initialized \n");fflush(stdout);
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaMemcpy(gGhostX_0, fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemcpy(gGhostX_1, fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
@@ -125,7 +125,7 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
 
     size_t step = 0;
-    printf("%d,",step); fflush(stdout);
+    printf("step %d ",step); fflush(stdout);
 
 
     bool save = false;
@@ -141,7 +141,7 @@ int main() {
         free(randomNumbers);
     }
 
-    printf("Initializing loop \n");fflush(stdout);
+   
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     cudaEvent_t start, stop, start_step, stop_step;
     checkCudaErrors(cudaEventCreate(&start));
@@ -183,11 +183,11 @@ int main() {
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
             
-            printf("step %d \n",step);
+            printf("step %d ",step);
             linearMacr(h_fMom,rho,ux,uy,uz,step); 
             fflush(stdout);
-            printf("------------------------------------------------------------------------\n");
-            saveMacr(rho,ux,uy,uz,step);
+            //printf("------------------------------------------------------------------------\n");
+            //saveMacr(rho,ux,uy,uz,step);
         }
 
     }

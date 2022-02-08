@@ -37,7 +37,7 @@ void gpuBCMomentN( dfloat* pop, dfloat& rhoVar, char dNodeType,
 
     uxVar = 0.0;  
     uyVar = 0.0;  
-    uzVar = 0.0;  
+    uzVar = U_MAX;  
 
     //IO: 3/7/11/14/17
     dfloat rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[9] + pop[10] + pop[12] + pop[13] + pop[15] + pop[16] + pop[18];
@@ -46,7 +46,7 @@ void gpuBCMomentN( dfloat* pop, dfloat& rhoVar, char dNodeType,
     dfloat pixx_I = inv_rho_I *  (pop[1] + pop[2] + pop[8] + pop[9] + pop[10] + pop[13] + pop[15] + pop[16] -  cs2*rho_I);
     dfloat pixy_I = inv_rho_I * (( pop[ 8]) - (pop[13] ));
     dfloat pixz_I = inv_rho_I * ((pop[9] + pop[10]) - (pop[15] + pop[16]));
-    dfloat piyy_I = inv_rho_I *  ( pop[4]  + pop[8] + pop[11] + pop[12] + pop[13] + pop[18] - cs2*rho_I);
+    dfloat piyy_I = inv_rho_I *  ( pop[4]  + pop[8]+ pop[12] + pop[13] + pop[18] - cs2*rho_I);
     dfloat piyz_I = inv_rho_I * ((pop[12])-(pop[18]));
     dfloat pizz_I = inv_rho_I *  (pop[5] + pop[6] + pop[9] + pop[10] + pop[12] + pop[15] + pop[16]+ pop[18] - cs2*rho_I);
 
