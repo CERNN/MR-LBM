@@ -37,7 +37,7 @@ void gpuBCMomentN( dfloat* pop, dfloat& rhoVar, char dNodeType,
 
     uxVar = 0.0;  
     uyVar = 0.0;  
-    uzVar = U_MAX;  
+    uzVar = 0.0;  
 
     //IO: 3/7/11/14/17
     dfloat rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[9] + pop[10] + pop[12] + pop[13] + pop[15] + pop[16] + pop[18];
@@ -53,12 +53,12 @@ void gpuBCMomentN( dfloat* pop, dfloat& rhoVar, char dNodeType,
     dfloat rho = rho_I * (9.0 * T_OMEGA * (piyy_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uyVar * uyVar) - 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    piyy = inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH - 0.5 * uyVar)); //A35
-    pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
-    pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
-    pixy = inv_rho * (2.0 * rho_I * pixy_I - ONETHIRD*rho*uxVar); //A37
-    piyz = inv_rho * (2.0 * rho_I * piyz_I - ONETHIRD*rho*uzVar); //A40       
-    pixz = inv_rho * rho_I * pixz_I; //A38
+    piyy = 4.5 * inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH - 0.5 * uyVar)); //A35
+    pixx = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
+    pizz = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
+    pixy = 9.0 * inv_rho * (2.0 * rho_I * pixy_I - ONETHIRD*rho*uxVar); //A37
+    piyz = 9.0 * inv_rho * (2.0 * rho_I * piyz_I - ONETHIRD*rho*uzVar); //A40       
+    pixz = 9.0 * inv_rho * rho_I * pixz_I; //A38
 
     rhoVar = rho;
 
@@ -91,12 +91,12 @@ void gpuBCMomentS( dfloat* pop, dfloat& rhoVar, char dNodeType,
     dfloat rho = rho_I * (9.0 * T_OMEGA * (piyy_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uyVar * uyVar) + 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    piyy = inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH + 0.5 * uyVar)); //A35
-    pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
-    pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
-    pixy = inv_rho * (2.0 * rho_I * pixy_I + ONETHIRD*rho*uxVar); //A37
-    piyz = inv_rho * (2.0 * rho_I * piyz_I + ONETHIRD*rho*uzVar); //A40      
-    pixz = inv_rho * rho_I * pixz_I; //A38
+    piyy = 4.5 * inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH + 0.5 * uyVar)); //A35
+    pixx = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
+    pizz = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
+    pixy = 9.0 * inv_rho * (2.0 * rho_I * pixy_I + ONETHIRD*rho*uxVar); //A37
+    piyz = 9.0 * inv_rho * (2.0 * rho_I * piyz_I + ONETHIRD*rho*uzVar); //A40      
+    pixz = 9.0 * inv_rho * rho_I * pixz_I; //A38
 
     rhoVar = rho;
 
@@ -130,12 +130,12 @@ void gpuBCMomentW( dfloat* pop, dfloat& rhoVar, char dNodeType, // x = 0
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pixx_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uxVar * uxVar) + 3.0 * uxVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pixx = inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH + 0.5 * uxVar)); //A35
-    piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pizz_I); //A36
-    pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - piyy_I); //A39
-    pixy = inv_rho * (2.0 * rho_I * pixy_I + ONETHIRD*rho*uyVar); //A37
-    pixz = inv_rho * (2.0 * rho_I * pixz_I + ONETHIRD*rho*uzVar); //A40
-    piyz = inv_rho * rho_I * piyz_I; //A38
+    pixx = 4.5 * inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH + 0.5 * uxVar)); //A35
+    piyy = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pizz_I); //A36
+    pizz = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - piyy_I); //A39
+    pixy = 9.0 * inv_rho * (2.0 * rho_I * pixy_I + ONETHIRD*rho*uyVar); //A37
+    pixz = 9.0 * inv_rho * (2.0 * rho_I * pixz_I + ONETHIRD*rho*uzVar); //A40
+    piyz = 9.0 * inv_rho * rho_I * piyz_I; //A38
 
     rhoVar = rho;
 
@@ -169,12 +169,12 @@ void gpuBCMomentE( dfloat* pop, dfloat& rhoVar, char dNodeType, //x = NX
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pixx_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uxVar * uxVar) - 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pixx = inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH - 0.5 * uxVar)); //A35
-    piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pizz_I); //A36
-    pizz = inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - piyy_I); //A39
-    pixy = inv_rho * (2.0 * rho_I * pixy_I - ONETHIRD*rho*uyVar); //A37
-    pixz = inv_rho * (2.0 * rho_I * pixz_I - ONETHIRD*rho*uzVar); //A40
-    piyz = inv_rho * rho_I * piyz_I; //A38
+    pixx = 4.5 * inv_rho * (1.5 * rho_I * pixx_I  + rho * (ONESIXTH - 0.5 * uxVar)); //A35
+    piyy = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pizz_I); //A36
+    pizz = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - piyy_I); //A39
+    pixy = 9.0 * inv_rho * (2.0 * rho_I * pixy_I - ONETHIRD*rho*uyVar); //A37
+    pixz = 9.0 * inv_rho * (2.0 * rho_I * pixz_I - ONETHIRD*rho*uzVar); //A40
+    piyz = 9.0 * inv_rho * rho_I * piyz_I; //A38
 
     rhoVar = rho;
 
@@ -208,12 +208,12 @@ void gpuBCMomentB( dfloat* pop, dfloat& rhoVar, char dNodeType, // z = 0
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pizz_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uzVar * uzVar) + 3.0 * uzVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pizz = inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH + 0.5 * uzVar)); //A35
-    piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pixx_I); //A36
-    pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - piyy_I); //A39
-    pixz = inv_rho * (2.0 * rho_I * pixz_I + ONETHIRD*rho*uxVar); //A37
-    piyz = inv_rho * (2.0 * rho_I * piyz_I + ONETHIRD*rho*uyVar); //A40
-    pixy = inv_rho * rho_I * pixy_I; //A38
+    pizz = 4.5 * inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH + 0.5 * uzVar)); //A35
+    piyy = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pixx_I); //A36
+    pixx = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - piyy_I); //A39
+    pixz = 9.0 * inv_rho * (2.0 * rho_I * pixz_I + ONETHIRD*rho*uxVar); //A37
+    piyz = 9.0 * inv_rho * (2.0 * rho_I * piyz_I + ONETHIRD*rho*uyVar); //A40
+    pixy = 9.0 * inv_rho * rho_I * pixy_I; //A38
 
     rhoVar = rho;
 
@@ -246,12 +246,12 @@ void gpuBCMomentF( dfloat* pop, dfloat& rhoVar, char dNodeType, //z = NZ
     dfloat rho = rho_I * ( 9.0 * T_OMEGA * (pizz_I) + 12.0)/ (OMEGA * (1.0 - 6.0 * uzVar * uzVar) - 3.0 * uzVar * OMEGA_P1 + 9.0); //A34
     dfloat inv_rho = 1.0/rho;
 
-    pizz = inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH - 0.5 * uzVar)); //A35
-    piyy = inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pixx_I); //A36
-    pixx = inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - piyy_I); //A39
-    pixz = inv_rho * (2.0 * rho_I * pixz_I - ONETHIRD*rho*uxVar); //A37
-    piyz = inv_rho * (2.0 * rho_I * piyz_I - ONETHIRD*rho*uyVar); //A40
-    pixy = inv_rho * rho_I * pixy_I; //A38
+    pizz = 4.5 * inv_rho * (1.5 * rho_I * pizz_I  + rho * (ONESIXTH - 0.5 * uzVar)); //A35
+    piyy = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * piyy_I - pixx_I); //A36
+    pixx = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - piyy_I); //A39
+    pixz = 9.0 * inv_rho * (2.0 * rho_I * pixz_I - ONETHIRD*rho*uxVar); //A37
+    piyz = 9.0 * inv_rho * (2.0 * rho_I * piyz_I - ONETHIRD*rho*uyVar); //A40
+    pixy = 9.0 * inv_rho * rho_I * pixy_I; //A38
 
     rhoVar = rho;
 
@@ -297,12 +297,12 @@ gpuBCMomentNW(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho; 
 
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 - 15.0*uxVar + 8.0*uyVar); //A30
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar - 8.0*uxVar); //A30  
-    pizz = inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I - 30.0 * pixy_I) - (4.0/69.0) * (1.0- uxVar + uzVar); //A31
-    pixz = inv_rho * 2.0 * pixz_I + ONETHIRD * uzVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I - ONETHIRD * uzVar; //A33
-    pixy = inv_rho * (1.0/23.0) * rho_I * (-(-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 + uxVar - uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 - 15.0*uxVar + 8.0*uyVar)); //A30
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar - 8.0*uxVar)); //A30  
+    pizz = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I - 30.0 * pixy_I) - (4.0/69.0) * (1.0- uxVar + uzVar)); //A31
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I + ONETHIRD * uzVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I - ONETHIRD * uzVar); //A33
+    pixy = 9.0 * (inv_rho * (1.0/23.0) * rho_I * (-(-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 + uxVar - uzVar)); //A32
 
     rhoVar = rho;                  
 }
@@ -338,12 +338,12 @@ gpuBCMomentNE(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho; 
 
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uxVar + 8.0*uyVar); //A30
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar + 8.0*uxVar); //A30  
-    pizz = inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I + 30.0 * pixy_I) - (4.0/69.0) * (1.0+ uxVar + uzVar); //A31
-    pixz = inv_rho * 2.0 * pixz_I - ONETHIRD * uzVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I - ONETHIRD * uzVar; //A33
-    pixy = inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 + uxVar + uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uxVar + 8.0*uyVar)); //A30
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar + 8.0*uxVar));//A30  
+    pizz = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I + 30.0 * pixy_I) - (4.0/69.0) * (1.0+ uxVar + uzVar)); //A31
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I - ONETHIRD * uzVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I - ONETHIRD * uzVar); //A33
+    pixy = 9.0 * (inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 + uxVar + uzVar)); //A32
 
     rhoVar = rho;  
          
@@ -380,12 +380,12 @@ gpuBCMomentSW(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho; 
 
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 - 15.0*uxVar - 8.0*uyVar); //A30
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 - 15.0*uzVar - 8.0*uxVar); //A30  
-    pizz = inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I + 30.0 * pixy_I) - (4.0/69.0) * (1.0- uxVar - uzVar); //A31
-    pixz = inv_rho * 2.0 * pixz_I + ONETHIRD * uzVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I + ONETHIRD * uzVar; //A33
-    pixy = inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 - uxVar - uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 - 15.0*uxVar - 8.0*uyVar)); //A30
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I - 34.0*pixy_I) - (2.0/69.0)*(-8.0 - 15.0*uzVar - 8.0*uxVar)); //A30  
+    pizz = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I + 30.0 * pixy_I) - (4.0/69.0) * (1.0- uxVar - uzVar)); //A31
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I + ONETHIRD * uzVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I + ONETHIRD * uzVar); //A33
+    pixy = 9.0 * (inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 - uxVar - uzVar)); //A32
 
     rhoVar = rho;   
                 
@@ -422,12 +422,12 @@ gpuBCMomentSE(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho;
     
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uxVar - 8.0*uyVar); //A30
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar - 8.0*uxVar); //A30  
-    pizz = inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I + 30.0 * pixy_I) - (4.0/69.0) * (-1.0 + uxVar - uzVar); //A31
-    pixz = inv_rho * 2.0 * pixz_I - ONETHIRD * uzVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I + ONETHIRD * uzVar; //A33
-    pixy = inv_rho * (1.0/23.0) * rho_I * (-(-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 - uxVar + uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + piyy_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uxVar - 8.0*uyVar)); //A30
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pixx_I - 6.0*pizz_I + 34.0*pixy_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar - 8.0*uxVar));//A30  
+    pizz = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * pixx_I - 9.0*piyy_I + 54.0 * pizz_I + 30.0 * pixy_I) - (4.0/69.0) * (-1.0 + uxVar - uzVar)); //A31
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I - ONETHIRD * uzVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I + ONETHIRD * uzVar); //A33
+    pixy = 9.0 * (inv_rho * (1.0/23.0) * rho_I * (-(-17.0*pixx_I - 17.0*piyy_I + 10.0*pizz_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 - uxVar + uzVar)); //A32
 
     rhoVar = rho;                    
 }
@@ -468,12 +468,12 @@ gpuBCMomentNF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho;
 
 
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uyVar + 8.0*uzVar); //A30  
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar + 8.0*uyVar); //A30
-    pixx = inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I + 30.0 * piyz_I) - (4.0/69.0) * (1.0 + uyVar + uzVar); //A31
-    pixy = inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar; //A33
-    pixz = inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar; //A33
-    piyz = inv_rho * (1.0/23.0) * rho_I * ((-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 + uyVar + uzVar); //A32
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uyVar + 8.0*uzVar)); //A30  
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar + 8.0*uyVar)); //A30
+    pixx = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I + 30.0 * piyz_I) - (4.0/69.0) * (1.0 + uyVar + uzVar)); //A31
+    pixy = 9.0 * (inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar); //A33
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar); //A33
+    piyz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * ((-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 + uyVar + uzVar)); //A32
 
     rhoVar = rho;                
 }
@@ -508,12 +508,12 @@ gpuBCMomentNB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;
 
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uyVar - 8.0*uzVar); //A30  
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uzVar + 8.0*uyVar); //A30
-    pixx = inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I - 30.0 * piyz_I) - (4.0/69.0) * (1.0 + uyVar - uzVar); //A31
-    pixy = inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar; //A33
-    pixz = inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar; //A33
-    piyz = inv_rho * (1.0/23.0) * rho_I * (-(-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 - uyVar + uzVar); //A32
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uyVar - 8.0*uzVar)); //A30  
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uzVar + 8.0*uyVar)); //A30
+    pixx = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I - 30.0 * piyz_I) - (4.0/69.0) * (1.0 + uyVar - uzVar)); //A31
+    pixy = 9.0 * (inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar); //A33
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar); //A33
+    piyz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * (-(-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 - uyVar + uzVar)); //A32
 
     rhoVar = rho;  
 
@@ -551,12 +551,12 @@ gpuBCMomentSF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;
 
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uyVar + 8.0*uzVar); //A30  
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar - 8.0*uyVar); //A30
-    pixx = inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I - 30.0 * piyz_I) - (4.0/69.0) * (1.0 - uyVar + uzVar); //A31
-    pixy = inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar; //A33
-    pixz = inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar; //A33
-    piyz = inv_rho * (1.0/23.0) * rho_I * (-(-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 + uyVar - uzVar); //A32
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uyVar + 8.0*uzVar));//A30  
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I + 34.0*piyz_I) - (2.0/69.0)*(-8.0 + 15.0*uzVar - 8.0*uyVar)); //A30
+    pixx = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I - 30.0 * piyz_I) - (4.0/69.0) * (1.0 - uyVar + uzVar)); //A31
+    pixy = 9.0 * (inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar); //A33
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I - ONETHIRD * uxVar); //A33
+    piyz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * (-(-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(-1.0 + uyVar - uzVar)); //A32
 
     rhoVar = rho;  
 }
@@ -592,12 +592,12 @@ gpuBCMomentSB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho;
 
 
-    piyy = inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uyVar - 8.0*uzVar); //A30  
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uzVar - 8.0*uyVar); //A30
-    pixx = inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I + 30.0 * piyz_I) - (4.0/69.0) * (1.0 - uyVar - uzVar); //A31
-    pixy = inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar; //A33
-    pixz = inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar; //A33
-    piyz = inv_rho * (1.0/23.0) * rho_I * ((-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 - uyVar - uzVar); //A32
+    piyy = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * piyy_I + pizz_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uyVar - 8.0*uzVar));//A30  
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + piyy_I - 6.0*pixx_I - 34.0*piyz_I) - (2.0/69.0)*(-8.0 - 15.0*uzVar - 8.0*uyVar)); //A30
+    pixx = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 * piyy_I - 9.0*pizz_I + 54.0 * pixx_I + 30.0 * piyz_I) - (4.0/69.0) * (1.0 - uyVar - uzVar)); //A31
+    pixy = 9.0 * (inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar); //A33
+    pixz = 9.0 * (inv_rho * 2.0 * pixz_I + ONETHIRD * uxVar); //A33
+    piyz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * ((-17.0*piyy_I - 17.0*pizz_I + 10.0*pixx_I) + 118.0*pixy_I) - (19.0/69.0)*(1.0 - uyVar - uzVar)); //A32
 
     rhoVar = rho;  
                    
@@ -636,12 +636,12 @@ gpuBCMomentWF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho; 
 
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uxVar+8.0*uzVar); //A30
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uzVar-8.0*uxVar); //A30  
-    piyy = inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I - 30.0 * pixz_I) - (4.0/69.0) * (1.0- uxVar + uzVar); //A31
-    pixy = inv_rho * 2.0 * pixy_I + ONETHIRD * uyVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I - ONETHIRD * uyVar; //A33
-    pixz = inv_rho * (1.0/23.0) * rho_I * (-(-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(-1.0 - uxVar + uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uxVar+8.0*uzVar)); //A30
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uzVar-8.0*uxVar));//A30  
+    piyy = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I - 30.0 * pixz_I) - (4.0/69.0) * (1.0- uxVar + uzVar)); //A31
+    pixy = 9.0 * (inv_rho * 2.0 * pixy_I + ONETHIRD * uyVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I - ONETHIRD * uyVar); //A33
+    pixz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * (-(-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(-1.0 - uxVar + uzVar)); //A32
 
     rhoVar = rho;             
                 
@@ -679,12 +679,12 @@ gpuBCMomentWB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho;
 
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uxVar-8.0*uzVar); //A30
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uzVar-8.0*uxVar); //A30
-    piyy = inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I + 30.0 * pixz_I) - (4.0/69.0) * (1.0- uxVar - uzVar); //A31
-    pixy = inv_rho * 2.0 * pixy_I + ONETHIRD * uyVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I + ONETHIRD * uyVar; //A33
-    pixz = inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(1.0 - uxVar - uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uxVar-8.0*uzVar)); //A30
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uzVar-8.0*uxVar)); //A30
+    piyy = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I + 30.0 * pixz_I) - (4.0/69.0) * (1.0- uxVar - uzVar)); //A31
+    pixy = 9.0 * (inv_rho * 2.0 * pixy_I + ONETHIRD * uyVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I + ONETHIRD * uyVar); //A33
+    pixz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(1.0 - uxVar - uzVar)); //A32
 
     rhoVar = rho;
 }
@@ -719,12 +719,12 @@ gpuBCMomentEF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho; 
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uxVar+8.0*uzVar); //A30
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uzVar+8.0*uxVar); //A30    
-    piyy = inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I + 30.0 * pixz_I) - (4.0/69.0) * (1.0+ uxVar + uzVar); //A31 
-    pixy = inv_rho * 2.0 * pixy_I - ONETHIRD * uyVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I - ONETHIRD * uyVar; //A33 
-    pixz = inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(1.0 + uxVar + uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uxVar+8.0*uzVar)); //A30
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I - 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uzVar+8.0*uxVar)); //)A30    
+    piyy = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I + 30.0 * pixz_I) - (4.0/69.0) * (1.0+ uxVar + uzVar)); //A31 
+    pixy = 9.0 * (inv_rho * 2.0 * pixy_I - ONETHIRD * uyVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I - ONETHIRD * uyVar); //A33 
+    pixz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(1.0 + uxVar + uzVar)); //A32
 
     rhoVar = rho;                            
 
@@ -762,12 +762,12 @@ gpuBCMomentEB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat inv_rho = 1.0/rho;            
 
     //                                                                         v this sign may be wrong
-    pixx = inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uxVar-8.0*uzVar); //A30
-    pizz = inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uzVar+8.0*uxVar); //A30
-    piyy = inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I - 30.0 * pixz_I) - (4.0/69.0) * (1.0+ uxVar - uzVar); //A31 
-    pixy = inv_rho * 2.0 * pixy_I - ONETHIRD * uyVar; //A33
-    piyz = inv_rho * 2.0 * piyz_I + ONETHIRD * uyVar; //A33   
-    pixz = inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(1.0 + uxVar - uzVar); //A32
+    pixx = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pixx_I + pizz_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0+15.0*uxVar-8.0*uzVar)); //A30
+    pizz = 4.5 * (inv_rho * (1.0/23.0) * rho_I * (47.0 * pizz_I + pixx_I - 6.0*piyy_I + 34.0*pixz_I) - (2.0/69.0)*(-8.0-15.0*uzVar+8.0*uxVar)); //A30
+    piyy = 4.5 * (inv_rho * (2.0/69.0) * rho_I * (-9.0 *pixx_I - 9.0*pizz_I + 54.0 * piyy_I - 30.0 * pixz_I) - (4.0/69.0) * (1.0+ uxVar - uzVar)); //A31 
+    pixy = 9.0 * (inv_rho * 2.0 * pixy_I - ONETHIRD * uyVar); //A33
+    piyz = 9.0 * (inv_rho * 2.0 * piyz_I + ONETHIRD * uyVar); //A33   
+    pixz = 9.0 * (inv_rho * (1.0/23.0) * rho_I * ((-17.0*pixx_I - 17.0*pizz_I + 10.0*piyy_I) + 118.0*pixz_I) - (19.0/69.0)*(1.0 + uxVar - uzVar)); //A32
 
     rhoVar = rho;     
 }
@@ -812,12 +812,12 @@ gpuBCMomentNWF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;        
 
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I + pixz_I + piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar + uyVar + uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I - piyz_I - pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar - uxVar + uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I - piyz_I - pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar - uxVar + uyVar);
-    pixy = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I - pixz_I + piyz_I) - (2.0/9.0) * (-1.0 - uyVar + uxVar - uzVar);
-    pixz = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I - pixy_I + piyz_I) - (2.0/9.0) * (-1.0 - uzVar + uxVar - uyVar);
-    piyz = inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I + pixy_I + pixz_I) - (2.0/9.0) * (1.0 + uzVar + uyVar - uxVar);
+    pixx = 4.5 *( inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I + pixz_I + piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar + uyVar + uzVar));
+    piyy = 4.5 *( inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I - piyz_I - pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar - uxVar + uzVar));
+    pizz = 4.5 *( inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I - piyz_I - pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar - uxVar + uyVar));
+    pixy = 9.0 *( inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I - pixz_I + piyz_I) - (2.0/9.0) * (-1.0 - uyVar + uxVar - uzVar));
+    pixz = 9.0 *( inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I - pixy_I + piyz_I) - (2.0/9.0) * (-1.0 - uzVar + uxVar - uyVar));
+    piyz = 9.0 *( inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I + pixy_I + pixz_I) - (2.0/9.0) * (1.0 + uzVar + uyVar - uxVar));
 
     rhoVar = rho;             
      
@@ -856,12 +856,12 @@ gpuBCMomentNWB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;         
        
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I - pixz_I - piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar + uyVar - uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I + piyz_I + pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar - uxVar - uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I + piyz_I - pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar - uxVar + uyVar);
-    pixy = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I + pixz_I - piyz_I) - (2.0/9.0) * (-1.0 - uyVar + uxVar + uzVar);
-    pixz = inv_rho * ONETHIRD * (+3.0 * pixx_I -3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I + pixy_I + piyz_I) - (2.0/9.0) * (1.0 - uzVar - uxVar + uyVar);
-    piyz = inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I - pixy_I + pixz_I) - (2.0/9.0) * (-1.0 + uzVar - uyVar + uxVar);
+    pixx = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I - pixz_I - piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar + uyVar - uzVar));
+    piyy = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I + piyz_I + pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar - uxVar - uzVar));
+    pizz = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I + piyz_I - pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar - uxVar + uyVar));
+    pixy = 9.0 * (inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I + pixz_I - piyz_I) - (2.0/9.0) * (-1.0 - uyVar + uxVar + uzVar));
+    pixz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * pixx_I -3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I + pixy_I + piyz_I) - (2.0/9.0) * (1.0 - uzVar - uxVar + uyVar));
+    piyz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I - pixy_I + pixz_I) - (2.0/9.0) * (-1.0 + uzVar - uyVar + uxVar));
 
     rhoVar = rho;    
 }
@@ -899,12 +899,12 @@ gpuBCMomentNEF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;            
 
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I - pixz_I + piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar + uyVar + uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I - piyz_I + pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar + uxVar + uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I - piyz_I + pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar + uxVar + uyVar);
-    pixy = inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I - pixz_I - piyz_I) - (2.0/9.0) * (1.0 + uyVar + uxVar + uzVar);
-    pixz = inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * pizz_I + 3.0* piyy_I + 17.0*pixz_I - pixy_I - piyz_I) - (2.0/9.0) * (1.0 + uzVar + uxVar + uyVar);
-    piyz = inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I - pixy_I - pixz_I) - (2.0/9.0) * (1.0 + uzVar + uyVar + uxVar);
+    pixx = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I - pixz_I + piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar + uyVar + uzVar));
+    piyy = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I - piyz_I + pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar + uxVar + uzVar));
+    pizz = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I - piyz_I + pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar + uxVar + uyVar));
+    pixy = 9.0 * (inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I - pixz_I - piyz_I) - (2.0/9.0) * (1.0 + uyVar + uxVar + uzVar));
+    pixz = 9.0 * (inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * pizz_I + 3.0* piyy_I + 17.0*pixz_I - pixy_I - piyz_I) - (2.0/9.0) * (1.0 + uzVar + uxVar + uyVar));
+    piyz = 9.0 * (inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I - pixy_I - pixz_I) - (2.0/9.0) * (1.0 + uzVar + uyVar + uxVar));
 
     rhoVar = rho;     
 }
@@ -942,12 +942,12 @@ gpuBCMomentNEB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;    
 
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I + pixz_I - piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar + uyVar - uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I + piyz_I - pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar + uxVar - uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I + piyz_I + pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar + uxVar + uyVar);  
-    pixy = inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I + pixz_I + piyz_I) - (2.0/9.0) * (1.0 + uyVar + uxVar - uzVar);
-    pixz = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I + pixy_I - piyz_I) - (2.0/9.0) * (-1.0 + uzVar - uxVar - uyVar);
-    piyz = inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I + pixy_I - pixz_I) - (2.0/9.0) * (-1.0 + uzVar - uyVar - uxVar);
+    pixx = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I + pixz_I - piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar + uyVar - uzVar));
+    piyy = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I + piyz_I - pixz_I)) + (2.0/9.0) * (1.0 - 2.0*uyVar + uxVar - uzVar));
+    pizz = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I + piyz_I + pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar + uxVar + uyVar));  
+    pixy = 9.0 * (inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I + pixz_I + piyz_I) - (2.0/9.0) * (1.0 + uyVar + uxVar - uzVar));
+    pixz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I + pixy_I - piyz_I) - (2.0/9.0) * (-1.0 + uzVar - uxVar - uyVar));
+    piyz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I + pixy_I - pixz_I) - (2.0/9.0) * (-1.0 + uzVar - uyVar - uxVar));
 
     rhoVar = rho;      
 }
@@ -984,12 +984,12 @@ gpuBCMomentSWF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;    
 
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I + pixz_I - piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar - uyVar + uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I + piyz_I - pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar - uxVar + uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I + piyz_I + pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar - uxVar - uyVar);
-    pixy = inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I + pixz_I + piyz_I) - (2.0/9.0) * (1.0 - uyVar - uxVar + uzVar);
-    pixz = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I + pixy_I - piyz_I) - (2.0/9.0) * (-1.0 - uzVar + uxVar + uyVar);
-    piyz = inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I + pixy_I - pixz_I) - (2.0/9.0) * (-1.0 - uzVar - uyVar + uxVar);
+    pixx = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I + pixz_I - piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar - uyVar + uzVar));
+    piyy = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I + piyz_I - pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar - uxVar + uzVar));
+    pizz = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I + piyz_I + pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar - uxVar - uyVar));
+    pixy = 9.0 * (inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I + pixz_I + piyz_I) - (2.0/9.0) * (1.0 - uyVar - uxVar + uzVar));
+    pixz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I + pixy_I - piyz_I) - (2.0/9.0) * (-1.0 - uzVar + uxVar + uyVar));
+    piyz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I + pixy_I - pixz_I) - (2.0/9.0) * (-1.0 - uzVar - uyVar + uxVar));
 
     rhoVar = rho;    
 
@@ -1027,12 +1027,12 @@ gpuBCMomentSWB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho;
 
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I - pixz_I + piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar - uyVar - uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I - piyz_I + pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar - uxVar - uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I - piyz_I + pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar - uxVar - uyVar); 
-    pixy = inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I - pixz_I - piyz_I) - (2.0/9.0) * (1.0 - uyVar - uxVar - uzVar);
-    pixz = inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * pizz_I + 3.0* piyy_I + 17.0*pixz_I - pixy_I - piyz_I) - (2.0/9.0) * (1.0 - uzVar - uxVar - uyVar);
-    piyz = inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I - pixy_I - pixz_I) - (2.0/9.0) * (1.0 - uzVar - uyVar - uxVar);
+    pixx = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(-pixy_I - pixz_I + piyz_I)) + (2.0/9.0) * (1.0 + 2.0*uxVar - uyVar - uzVar));
+    piyy = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixy_I - piyz_I + pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar - uxVar - uzVar));
+    pizz = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I - piyz_I + pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar - uxVar - uyVar)); 
+    pixy = 9.0 * (inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * piyy_I + 3.0* pizz_I + 17.0*pixy_I - pixz_I - piyz_I) - (2.0/9.0) * (1.0 - uyVar - uxVar - uzVar));
+    pixz = 9.0 * (inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * pizz_I + 3.0* piyy_I + 17.0*pixz_I - pixy_I - piyz_I) - (2.0/9.0) * (1.0 - uzVar - uxVar - uyVar));
+    piyz = 9.0 * (inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I - pixy_I - pixz_I) - (2.0/9.0) * (1.0 - uzVar - uyVar - uxVar));
 
     rhoVar = rho;                     
 }
@@ -1071,12 +1071,12 @@ gpuBCMomentSEF(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho; 
 
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I - pixz_I - piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar - uyVar + uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I + piyz_I + pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar + uxVar + uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I + piyz_I - pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar + uxVar - uyVar);
-    pixy = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I - pixz_I - piyz_I) - (2.0/9.0) * (-1.0 + uyVar - uxVar + uzVar);
-    pixz = inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * pizz_I + 3.0* piyy_I + 17.0*pixz_I + pixy_I + piyz_I) - (2.0/9.0) * (1.0 + uzVar + uxVar + uyVar);
-    piyz = inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I - pixy_I + pixz_I) - (2.0/9.0) * (-1.0 - uzVar + uyVar + uxVar);
+    pixx = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I - pixz_I - piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar - uyVar + uzVar));
+    piyy = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I + piyz_I + pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar + uxVar + uzVar));
+    pizz = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(-pixz_I + piyz_I - pixy_I)) + (2.0/9.0) * (1.0 - 2.0*uzVar + uxVar - uyVar));
+    pixy = 9.0 * (inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I - pixz_I - piyz_I) - (2.0/9.0) * (-1.0 + uyVar - uxVar + uzVar));
+    pixz = 9.0 * (inv_rho * ONETHIRD * (-3.0 * pixx_I -3.0 * pizz_I + 3.0* piyy_I + 17.0*pixz_I + pixy_I + piyz_I) - (2.0/9.0) * (1.0 + uzVar + uxVar + uyVar));
+    piyz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * piyy_I +3.0 * pizz_I - 3.0* pixx_I + 17.0*piyz_I - pixy_I + pixz_I) - (2.0/9.0) * (-1.0 - uzVar + uyVar + uxVar));
 
     rhoVar = rho;                     
 }
@@ -1114,12 +1114,12 @@ gpuBCMomentSEB(dfloat *pop, dfloat &rhoVar, char dNodeType,
     dfloat rho = rho_I * bE / dE; //A27
     dfloat inv_rho = 1.0/rho; 
 
-    pixx = inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I + pixz_I + piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar - uyVar - uzVar);
-    piyy = inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I - piyz_I - pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar + uxVar - uzVar);
-    pizz = inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I - piyz_I - pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar + uxVar - uyVar);   
-    pixy = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I - pixz_I + piyz_I) - (2.0/9.0) * (-1.0 + uyVar - uxVar + uzVar);
-    pixz = inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I - pixy_I + piyz_I) - (2.0/9.0) * (-1.0 + uzVar - uxVar + uyVar);
-    piyz = inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I + pixy_I + pixz_I) - (2.0/9.0) * (1.0 - uzVar - uyVar + uxVar);
+    pixx = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pixx_I - 2.0*piyy_I - 2.0 * pizz_I + 6.0*(pixy_I + pixz_I + piyz_I)) + (2.0/9.0) * (1.0 - 2.0*uxVar - uyVar - uzVar));
+    piyy = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * piyy_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixy_I - piyz_I - pixz_I)) + (2.0/9.0) * (1.0 + 2.0*uyVar + uxVar - uzVar));
+    pizz = 4.5 * (inv_rho * ONETHIRD * rho_I * (10.0 * pizz_I - 2.0*pixx_I - 2.0 * pizz_I + 6.0*(pixz_I - piyz_I - pixy_I)) + (2.0/9.0) * (1.0 + 2.0*uzVar + uxVar - uyVar)); 
+    pixy = 9.0 * (inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * piyy_I - 3.0* pizz_I + 17.0*pixy_I - pixz_I + piyz_I) - (2.0/9.0) * (-1.0 + uyVar - uxVar + uzVar));
+    pixz = 9.0 * (inv_rho * ONETHIRD * (+3.0 * pixx_I +3.0 * pizz_I - 3.0* piyy_I + 17.0*pixz_I - pixy_I + piyz_I) - (2.0/9.0) * (-1.0 + uzVar - uxVar + uyVar));
+    piyz = 9.0 * (inv_rho * ONETHIRD * (-3.0 * piyy_I -3.0 * pizz_I + 3.0* pixx_I + 17.0*piyz_I + pixy_I + pixz_I) - (2.0/9.0) * (1.0 - uzVar - uyVar + uxVar));
 
     rhoVar = rho;    
 }

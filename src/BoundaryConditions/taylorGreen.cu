@@ -1,5 +1,10 @@
 #include "boundaryCondition.cuh"
 
+__device__ void gpuBoundaryConditionPop(
+    dim3 threadIdx, dim3 blockIdx, dfloat *pop,dfloat *s_pop, char dNodeType){
+
+}
+
 __device__ void gpuBoundaryConditionMom(
     dim3 threadIdx, dim3 blockIdx,  dfloat* pop, dfloat& rhoVar, char dNodeType,
     dfloat &uxVar , dfloat &uyVar , dfloat& uzVar , 
