@@ -54,7 +54,7 @@ __global__ void gpuInitialization_mom(
         // logaritimic velocity profile
         dfloat uz_log; 
         dfloat pos = (y < NY/2 ? y + 0.5 : NY - (y + 0.5));
-        uz_log = (uc_f*U_TAU)*(pos/del)*(pos/del);
+        uz_log = -(uc_f*U_TAU)*(((pos-NY/2)/del)*((pos-NY/2)/del)) + (uc_f*U_TAU);
         
         uz = uz_log;
         ux = 0.0;
