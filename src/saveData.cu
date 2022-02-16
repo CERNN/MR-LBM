@@ -11,27 +11,145 @@ void linearMacr(
 ){
     size_t indexMacr;
 
-    dfloat Ekin;
-    Ekin  =  0;
+    dfloat rho0 =0;
+    dfloat ux0  =0;
+    dfloat uy0  =0;
+    dfloat uz0  =0;
 
-    for(int z = 0; z< NZ;z++){
-        ///printf("z %d \n", z);
-        for(int y = 0; y< NY;y++){
+    dfloat u[NY];
+    dfloat v[NY];
+    dfloat w[NY];
+
+    dfloat p[NY];
+
+    dfloat uu[NY];
+    dfloat vv[NY];
+    dfloat ww[NY];
+    dfloat uv[NY];
+    dfloat uw[NY];
+    dfloat vw[NY];
+    dfloat pp[NY];
+
+    dfloat loc_p = 0;
+
+    dfloat rho_avg_inst = 0.0;
+
+    for(int y = 0; y< NY;y++){
+        for(int z = 0; z< NZ;z++){
             for(int x = 0; x< NX;x++){
-                indexMacr = idxScalarGlobal(x,y,z);
-
-                rho[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                ux[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                uy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                uz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-
-                //Ekin += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
-                
-
-                
+                rho_avg_inst += h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
             }
         }
     }
+    rho_avg_inst /= NX*NY*NZ;
+
+    for(int y = 0; y< NY;y++){
+        u[y] = 0.0;
+        v[y] = 0.0;
+        w[y] = 0.0;
+
+        p[y] = 0.0;
+
+        uu[y] = 0.0;
+        vv[y] = 0.0;
+        ww[y] = 0.0;
+        uv[y] = 0.0;
+        uw[y] = 0.0;
+        vw[y] = 0.0;
+        pp[y] = 0.0;
+
+
+        for(int z = 0; z< NZ;z++){
+            for(int x = 0; x< NX;x++){
+                indexMacr = idxScalarGlobal(x,y,z);
+
+                rho0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                ux0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                uz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+
+                rho[indexMacr] =rho0;
+                ux[indexMacr] = ux0;
+                uy[indexMacr] = uy0;
+                uz[indexMacr] = uz0;
+
+                loc_p = (1.0/3.0)*rho0 - (1.0/3.0)*rho_avg_inst;
+                
+                u[y] += ux0;
+                v[y] += uy0;
+                w[y] += uz0;
+                p[y] += loc_p;
+                uu[y] += ux0*ux0;
+                vv[y] += uy0*uy0;
+                ww[y] += uz0*uz0;
+                uv[y] += ux0*uy0;
+                uw[y] += ux0*uz0;
+                vw[y] += uy0*uz0;
+                pp[y] += loc_p*loc_p;
+            }
+        }
+        u[y] /= NX*NZ;
+        v[y] /= NX*NZ;
+        w[y] /= NX*NZ;
+        p[y] /= NX*NZ;
+        uu[y] /= NX*NZ;
+        vv[y] /= NX*NZ;
+        ww[y] /= NX*NZ;
+        uv[y] /= NX*NZ;
+        uw[y] /= NX*NZ;
+        vw[y] /= NX*NZ;
+        pp[y] /= NX*NZ;
+    }
+
+    
+    
+    printf(" %d 00 ",step);
+    for(int y = 0; y< NY;y++)
+        printf("%0.7e ",u[y]);
+    
+    printf("\n %d 01 ",step);
+    for(int y = 0; y< NY;y++)
+        printf("%0.7e ",u[y]);
+
+    printf("\n %d 02 ",step);
+    for(int y = 0; y< NY;y++)
+        printf("%0.7e ",v[y]);
+
+    printf("\n %d 03 ",step);
+    for(int y = 0; y< NY;y++)
+        printf("%0.7e ",w[y]);
+
+
+
+
+    printf("\n %d 11 ",step);
+    for(int y = 0; y< NY;y++)
+        printf("%0.7e ", uu[y]);
+
+    printf("\n %d 12 ",step);        
+    for(int y = 0; y< NY;y++)
+        printf("%0.7e ", uv[y]);
+
+    printf("\n %d 13 ",step);
+    for(int y = 0; y< NY;y++)        
+        printf("%0.7e ", uw[y]);
+
+    printf("\n %d 22 ",step);
+    for(int y = 0; y< NY;y++)        
+        printf("%0.7e ", vv[y]);
+
+    printf("\n %d 23 ",step);     
+    for(int y = 0; y< NY;y++)        
+        printf("%0.7e ", vw[y]);
+
+    printf("\n %d 33 ",step);
+    for(int y = 0; y< NY;y++)        
+        printf("%0.7e ", ww[y]);
+        
+
+    printf("\n");
+    
+
     //Ekin = Ekin/(2*N*N*N);
     //printf("%0.7e \n",Ekin);
 }

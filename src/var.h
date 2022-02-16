@@ -8,7 +8,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-#define SINGLE_PRECISION 
+#define DOUBLE_PRECISION 
 #ifdef SINGLE_PRECISION
     typedef float dfloat;      // single precision
 #endif
@@ -20,54 +20,59 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-//#define BC_POPULATION_BASED
-#define BC_MOMENT_BASED
+#define BC_POPULATION_BASED
+//#define BC_MOMENT_BASED
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 
-#define ID_SIM "256"            // prefix for simulation's files
-#define PATH_FILES "TAYLOR"  // path to save simulation's files
+#define ID_SIM "Re180_D"            // prefix for simulation's files
+#define PATH_FILES "CHANNEL"  // path to save simulation's files
 #define RANDOM_NUMBERS true    // to generate random numbers 
                                 // (useful for turbulence)
 
 #define GPU_INDEX 0
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
-constexpr int SCALE = 1;
+constexpr dfloat U_TAU = 0.00579;     // friction velocity
+constexpr int del = 104;               // integral lenght scale
 
-#define MACR_SAVE (200 * SCALE)
 
-
-constexpr int N = 256 * SCALE;
-constexpr int NX = N;        // size x of the grid 
-                                    // (32 multiple for better performance)
-constexpr int NY = N;        // size y of the grid
-constexpr int NZ = N;        // size z of the grid in one GPU
+constexpr int N = del;       // (32 multiple for better performance)
+constexpr int NX = 2*del;    // size x of the grid 
+constexpr int NY = 2*del;    // size y of the grid
+constexpr int NZ = 16*del; //4*del/dZ;    
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 16.0/(125.0*M_PI);  
-constexpr dfloat RE = 1600.0;	
-constexpr dfloat L = (dfloat)N / (2.0 * M_PI);
-constexpr dfloat VISC = L*U_MAX / RE;
-constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
-constexpr dfloat Cx = 1.0/L;
-constexpr dfloat Cp = 1.0/(Cx * Ct * Ct);
+constexpr dfloat U_MAX = U_TAU;       // max velocity
+constexpr dfloat RHO_0 = 1.0;         // initial rho
 
-constexpr int N_STEPS = (int)(20.0/Ct)+1;
+constexpr dfloat Re = 180.0;	  // Reynolds number
+constexpr dfloat visc = del*U_TAU/Re;// kinematic viscosity for Re_tau = 180
+constexpr dfloat TAU = 3.0*visc + 0.5;// relaxation time
 
-
-constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
+constexpr dfloat OMEGAd2 = OMEGA/2.0;
+constexpr dfloat OMEGAd3 = OMEGA/3.0;
 constexpr dfloat OMEGAd9 = OMEGA/9.0; 
 constexpr dfloat T_OMEGA = 1.0 - OMEGA;
 constexpr dfloat TT_OMEGA = 1.0 - 0.5*OMEGA;
 constexpr dfloat OMEGA_P1 = 1.0 + OMEGA;
+constexpr dfloat TT_OMEGA_T3 = TT_OMEGA*3.0;
 
-constexpr dfloat RHO_0 = 1.0;         // initial rho
+constexpr dfloat ETT = del/U_TAU;
+constexpr int N_STEPS_DEV = (int)ETT * 30;
+constexpr int N_STEPS_DATA = (int)ETT * 50;
+//constexpr int N_STEPS = N_STEPS_DEV + N_STEPS_DATA;
+constexpr int N_STEPS = 1400000;
+//constexpr int save_data = ETT/20;
+
+#define MACR_SAVE (1000)
+
+
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
-constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
+constexpr dfloat FZ = U_TAU*U_TAU/del;;        // force in z (flow direction in most cases)
 
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
     
@@ -126,7 +131,7 @@ constexpr dfloat ONETHIRD = 1.0/3.0;
 /* ------------------------------ MEMORY SIZE ------------------------------ */
 const size_t BLOCK_NX = 8;
 const size_t BLOCK_NY = 8;
-const size_t BLOCK_NZ = 8;
+const size_t BLOCK_NZ = 4;
 const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;
 
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;
