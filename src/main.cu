@@ -183,11 +183,11 @@ int main() {
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
             
-            printf("step %d ",step);
+            printf("step %d \n",step);
             linearMacr(h_fMom,rho,ux,uy,uz,step); 
             fflush(stdout);
-            //printf("------------------------------------------------------------------------\n");
-            //saveMacr(rho,ux,uy,uz,step);
+            printf("------------------------------------------------------------------------\n");
+            saveMacr(rho,ux,uy,uz,step);
         }
 
     }

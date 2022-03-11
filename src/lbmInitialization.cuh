@@ -10,7 +10,6 @@
 #include "globalFunctions.h"
 #include "errorDef.h"
 #include "var.h"
-#include "interfaceTransfer.cuh"
 
 /*
 *   @brief Initializes random numbers (useful to initialize turbulence)

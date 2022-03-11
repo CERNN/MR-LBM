@@ -20,14 +20,14 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-//#define BC_POPULATION_BASED
-#define BC_MOMENT_BASED
+#define BC_POPULATION_BASED
+//#define BC_MOMENT_BASED
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 
-#define ID_SIM "256"            // prefix for simulation's files
-#define PATH_FILES "TAYLOR"  // path to save simulation's files
-#define RANDOM_NUMBERS true    // to generate random numbers 
+#define ID_SIM "000"            // prefix for simulation's files
+#define PATH_FILES "TEST"  // path to save simulation's files
+#define RANDOM_NUMBERS false    // to generate random numbers 
                                 // (useful for turbulence)
 
 #define GPU_INDEX 0
@@ -35,33 +35,34 @@
 
 constexpr int SCALE = 1;
 
-#define MACR_SAVE (200 * SCALE)
+#define MACR_SAVE (500)
 
 
-constexpr int N = 256 * SCALE;
+constexpr int N = 128 * SCALE;
 constexpr int NX = N;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 16.0/(125.0*M_PI);  
-constexpr dfloat RE = 1600.0;	
-constexpr dfloat L = (dfloat)N / (2.0 * M_PI);
+constexpr dfloat U_MAX = 0.05;  
+constexpr dfloat RE = 10.0;	
+constexpr dfloat L = N;
 constexpr dfloat VISC = L*U_MAX / RE;
-constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
-constexpr dfloat Cx = 1.0/L;
-constexpr dfloat Cp = 1.0/(Cx * Ct * Ct);
 
-constexpr int N_STEPS = (int)(20.0/Ct)+1;
+
+constexpr int N_STEPS = 10000;
 
 
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
+constexpr dfloat OMEGAd2 = OMEGA/2.0;
+constexpr dfloat OMEGAd3 = OMEGA/3.0;
 constexpr dfloat OMEGAd9 = OMEGA/9.0; 
 constexpr dfloat T_OMEGA = 1.0 - OMEGA;
 constexpr dfloat TT_OMEGA = 1.0 - 0.5*OMEGA;
 constexpr dfloat OMEGA_P1 = 1.0 + OMEGA;
+constexpr dfloat TT_OMEGA_T3 = TT_OMEGA*3.0;
 
 constexpr dfloat RHO_0 = 1.0;         // initial rho
 
