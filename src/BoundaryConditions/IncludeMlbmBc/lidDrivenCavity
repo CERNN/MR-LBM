@@ -69,14 +69,14 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX         
-            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX 
+            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX;         
+            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX; 
             #endif
             pop[1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 2 - 1)];
             pop[7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 8 - 1)];
@@ -100,14 +100,14 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX         
-            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX 
+            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX;      
+            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX;
             #endif
             pop[1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 2 - 1)];
             pop[7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 8 - 1)];
@@ -131,14 +131,14 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX 
-            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX 
+            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX; 
+            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX; 
             #endif
             pop[2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 1 - 1)];
             pop[8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 7 - 1)];
@@ -162,14 +162,14 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX 
-            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX 
+            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX; 
+            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX; 
             #endif
             pop[2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 1 - 1)];
             pop[8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 7 - 1)];
@@ -196,14 +196,14 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX         
-            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX 
+            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX;         
+            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX; 
             #endif
 
             pop[1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 2 - 1)];
@@ -228,14 +228,14 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX 
-            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX 
+            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX; 
+            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX; 
             #endif
             
             pop[2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 1 - 1)];
@@ -261,16 +261,16 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX         
-            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX 
-            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX 
-            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX 
+            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX;         
+            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX; 
+            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX; 
+            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX; 
             #endif
             break;
         #ifdef D3Q19
@@ -283,16 +283,16 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX         
-            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX 
-            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX 
-            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX 
+            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX;         
+            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX; 
+            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX; 
+            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX; 
             #endif
             break;
         case SOUTH_EAST:
@@ -429,16 +429,16 @@ switch (nodeType){
             pop[18] = pop[17];
             #endif
             #ifdef D3Q27
-            rho_w = rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             pop[ 4] = pop[3];
             pop[ 8] = pop[7] - 6 * rho_w * W2 * U_MAX;
             pop[12] = pop[11];
             pop[13] = pop[14] + 6 * rho_w * W2 * U_MAX;
             pop[18] = pop[17];
-            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX         
-            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX 
-            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX 
-            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX 
+            pop[20] = pop[19] - 6 * rho_w * W3 *U_MAX;         
+            pop[22] = pop[21] - 6 * rho_w * W3 *U_MAX; 
+            pop[23] = pop[24] + 6 * rho_w * W3 *U_MAX; 
+            pop[26] = pop[25] + 6 * rho_w * W3 *U_MAX; 
             #endif
             break;
 
