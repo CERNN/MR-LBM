@@ -261,7 +261,7 @@ __global__ void gpuMomCollisionStream(
     #ifdef BC_POPULATION_BASED
 
         if (nodeType){
-           #include "BC_MLBM_INCLUDE"
+               #include BC_PATH
         }
             
 
@@ -304,7 +304,8 @@ __global__ void gpuMomCollisionStream(
     #ifdef BC_MOMENT_BASED
         dfloat invRho;
         if(nodeType){
-            gpuBoundaryConditionMom(pop,rhoVar,nodeType,ux_t30,uy_t30,uz_t30,pixx_t45,pixy_t90,pixz_t90,piyy_t45,piyz_t90,pizz_t45);
+            #include BC_PATH
+            //gpuBoundaryConditionMom(pop,rhoVar,nodeType,ux_t30,uy_t30,uz_t30,pixx_t45,pixy_t90,pixz_t90,piyy_t45,piyz_t90,pizz_t45);
             invRho = 1.0 / rhoVar;
         }else{
 

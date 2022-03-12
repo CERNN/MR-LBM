@@ -243,3 +243,20 @@ __global__ void gpuInitialization_pop(
         #endif //D3Q27                                                                                                                                                                                                                    
     }
 }
+
+
+__global__ void gpuInitialization_nodeType(
+    char *dNodeType)
+{
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
+    int z = threadIdx.z + blockDim.z * blockIdx.z;
+    if (x >= NX || y >= NY || z >= NZ)
+        return;
+    
+    char nodeType;
+
+    #include BC_INIT_PATH
+
+    dNodeType[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = nodeType;
+}

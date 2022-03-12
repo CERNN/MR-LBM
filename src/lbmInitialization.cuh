@@ -10,6 +10,7 @@
 #include "globalFunctions.h"
 #include "errorDef.h"
 #include "var.h"
+#include "nodeTypeMap.h"
 
 /*
 *   @brief Initializes random numbers (useful to initialize turbulence)
