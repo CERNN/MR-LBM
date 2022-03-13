@@ -20,8 +20,10 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-#define BC_POPULATION_BASED
-//define BC_MOMENT_BASED
+#define BC_PROBLEM lidDrivenCavity
+
+//#define BC_POPULATION_BASED
+#define BC_MOMENT_BASED
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 
@@ -30,21 +32,21 @@
 #define RANDOM_NUMBERS false    // to generate random numbers 
                                 // (useful for turbulence)
 
-#define BC_PROBLEM lidDriveCavity
+
 
 #define GPU_INDEX 0
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
 constexpr int SCALE = 1;
 
-#define MACR_SAVE (1000)
+#define MACR_SAVE (1)
 
 
 constexpr int N = 128 * SCALE;
 constexpr int NX = N;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = 4;        // size z of the grid in one GPU
+constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 0.10;  
@@ -53,7 +55,7 @@ constexpr dfloat L = N;
 constexpr dfloat VISC = L*U_MAX / RE;
 
 
-constexpr int N_STEPS = 10000;
+constexpr int N_STEPS = 10;
 
 
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
@@ -70,7 +72,7 @@ constexpr dfloat RHO_0 = 1.0;         // initial rho
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
-constexpr dfloat FZ = 1e-6;        // force in z (flow direction in most cases)
+constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
 
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
     
@@ -196,12 +198,7 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 #endif
 
 #ifdef BC_MOMENT_BASED
-    #ifdef D3Q19
-        #define BC_DIRECTORY BoundaryConditions/IncludeMlbmBc_MOM/D3Q19
-    #endif 
-    #ifdef D3Q27
-        #define BC_DIRECTORY BoundaryConditions/IncludeMlbmBc_MOM/D3Q27
-    #endif
+    #define BC_DIRECTORY BoundaryConditions/IncludeMlbmBc_MOM
 
     #define BC_PATH STR(BC_DIRECTORY/BC_PROBLEM)
 #endif

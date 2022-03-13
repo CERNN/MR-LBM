@@ -11,7 +11,6 @@
 #include "errorDef.h"
 #include "var.h"
 #include "nodeTypeMap.h"
-#include "./BoundaryConditionsSchemes/D3Q19_MomentBased.cuh"
 
 __device__ void gpuBoundaryConditionMom(    
     dfloat* pop, dfloat &rhoVar, char dNodeType,
