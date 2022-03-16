@@ -9,6 +9,9 @@
 
 // FILES INCLUDES
 #include "var.h"
+#ifdef NON_NEWTONIAN_FLUID
+    #include "nnf.h"
+#endif
 #include "errorDef.h"
 //#include "structs.h"
 //#include "globalFunctions.h"
@@ -52,6 +55,10 @@ int main() {
     dfloat* uy;
     dfloat* uz;
 
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega;
+    #endif
+
     float** randomNumbers = nullptr; // useful for turbulence
 
     checkCudaErrors(cudaMallocHost((void**)&(h_fMom), MEM_SIZE_MOM));
@@ -59,7 +66,9 @@ int main() {
     checkCudaErrors(cudaMallocHost((void**)&(ux), MEM_SIZE_SCALAR));
     checkCudaErrors(cudaMallocHost((void**)&(uy), MEM_SIZE_SCALAR));
     checkCudaErrors(cudaMallocHost((void**)&(uz), MEM_SIZE_SCALAR));
-    
+    #ifdef NON_NEWTONIAN_FLUID
+    checkCudaErrors(cudaMallocHost((void**)&(omega), MEM_SIZE_SCALAR));
+    #endif
     randomNumbers = (float**)malloc(sizeof(float*));
 
 
@@ -132,7 +141,11 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
     checkCudaErrors(cudaDeviceSynchronize());
-    linearMacr(h_fMom,rho,ux,uy,uz,step);
+    linearMacr(h_fMom,rho,ux,uy,uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    omega,
+    #endif
+    step);
 
     // Free random numbers
     if (RANDOM_NUMBERS) {
@@ -184,10 +197,18 @@ int main() {
             checkCudaErrors(cudaDeviceSynchronize());
             
             printf("step %d \n",step);
-            linearMacr(h_fMom,rho,ux,uy,uz,step); 
+            linearMacr(h_fMom,rho,ux,uy,uz,
+            #ifdef NON_NEWTONIAN_FLUID
+            omega,
+            #endif
+            step); 
             fflush(stdout);
             printf("------------------------------------------------------------------------\n");
-            saveMacr(rho,ux,uy,uz,step);
+            saveMacr(rho,ux,uy,uz,
+            #ifdef NON_NEWTONIAN_FLUID
+            omega,
+            #endif
+            step);
         }
 
     }

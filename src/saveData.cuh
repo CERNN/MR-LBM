@@ -32,6 +32,9 @@ void linearMacr(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
     unsigned int step
 );
 
@@ -52,6 +55,9 @@ void saveMacr(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
     unsigned int nSteps
 );
 

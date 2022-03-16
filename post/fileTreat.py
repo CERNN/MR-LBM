@@ -3,9 +3,9 @@ import glob
 import numpy as np
 
 # ALL FILES IN THE FOLDER MUST BE FROM THE SAME SIMULATION
-PATH = "./../bin/TEST/000/"
+PATH = "./../bin/TEST/001/"
 
-__macr_names__ = ['ux', 'uy', 'uz', 'rho']
+__macr_names__ = ['ux', 'uy', 'uz', 'rho','omega']
 # Uncomment below for IBM
 # __macr_names__ += ['fx', 'fy', 'fz']
 # Uncomment below for NNF

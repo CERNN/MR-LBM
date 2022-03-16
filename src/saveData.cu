@@ -7,6 +7,9 @@ void linearMacr(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
     unsigned int step
 ){
     size_t indexMacr;
@@ -24,7 +27,9 @@ void linearMacr(
                 ux[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-
+                #ifdef NON_NEWTONIAN_FLUID
+                omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 10, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
+                #endif
                 //Ekin += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
                 
 
@@ -43,21 +48,29 @@ void saveMacr(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
     unsigned int nSteps
 ){
 // Names of files
-    std::string strFileRho, strFileUx, strFileUy, strFileUz;
+    std::string strFileRho, strFileUx, strFileUy, strFileUz, strFileOmega;
 
     strFileRho = getVarFilename("rho", nSteps, ".bin");
     strFileUx = getVarFilename("ux", nSteps, ".bin");
     strFileUy = getVarFilename("uy", nSteps, ".bin");
     strFileUz = getVarFilename("uz", nSteps, ".bin");
-
+    #ifdef NON_NEWTONIAN_FLUID
+    strFileOmega = getVarFilename("omega", nSteps, ".bin");
+    #endif
     // saving files
     saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+    #ifdef NON_NEWTONIAN_FLUID
+    saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+    #endif
 }
 
 void saveVarBin(

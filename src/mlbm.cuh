@@ -8,7 +8,11 @@
 #include <cuda_runtime.h>
 #include <builtin_types.h>
 #include "globalFunctions.h"
+#include "var.h"
 #include "boundaryCondition.cuh"
+#ifdef NON_NEWTONIAN_FLUID
+    #include "nnf.h"
+#endif
 
 
 /*

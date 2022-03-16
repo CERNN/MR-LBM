@@ -31,6 +31,19 @@ __global__ void gpuMomCollisionStream(
     dfloat piyz_t90   = 9.0*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat pizz_t45   = 4.5*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)];
 
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 10, blockIdx.x, blockIdx.y, blockIdx.z)];
+    #endif
+    #ifndef NON_NEWTONIAN_FLUID
+    dfloat omegaVar = OMEGA;
+    #endif
+    dfloat t_omegaVar = 1 - omegaVar;
+    dfloat tt_omegaVar = 1 - 0.5*omegaVar;
+    dfloat omegaVar_d2 = omegaVar / 2.0;
+    dfloat omegaVar_d9 = omegaVar / 9.0;
+    dfloat omegaVar_p1 = 1.0 + omegaVar;
+    dfloat tt_omega_t3 = tt_omegaVar * 3.0;
+
     
     //calculate post collision populations
     dfloat multiplyTerm;
@@ -261,7 +274,19 @@ __global__ void gpuMomCollisionStream(
     #ifdef BC_POPULATION_BASED
 
         if (nodeType){
-               #include BC_PATH
+            #include BC_PATH
+
+            ux_t30 = ux_t30 /3.0;
+            uy_t30 = uy_t30 /3.0;
+            uz_t30 = uz_t30 /3.0;
+
+            pixx_t45 = (pixx_t45 / 4.5 + cs2 ) * rhoVar;
+            pixy_t90 = (pixy_t90 / 9.0 ) * rhoVar;
+            pixz_t90 = (pixz_t90 / 9.0 ) * rhoVar;
+            piyy_t45 = (piyy_t45 / 4.5 + cs2) * rhoVar;
+            piyz_t90 = (piyz_t90 / 9.0 ) * rhoVar;
+            pizz_t45 = (pizz_t45 / 4.5 + cs2) * rhoVar;
+
         }
             
 
@@ -271,33 +296,33 @@ __global__ void gpuMomCollisionStream(
             rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
             dfloat invRho = 1 / rhoVar;
             //equation4 + force correction
-            ux_t30 = 3.0 * ((pop[ 1] + pop[7] + pop[ 9] + pop[13] + pop[15]) - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
-            uy_t30 = 3.0 * ((pop[ 3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
-            uz_t30 = 3.0 * ((pop[ 5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
+            ux_t30 = ((pop[ 1] + pop[7] + pop[ 9] + pop[13] + pop[15]) - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
+            uy_t30 = ((pop[ 3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
+            uz_t30 = ((pop[ 5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
 
             //equation5
-            pixx_t45 = 4.5 * ( (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) * invRho - cs2);
-            pixy_t90 = 9.0 * (((pop[7] + pop[ 8]) - (pop[13] + pop[14])) * invRho);
-            pixz_t90 = 9.0 * (((pop[9] + pop[10]) - (pop[15] + pop[16])) * invRho);
-            piyy_t45 = 4.5 * ( (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]) * invRho - cs2);
-            piyz_t90 = 9.0 * (((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho);
-            pizz_t45 = 4.5 * ( (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]) * invRho - cs2);
+            pixx_t45 = ( (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) );
+            pixy_t90 = (((pop[7] + pop[ 8]) - (pop[13] + pop[14])));
+            pixz_t90 = (((pop[9] + pop[10]) - (pop[15] + pop[16])));
+            piyy_t45 = ( (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]));
+            piyz_t90 = (((pop[11]+pop[12])-(pop[17]+pop[18])));
+            pizz_t45 = ( (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]));
 
 
         #endif
         #ifdef D3Q27
             rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             dfloat invRho = 1 / rhoVar;
-            ux_t30 = 3.0 * ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
-            uy_t30 = 3.0 * ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
-            uz_t30 = 3.0 * ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
+            ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
+            uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
+            uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
 
-            pixx_t45 = 4.5 * ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]) * invRho- cs2);
-            pixy_t90 = 9.0 * (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) * invRho);
-            pixz_t90 = 9.0 * (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) * invRho);
-            piyy_t45 = 4.5 * ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]) * invRho- cs2);
-            piyz_t90 = 9.0 * (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24]))*invRho);
-            pizz_t45 = 4.5 * ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]) * invRho- cs2);
+            pixx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
+            pixy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) );
+            pixz_t90 = (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) );
+            piyy_t45 = ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
+            piyz_t90 = (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24])));
+            pizz_t45 = ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
         #endif
     #endif
 
@@ -315,55 +340,105 @@ __global__ void gpuMomCollisionStream(
                 rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
                 invRho = 1 / rhoVar;
                 //equation4 + force correction
-                ux_t30 = 3.0 * ((pop[ 1] + pop[7] + pop[ 9] + pop[13] + pop[15]) - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
-                uy_t30 = 3.0 * ((pop[ 3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
-                uz_t30 = 3.0 * ((pop[ 5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
+                ux_t30 = ((pop[ 1] + pop[7] + pop[ 9] + pop[13] + pop[15]) - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16]) + 0.5 * FX) * invRho;
+                uy_t30 = ((pop[ 3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
+                uz_t30 = ((pop[ 5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
 
-                //equation5
-                pixx_t45 = 4.5 * ( (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) * invRho - cs2);
-                pixy_t90 = 9.0 * (((pop[7] + pop[ 8]) - (pop[13] + pop[14])) * invRho);
-                pixz_t90 = 9.0 * (((pop[9] + pop[10]) - (pop[15] + pop[16])) * invRho);
-                piyy_t45 = 4.5 * ( (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]) * invRho - cs2);
-                piyz_t90 = 9.0 * (((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho);
-                pizz_t45 = 4.5 * ( (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]) * invRho - cs2);
+            //equation5
+                pixx_t45 = ( (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) );
+                pixy_t90 = (((pop[7] + pop[ 8]) - (pop[13] + pop[14])));
+                pixz_t90 = (((pop[9] + pop[10]) - (pop[15] + pop[16])));
+                piyy_t45 = ( (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]));
+                piyz_t90 = (((pop[11]+pop[12])-(pop[17]+pop[18])));
+                pizz_t45 = ( (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]));
 
 
             #endif
             #ifdef D3Q27
                 rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
                 dfloat invRho = 1 / rhoVar;
-                ux_t30 = 3.0 * ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
-                uy_t30 = 3.0 * ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
-                uz_t30 = 3.0 * ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
+                ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
+                uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
+                uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
 
-                pixx_t45 = 4.5 * ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - cs2) * invRho);
-                pixy_t90 = 9.0 * (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) * invRho);
-                pixz_t90 = 9.0 * (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) * invRho);
-                piyy_t45 = 4.5 * ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - cs2) * invRho);
-                piyz_t90 = 9.0 * (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24]))*invRho);
-                pizz_t45 = 4.5 * ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26] - cs2) * invRho);
+                pixx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
+                pixy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) );
+                pixz_t90 = (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) );
+                piyy_t45 = ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
+                piyz_t90 = (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24])));
+                pizz_t45 = ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
             #endif
         }
     #endif // moment based
 
-    //NOTE : STREAMING DONE, NOW COLLIDE
+#ifdef NON_NEWTONIAN_FLUID
+    const dfloat momNeqXX = pixx_t45 - rhoVar*(ux_t30*ux_t30 + cs2);
+    const dfloat momNeqYY = piyy_t45 - rhoVar*(uy_t30*uy_t30 + cs2); 
+    const dfloat momNeqZZ = pizz_t45 - rhoVar*(uz_t30*uz_t30 + cs2);
+    const dfloat momNeqXYt2 = (pixy_t90 - rhoVar*ux_t30*uy_t30) * 2;
+    const dfloat momNeqXZt2 = (pixz_t90 - rhoVar*ux_t30*uz_t30) * 2;
+    const dfloat momNeqYZt2 = (piyz_t90 - rhoVar*uy_t30*uz_t30) * 2;
+
+    const dfloat uFxxd2 = ux_t30*FX; // d2 = uFxx Divided by two
+    const dfloat uFyyd2 = uy_t30*FY;
+    const dfloat uFzzd2 = uz_t30*FZ;
+    const dfloat uFxyd2 = (ux_t30*FY + uy_t30*FX) / 2;
+    const dfloat uFxzd2 = (ux_t30*FZ + uz_t30*FX) / 2;
+    const dfloat uFyzd2 = (uy_t30*FZ + uz_t30*FY) / 2;
+
+    const dfloat auxStressMag = sqrt(0.5 * (
+        (momNeqXX + uFxxd2) * (momNeqXX + uFxxd2) +
+        (momNeqYY + uFyyd2) * (momNeqYY + uFyyd2) +
+        (momNeqZZ + uFzzd2) * (momNeqZZ + uFzzd2) +
+        2 * ((momNeqXYt2/2 + uFxyd2) * (momNeqXYt2/2 + uFxyd2) +
+        (momNeqXZt2/2 + uFxzd2) * (momNeqXZt2/2 + uFxzd2) + 
+        (momNeqYZt2/2 + uFyzd2) * (momNeqYZt2/2 + uFyzd2))));
+
+    dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
+    dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
+    eta = VISC + S_Y/gamma_dot;
+    omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
+
+    omegaVar = calcOmega(omegaVar, auxStressMag);
+
+    t_omegaVar = 1 - omegaVar;
+    tt_omegaVar = 1 - 0.5*omegaVar;
+    omegaVar_d2 = omegaVar / 2.0;
+    omegaVar_d9 = omegaVar / 9.0;
+    omegaVar_p1 = 1.0 + omegaVar;
+    tt_omega_t3 = tt_omegaVar * 3.0;
+#endif
+
+
+    ux_t30 = 3.0 * ux_t30;
+    uy_t30 = 3.0 * uy_t30;
+    uz_t30 = 3.0 * uz_t30;
+
+    pixx_t45 = 4.5 * (pixx_t45 * invRho - cs2);
+    pixy_t90 = 9.0 * (pixy_t90 * invRho);
+    pixz_t90 = 9.0 * (pixz_t90 * invRho);
+    piyy_t45 = 4.5 * (piyy_t45 * invRho - cs2);
+    piyz_t90 = 9.0 * (piyz_t90 * invRho);
+    pizz_t45 = 4.5 * (pizz_t45 * invRho - cs2);
+
+   //NOTE : STREAMING DONE, NOW COLLIDE
 
     //Collide Moments
     //Equiblibrium momements
     
     dfloat invRho_mt15 = -1.5*invRho;
-    ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * FX ) + OMEGA * ux_t30 + TT_OMEGA_T3 * FX);
-    uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * FY ) + OMEGA * uy_t30 + TT_OMEGA_T3 * FY);
-    uz_t30 = (T_OMEGA * (uz_t30 + invRho_mt15 * FZ ) + OMEGA * uz_t30 + TT_OMEGA_T3 * FZ);
+    ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * FX ) + omegaVar * ux_t30 + tt_omega_t3 * FX);
+    uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * FY ) + omegaVar * uy_t30 + tt_omega_t3 * FY);
+    uz_t30 = (t_omegaVar * (uz_t30 + invRho_mt15 * FZ ) + omegaVar * uz_t30 + tt_omega_t3 * FZ);
     
     //equation 90
-    pixx_t45 = (T_OMEGA * pixx_t45  +   OMEGAd2 * ux_t30 * ux_t30    - invRho_mt15 * TT_OMEGA * (FX * ux_t30 + FX * ux_t30));
-    piyy_t45 = (T_OMEGA * piyy_t45  +   OMEGAd2 * uy_t30 * uy_t30    - invRho_mt15 * TT_OMEGA * (FY * uy_t30 + FY * uy_t30));
-    pizz_t45 = (T_OMEGA * pizz_t45  +   OMEGAd2 * uz_t30 * uz_t30    - invRho_mt15 * TT_OMEGA * (FZ * uz_t30 + FZ * uz_t30));
+    pixx_t45 = (t_omegaVar * pixx_t45  +   omegaVar_d2 * ux_t30 * ux_t30    - invRho_mt15 * tt_omegaVar * (FX * ux_t30 + FX * ux_t30));
+    piyy_t45 = (t_omegaVar * piyy_t45  +   omegaVar_d2 * uy_t30 * uy_t30    - invRho_mt15 * tt_omegaVar * (FY * uy_t30 + FY * uy_t30));
+    pizz_t45 = (t_omegaVar * pizz_t45  +   omegaVar_d2 * uz_t30 * uz_t30    - invRho_mt15 * tt_omegaVar * (FZ * uz_t30 + FZ * uz_t30));
 
-    pixy_t90 = (T_OMEGA * pixy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (FX * uy_t30 + FY * ux_t30));
-    pixz_t90 = (T_OMEGA * pixz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FX * uz_t30 + FZ * ux_t30));
-    piyz_t90 = (T_OMEGA * piyz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+    pixy_t90 = (t_omegaVar * pixy_t90  +     omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (FX * uy_t30 + FY * ux_t30));
+    pixz_t90 = (t_omegaVar * pixz_t90  +     omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (FX * uz_t30 + FZ * ux_t30));
+    piyz_t90 = (t_omegaVar * piyz_t90  +     omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (FY * uz_t30 + FZ * uy_t30));
     
 
     //calculate post collision populations
@@ -418,6 +493,10 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)] = piyy_t45/4.5;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)] = piyz_t90/9.0;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz_t45/4.5;
+    
+    #ifdef NON_NEWTONIAN_FLUID
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 10, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
+    #endif
 
     /* write to global pop */
     if (threadIdx.x == 0) { //w

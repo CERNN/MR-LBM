@@ -22,8 +22,15 @@
 
 #define BC_PROBLEM lidDrivenCavity
 
-//#define BC_POPULATION_BASED
-#define BC_MOMENT_BASED
+#define BC_POPULATION_BASED
+//#define BC_MOMENT_BASED
+
+#define BINGHAM
+
+
+#if defined(POWERLAW) || defined(BINGHAM)
+    #define NON_NEWTONIAN_FLUID
+#endif
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 
@@ -39,29 +46,28 @@
 
 constexpr int SCALE = 1;
 
-#define MACR_SAVE (1)
+#define MACR_SAVE (1000)
 
 
-constexpr int N = 128 * SCALE;
+constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = N;        // size z of the grid in one GPU
+constexpr int NZ = 8;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.10;  
-constexpr dfloat RE = 100.0;	
+constexpr dfloat U_MAX = 0.1;  
+constexpr dfloat RE = 1000.0;	
 constexpr dfloat L = N;
 constexpr dfloat VISC = L*U_MAX / RE;
 
 
-constexpr int N_STEPS = 10;
+constexpr int N_STEPS = 50000;
 
 
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
 constexpr dfloat OMEGAd2 = OMEGA/2.0;
-constexpr dfloat OMEGAd3 = OMEGA/3.0;
 constexpr dfloat OMEGAd9 = OMEGA/9.0; 
 constexpr dfloat T_OMEGA = 1.0 - OMEGA;
 constexpr dfloat TT_OMEGA = 1.0 - 0.5*OMEGA;
@@ -153,7 +159,13 @@ const size_t NUMBER_GHOST_FACE_XZ = BLOCK_NX*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NU
 const size_t NUMBER_GHOST_FACE_YZ = BLOCK_NY*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 
 #define MOMENT_ORDER 3
+#ifdef NON_NEWTONIAN_FLUID
+const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6 + 1;
+#endif
+#ifndef NON_NEWTONIAN_FLUID
 const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6;
+#endif
+
 
 const size_t MEM_SIZE_BLOCK_LBM = sizeof(dfloat) * BLOCK_LBM_SIZE * NUMBER_MOMENTS;
 const size_t MEM_SIZE_BLOCK_GHOST = sizeof(dfloat) * BLOCK_GHOST_SIZE * Q;
@@ -186,6 +198,13 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
 
 
+#ifndef myMax
+#define myMax(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef myMin
+#define myMin(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
 
 
 #define STR_IMPL(A) #A

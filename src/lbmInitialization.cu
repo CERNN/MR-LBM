@@ -39,12 +39,19 @@ __global__ void gpuInitialization_mom(
 
     //first moments
     dfloat rho, ux, uy, uz;
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat omega;
+    #endif
 
     //Taylor Green
 	rho = RHO_0;
 	ux = 0.0;
 	uy = 0.0;
     uz = 0.0;
+
+    #ifdef NON_NEWTONIAN_FLUID
+    omega = OMEGA;
+    #endif
 
     
 
@@ -109,6 +116,11 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 7, blockIdx.x, blockIdx.y, blockIdx.z)] = piyy; //= RHO_0*uy*uy+RHO_0*cs2;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 8, blockIdx.x, blockIdx.y, blockIdx.z)] = piyz; //= RHO_0*uy*uz;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 9, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz; //= RHO_0*uz*uz+RHO_0*cs2;
+
+    #ifdef NON_NEWTONIAN_FLUID
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 10, blockIdx.x, blockIdx.y, blockIdx.z)] = omega;
+    #endif
+    
 }
 
 __global__ void gpuInitialization_pop(
