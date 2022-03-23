@@ -33,16 +33,13 @@ __global__ void gpuMomCollisionStream(
 
     #ifdef NON_NEWTONIAN_FLUID
     dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 10, blockIdx.x, blockIdx.y, blockIdx.z)];
-    #endif
-    #ifndef NON_NEWTONIAN_FLUID
-    dfloat omegaVar = OMEGA;
-    #endif
     dfloat t_omegaVar = 1 - omegaVar;
     dfloat tt_omegaVar = 1 - 0.5*omegaVar;
     dfloat omegaVar_d2 = omegaVar / 2.0;
     dfloat omegaVar_d9 = omegaVar / 9.0;
     dfloat omegaVar_p1 = 1.0 + omegaVar;
     dfloat tt_omega_t3 = tt_omegaVar * 3.0;
+    #endif
 
     
     //calculate post collision populations
@@ -425,7 +422,9 @@ __global__ void gpuMomCollisionStream(
 
     //Collide Moments
     //Equiblibrium momements
+
     
+    #ifdef NON_NEWTONIAN_FLUID
     dfloat invRho_mt15 = -1.5*invRho;
     ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * FX ) + omegaVar * ux_t30 + tt_omega_t3 * FX);
     uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * FY ) + omegaVar * uy_t30 + tt_omega_t3 * FY);
@@ -436,10 +435,26 @@ __global__ void gpuMomCollisionStream(
     piyy_t45 = (t_omegaVar * piyy_t45  +   omegaVar_d2 * uy_t30 * uy_t30    - invRho_mt15 * tt_omegaVar * (FY * uy_t30 + FY * uy_t30));
     pizz_t45 = (t_omegaVar * pizz_t45  +   omegaVar_d2 * uz_t30 * uz_t30    - invRho_mt15 * tt_omegaVar * (FZ * uz_t30 + FZ * uz_t30));
 
-    pixy_t90 = (t_omegaVar * pixy_t90  +     omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (FX * uy_t30 + FY * ux_t30));
-    pixz_t90 = (t_omegaVar * pixz_t90  +     omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (FX * uz_t30 + FZ * ux_t30));
-    piyz_t90 = (t_omegaVar * piyz_t90  +     omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+    pixy_t90 = (t_omegaVar * pixy_t90  +   omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (FX * uy_t30 + FY * ux_t30));
+    pixz_t90 = (t_omegaVar * pixz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (FX * uz_t30 + FZ * ux_t30));
+    piyz_t90 = (t_omegaVar * piyz_t90  +   omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+    #endif
+    #ifndef NON_NEWTONIAN_FLUID
     
+    dfloat invRho_mt15 = -1.5*invRho;
+    ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * FX ) + OMEGA * ux_t30 + TT_OMEGA_T3 * FX);
+    uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * FY ) + OMEGA * uy_t30 + TT_OMEGA_T3 * FY);
+    uz_t30 = (T_OMEGA * (uz_t30 + invRho_mt15 * FZ ) + OMEGA * uz_t30 + TT_OMEGA_T3 * FZ);
+    
+    //equation 90
+    pixx_t45 = (T_OMEGA * pixx_t45  +   OMEGAd2 * ux_t30 * ux_t30    - invRho_mt15 * TT_OMEGA * (FX * ux_t30 + FX * ux_t30));
+    piyy_t45 = (T_OMEGA * piyy_t45  +   OMEGAd2 * uy_t30 * uy_t30    - invRho_mt15 * TT_OMEGA * (FY * uy_t30 + FY * uy_t30));
+    pizz_t45 = (T_OMEGA * pizz_t45  +   OMEGAd2 * uz_t30 * uz_t30    - invRho_mt15 * TT_OMEGA * (FZ * uz_t30 + FZ * uz_t30));
+
+    pixy_t90 = (T_OMEGA * pixy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (FX * uy_t30 + FY * ux_t30));
+    pixz_t90 = (T_OMEGA * pixz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FX * uz_t30 + FZ * ux_t30));
+    piyz_t90 = (T_OMEGA * piyz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+    #endif
 
     //calculate post collision populations
     
