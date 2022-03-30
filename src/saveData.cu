@@ -14,8 +14,8 @@ void linearMacr(
 ){
     size_t indexMacr;
 
-    dfloat Ekin;
-    Ekin  =  0;
+    dfloat data;
+    data  =  0;
 
     for(int z = 0; z< NZ;z++){
         ///printf("z %d \n", z);
@@ -30,15 +30,13 @@ void linearMacr(
                 #ifdef NON_NEWTONIAN_FLUID
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 10, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
-                //Ekin += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
-                
-
-                
+                //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
+                data += rho[indexMacr];
             }
         }
     }
-    //Ekin = Ekin/(2*N*N*N);
-    //printf("%0.7e \n",Ekin);
+    data = data/(NUMBER_LBM_NODES);
+    printf("%0.7e \n",data);
 }
 
 
