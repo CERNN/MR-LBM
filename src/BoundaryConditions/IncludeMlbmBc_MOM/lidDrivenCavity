@@ -22,6 +22,8 @@ dfloat pizz_I;
 
 dfloat rho;
 dfloat inv_rho;
+dfloat inv_rho2;
+
 
 dfloat ux1;
 dfloat ux2;
@@ -1206,27 +1208,26 @@ switch (nodeType)
 
 
 
-//####################### FACE #######################
-    case SOUTH:
-            l1 = -1; 
-            l2 = 0; 
+        //####################### FACE #######################
+    case NORTH:
+            l1 = 1;
+            l2 = 0;
             l3 = 0;
-            //u1 = uy // u2  = ux // u3 == uz
-            ux1 = 0.0;  
-            ux2 = 0.0;  
+            // u1 = uy // u2  = ux // u3 == uz
+            ux1 = 0.0;
+            ux2 = 0.0;
             ux3 = 0.0;
 
-            //IO: 4/8/12/13/18
+            // IO: 4/8/12/13/18
 
-
-            rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[5] + pop[6] + pop[7] + pop[9] + pop[10] + pop[11] + pop[14] + pop[15] + pop[16] + pop[17]; 
-            inv_rho_I = 1.0 / rho_I; 
-            pixx_I = inv_rho_I *   (pop[1] + pop[2] + pop[7] + pop[9] + pop[10] + pop[14] + pop[15] + pop[16] -  cs2*rho_I);
-            pixy_I = inv_rho_I *  ((pop[7]) - (pop[14]));
-            pixz_I = inv_rho_I *  ((pop[9] + pop[10]) - (pop[15] + pop[16]));
-            piyy_I = inv_rho_I *   (pop[3] +pop[7] + pop[11] + pop[14] + pop[17]  - cs2*rho_I);
-            piyz_I = inv_rho_I *  ((pop[11])-(pop[17]));
-            pizz_I = inv_rho_I *   (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[15] + pop[16] + pop[17]  - cs2*rho_I);
+            rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[5] + pop[6] + pop[7] + pop[9] + pop[10] + pop[11] + pop[14] + pop[15] + pop[16] + pop[17];
+            inv_rho_I = 1.0 / rho_I;
+            pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[9] + pop[10] + pop[14] + pop[15] + pop[16] - cs2 * rho_I);
+            pixy_I = inv_rho_I * ((pop[7]) - (pop[14]));
+            pixz_I = inv_rho_I * ((pop[9] + pop[10]) - (pop[15] + pop[16]));
+            piyy_I = inv_rho_I * (pop[3] + pop[7] + pop[11] + pop[14] + pop[17] - cs2 * rho_I);
+            piyz_I = inv_rho_I * ((pop[11]) - (pop[17]));
+            pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[15] + pop[16] + pop[17] - cs2 * rho_I);
 
             p_x1_x1_I = piyy_I;
             p_x2_x2_I = pixx_I;
@@ -1235,18 +1236,18 @@ switch (nodeType)
             p_x1_x3_I = piyz_I;
             p_x2_x3_I = pixz_I;
 
+            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); // A34
+            inv_rho = 1.0 / rho;
+            inv_rho2 = rho_I * inv_rho;
 
-            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
-            inv_rho = rho_I/rho;
+            p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+            p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+            p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+            p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD * ux2);            // A37
+            p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD * ux3);            // A40
+            p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
 
-            p_x1_x1 = inv_rho * (1.5 * p_x1_x1_I)  + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
-            p_x2_x2 = inv_rho * (4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
-            p_x3_x3 = inv_rho * (4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
-            p_x1_x2 = inv_rho * (2.0 * p_x1_x2_I) - ONETHIRD*ux2; //A37
-            p_x1_x3 = inv_rho * (2.0 * p_x1_x3_I) - ONETHIRD*ux3; //A40
-            p_x2_x3 = inv_rho * p_x2_x3; //A38
-
-            //save variables
+            // save variables
 
             uy_t30 = ux1;
             ux_t30 = ux2;
@@ -1259,26 +1260,26 @@ switch (nodeType)
             piyz_t90 = p_x1_x3;
             pixz_t90 = p_x2_x3;
 
-        break;
-    case NORTH: // TODO: this ones have velocity, need make a way to pass the velocity index
-            l1 = 1;
-            l2 = 0; 
+            break;
+    case SOUTH: // TODO: this ones have velocity, need make a way to pass the velocity index
+            l1 = -1;
+            l2 = 0;
             l3 = 0;
-            //u1 = uy // u2  = ux // u3 == uz
-            ux1 = U_MAX;  
-            ux2 = 0.0;  
-            ux3 = 0.0;  
+            // u1 = uy // u2  = ux // u3 == uz
+            ux1 = 0.0;
+            ux2 = 0.0;
+            ux3 = 0.0;
 
-            //IO: 3/7/11/14/17
+            // IO: 3/7/11/14/17
             rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[9] + pop[10] + pop[12] + pop[13] + pop[15] + pop[16] + pop[18];
             inv_rho_I = 1.0 / rho_I;
 
-            pixx_I = inv_rho_I *  (pop[1] + pop[2] + pop[8] + pop[9] + pop[10] + pop[13] + pop[15] + pop[16] -  cs2*rho_I);
-            pixy_I = inv_rho_I * (( pop[ 8]) - (pop[13] ));
+            pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[8] + pop[9] + pop[10] + pop[13] + pop[15] + pop[16] - cs2 * rho_I);
+            pixy_I = inv_rho_I * ((pop[8]) - (pop[13]));
             pixz_I = inv_rho_I * ((pop[9] + pop[10]) - (pop[15] + pop[16]));
-            piyy_I = inv_rho_I *  ( pop[4]  + pop[8]+ pop[12] + pop[13] + pop[18] - cs2*rho_I);
-            piyz_I = inv_rho_I * ((pop[12])-(pop[18]));
-            pizz_I = inv_rho_I *  (pop[5] + pop[6] + pop[9] + pop[10] + pop[12] + pop[15] + pop[16]+ pop[18] - cs2*rho_I);
+            piyy_I = inv_rho_I * (pop[4] + pop[8] + pop[12] + pop[13] + pop[18] - cs2 * rho_I);
+            piyz_I = inv_rho_I * ((pop[12]) - (pop[18]));
+            pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[10] + pop[12] + pop[15] + pop[16] + pop[18] - cs2 * rho_I);
 
             p_x1_x1_I = piyy_I;
             p_x2_x2_I = pixx_I;
@@ -1287,17 +1288,18 @@ switch (nodeType)
             p_x1_x3_I = piyz_I;
             p_x2_x3_I = pixz_I;
 
-            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
-            inv_rho = rho_I/rho;
+            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); // A34
+            inv_rho = 1.0 / rho;
+            inv_rho2 = rho_I * inv_rho;
 
-            p_x1_x1 = inv_rho * (1.5 * p_x1_x1_I)  + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
-            p_x2_x2 = inv_rho * (4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
-            p_x3_x3 = inv_rho * (4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
-            p_x1_x2 = inv_rho * (2.0 * p_x1_x2_I) - ONETHIRD*ux2; //A37
-            p_x1_x3 = inv_rho * (2.0 * p_x1_x3_I) - ONETHIRD*ux3; //A40
-            p_x2_x3 = inv_rho * p_x2_x3; //A38
+            p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+            p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+            p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+            p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD * ux2);            // A37
+            p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD * ux3);            // A40
+            p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
 
-                        //save variables
+            // save variables
 
             uy_t30 = ux1;
             ux_t30 = ux2;
@@ -1310,27 +1312,26 @@ switch (nodeType)
             piyz_t90 = p_x1_x3;
             pixz_t90 = p_x2_x3;
 
-
-        break;
+            break;
     case EAST:
             l1 = 1;
-            l2 = 0; 
+            l2 = 0;
             l3 = 0;
-            //u1 = ux // u2  = uy // u3 == uz
-            ux1 = 0.0;  
-            ux2 = 0.0;  
-            ux3 = 0.0;  
+            // u1 = ux // u2  = uy // u3 == uz
+            ux1 = 0.0;
+            ux2 = 0.0;
+            ux3 = 0.0;
 
-            //2/8//10/14/16
+            // 2/8//10/14/16
             rho_I = pop[0] + pop[1] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[9] + pop[11] + pop[12] + pop[13] + pop[15] + pop[17] + pop[18];
             inv_rho_I = 1.0 / rho_I;
 
-            pixx_I = inv_rho_I *  (pop[1] + pop[7] + pop[9] + pop[13] + pop[15]  - cs2* rho_I) ;
-            pixy_I = inv_rho_I * ((pop[7] ) - (pop[13] ));
-            pixz_I = inv_rho_I * ((pop[9] ) - (pop[15] ));
-            piyy_I = inv_rho_I *  (pop[3] + pop[4] + pop[7] + pop[11] + pop[12] + pop[13] + pop[17] + pop[18] - cs2* rho_I);
-            piyz_I = inv_rho_I * ((pop[11]+pop[12])-(pop[17]+pop[18]));
-            pizz_I = inv_rho_I *  (pop[5] + pop[6] + pop[9] + pop[11] + pop[12] + pop[15] + pop[17] + pop[18] - cs2* rho_I);
+            pixx_I = inv_rho_I * (pop[1] + pop[7] + pop[9] + pop[13] + pop[15] - cs2 * rho_I);
+            pixy_I = inv_rho_I * ((pop[7]) - (pop[13]));
+            pixz_I = inv_rho_I * ((pop[9]) - (pop[15]));
+            piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[11] + pop[12] + pop[13] + pop[17] + pop[18] - cs2 * rho_I);
+            piyz_I = inv_rho_I * ((pop[11] + pop[12]) - (pop[17] + pop[18]));
+            pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[11] + pop[12] + pop[15] + pop[17] + pop[18] - cs2 * rho_I);
 
             p_x1_x1_I = pixx_I;
             p_x2_x2_I = piyy_I;
@@ -1339,17 +1340,18 @@ switch (nodeType)
             p_x1_x3_I = pixz_I;
             p_x2_x3_I = piyz_I;
 
-            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
-            inv_rho = rho_I/rho;
+            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); // A34
+            inv_rho = 1.0 / rho;
+            inv_rho2 = rho_I * inv_rho;
 
-            p_x1_x1 = inv_rho * (1.5 * p_x1_x1_I)  + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
-            p_x2_x2 = inv_rho * (4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
-            p_x3_x3 = inv_rho * (4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
-            p_x1_x2 = inv_rho * (2.0 * p_x1_x2_I) - ONETHIRD*ux2; //A37
-            p_x1_x3 = inv_rho * (2.0 * p_x1_x3_I) - ONETHIRD*ux3; //A40
-            p_x2_x3 = inv_rho * p_x2_x3; //A38
+            p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+            p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+            p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+            p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD * ux2);            // A37
+            p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD * ux3);            // A40
+            p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
 
-            //save variables
+            // save variables
 
             ux_t30 = ux1;
             uy_t30 = ux2;
@@ -1362,26 +1364,26 @@ switch (nodeType)
             pixz_t90 = p_x1_x3;
             piyz_t90 = p_x2_x3;
 
-        break;
+            break;
     case WEST:
-            l1 = -1; 
-            l2 = 0; 
+            l1 = -1;
+            l2 = 0;
             l3 = 0;
-            //u1 = ux // u2  = uy // u3 == uz
-            ux1 = 0.0;  
-            ux2 = 0.0;  
-            ux3 = 0.0;  
+            // u1 = ux // u2  = uy // u3 == uz
+            ux1 = 0.0;
+            ux2 = 0.0;
+            ux3 = 0.0;
 
-            //1/7/9/13/15
-            rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[8] + pop[10] + pop[11] + pop[12]+ pop[14] + pop[16] + pop[17] + pop[18];
+            // 1/7/9/13/15
+            rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[8] + pop[10] + pop[11] + pop[12] + pop[14] + pop[16] + pop[17] + pop[18];
             inv_rho_I = 1.0 / rho_I;
 
-            pixx_I = inv_rho_I *  (pop[2] + pop[8] + pop[10] + pop[14] + pop[16] - cs2* rho_I) ;
-            pixy_I = inv_rho_I * (( pop[ 8]) - ( pop[14]));
-            pixz_I = inv_rho_I * (( pop[10]) - ( pop[16]));
-            piyy_I = inv_rho_I *  (pop[3] + pop[4] + pop[8] + pop[11] + pop[12] + pop[14] + pop[17] + pop[18] - cs2* rho_I);
-            piyz_I = inv_rho_I * ((pop[11]+pop[12])-(pop[17]+pop[18]));
-            pizz_I = inv_rho_I *  (pop[5] + pop[6] + pop[10] + pop[11] + pop[12] + pop[16] + pop[17] + pop[18] - cs2* rho_I);
+            pixx_I = inv_rho_I * (pop[2] + pop[8] + pop[10] + pop[14] + pop[16] - cs2 * rho_I);
+            pixy_I = inv_rho_I * ((pop[8]) - (pop[14]));
+            pixz_I = inv_rho_I * ((pop[10]) - (pop[16]));
+            piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[8] + pop[11] + pop[12] + pop[14] + pop[17] + pop[18] - cs2 * rho_I);
+            piyz_I = inv_rho_I * ((pop[11] + pop[12]) - (pop[17] + pop[18]));
+            pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[10] + pop[11] + pop[12] + pop[16] + pop[17] + pop[18] - cs2 * rho_I);
 
             p_x1_x1_I = pixx_I;
             p_x2_x2_I = piyy_I;
@@ -1390,17 +1392,18 @@ switch (nodeType)
             p_x1_x3_I = pixz_I;
             p_x2_x3_I = piyz_I;
 
-            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
-            inv_rho = rho_I/rho;
+            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); // A34
+            inv_rho = 1.0 / rho;
+            inv_rho2 = rho_I * inv_rho;
 
-            p_x1_x1 = inv_rho * (1.5 * p_x1_x1_I)  + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
-            p_x2_x2 = inv_rho * (4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
-            p_x3_x3 = inv_rho * (4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
-            p_x1_x2 = inv_rho * (2.0 * p_x1_x2_I) - ONETHIRD*ux2; //A37
-            p_x1_x3 = inv_rho * (2.0 * p_x1_x3_I) - ONETHIRD*ux3; //A40
-            p_x2_x3 = inv_rho * p_x2_x3; //A38
+            p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+            p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+            p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+            p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD * ux2);            // A37
+            p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD * ux3);            // A40
+            p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
 
-            //save variables
+            // save variables
 
             ux_t30 = ux1;
             uy_t30 = ux2;
@@ -1413,26 +1416,26 @@ switch (nodeType)
             pixz_t90 = p_x1_x3;
             piyz_t90 = p_x2_x3;
 
-        break;
+            break;
     case BACK:
-            l1 = -1; 
-            l2 = 0; 
+            l1 = -1;
+            l2 = 0;
             l3 = 0;
-            //u1 = uz // u2  = ux // u3 == uy
-            ux1 = 0.0;  
-            ux2 = 0.0;  
-            ux3 = 0.0;  
+            // u1 = uz // u2  = ux // u3 == uy
+            ux1 = 0.0;
+            ux2 = 0.0;
+            ux3 = 0.0;
 
-            //5/9/11/16/18
+            // 5/9/11/16/18
             rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[6] + pop[7] + pop[8] + pop[10] + pop[12] + pop[13] + pop[14] + pop[15] + pop[17];
             inv_rho_I = 1.0 / rho_I;
 
-            pixx_I = inv_rho_I *  (pop[1] + pop[2] + pop[7] + pop[8] + pop[10] + pop[13] + pop[14] + pop[15] - cs2* rho_I) ;
-            pixy_I = inv_rho_I * ((pop[7] + pop[ 8]) - (pop[13] + pop[14]));
-            pixz_I = inv_rho_I * (( pop[10]) - (pop[15] ));
-            piyy_I = inv_rho_I *  (pop[3] + pop[4] + pop[7] + pop[8] + pop[12] + pop[13] + pop[14] + pop[17] - cs2* rho_I);
-            piyz_I = inv_rho_I * ((pop[12])-(pop[17]));
-            pizz_I = inv_rho_I *  ( pop[6] + pop[10] + pop[12] + pop[15]  + pop[17] - cs2* rho_I);
+            pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[8] + pop[10] + pop[13] + pop[14] + pop[15] - cs2 * rho_I);
+            pixy_I = inv_rho_I * ((pop[7] + pop[8]) - (pop[13] + pop[14]));
+            pixz_I = inv_rho_I * ((pop[10]) - (pop[15]));
+            piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[8] + pop[12] + pop[13] + pop[14] + pop[17] - cs2 * rho_I);
+            piyz_I = inv_rho_I * ((pop[12]) - (pop[17]));
+            pizz_I = inv_rho_I * (pop[6] + pop[10] + pop[12] + pop[15] + pop[17] - cs2 * rho_I);
 
             p_x1_x1_I = pizz_I;
             p_x2_x2_I = pixx_I;
@@ -1441,18 +1444,18 @@ switch (nodeType)
             p_x1_x3_I = piyz_I;
             p_x2_x3_I = pixy_I;
 
-            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
-            inv_rho = rho_I/rho;
+            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); // A34
+            inv_rho = 1.0 / rho;
+            inv_rho2 = rho_I * inv_rho;
 
-            p_x1_x1 = inv_rho * (1.5 * p_x1_x1_I)  + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
-            p_x2_x2 = inv_rho * (4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
-            p_x3_x3 = inv_rho * (4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
-            p_x1_x2 = inv_rho * (2.0 * p_x1_x2_I) - ONETHIRD*ux2; //A37
-            p_x1_x3 = inv_rho * (2.0 * p_x1_x3_I) - ONETHIRD*ux3; //A40
-            p_x2_x3 = inv_rho * p_x2_x3; //A38
+            p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+            p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+            p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+            p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD * ux2);            // A37
+            p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD * ux3);            // A40
+            p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
 
-
-            //save variables
+            // save variables
 
             uz_t30 = ux1;
             ux_t30 = ux2;
@@ -1465,26 +1468,26 @@ switch (nodeType)
             piyz_t90 = p_x1_x3;
             pixy_t90 = p_x2_x3;
 
-        break;
+            break;
     case FRONT:
             l1 = 1;
-            l2 = 0; 
+            l2 = 0;
             l3 = 0;
-            //u1 = uz // u2  = ux // u3 == uy
-            ux1 = 0.0;  
-            ux2 = 0.0;  
-            ux3 = 0.0;  
+            // u1 = uz // u2  = ux // u3 == uy
+            ux1 = 0.0;
+            ux2 = 0.0;
+            ux3 = 0.0;
 
-            //6/10/12/15/17
+            // 6/10/12/15/17
             rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[7] + pop[8] + pop[9] + pop[11] + pop[13] + pop[14] + pop[16] + pop[18];
             inv_rho_I = 1.0 / rho_I;
 
-            pixx_I = inv_rho_I *  (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[13] + pop[14] + pop[16] - cs2* rho_I) ;
-            pixy_I = inv_rho_I * ((pop[7] + pop[ 8]) - (pop[13] + pop[14]));
-            pixz_I = inv_rho_I * ((pop[9] ) - (+ pop[16]));
-            piyy_I = inv_rho_I *  (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[13] + pop[14] + pop[18] - cs2* rho_I);
-            piyz_I = inv_rho_I * ((pop[11] )-(pop[18]));
-            pizz_I = inv_rho_I *  (pop[5] + pop[9] + pop[11] + pop[16] + pop[18] - cs2* rho_I);
+            pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[13] + pop[14] + pop[16] - cs2 * rho_I);
+            pixy_I = inv_rho_I * ((pop[7] + pop[8]) - (pop[13] + pop[14]));
+            pixz_I = inv_rho_I * ((pop[9]) - (+pop[16]));
+            piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[13] + pop[14] + pop[18] - cs2 * rho_I);
+            piyz_I = inv_rho_I * ((pop[11]) - (pop[18]));
+            pizz_I = inv_rho_I * (pop[5] + pop[9] + pop[11] + pop[16] + pop[18] - cs2 * rho_I);
 
             p_x1_x1_I = pizz_I;
             p_x2_x2_I = pixx_I;
@@ -1493,18 +1496,18 @@ switch (nodeType)
             p_x1_x3_I = piyz_I;
             p_x2_x3_I = pixy_I;
 
+            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); // A34
+            inv_rho = 1.0 / rho;
+            inv_rho2 = rho_I * inv_rho;
 
-            rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
-            inv_rho = rho_I/rho;
+            p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+            p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+            p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+            p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD * ux2);            // A37
+            p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD * ux3);            // A40
+            p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
 
-            p_x1_x1 = inv_rho * (1.5 * p_x1_x1_I)  + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
-            p_x2_x2 = inv_rho * (4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
-            p_x3_x3 = inv_rho * (4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
-            p_x1_x2 = inv_rho * (2.0 * p_x1_x2_I) - ONETHIRD*ux2; //A37
-            p_x1_x3 = inv_rho * (2.0 * p_x1_x3_I) - ONETHIRD*ux3; //A40
-            p_x2_x3 = inv_rho * p_x2_x3; //A38
-
-            //save variables
+            // save variables
 
             uz_t30 = ux1;
             ux_t30 = ux2;
@@ -1517,8 +1520,9 @@ switch (nodeType)
             piyz_t90 = p_x1_x3;
             pixy_t90 = p_x2_x3;
 
-
-        break;
+            break;
     default:
-        break;
+            break;
+
+rhoVar = rho;
 }
