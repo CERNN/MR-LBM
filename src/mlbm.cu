@@ -192,18 +192,6 @@ __global__ void gpuMomCollisionStream(
 
         if (nodeType){
             #include BC_PATH
-
-            ux_t30 = ux_t30 /3.0;
-            uy_t30 = uy_t30 /3.0;
-            uz_t30 = uz_t30 /3.0;
-
-            pixx_t45 = (pixx_t45 / 4.5 + cs2 ) * rhoVar;
-            pixy_t90 = (pixy_t90 / 9.0 ) * rhoVar;
-            pixz_t90 = (pixz_t90 / 9.0 ) * rhoVar;
-            piyy_t45 = (piyy_t45 / 4.5 + cs2) * rhoVar;
-            piyz_t90 = (piyz_t90 / 9.0 ) * rhoVar;
-            pizz_t45 = (pizz_t45 / 4.5 + cs2) * rhoVar;
-
         }
             //calculate streaming moments
         #ifdef D3Q19
@@ -243,10 +231,18 @@ __global__ void gpuMomCollisionStream(
 
     #ifdef BC_MOMENT_BASED
         dfloat invRho;
-        if(nodeType){
+        if(nodeType != BULK){
             #include BC_PATH
             //gpuBoundaryConditionMom(pop,rhoVar,nodeType,ux_t30,uy_t30,uz_t30,pixx_t45,pixy_t90,pixz_t90,piyy_t45,piyz_t90,pizz_t45);
+
             invRho = 1.0 / rhoVar;
+
+            pixx_t45 = (pixx_t45 + cs2)* rhoVar; 
+            pixy_t90 = (pixy_t90) * rhoVar; 
+            pixz_t90 = (pixz_t90) * rhoVar; 
+            piyy_t45 = (piyy_t45 + cs2)* rhoVar; 
+            piyz_t90 = (piyz_t90) * rhoVar; 
+            pizz_t45 = (pizz_t45 + cs2)* rhoVar;
         }else{
 
             //calculate streaming moments
@@ -259,7 +255,7 @@ __global__ void gpuMomCollisionStream(
                 uy_t30 = ((pop[ 3] + pop[7] + pop[11] + pop[14] + pop[17]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18]) + 0.5 * FY) * invRho;
                 uz_t30 = ((pop[ 5] + pop[9] + pop[11] + pop[16] + pop[18]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17]) + 0.5 * FZ) * invRho;
 
-            //equation5
+                //equation5
                 pixx_t45 = ( (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) );
                 pixy_t90 = (((pop[7] + pop[ 8]) - (pop[13] + pop[14])));
                 pixz_t90 = (((pop[9] + pop[10]) - (pop[15] + pop[16])));
@@ -271,7 +267,7 @@ __global__ void gpuMomCollisionStream(
             #endif
             #ifdef D3Q27
                 rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
-                dfloat invRho = 1 / rhoVar;
+                invRho = 1 / rhoVar;
                 ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
                 uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
                 uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;

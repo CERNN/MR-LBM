@@ -1,28 +1,52 @@
 dfloat rho_I;
 dfloat inv_rho_I;
+
 dfloat pixx_I;
 dfloat pixy_I;
 dfloat pixz_I;
 dfloat piyy_I;
 dfloat piyz_I;
 dfloat pizz_I;
+
 dfloat rho;
 dfloat inv_rho;
-dfloat uxVar;
-dfloat uyVar;
-dfloat uzVar;
+dfloat inv_rho2;
+
+dfloat ux1;
+dfloat ux2;
+dfloat ux3;
+
+
+dfloat l1, l2, l3;
+
+dfloat p_x1_x1;
+dfloat p_x2_x2;
+dfloat p_x3_x3;
+dfloat p_x1_x2;
+dfloat p_x1_x3;
+dfloat p_x2_x3;
+
+dfloat p_x1_x1_I;
+dfloat p_x2_x2_I;
+dfloat p_x3_x3_I;
+dfloat p_x1_x2_I;
+dfloat p_x1_x3_I;
+dfloat p_x2_x3_I;
+
+
 
 
 switch (nodeType){
     case BULK:
         break;
-    case NORTH:
-        //l1 = 1 // l2 = 0 // l3 = 0
+    case SOUTH:
+        l1 = -1; 
+        l2 = 0; 
+        l3 = 0;
         //u1 = uy // u2  = ux // u3 == uz
-
-        uxVar = 0.0;  
-        uyVar = 0.0;  
-        uzVar = 0.0;  
+        ux1 = 0.0;  
+        ux2 = U_MAX;  
+        ux3 = 0.0;
 
         //IO: 3/7/11/14/17
         rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[9] + pop[10] + pop[12] + pop[13] + pop[15] + pop[16] + pop[18];
@@ -35,27 +59,48 @@ switch (nodeType){
         piyz_I = inv_rho_I * ((pop[12])-(pop[18]));
         pizz_I = inv_rho_I *  (pop[5] + pop[6] + pop[9] + pop[10] + pop[12] + pop[15] + pop[16]+ pop[18] - cs2*rho_I);
 
-        rho = rho_I * (9.0 * T_OMEGA * (piyy_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uyVar * uyVar) - 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
+        
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pixx_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = piyz_I;
+        p_x2_x3_I = pixz_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
         inv_rho = 1.0/rho;
+        inv_rho2 = rho_I*inv_rho;
 
-        piyy_t45 = 4.5 * inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH - 0.5 * uyVar)); //A35
-        pixx_t45 = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
-        pizz_t45 = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
-        pixy_t90 = 9.0 * inv_rho * (2.0 * rho_I * pixy_I - ONETHIRD*rho*uxVar); //A37
-        piyz_t90 = 9.0 * inv_rho * (2.0 * rho_I * piyz_I - ONETHIRD*rho*uzVar); //A40       
-        pixz_t90 = 9.0 * inv_rho * rho_I * pixz_I; //A38
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
+        p_x2_x2 = inv_rho2 *(4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
+        p_x3_x3 = inv_rho2 *(4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD*ux2); //A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD*ux3); //A40      
+        p_x2_x3 = inv_rho2 * p_x2_x3_I; //A38
 
-        ux_t30 = uxVar * 3.0;
-        uy_t30 = uyVar * 3.0;
-        uz_t30 = uzVar * 3.0;
+        ux_t30 = ux2;
+        uy_t30 = ux1;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pixx_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        piyz_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
 
         rhoVar = rho;
 
         break;
-    case SOUTH:
-        uxVar = 0.0;  
-        uyVar = 0.0;  
-        uzVar = 0.0;  
+    case NORTH:
+
+        l1 = 1; 
+        l2 = 0; 
+        l3 = 0;
+        //u1 = uy // u2  = ux // u3 == uz
+        ux1 = 0.0;  
+        ux2 = 0.0;  
+        ux3 = 0.0;
 
         //IO: 4/8/12/13/18
         rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[5] + pop[6] + pop[7] + pop[9] + pop[10] + pop[11] + pop[14] + pop[15] + pop[16] + pop[17]; 
@@ -68,19 +113,34 @@ switch (nodeType){
         piyz_I = inv_rho_I *  ((pop[11])-(pop[17]));
         pizz_I = inv_rho_I *   (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[15] + pop[16] + pop[17]  - cs2*rho_I);
 
-        rho = rho_I * (9.0 * T_OMEGA * (piyy_I) + 12.0) / (OMEGA * (1.0 - 6.0 * uyVar * uyVar) + 3.0 * uyVar * OMEGA_P1 + 9.0); //A34
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pixx_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = piyz_I;
+        p_x2_x3_I = pixz_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) + 3.0 * ux1 * OMEGA_P1 + 9.0); //A34
         inv_rho = 1.0/rho;
+        inv_rho2 = rho_I*inv_rho;
 
-        piyy_t45 = 4.5 * inv_rho * (1.5 * rho_I * piyy_I + rho * (ONESIXTH + 0.5 * uyVar)); //A35
-        pixx_t45 = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pixx_I - pizz_I); //A36
-        pizz_t45 = 4.5 * inv_rho * (4.0/33.0) * rho_I * (10.0 * pizz_I - pixx_I); //A39
-        pixy_t90 = 9.0 * inv_rho * (2.0 * rho_I * pixy_I + ONETHIRD*rho*uxVar); //A37
-        piyz_t90 = 9.0 * inv_rho * (2.0 * rho_I * piyz_I + ONETHIRD*rho*uzVar); //A40      
-        pixz_t90 = 9.0 * inv_rho * rho_I * pixz_I; //A38
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1 ); //A35
+        p_x2_x2 = inv_rho2 *(4.0/33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I); //A36
+        p_x3_x3 = inv_rho2 *(4.0/33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I); //A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (ONETHIRD*ux2); //A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (ONETHIRD*ux3); //A40      
+        p_x2_x3 = inv_rho2 * p_x2_x3_I; //A38
 
-        ux_t30 = uxVar * 3.0;
-        uy_t30 = uyVar * 3.0;
-        uz_t30 = uzVar * 3.0;
+        ux_t30 = ux2;
+        uy_t30 = ux1;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pixx_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        piyz_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
 
         rhoVar = rho;
 
