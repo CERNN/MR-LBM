@@ -1,5 +1,5 @@
     /* write to global pop */
-    if (threadIdx.x == 0) { //w
+    if (threadIdx.x == 0 && x!=0) { //w
         gGhostX_0[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 2]; 
         gGhostX_0[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 8];
         gGhostX_0[idxPopX(ty, tz, 2, bx, by, bz)] = pop[10];
@@ -11,7 +11,7 @@
         gGhostX_0[idxPopX(ty, tz, 7, bx, by, bz)] = pop[24];
         gGhostX_0[idxPopX(ty, tz, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27                                                                                                           
-    }if (threadIdx.x == (BLOCK_NX - 1)){                                                                                                                                                                               
+    }if (threadIdx.x == (BLOCK_NX - 1) && x!=(NX-1)){                                                                                                                                                                               
         gGhostX_1[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 1];
         gGhostX_1[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 7];
         gGhostX_1[idxPopX(ty, tz, 2, bx, by, bz)] = pop[ 9];
@@ -25,7 +25,7 @@
         #endif //D3Q27       
     }
 
-    if (threadIdx.y == 0 )  { //s                                                                                                                                                                                        
+    if (threadIdx.y == 0 && y !=0)  { //s                                                                                                                                                                                        
         gGhostY_0[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 4];
         gGhostY_0[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 8];
         gGhostY_0[idxPopY(tx, tz, 2, bx, by, bz)] = pop[12];
@@ -37,7 +37,7 @@
         gGhostY_0[idxPopY(tx, tz, 7, bx, by, bz)] = pop[23];
         gGhostY_0[idxPopY(tx, tz, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27                                                                                                           
-    }if (threadIdx.y == (BLOCK_NY - 1)){
+    }if (threadIdx.y == (BLOCK_NY - 1) && y!=(NY-1)){
         gGhostY_1[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 3];
         gGhostY_1[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 7];
         gGhostY_1[idxPopY(tx, tz, 2, bx, by, bz)] = pop[11];
@@ -51,7 +51,7 @@
         #endif //D3Q27                                                                                                           
     }
     
-    if (threadIdx.z == 0){ //b                                                                                                                                                                                     
+    if (threadIdx.z == 0 && z!=0){ //b                                                                                                                                                                                     
         gGhostZ_0[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 6];
         gGhostZ_0[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[10];
         gGhostZ_0[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[12];
@@ -63,7 +63,7 @@
         gGhostZ_0[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[24];
         gGhostZ_0[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27                                                                                                           
-    }if (threadIdx.z == (BLOCK_NZ - 1)){                                                                                                               
+    }if (threadIdx.z == (BLOCK_NZ - 1) && z!= (NZ-1)){                                                                                                               
         gGhostZ_1[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 5];
         gGhostZ_1[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[ 9];
         gGhostZ_1[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[11];
