@@ -29,6 +29,7 @@ void interfaceSwap(dfloat* &pt1, dfloat* &pt2){
 } 
 
 int main() {
+    checkCudaErrors(cudaSetDevice(GPU_INDEX));
 
     dfloat* fMom;
     dfloat* fGhostX_0;

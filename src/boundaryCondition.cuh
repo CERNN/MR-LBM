@@ -12,14 +12,18 @@
 #include "var.h"
 #include "nodeTypeMap.h"
 
-__device__ void gpuBoundaryConditionMom(    
+__device__ 
+void gpuBoundaryConditionMom(    
     dfloat* pop, dfloat &rhoVar, char dNodeType,
     dfloat &uxVar , dfloat &uyVar , dfloat &uzVar, 
     dfloat &pixx  , dfloat &pixy  , dfloat &pixz , 
-    dfloat &piyy  , dfloat &piyz  , dfloat &pizz );
+    dfloat &piyy  , dfloat &piyz  , dfloat &pizz 
+);
 
-__global__ void gpuInitialization_nodeType(
-    char *dNodeType);
+__global__ 
+void gpuInitialization_nodeType(
+    char *dNodeType
+);
 
 
 
