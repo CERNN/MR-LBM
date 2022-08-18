@@ -2,7 +2,7 @@ from pyevtk.hl import gridToVTK
 from fileTreat import *
 
 
-def saveVTK3D(macrsDict, filenameWrite, points=True, normVal=1):
+def saveVTK3D(macrsDict, path, filenameWrite, points=True, normVal=1):
     """ Saves variables values to VTK format
 
     Parameters
@@ -19,7 +19,7 @@ def saveVTK3D(macrsDict, filenameWrite, points=True, normVal=1):
         normalized by NX), by default 0
     """
 
-    info = getSimInfo()
+    info = getSimInfo(path)
 
     if(normVal == 0):
         normVal = info['NX']
@@ -37,13 +37,13 @@ def saveVTK3D(macrsDict, filenameWrite, points=True, normVal=1):
         x = np.arange(0, info['NX'] / normVal + 0.1 * dx, dx, dtype=prc)
         y = np.arange(0, info['NY'] / normVal + 0.1 * dy, dy, dtype=prc)
         z = np.arange(0, info['NZ_TOTAL'] / normVal + 0.1 * dz, dz, dtype=prc)
-        gridToVTK(PATH + filenameWrite, x, y, z, cellData=macrsDict)
+        gridToVTK(path + filenameWrite, x, y, z, cellData=macrsDict)
     else:
         # grid
         x = np.arange(0, (info['NX'] - 1) / normVal + 0.1 * dx, dx, dtype=prc)
         y = np.arange(0, (info['NY'] - 1) / normVal + 0.1 * dy, dy, dtype=prc)
         z = np.arange(0, (info['NZ_TOTAL'] - 1) / normVal + 0.1 * dz, dz, dtype=prc)
-        gridToVTK(PATH + filenameWrite, x, y, z, pointData=macrsDict)
+        gridToVTK(path + filenameWrite, x, y, z, pointData=macrsDict)
 
 
 def saveMacrCsv(filenameWrite, macr, normalizeDist=False):

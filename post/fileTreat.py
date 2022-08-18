@@ -3,7 +3,7 @@ import glob
 import numpy as np
 
 # ALL FILES IN THE FOLDER MUST BE FROM THE SAME SIMULATION
-PATH = "./../bin/TEST/001/"
+#PATH = "./../bin/TEST/000/"
 
 __macr_names__ = ['ux', 'uy', 'uz', 'rho','omega']
 # Uncomment below for IBM
@@ -14,7 +14,7 @@ __macr_names__ = ['ux', 'uy', 'uz', 'rho','omega']
 __info__ = dict()
 
 
-def getFilenamesMacr(macrName):
+def getFilenamesMacr(macrName,path):
     """ Get all macroscopics filenames from the folder
 
     Parameters
@@ -28,11 +28,11 @@ def getFilenamesMacr(macrName):
         List of macroscopics filenames
     """
 
-    listFiles = sorted(glob.glob(PATH + "*" + macrName + "*.bin"))
+    listFiles = sorted(glob.glob(path + "*" + macrName + "*.bin"))
     return listFiles
 
 
-def getMacrSteps():
+def getMacrSteps(path):
     """ Get all macroscopics steps from the folder
 
     Returns
@@ -41,7 +41,7 @@ def getMacrSteps():
         Sorted list of steps values
     """
 
-    listFiles = getFilenamesMacr(__macr_names__[0])
+    listFiles = getFilenamesMacr(__macr_names__[0],path)
     setMacrSteps = set()
     for i in listFiles:
         # get everything after the macr name
@@ -53,7 +53,7 @@ def getMacrSteps():
     return listMacrSteps
 
 
-def getSimInfo():
+def getSimInfo(path):
     """ Get simulation info in dictionary format
 
     Returns
@@ -63,7 +63,7 @@ def getSimInfo():
     """
 
     if len(__info__) == 0:
-        filename = glob.glob(PATH + "*info*.txt")[0]
+        filename = glob.glob(path + "*info*.txt")[0]
         with open(filename, "r") as f:
             lines = f.readlines()
             linesTrim = [l.strip() for l in lines]
@@ -143,7 +143,7 @@ def getSimInfo():
     return __info__
 
 
-def readFileMacr3D(macrFilename):
+def readFileMacr3D(macrFilename,path):
     """ Read the binary file and returns its content as a 3D matrix
 
     Parameters
@@ -157,7 +157,7 @@ def readFileMacr3D(macrFilename):
         Macroscopic array
     """
 
-    info = getSimInfo()
+    info = getSimInfo(path)
     if info['Prc'] == 'double':
         prc = 'd'
     elif info['Prc'] == 'float':
@@ -168,7 +168,7 @@ def readFileMacr3D(macrFilename):
         return np.swapaxes(vec3D, 0, 2)
 
 
-def getMacrsFromStep(step):
+def getMacrsFromStep(step,path):
     """ Get all macroscopics in the folder from the step specified
 
     Parameters
@@ -186,7 +186,7 @@ def getMacrsFromStep(step):
     listFilename = list()
 
     for macrName in __macr_names__:
-        listFilename.append(getFilenamesMacr(macrName))
+        listFilename.append(getFilenamesMacr(macrName,path))
 
     # flatten list
     listFilenameFlat = [j for i in range(0, len(listFilename))
@@ -207,12 +207,12 @@ def getMacrsFromStep(step):
     for filename in listFilenameStep:
         for macrName in __macr_names__:
             if macrName in filename:
-                macr[macrName] = readFileMacr3D(filename)
+                macr[macrName] = readFileMacr3D(filename,path)
 
     return macr
 
 
-def getAllMacrs():
+def getAllMacrs(path):
     """ Get array for all macroscopics in folder. For compatibility all
         macrs must have the same number of files and same steps for each
 
@@ -226,7 +226,7 @@ def getAllMacrs():
 
     filenames = dict()
     for macrName in __macr_names__:
-        filenames[macrName] = getFilenamesMacr(macrName)
+        filenames[macrName] = getFilenamesMacr(macrName,path)
 
     for i in range(0, min(len(filenames[i]) for i in filenames)):
         # getting simulation step
@@ -237,6 +237,6 @@ def getAllMacrs():
         # save macroscopics from simulation step
         macr[macrStep] = dict()
         for macrName in filenames:
-            macr[macrStep][macrName] = readFileMacr3D(filenames[macrName][i])
+            macr[macrStep][macrName] = readFileMacr3D(filenames[macrName][i],path)
 
     return macr
