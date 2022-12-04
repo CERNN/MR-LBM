@@ -1,0 +1,378 @@
+dfloat rho_w;
+switch (nodeType){
+        case BULK:
+            break;
+        //corners
+        case SOUTH_WEST_BACK:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            #ifdef D3Q27
+            pop[19] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20 - 1)];
+            #endif
+            //Dead Pop are: [13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26]
+            
+            break;
+        case SOUTH_WEST_FRONT:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[21] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22 - 1)];
+            #endif
+            //Dead Pop are: [9, 10, 11, 12, 13, 14, 19, 20, 23, 24, 25, 26]
+            
+            break;
+        case SOUTH_EAST_BACK:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            #ifdef D3Q27
+            pop[25] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 26 - 1)];
+            #endif
+            //Dead Pop are: [7, 8, 9, 10, 17, 18, 19, 20, 21, 22, 23, 24]
+            
+            break;
+        case SOUTH_EAST_FRONT:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[24] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23 - 1)];
+            #endif
+            //Dead Pop are: [7, 8, 11, 12, 15, 16, 19, 20, 21, 22, 25, 26]
+            
+            break;
+        case NORTH_WEST_BACK:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[23] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 24 - 1)];
+            #endif
+            //Dead Pop are: [7, 8, 11, 12, 15, 16, 19, 20, 21, 22, 25, 26]
+            
+            break;
+        case NORTH_WEST_FRONT:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            #ifdef D3Q27
+            pop[26] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 25 - 1)];
+            #endif
+            //Dead Pop are: [7, 8, 9, 10, 17, 18, 19, 20, 21, 22, 23, 24]
+            
+            break;
+        case NORTH_EAST_BACK:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[22] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 21 - 1)];
+            #endif
+            //Dead Pop are: [9, 10, 11, 12, 13, 14, 19, 20, 23, 24, 25, 26]
+            
+            break;
+        case NORTH_EAST_FRONT:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            #ifdef D3Q27
+            pop[20] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 19 - 1)];
+            #endif
+            //Dead Pop are: [13, 14, 15, 16, 17, 18, 21, 22, 23, 24, 25, 26]
+    
+            break;
+
+
+        //edges
+        case NORTH_WEST:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[23] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 24 - 1)];
+            pop[26] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 25 - 1)];
+            #endif
+            //Dead Pop are: [7, 8, 19, 20, 21, 22]
+
+            break;
+        case NORTH_EAST:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[20] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 19 - 1];
+            pop[22] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 21 - 1];
+            #endif
+            //Dead Pop are: [13, 14, 23, 24, 25, 26]
+            break;
+        case NORTH_FRONT:
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            #ifdef D3Q27
+            pop[20] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 19 - 1)];
+            pop[26] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 25 - 1)];
+            #endif
+            //Dead Pop are: [17, 18, 21, 22, 23, 24]
+            break;
+        case NORTH_BACK:
+            pop[ 4] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[22] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 21 - 1)];
+            pop[23] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 24 - 1)];
+            #endif
+            //Dead Pop are: [11, 12, 19, 20, 25, 26]
+
+            break;
+        case SOUTH_EAST:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[24] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23 - 1)];
+            pop[25] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 26 - 1)];
+            #endif
+            //Dead Pop are: [7, 8, 19, 20, 21, 22]
+            break;
+        case SOUTH_WEST:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[19] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20 - 1)];
+            pop[21] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22 - 1)];
+            #endif
+            //Dead Pop are: [13, 14, 23, 24, 25, 26]
+            break;
+        case SOUTH_FRONT:
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[21] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22 - 1)];
+            pop[24] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23 - 1)];
+            #endif
+            //Dead Pop are: [11, 12, 19, 20, 25, 26]
+            break;
+        case SOUTH_BACK:
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            #ifdef D3Q27
+            pop[19] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20 - 1)];
+            pop[25] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 26 - 1)];
+            #endif
+            //Dead Pop are: [17, 18, 21, 22, 23, 24]
+            break;
+        case WEST_FRONT:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[21] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22 - 1)];
+            pop[26] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 25 - 1)];
+            #endif
+            //Dead Pop are: [9, 10, 19, 20, 23, 24]
+            break;
+        case WEST_BACK:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[19] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20 - 1)];
+            pop[23] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 24 - 1)];
+            #endif
+            //Dead Pop are: [15, 16, 21, 22, 25, 26]
+            break;
+        case EAST_FRONT:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[20] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 19 - 1)];
+            pop[24] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23 - 1)];
+            #endif
+            //Dead Pop are: [15, 16, 21, 22, 25, 26]
+            break;
+        case EAST_BACK:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[22] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 21 - 1)];
+            pop[25] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 26 - 1)];
+            #endif
+            //Dead Pop are: [9, 10, 19, 20, 23, 24]
+            break;
+
+
+        // face
+        case SOUTH:
+            pop[ 3] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[19] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20 - 1)];
+            pop[21] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22 - 1)];
+            pop[24] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23 - 1)];
+            pop[25] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 26 - 1)];
+            #endif
+            break;
+
+        case NORTH: //TODO: this ones have velocity, need make a way to pass the velocity index
+            #ifdef D3Q19
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
+            // f_i = f_i* w_i*rho_w*ci*u_w /c_s2
+            pop[ 4] = pop[ 3];
+            pop[ 8] = pop[ 7] ;
+            pop[12] = pop[11] ;
+            pop[13] = pop[14] ;
+            pop[18] = pop[17] ;
+            #endif
+            #ifdef D3Q27
+            rho_w = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            pop[ 4] = pop[ 3];
+            pop[ 8] = pop[ 7] ;
+            pop[12] = pop[11];
+            pop[13] = pop[14] ;
+            pop[18] = pop[17];
+            pop[20] = pop[19] ;         
+            pop[22] = pop[21] ; 
+            pop[23] = pop[24] ; 
+            pop[26] = pop[25] ; 
+            #endif
+            break;
+
+        case EAST:
+            pop[ 2] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1 - 1)];
+            pop[ 8] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[14] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            #ifdef D3Q27
+            pop[20] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 19 - 1)];
+            pop[22] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 21 - 1)];
+            pop[24] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23 - 1)];
+            pop[25] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 26 - 1)];
+            #endif
+            break;
+        case WEST:
+            pop[ 1] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2 - 1)];
+            pop[ 7] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[13] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            #ifdef D3Q27
+            pop[19] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20 - 1)];
+            pop[21] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22 - 1)];
+            pop[23] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 24 - 1)];
+            pop[26] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 25 - 1)];
+            #endif
+            break;
+        //periodic
+        case BACK:
+            pop[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6 - 1)];
+            pop[ 9] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10 - 1)];
+            pop[11] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12 - 1)];
+            pop[16] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15 - 1)];
+            pop[18] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17 - 1)];
+            #ifdef D3Q27
+            pop[19] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 20 - 1)];
+            pop[22] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 21 - 1)];
+            pop[23] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 24 - 1)];
+            pop[25] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 26 - 1)];
+            #endif
+            break;
+        case FRONT:
+            pop[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5 - 1)];
+            pop[10] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9 - 1)];
+            pop[12] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11 - 1)];
+            pop[15] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16 - 1)];
+            pop[17] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18 - 1)];
+            #ifdef D3Q27
+            pop[20] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 19 - 1)];
+            pop[21] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 22 - 1)];
+            pop[24] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 23 - 1)];
+            pop[26] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 25 - 1)];
+            #endif
+        default:
+            break;
+    }

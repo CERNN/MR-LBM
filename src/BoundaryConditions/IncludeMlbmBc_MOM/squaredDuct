@@ -1,0 +1,1416 @@
+/*
+    //IO:
+    dfloat rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
+    dfloat inv_rho_I = 1.0 / rho_I;
+    dfloat pixx_I = inv_rho_I *  (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16] - cs2*rho_I);
+    dfloat pixy_I = inv_rho_I * ((pop[7] + pop[8]) - (pop[13] + pop[14]));
+    dfloat pixz_I = inv_rho_I * ((pop[9] + pop[10]) - (pop[15] + pop[16])) ;
+    dfloat piyy_I = inv_rho_I *  (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18] - cs2*rho_I);
+    dfloat piyz_I = inv_rho_I * ((pop[11] + pop[12]) - (pop[17] + pop[18]));
+    dfloat pizz_I = inv_rho_I *  (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18] - cs2*rho_I);
+*/
+
+dfloat rho_I;
+dfloat inv_rho_I;
+
+dfloat pixx_I;
+dfloat pixy_I;
+dfloat pixz_I;
+dfloat piyy_I;
+dfloat piyz_I;
+dfloat pizz_I;
+
+dfloat rho;
+dfloat inv_rho;
+dfloat inv_rho2;
+
+dfloat ux1;
+dfloat ux2;
+dfloat ux3;
+
+dfloat bE;
+dfloat dE;
+
+dfloat l1, l2, l3;
+
+dfloat p_x1_x1;
+dfloat p_x2_x2;
+dfloat p_x3_x3;
+dfloat p_x1_x2;
+dfloat p_x1_x3;
+dfloat p_x2_x3;
+
+dfloat p_x1_x1_I;
+dfloat p_x2_x2_I;
+dfloat p_x3_x3_I;
+dfloat p_x1_x2_I;
+dfloat p_x1_x3_I;
+dfloat p_x2_x3_I;
+
+switch (nodeType)
+{
+
+case BULK:
+        break;
+
+        //####################### CORNER #######################
+case SOUTH_WEST_BACK:
+
+        l1 = -1;
+        l2 = -1;
+        l3 = -1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/2/4/6/8/10/12
+        rho_I = pop[0] + pop[2] + pop[4] + pop[6] + pop[8] + pop[10] + pop[12];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[8] + pop[10] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]));
+        pixz_I = inv_rho_I * ((pop[10]));
+        piyy_I = inv_rho_I * (pop[4] + pop[8] + pop[12] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]));
+        pizz_I = inv_rho_I * (pop[6] + pop[10] + pop[12] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case SOUTH_WEST_FRONT:
+
+        l1 = -1;
+        l2 = -1;
+        l3 = 1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/2/4/5/8/16/18
+        rho_I = pop[0] + pop[2] + pop[4] + pop[5] + pop[8] + pop[16] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[8] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]));
+        pixz_I = inv_rho_I * (-(pop[16]));
+        piyy_I = inv_rho_I * (pop[4] + pop[8] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * (-(pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[16] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case SOUTH_EAST_BACK:
+        l1 = 1;
+        l2 = -1;
+        l3 = -1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/1/4/6/12/13/15
+        rho_I = pop[0] + pop[1] + pop[4] + pop[6] + pop[12] + pop[13] + pop[15];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[13] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * (-(pop[13]));
+        pixz_I = inv_rho_I * (-(pop[15]));
+        piyy_I = inv_rho_I * (pop[4] + pop[12] + pop[13] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]));
+        pizz_I = inv_rho_I * (pop[6] + pop[12] + pop[15] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case SOUTH_EAST_FRONT:
+        l1 = 1;
+        l2 = -1;
+        l3 = 1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/1/4/5/9/13/18
+        rho_I = pop[0] + pop[1] + pop[4] + pop[5] + pop[9] + pop[13] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[9] + pop[13] - cs2 * rho_I);
+        pixy_I = inv_rho_I * (-(pop[13]));
+        pixz_I = inv_rho_I * ((pop[9]));
+        piyy_I = inv_rho_I * (pop[4] + pop[13] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * (-(pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[9] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case NORTH_WEST_BACK:
+        l1 = -1;
+        l2 = 1;
+        l3 = -1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/2/3/6/10/14/17
+        rho_I = pop[0] + pop[2] + pop[3] + pop[6] + pop[10] + pop[14] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[10] + pop[14] - cs2 * rho_I);
+        pixy_I = inv_rho_I * (-(pop[14]));
+        pixz_I = inv_rho_I * ((pop[9]));
+        piyy_I = inv_rho_I * (pop[3] + pop[14] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * (-(pop[17]));
+        pizz_I = inv_rho_I * (pop[6] + pop[10] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case NORTH_WEST_FRONT:
+        l1 = -1;
+        l2 = 1;
+        l3 = 1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/2/3/5/11/14/16
+        rho_I = pop[0] + pop[2] + pop[3] + pop[5] + pop[11] + pop[14] + pop[16];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[14] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * (-(pop[14]));
+        pixz_I = inv_rho_I * (-(pop[16]));
+        piyy_I = inv_rho_I * (pop[3] + pop[11] + pop[14] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]));
+        pizz_I = inv_rho_I * (pop[5] + pop[11] + pop[16] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case NORTH_EAST_BACK:
+        l1 = 1;
+        l2 = 1;
+        l3 = -1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/1/3/6/7/15/17
+        rho_I = pop[0] + pop[1] + pop[3] + pop[6] + pop[7] + pop[15] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[7] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]));
+        pixz_I = inv_rho_I * (-(pop[15]));
+        piyy_I = inv_rho_I * (pop[3] + pop[7] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * (-(pop[17]));
+        pizz_I = inv_rho_I * (pop[6] + pop[15] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case NORTH_EAST_FRONT:
+        l1 = 1;
+        l2 = 1;
+        l3 = 1;
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 0/1/3/5/7/9/11
+        rho_I = pop[0] + pop[1] + pop[3] + pop[5] + pop[7] + pop[9] + pop[11];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[7] + pop[9] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]));
+        pixz_I = inv_rho_I * ((pop[9]));
+        piyy_I = inv_rho_I * (pop[3] + pop[7] + pop[11] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]));
+        pizz_I = inv_rho_I * (pop[5] + pop[9] + pop[11] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = (1.0 / 24.0) * (T_OMEGA) * (p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2.0 * l1 * l2 * p_x1_x2_I - 2.0 * l1 * l3 * p_x1_x3_I - 2.0 * l2 * l3 * p_x2_x3_I);
+        dE = 4.0 + 10.0 * OMEGA + 4 * (OMEGA - 3.0) * (l1*ux1 + l2*ux2 + l3*ux3) - 9.0 * OMEGA * (ux1 * ux1 + ux2 * ux2 + ux3 * ux3) + 6.0 * OMEGA * (l1 * l2 * ux1 * ux2 + l1 * l3 * ux1 * ux3 + l2 * l3 * ux2 * ux3);
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (ONETHIRD * (10.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 6.0 * (l1 * l2 * pixy_I + l1 * l3 * pixz_I - l2 * l3 * piyz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l1 * ux1 + l2 * ux2 + l3 * ux3);
+        p_x2_x2 = inv_rho2 * (ONETHIRD * (10.0 * p_x2_x2_I - 2.0 * p_x1_x1_I - 2.0 * p_x3_x3_I - 6.0 * (l2 * l1 * pixy_I + l2 * l3 * piyz_I - l1 * l3 * pixz_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l2 * ux2 + l1 * ux1 + l3 * ux3);
+        p_x3_x3 = inv_rho2 * (ONETHIRD * (10.0 * p_x3_x3_I - 2.0 * p_x1_x1_I - 2.0 * p_x2_x2_I - 6.0 * (l3 * l1 * pixz_I + l3 * l2 * piyz_I - l1 * l2 * pixy_I))) + (2.0 / 9.0) * (1.0 - 2.0 * l3 * ux3 + l1 * ux1 + l2 * ux2);
+        p_x1_x2 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l2 * p_x1_x1_I - 3.0 * l1 * l2 * p_x2_x2_I + 3.0 * l1 * l2 * p_x3_x3_I + 17.0 * p_x1_x2_I - l2 * l3 * p_x1_x3_I - l1 * l3 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l2 + l1 * ux2 + l2 * ux1 + l1 * l2 * l3 * ux3);
+        p_x1_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l1 * l3 * p_x1_x1_I - 3.0 * l1 * l3 * p_x3_x3_I + 3.0 * l1 * l3 * p_x2_x2_I + 17.0 * p_x1_x3_I - l3 * l2 * p_x1_x2_I - l1 * l2 * p_x2_x3_I)) - (2.0 / 9.0) * (l1 * l3 + l1 * ux3 + l3 * ux1 + l1 * l2 * l3 * ux2);
+        p_x2_x3 = inv_rho2 * (ONETHIRD * (-3.0 * l2 * l3 * p_x2_x2_I - 3.0 * l2 * l3 * p_x3_x3_I + 3.0 * l2 * l3 * p_x1_x1_I + 17.0 * p_x2_x3_I - l3 * l1 * p_x1_x2_I - l2 * l1 * p_x1_x3_I)) - (2.0 / 9.0) * (l2 * l3 + l2 * ux3 + l3 * ux2 + l1 * l2 * l3 * ux1);
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+
+        //####################### EDGE #######################
+case NORTH_WEST:
+        l1 = -1;
+        l2 = 1;
+        l3 = 0;
+        // u1 = ux // u2  = uy // u3 == uz
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 1/4/7/8/9/12/13/15/18
+        rho_I = pop[0] + pop[2] + pop[3] + pop[5] + pop[6] + pop[10] + pop[11] + pop[14] + pop[16] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[10] + pop[14] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * (-(pop[14]));
+        pixz_I = inv_rho_I * ((pop[10]) - (pop[16]));
+        piyy_I = inv_rho_I * (pop[3] + pop[11] + pop[14] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]) - (pop[17]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[10] + pop[11] + pop[16] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+        break;
+
+case NORTH_EAST:
+        l1 = 1;
+        l2 = 1;
+        l3 = 0;
+        // u1 = ux // u2  = uy // u3 == uz
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 2/4/8/10/12/13/14/16/18
+        rho_I = pop[0] + pop[1] + pop[3] + pop[5] + pop[6] + pop[7] + pop[9] + pop[11] + pop[15] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[7] + pop[9] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]));
+        pixz_I = inv_rho_I * ((pop[9]) - (pop[15]));
+        piyy_I = inv_rho_I * (pop[3] + pop[7] + pop[11] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]) - (pop[17]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[11] + pop[15] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case NORTH_FRONT:
+        l1 = 1;
+        l2 = 1;
+        l3 = 0;
+        // u1 = uy // u2  = uz // u3 == ux
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 4/6/8/10/12/13/15/17/18
+        rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[5] + pop[7] + pop[9] + pop[11] + pop[14] + pop[16];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[9] + pop[14] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]) - (pop[14]));
+        pixz_I = inv_rho_I * ((pop[9]) - (pop[16]));
+        piyy_I = inv_rho_I * (pop[3] + pop[7] + pop[11] + pop[14] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]));
+        pizz_I = inv_rho_I * (pop[5] + pop[9] + pop[11] + pop[16] - cs2 * rho_I);
+
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = pixx_I;
+        p_x1_x2_I = piyz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = pixz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        pixx_t45 = p_x3_x3;
+        piyz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
+
+        break;
+case NORTH_BACK:
+        l1 = 1;
+        l2 = -1;
+        l3 = 0;
+        // u1 = uy // u2  = uz // u3 == ux
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO:  4/5/8/9/11/12/13/16/18
+        rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[6] + pop[7] + pop[10] + pop[14] + pop[15] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[10] + pop[14] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]) - (pop[14]));
+        pixz_I = inv_rho_I * ((pop[10]) - (pop[15]));
+        piyy_I = inv_rho_I * (pop[3] + pop[7] + pop[14] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * (-(pop[17]));
+        pizz_I = inv_rho_I * (pop[6] + pop[10] + pop[15] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = pixx_I;
+        p_x1_x2_I = piyz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = pixz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        pixx_t45 = p_x3_x3;
+        piyz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
+
+        break;
+case SOUTH_EAST:
+        l1 = 1;
+        l2 = -1;
+        l3 = 0;
+        // u1 = ux // u2  = uy // u3 == uz
+
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 2/3/7/8/10/11/14/16/17
+        rho_I = pop[0] + pop[1] + pop[4] + pop[5] + pop[6] + pop[9] + pop[12] + pop[13] + pop[15] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[9] + pop[13] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * (-(pop[13]));
+        pixz_I = inv_rho_I * ((pop[9]) - (pop[15]));
+        piyy_I = inv_rho_I * (pop[4] + pop[12] + pop[13] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]) - (pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[12] + pop[15] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case SOUTH_WEST:
+        l1 = -1;
+        l2 = -1;
+        l3 = 0;
+        // u1 = ux // u2  = uy // u3 == uz
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 1/3/7/9/11/13/14/15/17
+        rho_I = pop[0] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[10] + pop[12] + pop[16] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[8] + pop[10] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]));
+        pixz_I = inv_rho_I * ((pop[10]) - (pop[16]));
+        piyy_I = inv_rho_I * (pop[4] + pop[8] + pop[12] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]) - (pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[10] + pop[12] + pop[15] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case SOUTH_FRONT:
+        l1 = -1;
+        l2 = 1;
+        l3 = 0;
+        // u1 = uy // u2  = uz // u3 == ux
+
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 3/6/7/10/11/12/14/15/17
+        rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[8] + pop[9] + pop[13] + pop[16] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[8] + pop[9] + pop[13] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]) - (pop[13]));
+        pixz_I = inv_rho_I * ((pop[9]) - (pop[16]));
+        piyy_I = inv_rho_I * (pop[4] + pop[8] + pop[13] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * (-(pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[9] + pop[16] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = pixx_I;
+        p_x1_x2_I = piyz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = pixz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        pixx_t45 = p_x3_x3;
+        piyz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
+
+        break;
+case SOUTH_BACK:
+        l1 = -1;
+        l2 = -1;
+        l3 = 0;
+        // u1 = uy // u2  = uz // u3 == ux
+
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 3/5/7/9/11/14/16/17/18
+        rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[6] + pop[8] + pop[10] + pop[12] + pop[13] + pop[15];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[8] + pop[10] + pop[13] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]) - (pop[13]));
+        pixz_I = inv_rho_I * ((pop[10]) - (pop[15]));
+        piyy_I = inv_rho_I * (pop[4] + pop[8] + pop[12] + pop[13] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]));
+        pizz_I = inv_rho_I * (pop[6] + pop[10] + pop[12] + pop[15] - cs2 * rho_I);
+
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = pixx_I;
+        p_x1_x2_I = piyz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = pixz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        pixx_t45 = p_x3_x3;
+        piyz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
+
+        break;
+case WEST_FRONT:
+        l1 = -1;
+        l2 = 1;
+        l3 = 0;
+        // u1 = ux // u2  = uz // u3 == uy
+
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 1/6/7/9/10/12/13/15/17
+        rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[5] + pop[8] + pop[11] + pop[14] + pop[16] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[8] + pop[14] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]) - (pop[14]));
+        pixz_I = inv_rho_I * (-(pop[16]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[8] + pop[11] + pop[14] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]) - (pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[11] + pop[16] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = piyy_I;
+        p_x1_x2_I = pixz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        piyy_t45 = p_x3_x3;
+        pixz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case WEST_BACK:
+        l1 = -1;
+        l2 = -1;
+        l3 = 0;
+        // u1 = ux // u2  = uz // u3 == uy
+
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 1/5/7/9/11/13/15/16/18
+        rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[6] + pop[8] + pop[10] + pop[12] + pop[14] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[2] + pop[8] + pop[10] + pop[14] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]) - (pop[14]));
+        pixz_I = inv_rho_I * ((pop[10]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[8] + pop[12] + pop[14] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]) - (pop[17]));
+        pizz_I = inv_rho_I * (pop[6] + pop[10] + pop[12] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = piyy_I;
+        p_x1_x2_I = pixz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        piyy_t45 = p_x3_x3;
+        pixz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case EAST_FRONT:
+        l1 = 1;
+        l2 = 1;
+        l3 = 0;
+        // u1 = ux // u2  = uz // u3 == uy
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO:2/6/8/10/12/14/15/16/17
+        rho_I = pop[0] + pop[1] + pop[3] + pop[4] + pop[5] + pop[7] + pop[9] + pop[11] + pop[13] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[7] + pop[9] + pop[13] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]) - (pop[13]));
+        pixz_I = inv_rho_I * ((pop[9]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[11] + pop[13] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]) - (pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[9] + pop[11] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = piyy_I;
+        p_x1_x2_I = pixz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        piyy_t45 = p_x3_x3;
+        pixz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case EAST_BACK:
+        l1 = 1;
+        l2 = -1;
+        l3 = 0;
+        // u1 = ux // u2  = uz // u3 == uy
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO:2/5/8/9/10/11/14/16/18
+        rho_I = pop[0] + pop[1] + pop[3] + pop[4] + pop[6] + pop[7] + pop[12] + pop[13] + pop[15] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[7] + pop[13] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]) - (pop[13]));
+        pixz_I = inv_rho_I * (-(pop[15]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[12] + pop[13] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]) - (pop[17]));
+        pizz_I = inv_rho_I * (pop[6] + pop[12] + pop[15] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = pizz_I;
+        p_x3_x3_I = piyy_I;
+        p_x1_x2_I = pixz_I;
+        p_x1_x3_I = pixy_I;
+        p_x2_x3_I = piyz_I;
+
+        bE = 1656.0 + 216.0 * T_OMEGA * (8.0 * p_x1_x1_I + 8.0 * p_x2_x2_I - 2.0 * p_x3_x3_I - 19.0 * l1 * l2 * p_x1_x2_I);                                                             // A28
+        dE = 720.0 - 660.0 * (l1 * ux1 + l2 * ux2) + OMEGA * (430.0 - 30.0 * (l1 * ux1 + l2 * ux2) + 414.0 * l1 * l2 * ux1 * ux2 - 690.0 * (ux1 * ux1 + ux2 * ux2) - 69.0 * ux3 * ux3); // A29
+
+        rho = rho_I * bE / dE; // A27
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x1_x1_I + p_x2_x2_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l1 * ux1 + 8.0 * l2 * ux2);       // A30
+        p_x2_x2 = inv_rho2 * ((1.0 / 23.0) * (47.0 * p_x2_x2_I + p_x1_x1_I - 6.0 * pizz_I - 34.0 * l1 * l2 * p_x1_x2_I)) - (2.0 / 69.0) * (-8.0 + 15.0 * l2 * ux2 + 8.0 * l1 * ux1);       // A30
+        p_x3_x3 = inv_rho2 * ((2.0 / 69.0) * (-9.0 * p_x1_x1_I - 9.0 * p_x2_x2_I + 54.0 * p_x3_x3_I + 30.0 * l1 * l1 * p_x1_x2_I)) - (4.0 / 69.0) * (1.0 + l1 * ux1 + l2 * ux2);           // A31
+        p_x1_x2 = inv_rho2 * ((1.0 / 23.0) * (l1 * l2 * (-17.0 * p_x1_x1_I - 17.0 * p_x1_x2_I + 10.0 * p_x3_x3_I) + 118.0 * p_x1_x2_I)) - (19.0 / 69.0) * (l1 * l2 + l1 * ux2 + l2 * ux1); // A32
+        p_x1_x3 = inv_rho2 * 2.0 * p_x1_x3_I - ONETHIRD * l1 * ux3;
+        p_x2_x3 = inv_rho2 * 2.0 * p_x2_x3_I - ONETHIRD * l2 * ux3;
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        pizz_t45 = p_x2_x2;
+        piyy_t45 = p_x3_x3;
+        pixz_t90 = p_x1_x2;
+        pixy_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+
+        //####################### FACE #######################
+case NORTH:
+        l1 = 1;
+        l2 = 0;
+        l3 = 0;
+        // u1 = uy // u2  = ux // u3 == uz
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 4/8/12/13/18
+
+        rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[5] + pop[6] + pop[7] + pop[9] + pop[10] + pop[11] + pop[14] + pop[15] + pop[16] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[9] + pop[10] + pop[14] + pop[15] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]) - (pop[14]));
+        pixz_I = inv_rho_I * ((pop[9] + pop[10]) - (pop[15] + pop[16]));
+        piyy_I = inv_rho_I * (pop[3] + pop[7] + pop[11] + pop[14] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]) - (pop[17]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[15] + pop[16] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pixx_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = piyz_I;
+        p_x2_x3_I = pixz_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) - 3.0 *l1* ux1 * OMEGA_P1 + 9.0); // A34
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+        p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+        p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (l1*ONETHIRD * ux2);            // A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (l1*ONETHIRD * ux3);            // A40
+        p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
+
+        // save variables
+
+        uy_t30 = ux1;
+        ux_t30 = ux2;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pixx_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        piyz_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
+
+        break;
+case SOUTH: // TODO: this ones have velocity, need make a way to pass the velocity index
+        l1 = -1;
+        l2 = 0;
+        l3 = 0;
+        // u1 = uy // u2  = ux // u3 == uz
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // IO: 3/7/11/14/17
+        rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[9] + pop[10] + pop[12] + pop[13] + pop[15] + pop[16] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[8] + pop[9] + pop[10] + pop[13] + pop[15] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]) - (pop[13]));
+        pixz_I = inv_rho_I * ((pop[9] + pop[10]) - (pop[15] + pop[16]));
+        piyy_I = inv_rho_I * (pop[4] + pop[8] + pop[12] + pop[13] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]) - (pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[10] + pop[12] + pop[15] + pop[16] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = piyy_I;
+        p_x2_x2_I = pixx_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = piyz_I;
+        p_x2_x3_I = pixz_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) - 3.0 *l1* ux1 * OMEGA_P1 + 9.0); // A34
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+        p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+        p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (l1*ONETHIRD * ux2);            // A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (l1*ONETHIRD * ux3);            // A40
+        p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
+
+        // save variables
+
+        uy_t30 = ux1;
+        ux_t30 = ux2;
+        uz_t30 = ux3;
+
+        piyy_t45 = p_x1_x1;
+        pixx_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        piyz_t90 = p_x1_x3;
+        pixz_t90 = p_x2_x3;
+
+        break;
+case EAST:
+        l1 = 1;
+        l2 = 0;
+        l3 = 0;
+        // u1 = ux // u2  = uy // u3 == uz
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // 2/8//10/14/16
+        rho_I = pop[0] + pop[1] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[9] + pop[11] + pop[12] + pop[13] + pop[15] + pop[17] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+
+        pixx_I = inv_rho_I * (pop[1] + pop[7] + pop[9] + pop[13] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7]) - (pop[13]));
+        pixz_I = inv_rho_I * ((pop[9]) - (pop[15]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[11] + pop[12] + pop[13] + pop[17] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11] + pop[12]) - (pop[17] + pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[9] + pop[11] + pop[12] + pop[15] + pop[17] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) - 3.0 *l1* ux1 * OMEGA_P1 + 9.0); // A34
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+        p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+        p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (l1*ONETHIRD * ux2);            // A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (l1*ONETHIRD * ux3);            // A40
+        p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
+
+        // save variables
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case WEST:
+        l1 = -1;
+        l2 = 0;
+        l3 = 0;
+        // u1 = ux // u2  = uy // u3 == uz
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // 1/7/9/13/15
+        rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[8] + pop[10] + pop[11] + pop[12] + pop[14] + pop[16] + pop[17] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+
+        pixx_I = inv_rho_I * (pop[2] + pop[8] + pop[10] + pop[14] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[8]) - (pop[14]));
+        pixz_I = inv_rho_I * ((pop[10]) - (pop[16]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[8] + pop[11] + pop[12] + pop[14] + pop[17] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11] + pop[12]) - (pop[17] + pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[6] + pop[10] + pop[11] + pop[12] + pop[16] + pop[17] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pixx_I;
+        p_x2_x2_I = piyy_I;
+        p_x3_x3_I = pizz_I;
+        p_x1_x2_I = pixy_I;
+        p_x1_x3_I = pixz_I;
+        p_x2_x3_I = piyz_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) - 3.0 *l1* ux1 * OMEGA_P1 + 9.0); // A34
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+        p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+        p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (l1*ONETHIRD * ux2);            // A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (l1*ONETHIRD * ux3);            // A40
+        p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
+
+        // save variables
+
+        ux_t30 = ux1;
+        uy_t30 = ux2;
+        uz_t30 = ux3;
+
+        pixx_t45 = p_x1_x1;
+        piyy_t45 = p_x2_x2;
+        pizz_t45 = p_x3_x3;
+        pixy_t90 = p_x1_x2;
+        pixz_t90 = p_x1_x3;
+        piyz_t90 = p_x2_x3;
+
+        break;
+case BACK:
+        l1 = -1;
+        l2 = 0;
+        l3 = 0;
+        // u1 = uz // u2  = ux // u3 == uy
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // 5/9/11/16/18
+        rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[6] + pop[7] + pop[8] + pop[10] + pop[12] + pop[13] + pop[14] + pop[15] + pop[17];
+        inv_rho_I = 1.0 / rho_I;
+
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[8] + pop[10] + pop[13] + pop[14] + pop[15] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7] + pop[8]) - (pop[13] + pop[14]));
+        pixz_I = inv_rho_I * ((pop[10]) - (pop[15]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[8] + pop[12] + pop[13] + pop[14] + pop[17] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[12]) - (pop[17]));
+        pizz_I = inv_rho_I * (pop[6] + pop[10] + pop[12] + pop[15] + pop[17] - cs2 * rho_I);
+
+        p_x1_x1_I = pizz_I;
+        p_x2_x2_I = pixx_I;
+        p_x3_x3_I = piyy_I;
+        p_x1_x2_I = pixz_I;
+        p_x1_x3_I = piyz_I;
+        p_x2_x3_I = pixy_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) - 3.0 *l1* ux1 * OMEGA_P1 + 9.0); // A34
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+        p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+        p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (l1*ONETHIRD * ux2);            // A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (l1*ONETHIRD * ux3);            // A40
+        p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
+
+        // save variables
+
+        uz_t30 = ux1;
+        ux_t30 = ux2;
+        uy_t30 = ux3;
+
+        pizz_t45 = p_x1_x1;
+        pixx_t45 = p_x2_x2;
+        piyy_t45 = p_x3_x3;
+        pixz_t90 = p_x1_x2;
+        piyz_t90 = p_x1_x3;
+        pixy_t90 = p_x2_x3;
+
+        break;
+case FRONT:
+        l1 = 1;
+        l2 = 0;
+        l3 = 0;
+        // u1 = uz // u2  = ux // u3 == uy
+        ux1 = 0.0;
+        ux2 = 0.0;
+        ux3 = 0.0;
+
+        // 6/10/12/15/17
+        rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[7] + pop[8] + pop[9] + pop[11] + pop[13] + pop[14] + pop[16] + pop[18];
+        inv_rho_I = 1.0 / rho_I;
+
+        pixx_I = inv_rho_I * (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[13] + pop[14] + pop[16] - cs2 * rho_I);
+        pixy_I = inv_rho_I * ((pop[7] + pop[8]) - (pop[13] + pop[14]));
+        pixz_I = inv_rho_I * ((pop[9]) - (+pop[16]));
+        piyy_I = inv_rho_I * (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[13] + pop[14] + pop[18] - cs2 * rho_I);
+        piyz_I = inv_rho_I * ((pop[11]) - (pop[18]));
+        pizz_I = inv_rho_I * (pop[5] + pop[9] + pop[11] + pop[16] + pop[18] - cs2 * rho_I);
+
+        p_x1_x1_I = pizz_I;
+        p_x2_x2_I = pixx_I;
+        p_x3_x3_I = piyy_I;
+        p_x1_x2_I = pixz_I;
+        p_x1_x3_I = piyz_I;
+        p_x2_x3_I = pixy_I;
+
+        rho = rho_I * (9.0 * T_OMEGA * (p_x1_x1_I) + 12.0) / (OMEGA * (1.0 - 6.0 * ux1 * ux1) - 3.0 *l1* ux1 * OMEGA_P1 + 9.0); // A34
+        inv_rho = 1.0 / rho;
+        inv_rho2 = rho_I * inv_rho;
+
+        p_x1_x1 = inv_rho2 * (1.5 * p_x1_x1_I) + (ONESIXTH - l1 * 0.5 * ux1); // A35
+        p_x2_x2 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x2_x2_I - p_x3_x3_I);   // A36
+        p_x3_x3 = inv_rho2 * (4.0 / 33.0) * (10.0 * p_x3_x3_I - p_x2_x2_I);   // A39
+        p_x1_x2 = inv_rho2 * (2.0 * p_x1_x2_I) + (l1*ONETHIRD * ux2);            // A37
+        p_x1_x3 = inv_rho2 * (2.0 * p_x1_x3_I) + (l1*ONETHIRD * ux3);            // A40
+        p_x2_x3 = inv_rho2 * p_x2_x3_I;                                       // A38
+
+        // save variables
+
+        uz_t30 = ux1;
+        ux_t30 = ux2;
+        uy_t30 = ux3;
+
+        pizz_t45 = p_x1_x1;
+        pixx_t45 = p_x2_x2;
+        piyy_t45 = p_x3_x3;
+        pixz_t90 = p_x1_x2;
+        piyz_t90 = p_x1_x3;
+        pixy_t90 = p_x2_x3;
+
+        break;
+default:
+        break;
+
+rhoVar = rho;
+}
