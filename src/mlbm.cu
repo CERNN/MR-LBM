@@ -235,7 +235,7 @@ __global__ void gpuMomCollisionStream(
             #include BC_PATH
             //gpuBoundaryConditionMom(pop,rhoVar,nodeType,ux_t30,uy_t30,uz_t30,pixx_t45,pixy_t90,pixz_t90,piyy_t45,piyz_t90,pizz_t45);
 
-            invRho = 1.0 / rhoVar;
+            invRho = 1.0 / rho;
 
             pixx_t45 = (pixx_t45 + cs2)* rhoVar; 
             pixy_t90 = (pixy_t90) * rhoVar; 
@@ -345,9 +345,9 @@ __global__ void gpuMomCollisionStream(
     uz_t30 = (t_omegaVar * (uz_t30 + invRho_mt15 * FZ ) + omegaVar * uz_t30 + tt_omega_t3 * FZ);
     
     //equation 90
-    pixx_t45 = (t_omegaVar * pixx_t45  +   omegaVar_d2 * ux_t30 * ux_t30    - invRho_mt15 * tt_omegaVar * (FX * ux_t30 + FX * ux_t30));
-    piyy_t45 = (t_omegaVar * piyy_t45  +   omegaVar_d2 * uy_t30 * uy_t30    - invRho_mt15 * tt_omegaVar * (FY * uy_t30 + FY * uy_t30));
-    pizz_t45 = (t_omegaVar * pizz_t45  +   omegaVar_d2 * uz_t30 * uz_t30    - invRho_mt15 * tt_omegaVar * (FZ * uz_t30 + FZ * uz_t30));
+    pixx_t45 = (t_omegaVar * pixx_t45  +   omegaVar_d2 * ux_t30 * ux_t30  - invRho_mt15 * tt_omegaVar * (FX * ux_t30 + FX * ux_t30));
+    piyy_t45 = (t_omegaVar * piyy_t45  +   omegaVar_d2 * uy_t30 * uy_t30  - invRho_mt15 * tt_omegaVar * (FY * uy_t30 + FY * uy_t30));
+    pizz_t45 = (t_omegaVar * pizz_t45  +   omegaVar_d2 * uz_t30 * uz_t30  - invRho_mt15 * tt_omegaVar * (FZ * uz_t30 + FZ * uz_t30));
 
     pixy_t90 = (t_omegaVar * pixy_t90  +   omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (FX * uy_t30 + FY * ux_t30));
     pixz_t90 = (t_omegaVar * pixz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (FX * uz_t30 + FZ * ux_t30));

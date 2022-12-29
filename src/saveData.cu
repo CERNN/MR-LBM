@@ -1,5 +1,128 @@
 #include "saveData.cuh"
 
+
+__host__
+void probeExport(
+        dfloat* h_fMom,
+    dfloat* rho,
+    dfloat* ux,
+    dfloat* uy,
+    dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    unsigned int step
+){
+    
+    int x_0,x_1,x_2,x_3,x_4;
+    int y_0,y_1,y_2,y_3,y_4;
+    int z_0;
+    x_0 = probe_x;
+    y_0 = probe_y;
+    z_0 = probe_z;
+
+    x_1 = (NX/4);
+    x_2 = (NX/4);
+    x_3 = (3*NX/4);
+    x_4 = (3*NX/4);
+
+    y_1 = (NY/4);
+    y_2 = (3*NY/4);
+    y_3 = (3*NY/4);
+    y_4 = (NY/4);
+
+    dfloat p_ux_0,p_uy_0,p_uz_0,p_rho_0;
+
+    dfloat p_ux_1,p_uy_1;
+    dfloat p_ux_2,p_uy_2;
+    dfloat p_ux_3,p_uy_3;
+    dfloat p_ux_4,p_uy_4;
+
+    p_rho_0 = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 0, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_ux_0  = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 1, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_uy_0  = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 2, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_uz_0  = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 3, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
+
+    p_ux_1  = h_fMom[idxMom(x_1%BLOCK_NX, y_1%BLOCK_NY, z_0%BLOCK_NZ, 1, x_1/BLOCK_NX, y_1/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_uy_1  = h_fMom[idxMom(x_1%BLOCK_NX, y_1%BLOCK_NY, z_0%BLOCK_NZ, 2, x_1/BLOCK_NX, y_1/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_ux_2  = h_fMom[idxMom(x_2%BLOCK_NX, y_2%BLOCK_NY, z_0%BLOCK_NZ, 1, x_2/BLOCK_NX, y_2/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_uy_2  = h_fMom[idxMom(x_2%BLOCK_NX, y_2%BLOCK_NY, z_0%BLOCK_NZ, 2, x_2/BLOCK_NX, y_2/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_ux_3  = h_fMom[idxMom(x_3%BLOCK_NX, y_3%BLOCK_NY, z_0%BLOCK_NZ, 1, x_3/BLOCK_NX, y_3/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_uy_3  = h_fMom[idxMom(x_3%BLOCK_NX, y_3%BLOCK_NY, z_0%BLOCK_NZ, 2, x_3/BLOCK_NX, y_3/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_ux_4  = h_fMom[idxMom(x_4%BLOCK_NX, y_4%BLOCK_NY, z_0%BLOCK_NZ, 1, x_4/BLOCK_NX, y_4/BLOCK_NY, z_0/BLOCK_NZ)];
+    p_uy_4  = h_fMom[idxMom(x_4%BLOCK_NX, y_4%BLOCK_NY, z_0%BLOCK_NZ, 2, x_4/BLOCK_NX, y_4/BLOCK_NY, z_0/BLOCK_NZ)];
+
+
+    
+   printf("%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\n",p_rho_0,p_ux_0,p_uy_0,p_uz_0,p_ux_1,p_uy_1,p_ux_2,p_uy_2,p_ux_3,p_uy_3,p_ux_4,p_uy_4);
+
+
+
+
+
+
+
+
+/*
+    //test consistency energy
+
+    dfloat t_mxx0, t_mxy0, t_myy0;
+    dfloat t_ux0, t_uy0, t_ux1;
+
+    
+    dfloat DS0=0;
+    dfloat DS1=0;
+
+    int NN = (NX-2);
+
+    int y0 = NY-1;
+    int y1 = NY-2;
+    int z = 0;
+
+
+    //right side of the equation 10
+        for(int x = 1; x< NX-1;x++){
+            t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+            t_ux1 = h_fMom[idxMom(x%BLOCK_NX, y1%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y1/BLOCK_NY, z/BLOCK_NZ)];
+
+
+            DS0 += t_ux0*t_ux0;
+            DS1 += t_ux1*t_ux1;
+
+        }
+    dfloat LS = ((DS0/NN)-(DS1/NN))/1.0;
+    LS /= 4*N;
+
+
+    dfloat SS3=0;
+    dfloat SS1=0;
+    dfloat SS2=0;
+    //left side of the equation
+        for(int y = 0; y< NY;y++){
+            for(int x = 0; x< NX;x++){
+                t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+
+                t_mxx0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 4, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_mxy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_myy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 7, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+
+                SS1 += (t_ux0*t_ux0-t_mxx0);
+                SS2 += (t_uy0*t_uy0-t_myy0);
+                SS3 += (t_ux0*t_uy0-t_mxy0);
+            }
+        }
+    //SS *= (as2/(2.0*TAU))/(NX*NY*NZ);
+
+
+
+    printf("%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\n",LS,SS1,SS2,SS3,(SS1+SS2+2*SS3)*as2/(2*TAU*NX*NY));
+
+*/
+
+
+}
+
 __host__
 void linearMacr(
     dfloat* h_fMom,
@@ -14,8 +137,8 @@ void linearMacr(
 ){
     size_t indexMacr;
 
-    dfloat data;
-    data  =  0;
+    dfloat meanRho;
+    meanRho  =  0;
 
     for(int z = 0; z< NZ;z++){
         ///printf("z %d \n", z);
@@ -24,19 +147,17 @@ void linearMacr(
                 indexMacr = idxScalarGlobal(x,y,z);
 
                 rho[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 0, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                ux[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                uy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                uz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                ux[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                uy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                uz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 #ifdef NON_NEWTONIAN_FLUID
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 10, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
                 //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
-                data += rho[indexMacr];
+                meanRho += rho[indexMacr];
             }
         }
     }
-    data = data/(NUMBER_LBM_NODES);
-    printf("%0.7e \n",data);
 }
 
 

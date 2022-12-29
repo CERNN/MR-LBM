@@ -135,7 +135,7 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
 
     size_t step = 0;
-    printf("step %d ",step); fflush(stdout);
+    printf("step %d\t",step); fflush(stdout);
 
 
     bool save = false;
@@ -166,8 +166,6 @@ int main() {
     checkCudaErrors(cudaEventRecord(start, 0));
     checkCudaErrors(cudaEventRecord(start_step, 0));
     /* ------------------------------ LBM LOOP ------------------------------ */
-
-    
     for (step=1; step<N_STEPS;step++){
         save =false;
 
@@ -193,26 +191,48 @@ int main() {
         //save macroscopics
 
         if(save){
+            //if (N_STEPS - step < 4*((int)turn_over_time)){
             checkCudaErrors(cudaDeviceSynchronize());
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
             
-            printf("step %d \n",step);
+            printf("step %d\t",step);
+            probeExport(h_fMom,rho,ux,uy,uz,
+            #ifdef NON_NEWTONIAN_FLUID
+            omega,
+            #endif
+            step); 
+            /*if (!(step%((int)turn_over_time))){
+                linearMacr(h_fMom,rho,ux,uy,uz,
+                #ifdef NON_NEWTONIAN_FLUID
+                omega,
+                #endif
+                step); 
+
+                fflush(stdout);
+
+                saveMacr(rho,ux,uy,uz,
+                #ifdef NON_NEWTONIAN_FLUID
+                omega,
+                #endif
+                step);
+            }*/
+        }
+
+    }
+    checkCudaErrors(cudaDeviceSynchronize());
             linearMacr(h_fMom,rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
             step); 
             fflush(stdout);
-            printf("------------------------------------------------------------------------\n");
             saveMacr(rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
             step);
-        }
 
-    }
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */
     //Calculate MLUPS

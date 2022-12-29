@@ -20,12 +20,12 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-#define BC_PROBLEM lidDrivenCavity
+#define BC_PROBLEM lidDrivenCavity_3D
 
 #define BC_POPULATION_BASED
 //#define BC_MOMENT_BASED
 
-#define BINGHAM
+//#define BINGHAM
 
 
 #if defined(POWERLAW) || defined(BINGHAM)
@@ -33,9 +33,9 @@
 #endif
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
-
-#define ID_SIM "001"            // prefix for simulation's files
-#define PATH_FILES "TEST"  // path to save simulation's files
+    #define ID_SIM "020a"            // prefix for simulation's files
+constexpr dfloat RE = 2000;
+#define PATH_FILES "LidDrivenCavity_3D"  // path to save simulation's files
 #define RANDOM_NUMBERS false    // to generate random numbers 
                                 // (useful for turbulence)
 
@@ -46,23 +46,25 @@
 
 constexpr int SCALE = 1;
 
-#define MACR_SAVE (1000)
+#define MACR_SAVE (32)
 
 
-constexpr int N = 256 * SCALE;
+constexpr int N = 512 * SCALE;
 constexpr int NX = N;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = 8;        // size z of the grid in one GPU
+constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 0.1;  
-constexpr dfloat RE = 1000.0;	
+
 constexpr dfloat L = N;
 constexpr dfloat VISC = L*U_MAX / RE;
+constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
 
-
-constexpr int N_STEPS = 50000;
+constexpr dfloat turn_over_time = L / U_MAX;
+constexpr int N_STEPS = 250*((int)turn_over_time);
+constexpr dfloat total_time = N_STEPS *Ct;
 
 
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
@@ -81,6 +83,13 @@ constexpr dfloat FY = 0.0;        // force in y
 constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
 
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
+
+/* ------------------------------ PROBE DEFINES ------------------------------ */
+
+constexpr int probe_x = (NX/2);
+constexpr int probe_y = (NY/2);
+constexpr int probe_z = (NZ_TOTAL/2);
+constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
     
 /* ------------------------------ VELOCITY SET ------------------------------ */
 #ifdef D3Q19
@@ -137,7 +146,7 @@ constexpr dfloat ONETHIRD = 1.0/3.0;
 /* ------------------------------ MEMORY SIZE ------------------------------ */
 const size_t BLOCK_NX = 8;
 const size_t BLOCK_NY = 8;
-const size_t BLOCK_NZ = 4;
+const size_t BLOCK_NZ = 8;
 const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;
 
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;

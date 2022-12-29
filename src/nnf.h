@@ -9,9 +9,9 @@
 /* ------------------------ NON NEWTONIAN FLUID TYPE ------------------------ */
 #ifdef BINGHAM
 // Inputs
-constexpr dfloat Bn = 100.0;
+constexpr dfloat Bn = 5.0;
 
-constexpr dfloat S_Y = Bn * VISC * U_MAX / L;                // Yield stress
+constexpr dfloat S_Y = Bn * VISC * U_MAX / L;                // Yield stress 0.00579
 // Calculated variables
 constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
 #endif

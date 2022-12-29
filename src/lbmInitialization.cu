@@ -49,6 +49,17 @@ __global__ void gpuInitialization_mom(
 	uy = 0.0;
     uz = 0.0;
 
+    //if(y == NY-1 && (( x%(NX-1) != 0 ||z%(NZ-1) != 0)))
+    //    ux = U_MAX;
+
+    /*dfloat pert = 0.05;
+    int l = idxScalarGlobal(x, y, z);
+    int Nt = NUMBER_LBM_NODES;
+    
+    ux += (U_MAX)*pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
+    uy += (U_MAX)*pert*randomNumbers[l + y - Nt*((l + y) / Nt)];
+    uz += (U_MAX)*pert*randomNumbers[l + z - Nt*((l + z) / Nt)];*/
+
     #ifdef NON_NEWTONIAN_FLUID
     omega = OMEGA;
     #endif

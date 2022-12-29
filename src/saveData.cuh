@@ -26,6 +26,28 @@
 *   @param nSteps: number of steps of the simulation
 */
 __host__
+void probeExport(
+    dfloat* h_fMom,
+    dfloat* rho,
+    dfloat* ux,
+    dfloat* uy,
+    dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    unsigned int step
+);
+
+/*
+*   @brief Change field vector order to be used saved in binary
+*   @param h_fMom: host macroscopic field based on block and thread index
+*   @param rho: rho field
+*   @param ux: ux field
+*   @param uy: uy field
+*   @param uz: uz field
+*   @param nSteps: number of steps of the simulation
+*/
+__host__
 void linearMacr(
     dfloat* h_fMom,
     dfloat* rho,
