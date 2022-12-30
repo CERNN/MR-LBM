@@ -22,10 +22,10 @@
 
 #define BC_PROBLEM lidDrivenCavity_3D
 
-#define BC_POPULATION_BASED
-//#define BC_MOMENT_BASED
+//#define BC_POPULATION_BASED
+#define BC_MOMENT_BASED
 
-//#define BINGHAM
+#define BINGHAM
 
 
 #if defined(POWERLAW) || defined(BINGHAM)
