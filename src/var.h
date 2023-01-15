@@ -25,6 +25,9 @@
 //#define BC_POPULATION_BASED
 #define BC_MOMENT_BASED
 
+#define DENSITY_CORRECTION
+
+/* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
 #define BINGHAM
 
 
@@ -144,10 +147,10 @@ constexpr dfloat ONESIXTH = 1.0/6.0;
 constexpr dfloat ONETHIRD = 1.0/3.0;
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
-const size_t BLOCK_NX = 8;
-const size_t BLOCK_NY = 8;
-const size_t BLOCK_NZ = 8;
-const size_t BLOCK_LBM_SIZE = BLOCK_NX * BLOCK_NY * BLOCK_NZ;
+#define BLOCK_NX 8
+#define BLOCK_NY 8
+#define BLOCK_NZ 8
+#define BLOCK_LBM_SIZE (BLOCK_NX * BLOCK_NY * BLOCK_NZ)
 
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;
 const size_t BLOCK_FACE_XZ = BLOCK_NX * BLOCK_NZ;

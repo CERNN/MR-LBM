@@ -13,7 +13,7 @@ void probeExport(
     #endif
     unsigned int step
 ){
-    
+    /*
     int x_0,x_1,x_2,x_3,x_4;
     int y_0,y_1,y_2,y_3,y_4;
     int z_0;
@@ -56,69 +56,77 @@ void probeExport(
     
    printf("%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\n",p_rho_0,p_ux_0,p_uy_0,p_uz_0,p_ux_1,p_uy_1,p_ux_2,p_uy_2,p_ux_3,p_uy_3,p_ux_4,p_uy_4);
 
+*/
 
 
 
 
-
-
-
-/*
-    //test consistency energy
-
-    dfloat t_mxx0, t_mxy0, t_myy0;
-    dfloat t_ux0, t_uy0, t_ux1;
-
-    
-    dfloat DS0=0;
-    dfloat DS1=0;
-
-    int NN = (NX-2);
-
+    dfloat t_ux0, t_ux1;
+    dfloat dy_ux = 0.0;
     int y0 = NY-1;
     int y1 = NY-2;
-    int z = 0;
-
+    int count = 0;
 
     //right side of the equation 10
-        for(int x = 1; x< NX-1;x++){
+    for (int z = 1 ; z <NZ_TOTAL-1 ; z++){
+        for (int x = 1; x< NX-1;x++){
             t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
             t_ux1 = h_fMom[idxMom(x%BLOCK_NX, y1%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y1/BLOCK_NY, z/BLOCK_NZ)];
 
-
-            DS0 += t_ux0*t_ux0;
-            DS1 += t_ux1*t_ux1;
-
+            dy_ux += (t_ux0-t_ux1)*(t_ux0-t_ux1);
+            count++;
         }
-    dfloat LS = ((DS0/NN)-(DS1/NN))/1.0;
+    }
+    dfloat LS = dy_ux/count;
     LS /= 4*N;
 
 
-    dfloat SS3=0;
-    dfloat SS1=0;
-    dfloat SS2=0;
+
+    dfloat t_uy0,t_uz0;
+    dfloat t_mxx0,t_mxy0,t_mxz0,t_myy0,t_myz0,t_mzz0;
+    dfloat Sxx = 0;
+    dfloat Sxy = 0;
+    dfloat Sxz = 0;
+    dfloat Syy = 0;
+    dfloat Syz = 0;
+    dfloat Szz = 0;
+    dfloat SS = 0;
+
     //left side of the equation
+    for (int z = 0 ; z <NZ_TOTAL; z++){
         for(int y = 0; y< NY;y++){
             for(int x = 0; x< NX;x++){
                 t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+                t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
 
                 t_mxx0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 4, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_mxy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_mxz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 9, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_myy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 7, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_myz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 8, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_mzz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 9, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
-                SS1 += (t_ux0*t_ux0-t_mxx0);
-                SS2 += (t_uy0*t_uy0-t_myy0);
-                SS3 += (t_ux0*t_uy0-t_mxy0);
+
+
+                Sxx = (as2/(2*TAU))*(t_ux0*t_ux0-t_mxx0);
+                Sxy = (as2/(2*TAU))*(t_ux0*t_uy0-t_mxy0);
+                Sxz = (as2/(2*TAU))*(t_ux0*t_uz0-t_mxz0);
+                Syy = (as2/(2*TAU))*(t_uy0*t_uy0-t_myy0);
+                Syz = (as2/(2*TAU))*(t_uy0*t_uz0-t_myz0);
+                Szz = (as2/(2*TAU))*(t_uz0*t_uz0-t_mzz0);
+                SS += ( Sxx * Sxx + Syy * Syy + Szz * Szz + 2*(Sxy * Sxy + Sxz * Sxz +  Syz * Syz)) ;
+
             }
         }
-    //SS *= (as2/(2.0*TAU))/(NX*NY*NZ);
+    }
+
+    SS = SS / (NUMBER_LBM_NODES);
 
 
 
-    printf("%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\n",LS,SS1,SS2,SS3,(SS1+SS2+2*SS3)*as2/(2*TAU*NX*NY));
 
-*/
+    printf("%0.7e\t%0.7e\t%0.7e\n",LS,SS,SS/LS);
 
 
 }

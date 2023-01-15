@@ -9,6 +9,7 @@
 
 // FILES INCLUDES
 #include "var.h"
+#include "auxFunctions.cuh"
 #ifdef NON_NEWTONIAN_FLUID
     #include "nnf.h"
 #endif
@@ -47,6 +48,11 @@ int main() {
     dfloat* gGhostZ_1;
 
     char* dNodeType;
+
+    #ifdef DENSITY_CORRECTION
+    dfloat* h_mean_rho;
+    dfloat* d_mean_rho;
+    #endif
 
 
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
@@ -94,6 +100,12 @@ int main() {
     cudaMalloc((void**)&gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
     cudaMalloc((void**)&gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
+
+    #ifdef DENSITY_CORRECTION
+    checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
+    cudaMalloc((void**)&d_mean_rho, sizeof(dfloat));  
+    #endif
+
     //printf("Allocated memory \n");fflush(stdout);
     
 
@@ -132,6 +144,10 @@ int main() {
     checkCudaErrors(cudaMemcpy(gGhostY_1, fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemcpy(gGhostZ_0, fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemcpy(gGhostZ_1, fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
+    #ifdef DENSITY_CORRECTION
+    h_mean_rho[0] = RHO_0;
+    checkCudaErrors(cudaMemcpy(d_mean_rho, h_mean_rho, sizeof(dfloat), cudaMemcpyHostToDevice)); 
+    #endif
     checkCudaErrors(cudaDeviceSynchronize());
 
     size_t step = 0;
@@ -174,7 +190,16 @@ int main() {
 
         gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,dNodeType,
         fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1,
-        gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1);
+        gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,
+        #ifdef DENSITY_CORRECTION
+        d_mean_rho,
+        #endif
+        step); 
+
+        #ifdef DENSITY_CORRECTION
+            mean_moment(fMom,d_mean_rho,0,step);
+        #endif
+
 
 
         
@@ -196,7 +221,7 @@ int main() {
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
             
-            printf("step %d\t",step);
+            printf("step %d\t",step);//fflush(stdout);
             probeExport(h_fMom,rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
@@ -221,6 +246,7 @@ int main() {
 
     }
     checkCudaErrors(cudaDeviceSynchronize());
+    checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             linearMacr(h_fMom,rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
@@ -273,6 +299,11 @@ int main() {
     cudaFree(ux);
     cudaFree(uy);
     cudaFree(uz);
+
+    #ifdef DENSITY_CORRECTION
+    cudaFree(d_mean_rho);
+    free(h_mean_rho);
+    #endif
 
     return 0;
 
