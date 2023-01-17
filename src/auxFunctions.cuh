@@ -11,19 +11,9 @@
 #include "errorDef.h"
 #include "var.h"
 #include "nodeTypeMap.h"
-
-__global__ 
-void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index);
-
-__global__ 
-void sumReductionBlock(dfloat* g_idata, dfloat* g_odata);
-
+#include "reduction.cuh"
 
 __host__
 void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step);
-
-
-
-
 
 #endif // !__AUX_FUNCTION_CUH
