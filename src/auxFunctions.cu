@@ -16,11 +16,11 @@ void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index)
     unsigned int i =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, m_index, blockIdx.x, blockIdx.y, blockIdx.z);
     //thread index in the array
     unsigned int tid = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z));
+    //block index
     unsigned int bid = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z));
 
     sdata[tid] = g_idata[i];
     __syncthreads();
-    // do reduction in shared mem  //
     for (unsigned int s = (blockDim.x * blockDim.y * blockDim.z) / 2; s > 0; s >>= 1) {
         if (tid < s) {
             sdata[tid] += sdata[tid + s];
@@ -47,11 +47,11 @@ void sumReductionBlock(dfloat* g_idata, dfloat* g_odata)
     unsigned int i = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z + blockDim.z * ((blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z))))));
     //thread index in the array
     unsigned int tid = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z));
+    //block index
     unsigned int bid = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z));
 
     sdata[tid] = g_idata[i];
     __syncthreads();
-    // do reduction in shared mem  //
     for (unsigned int s = (blockDim.x * blockDim.y * blockDim.z) / 2; s > 0; s >>= 1) {
         if (tid < s) {
             sdata[tid] += sdata[tid + s];
@@ -75,8 +75,8 @@ void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step){
     int nt_y = BLOCK_NY;
     int nt_z = BLOCK_NZ;
     int nb_x = NX / nt_x;
-    int nb_y = NX / nt_y;
-    int nb_z = NX / nt_z;
+    int nb_y = NY / nt_y;
+    int nb_z = NZ / nt_z;
 
     sumReductionThread << <dim3(NUM_BLOCK_X, NUM_BLOCK_Y, NUM_BLOCK_Z), dim3(BLOCK_NX, BLOCK_NY, BLOCK_NZ) >> > (fMom, sum,m_index);
 
