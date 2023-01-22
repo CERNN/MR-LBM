@@ -49,8 +49,8 @@ void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step){
     
     checkCudaErrors(cudaMemcpy(&temp, sum, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
 
-    temp = (temp/(dfloat)NUMBER_LBM_NODES)- 1.0;   // TODO: NO IDEA WHY DOUBLING  
-    printf("step %d temp %e \n ",step, temp);
+    temp = (temp/(dfloat)NUMBER_LBM_NODES) - RHO_0; 
+    //printf("step %d temp %e \n ",step, temp);
     checkCudaErrors(cudaMemcpy(meanMom, &temp, sizeof(dfloat), cudaMemcpyHostToDevice)); 
     cudaFree(sum);
     
