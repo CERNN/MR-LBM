@@ -1,0 +1,1157 @@
+dfloat rho_I;
+dfloat inv_rho_I;
+
+dfloat pixx_I;
+dfloat pixy_I;
+dfloat pixz_I;
+dfloat piyy_I;
+dfloat piyz_I;
+dfloat pizz_I;
+
+dfloat rho;
+dfloat inv_rho;
+
+dfloat ux1;
+dfloat ux2;
+dfloat ux3;
+
+
+dfloat l1, l2, l3;
+
+dfloat p_x1_x1;
+dfloat p_x2_x2;
+dfloat p_x3_x3;
+dfloat p_x1_x2;
+dfloat p_x1_x3;
+dfloat p_x2_x3;
+
+dfloat p_x1_x1_I;
+dfloat p_x2_x2_I;
+dfloat p_x3_x3_I;
+dfloat p_x1_x2_I;
+dfloat p_x1_x3_I;
+dfloat p_x2_x3_I;
+
+switch (nodeType)
+{
+
+case BULK:
+        break;
+case SOUTH_WEST_BACK:
+    l1 = -1;
+    l2 = -1;
+    l3 = -1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[4] + pop[6] + pop[8] + pop[10] + pop[12];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[12]);
+    pixy_I = inv_rho_I * (pop[8]);
+    pixz_I = inv_rho_I * (pop[10]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[12]);
+    piyz_I = inv_rho_I * (pop[12]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+#include "momCorner"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case SOUTH_WEST_FRONT:
+    l1 = -1;
+    l2 = -1;
+    l3 = 1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[4] + pop[5] + pop[8] + pop[16] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[8]);
+    pixz_I = inv_rho_I * (-pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (-pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momCorner"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_WEST_BACK:
+    l1 = -1;
+    l2 = 1;
+    l3 = -1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[3] + pop[6] + pop[10] + pop[14] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (-pop[14]);
+    pixz_I = inv_rho_I * (pop[10]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[6] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (-pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+#include "momCorner"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_WEST_FRONT:
+    l1 = -1;
+    l2 = 1;
+    l3 = 1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[3] + pop[5] + pop[11] + pop[14] + pop[16];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[16]);
+    pixy_I = inv_rho_I * (-pop[14]);
+    pixz_I = inv_rho_I * (-pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[16]);
+    piyz_I = inv_rho_I * (pop[11]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+#include "momCorner"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case SOUTH_EAST_BACK:
+    l1 = 1;
+    l2 = -1;
+    l3 = -1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[4] + pop[6] + pop[12] + pop[13] + pop[15];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[6] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[15]);
+    pixy_I = inv_rho_I * (-pop[13]);
+    pixz_I = inv_rho_I * (-pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[15]);
+    piyz_I = inv_rho_I * (pop[12]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    rho = rho_I;
+    rho = rho*(24.0 + 24.0*(1-omegaVar)*(p_x1_x1_I + p_x2_x2_I + p_x3_x3_I - 2*l1*l3*p_x1_x3_I - 2*l2*l3*p_x2_x3_I -2*l1*l2*p_x1_x2_I));
+    rho /= 4.0 + 10.0*omegaVar + (4*omegaVar - 12)*(l1*ux1+l2*ux2+l3*ux3) - 9*omegaVar * (ux1*ux1+ux2*ux2+ux3*ux3) + 6*omegaVar*(l1*l2*ux1*ux2+l1*l3*ux1*ux3+l2*l3*ux2*ux3);
+    inv_rho = 1.0/rho;
+    inv_rho_I = rho_I*inv_rho;
+
+#include "momCorner"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case SOUTH_EAST_FRONT:
+    l1 = 1;
+    l2 = -1;
+    l3 = 1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[4] + pop[5] + pop[9] + pop[13] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (-pop[13]);
+    pixz_I = inv_rho_I * (pop[9]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (-pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+#include "momCorner"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_EAST_BACK:
+    l1 = 1;
+    l2 = 1;
+    l3 = -1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[3] + pop[6] + pop[7] + pop[15] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[15] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (pop[7]);
+    pixz_I = inv_rho_I * (-pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (-pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+#include "momCorner"
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_EAST_FRONT:
+    l1 = 1;
+    l2 = 1;
+    l3 = 1;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[3] + pop[5] + pop[7] + pop[9] + pop[11];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[11]);
+    pixy_I = inv_rho_I * (pop[7]);
+    pixz_I = inv_rho_I * (pop[9]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[11]);
+    piyz_I = inv_rho_I * (pop[11]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momCorner"
+    
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+case SOUTH_WEST:
+    l1 = -1;
+    l2 = -1;
+    l3 = 0;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[10] + pop[12] + pop[16] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[8]);
+    pixz_I = inv_rho_I * (pop[10] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[12] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_WEST:
+    l1 = -1;
+    l2 = 1;
+    l3 = 0;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[3] + pop[5] + pop[6] + pop[10] + pop[11] + pop[14] + pop[16] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (-pop[14]);
+    pixz_I = inv_rho_I * (pop[10] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (pop[11] - pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case SOUTH_EAST:
+    l1 = 1;
+    l2 = -1;
+    l3 = 0;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[4] + pop[5] + pop[6] + pop[9] + pop[12] + pop[13] + pop[15] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[15] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (-pop[13]);
+    pixz_I = inv_rho_I * (pop[9] - pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[15] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[12] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_EAST:
+    l1 = 1;
+    l2 = 1;
+    l3 = 0;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[3] + pop[5] + pop[6] + pop[7] + pop[9] + pop[11] + pop[15] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[15] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (pop[7]);
+    pixz_I = inv_rho_I * (pop[9] - pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (pop[11] - pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 =  p_x1_x1;
+    piyy_t45 =  p_x2_x2;
+    pizz_t45 =  p_x3_x3;
+    pixy_t90 =  p_x1_x2;
+    pixz_t90 =  p_x1_x3;
+    piyz_t90 =  p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case WEST_BACK:
+    l1 = -1;
+    l2 = -1;
+    l3 = 0;
+    // u1 = ux // u2  = uz // u3 == uy
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[6] + pop[8] + pop[10] + pop[12] + pop[14] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (pop[8] - pop[14]);
+    pixz_I = inv_rho_I * (pop[10]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (pop[12] - pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = piyy_I;
+    p_x1_x2_I = pixz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux3;
+    uz_t30 = ux2;
+
+    pixx_t45 =  p_x1_x1;
+    piyy_t45 =  p_x3_x3;
+    pizz_t45 =  p_x2_x2;
+    pixy_t90 =  p_x1_x3;
+    pixz_t90 =  p_x1_x2;
+    piyz_t90 =  p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case WEST_FRONT:
+    l1 = -1;
+    l2 = 1;
+    l3 = 0;
+    // u1 = ux // u2  = uz // u3 == uy
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[5] + pop[8] + pop[11] + pop[14] + pop[16] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[8] - pop[14]);
+    pixz_I = inv_rho_I * (-pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[11] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = piyy_I;
+    p_x1_x2_I = pixz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux3;
+    uz_t30 = ux2;
+
+    pixx_t45 =  p_x1_x1;
+    piyy_t45 =  p_x3_x3;
+    pizz_t45 =  p_x2_x2;
+    pixy_t90 =  p_x1_x3;
+    pixz_t90 =  p_x1_x2;
+    piyz_t90 =  p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case EAST_BACK:
+    l1 = 1;
+    l2 = -1;
+    l3 = 0;
+    // u1 = ux // u2  = uz // u3 == uy
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[3] + pop[4] + pop[6] + pop[7] + pop[12] + pop[13] + pop[15] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[15] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (pop[7] - pop[13]);
+    pixz_I = inv_rho_I * (-pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (pop[12] - pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = piyy_I;
+    p_x1_x2_I = pixz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux3;
+    uz_t30 = ux2;
+
+    pixx_t45 =  p_x1_x1;
+    piyy_t45 =  p_x3_x3;
+    pizz_t45 =  p_x2_x2;
+    pixy_t90 =  p_x1_x3;
+    pixz_t90 =  p_x1_x2;
+    piyz_t90 =  p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case EAST_FRONT:
+    l1 = 1;
+    l2 = 1;
+    l3 = 0;
+    // u1 = ux // u2  = uz // u3 == uy
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[3] + pop[4] + pop[5] + pop[7] + pop[9] + pop[11] + pop[13] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[7] - pop[13]);
+    pixz_I = inv_rho_I * (pop[9]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[11] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = piyy_I;
+    p_x1_x2_I = pixz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux1;
+    uy_t30 = ux3;
+    uz_t30 = ux2;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x3_x3;
+    pizz_t45 = p_x2_x2;
+    pixy_t90 = p_x1_x3;
+    pixz_t90 = p_x1_x2;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case SOUTH_BACK:
+    l1 = -1;
+    l2 = -1;
+    l3 = 0;
+    // u1 = uy // u2  = uz // u3 == ux
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[6] + pop[8] + pop[10] + pop[12] + pop[13] + pop[15];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[15]);
+    pixy_I = inv_rho_I * (pop[8] - pop[13]);
+    pixz_I = inv_rho_I * (pop[10] - pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[15]);
+    piyz_I = inv_rho_I * (pop[12]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15]);
+
+    p_x1_x1_I = piyy_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = pixx_I;
+    p_x1_x2_I = piyz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = pixz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux3;
+    uy_t30 = ux1;
+    uz_t30 = ux2;
+
+    pixx_t45 =  p_x3_x3;
+    piyy_t45 =  p_x1_x1;
+    pizz_t45 =  p_x2_x2;
+    pixy_t90 =  p_x1_x3;
+    pixz_t90 =  p_x2_x3;
+    piyz_t90 =  p_x1_x2;
+
+    rhoVar = rho;
+
+    break;
+case SOUTH_FRONT:
+    l1 = -1;
+    l2 = 1;
+    l3 = 0;
+    // u1 = uy // u2  = uz // u3 == ux
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[8] + pop[9] + pop[13] + pop[16] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[8] - pop[13]);
+    pixz_I = inv_rho_I * (pop[9] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (-pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = piyy_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = pixx_I;
+    p_x1_x2_I = piyz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = pixz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux3;
+    uy_t30 = ux1;
+    uz_t30 = ux2;
+
+    pixx_t45 = p_x3_x3;
+    piyy_t45 = p_x1_x1;
+    pizz_t45 = p_x2_x2;
+    pixy_t90 = p_x1_x3;
+    pixz_t90 = p_x2_x3;
+    piyz_t90 = p_x1_x2;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_BACK:
+    l1 = 1;
+    l2 = -1;
+    l3 = 0;
+    // u1 = uy // u2  = uz // u3 == ux
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[6] + pop[7] + pop[10] + pop[14] + pop[15] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[15] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (pop[7] - pop[14]);
+    pixz_I = inv_rho_I * (pop[10] - pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (-pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = piyy_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = pixx_I;
+    p_x1_x2_I = piyz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = pixz_I;
+
+    #include "momEdge"
+    
+    ux_t30 = ux3;
+    uy_t30 = ux1;
+    uz_t30 = ux2;
+
+    pixx_t45 = p_x3_x3;
+    piyy_t45 = p_x1_x1;
+    pizz_t45 = p_x2_x2;
+    pixy_t90 = p_x1_x3;
+    pixz_t90 = p_x2_x3;
+    piyz_t90 = p_x1_x2;
+
+    rhoVar = rho;
+
+    break;
+case NORTH_FRONT:
+    l1 = 1;
+    l2 = 1;
+    l3 = 0;
+    // u1 = uy // u2  = uz // u3 == ux
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[5] + pop[7] + pop[9] + pop[11] + pop[14] + pop[16];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[16]);
+    pixy_I = inv_rho_I * (pop[7] - pop[14]);
+    pixz_I = inv_rho_I * (pop[9] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[16]);
+    piyz_I = inv_rho_I * (pop[11]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16]);
+
+    p_x1_x1_I = piyy_I;
+    p_x2_x2_I = pizz_I;
+    p_x3_x3_I = pixx_I;
+    p_x1_x2_I = piyz_I;
+    p_x1_x3_I = pixy_I;
+    p_x2_x3_I = pixz_I;
+
+    #include "momEdge"
+
+    ux_t30 = ux3;
+    uy_t30 = ux1;
+    uz_t30 = ux2;
+
+    pixx_t45 = p_x3_x3;
+    piyy_t45 = p_x1_x1;
+    pizz_t45 = p_x2_x2;
+    pixy_t90 = p_x1_x3;
+    pixz_t90 = p_x2_x3;
+    piyz_t90 = p_x1_x2;
+
+    rhoVar = rho;
+
+    break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //####################### FACE #######################
+case WEST:
+    l1 = -1;
+    l2 = 0;
+    l3 = 0;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[8] + pop[10] + pop[11] + pop[12] + pop[14] + pop[16] + pop[17] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[11] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[17] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[8] - pop[14]);
+    pixz_I = inv_rho_I * (pop[10] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[17] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[11] + pop[12] - pop[17] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[17] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momFace"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 =  p_x1_x1;
+    piyy_t45 =  p_x2_x2;
+    pizz_t45 =  p_x3_x3;
+    pixy_t90 =  p_x1_x2;
+    pixz_t90 =  p_x1_x3;
+    piyz_t90 =  p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case EAST:
+    l1 = 1;
+    l2 = 0;
+    l3 = 0;
+    // u1 = ux // u2  = uy // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[9] + pop[11] + pop[12] + pop[13] + pop[15] + pop[17] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[11] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[15] - (1.0/3.0)*pop[17] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[7] - pop[13]);
+    pixz_I = inv_rho_I * (pop[9] - pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[15] + (2.0/3.0)*pop[17] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[11] + pop[12] - pop[17] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pixx_I;
+    p_x2_x2_I = piyy_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = pixz_I;
+    p_x2_x3_I = piyz_I;
+
+    #include "momFace"
+
+    ux_t30 = ux1;
+    uy_t30 = ux2;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x1_x1;
+    piyy_t45 = p_x2_x2;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x1_x3;
+    piyz_t90 = p_x2_x3;
+
+    rhoVar = rho;
+
+    break;
+case SOUTH:
+    l1 = -1;
+    l2 = 0;
+    l3 = 0;
+    // u1 = uy // u2  = ux // u3 == uz
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[4] + pop[5] + pop[6] + pop[8] + pop[9] + pop[10] + pop[12] + pop[13] + pop[15] + pop[16] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[8] - pop[13]);
+    pixz_I = inv_rho_I * (pop[9] + pop[10] - pop[15] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[9] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[13] - (1.0/3.0)*pop[15] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[12] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = piyy_I;
+    p_x2_x2_I = pixx_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = piyz_I;
+    p_x2_x3_I = pixz_I;
+
+    #include "momFace"
+
+    ux_t30 = ux2;
+    uy_t30 = ux1;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x2_x2;
+    piyy_t45 = p_x1_x1;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x2_x3;
+    piyz_t90 = p_x1_x3;
+
+    rhoVar = rho;
+
+    break;
+case NORTH:
+    l1 = 1;
+    l2 = 0;
+    l3 = 0;
+    // u1 = uy // u2  = ux // u3 == uz
+    ux1 = 0.0;
+    ux2 = U_MAX;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[5] + pop[6] + pop[7] + pop[9] + pop[10] + pop[11] + pop[14] + pop[15] + pop[16] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (pop[7] - pop[14]);
+    pixz_I = inv_rho_I * (pop[9] + pop[10] - pop[15] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] - (1.0/3.0)*pop[5] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] - (1.0/3.0)*pop[9] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[15] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (pop[11] - pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = piyy_I;
+    p_x2_x2_I = pixx_I;
+    p_x3_x3_I = pizz_I;
+    p_x1_x2_I = pixy_I;
+    p_x1_x3_I = piyz_I;
+    p_x2_x3_I = pixz_I;
+
+    #include "momFace"
+
+
+    ux_t30 = ux2;
+    uy_t30 = ux1;
+    uz_t30 = ux3;
+
+    pixx_t45 = p_x2_x2;
+    piyy_t45 = p_x1_x1;
+    pizz_t45 = p_x3_x3;
+    pixy_t90 = p_x1_x2;
+    pixz_t90 = p_x2_x3;
+    piyz_t90 = p_x1_x3;
+
+    rhoVar = rho;
+
+    break;
+case BACK:
+    l1 = -1;
+    l2 = 0;
+    l3 = 0;
+    // u1 = uz // u2  = ux // u3 == uy
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[6] + pop[7] + pop[8] + pop[10] + pop[12] + pop[13] + pop[14] + pop[15] + pop[17];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[15] - (1.0/3.0)*pop[17]);
+    pixy_I = inv_rho_I * (pop[7] + pop[8] - pop[13] - pop[14]);
+    pixz_I = inv_rho_I * (pop[10] - pop[15]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[6] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[10] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+    piyz_I = inv_rho_I * (pop[12] - pop[17]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
+
+    p_x1_x1_I = pizz_I;
+    p_x2_x2_I = pixx_I;
+    p_x3_x3_I = piyy_I;
+    p_x1_x2_I = pixz_I;
+    p_x1_x3_I = piyz_I;
+    p_x2_x3_I = pixy_I;
+
+    #include "momFace"
+
+
+    ux_t30 = ux2;
+    uy_t30 = ux3;
+    uz_t30 = ux1;
+
+    pixx_t45 = p_x2_x2;
+    piyy_t45 = p_x3_x3;
+    pizz_t45 = p_x1_x1;
+    pixy_t90 = p_x2_x3;
+    pixz_t90 = p_x1_x2;
+    piyz_t90 = p_x1_x3;
+
+    rhoVar = rho;
+
+    break;
+case FRONT:
+    l1 = 1;
+    l2 = 0;
+    l3 = 0;
+    // u1 = uz // u2  = ux // u3 == uy
+    ux1 = 0.0;
+    ux2 = 0.0;
+    ux3 = 0.0;
+
+    rho_I = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[7] + pop[8] + pop[9] + pop[11] + pop[13] + pop[14] + pop[16] + pop[18];
+    inv_rho_I = 1.0 / rho_I;
+    pixx_I = inv_rho_I * (-(1.0/3.0)*pop[0] + (2.0/3.0)*pop[1] + (2.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[8] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[11] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[14] + (2.0/3.0)*pop[16] - (1.0/3.0)*pop[18]);
+    pixy_I = inv_rho_I * (pop[7] + pop[8] - pop[13] - pop[14]);
+    pixz_I = inv_rho_I * (pop[9] - pop[16]);
+    piyy_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] + (2.0/3.0)*pop[3] + (2.0/3.0)*pop[4] - (1.0/3.0)*pop[5] + (2.0/3.0)*pop[7] + (2.0/3.0)*pop[8] - (1.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[13] + (2.0/3.0)*pop[14] - (1.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+    piyz_I = inv_rho_I * (pop[11] - pop[18]);
+    pizz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[13] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
+
+    p_x1_x1_I = pizz_I;
+    p_x2_x2_I = pixx_I;
+    p_x3_x3_I = piyy_I;
+    p_x1_x2_I = pixz_I;
+    p_x1_x3_I = piyz_I;
+    p_x2_x3_I = pixy_I;
+
+    #include "momFace"
+
+
+    ux_t30 = ux2;
+    uy_t30 = ux3;
+    uz_t30 = ux1;
+
+    pixx_t45 = p_x2_x2;
+    piyy_t45 = p_x3_x3;
+    pizz_t45 = p_x1_x1;
+    pixy_t90 = p_x2_x3;
+    pixz_t90 = p_x1_x2;
+    piyz_t90 = p_x1_x3;
+
+    rhoVar = rho;
+
+    break;
+
+default:
+        break;
+
+rhoVar = rho;
+}

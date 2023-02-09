@@ -452,6 +452,8 @@ case NORTH_EAST_FRONT:
     rhoVar = rho;
 
     break;
+
+//EDGE
 case SOUTH_WEST:
     l1 = -1;
     l2 = -1;

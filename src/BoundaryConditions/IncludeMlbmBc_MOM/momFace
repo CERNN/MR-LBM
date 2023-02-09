@@ -1,0 +1,14 @@
+
+    rho = rho_I;
+    rho *= (-9*p_x1_x1_I)*omegaVar + (9*p_x1_x1_I + 12) ;
+    rho /= (1 - 3*l1*ux1 - 6*ux1*ux1)*omegaVar + (9 - l1*ux1) ;
+
+    inv_rho = 1.0 / rho;
+    inv_rho_I = rho_I * inv_rho;
+
+    p_x1_x1 = 1.5*inv_rho_I*p_x1_x1_I - 0.5*l1*ux1+ (1.0/6.0);
+    p_x2_x2 = (4.0/33.0) * inv_rho_I * (10*p_x2_x2_I - p_x3_x3_I*rho_I);
+    p_x3_x3 = (4.0/33.0) * inv_rho_I * (10*p_x3_x3_I - p_x2_x2_I*rho_I);
+    p_x1_x2 = 2*p_x1_x2_I*inv_rho_I - ONETHIRD * l1*ux2;
+    p_x1_x3 = 2*p_x1_x3_I*inv_rho_I - ONETHIRD * l1*ux3;
+    p_x2_x3 = p_x2_x3_I*inv_rho_I;
