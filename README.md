@@ -1,12 +1,13 @@
 # MR-LBM for GPU
 
-This is a LBM (Lattice Boltzmann method) with moment represent, where the collision is performed in momentos from 0th to 2nd order.
+This is a moment represent LBM (Lattice Boltzmann method), where the collision is performed in momentos from 0th to 2nd order.
 
+The theory can be found in the article: https://doi.org/10.1002/fld.5185
+Which should be used as software citation.
 
 It currently does not support many features, and only was created to be used as proof-of-concept.
-The program runs in only one GPU. Currently there is an implementation for Newtonian and Bingham fluid.
 
-Great part of the files share the same code as https://github.com/CERNN/VISCOPLASTIC-LBM, and therefore it will share same kind of licence.
+Great part of the files share the same code as https://github.com/CERNN/VISCOPLASTIC-LBM, and therefore it will share similar licence.
 
 ## Compilation
 
@@ -16,7 +17,7 @@ The requirements are:
 
 Both can be obtained in "CUDA Toolkit", provided by Nvidia.
 
-The code supports Nvidia's GPUs with compute capability 3.5 or higher. 
+The code supports Nvidia's GPUs with compute capability 3.5 or higher. The program runs in only one GPU, multi-GPU is not supported yet.
 
 For compilation, a [bash file](./src/compile.sh) is provided. It contains the commands used to compile and the instructions for altering it according to the GPU compute capability and the arguments to pass to it.
 
