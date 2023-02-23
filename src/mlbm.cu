@@ -41,6 +41,8 @@ __global__ void gpuMomCollisionStream(
     dfloat tt_omegaVar = 1 - 0.5*omegaVar;
     dfloat omegaVar_d2 = omegaVar / 2.0;
     dfloat tt_omega_t3 = tt_omegaVar * 3.0;
+    #else
+    dfloat omegaVar = OMEGA;
     #endif
 
     
@@ -321,10 +323,12 @@ __global__ void gpuMomCollisionStream(
         (momNeqXZt2/2 + uFxzd2) * (momNeqXZt2/2 + uFxzd2) + 
         (momNeqYZt2/2 + uFyzd2) * (momNeqYZt2/2 + uFyzd2))));
 
+    /*
     dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
     dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
     eta = VISC + S_Y/gamma_dot;
     omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
+    */
 
     omegaVar = calcOmega(omegaVar, auxStressMag);
 

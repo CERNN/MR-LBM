@@ -151,7 +151,7 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
 
     size_t step = 0;
-    printf("step %d\t",step); fflush(stdout);
+    printf("step %zu\t",step); fflush(stdout);
 
 
     bool save = false;
@@ -221,13 +221,15 @@ int main() {
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
             
-            printf("step %d\t",step);//fflush(stdout);
+            printf("step %zu\t",step);//fflush(stdout);
             probeExport(h_fMom,rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
-            step); 
-            /*if (!(step%((int)turn_over_time))){
+            step);
+            
+            //if (!(step%((int)turn_over_time))){
+            /*if((step>N_STEPS-6*(int)(turn_over_time))){  
                 linearMacr(h_fMom,rho,ux,uy,uz,
                 #ifdef NON_NEWTONIAN_FLUID
                 omega,
