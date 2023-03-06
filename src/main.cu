@@ -151,7 +151,7 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
 
     size_t step = 0;
-    printf("step %zu\t",step); fflush(stdout);
+    //printf("step %zu\t",step); fflush(stdout);
 
 
     bool save = false;
@@ -217,16 +217,21 @@ int main() {
 
         if(save){
             //if (N_STEPS - step < 4*((int)turn_over_time)){
-            checkCudaErrors(cudaDeviceSynchronize());
-            checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-            checkCudaErrors(cudaDeviceSynchronize());
+
+            /*
+            treatData(h_fMom,fMom,
+            #ifdef NON_NEWTONIAN_FLUID
+            omega,
+            #endif
+            step);*/
+
             
-            printf("step %zu\t",step);//fflush(stdout);
-            probeExport(h_fMom,rho,ux,uy,uz,
+            probeExport(fMom,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
             step);
+        
             
             //if (!(step%((int)turn_over_time))){
             /*if((step>N_STEPS-6*(int)(turn_over_time))){  

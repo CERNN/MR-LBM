@@ -2,85 +2,52 @@
 
 
 __host__
-void probeExport(
-        dfloat* h_fMom,
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
+void treatData(
+    dfloat* h_fMom,
+    dfloat* fMom,
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
     unsigned int step
 ){
-    /*
-    int x_0,x_1,x_2,x_3,x_4;
-    int y_0,y_1,y_2,y_3,y_4;
-    int z_0;
-    x_0 = probe_x;
-    y_0 = probe_y;
-    z_0 = probe_z;
 
-    x_1 = (NX/4);
-    x_2 = (NX/4);
-    x_3 = (3*NX/4);
-    x_4 = (3*NX/4);
-
-    y_1 = (NY/4);
-    y_2 = (3*NY/4);
-    y_3 = (3*NY/4);
-    y_4 = (NY/4);
-
-    dfloat p_ux_0,p_uy_0,p_uz_0,p_rho_0;
-
-    dfloat p_ux_1,p_uy_1;
-    dfloat p_ux_2,p_uy_2;
-    dfloat p_ux_3,p_uy_3;
-    dfloat p_ux_4,p_uy_4;
-
-    p_rho_0 = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 0, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_ux_0  = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 1, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_uy_0  = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 2, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_uz_0  = h_fMom[idxMom(x_0%BLOCK_NX, y_0%BLOCK_NY, z_0%BLOCK_NZ, 3, x_0/BLOCK_NX, y_0/BLOCK_NY, z_0/BLOCK_NZ)];
-
-    p_ux_1  = h_fMom[idxMom(x_1%BLOCK_NX, y_1%BLOCK_NY, z_0%BLOCK_NZ, 1, x_1/BLOCK_NX, y_1/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_uy_1  = h_fMom[idxMom(x_1%BLOCK_NX, y_1%BLOCK_NY, z_0%BLOCK_NZ, 2, x_1/BLOCK_NX, y_1/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_ux_2  = h_fMom[idxMom(x_2%BLOCK_NX, y_2%BLOCK_NY, z_0%BLOCK_NZ, 1, x_2/BLOCK_NX, y_2/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_uy_2  = h_fMom[idxMom(x_2%BLOCK_NX, y_2%BLOCK_NY, z_0%BLOCK_NZ, 2, x_2/BLOCK_NX, y_2/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_ux_3  = h_fMom[idxMom(x_3%BLOCK_NX, y_3%BLOCK_NY, z_0%BLOCK_NZ, 1, x_3/BLOCK_NX, y_3/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_uy_3  = h_fMom[idxMom(x_3%BLOCK_NX, y_3%BLOCK_NY, z_0%BLOCK_NZ, 2, x_3/BLOCK_NX, y_3/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_ux_4  = h_fMom[idxMom(x_4%BLOCK_NX, y_4%BLOCK_NY, z_0%BLOCK_NZ, 1, x_4/BLOCK_NX, y_4/BLOCK_NY, z_0/BLOCK_NZ)];
-    p_uy_4  = h_fMom[idxMom(x_4%BLOCK_NX, y_4%BLOCK_NY, z_0%BLOCK_NZ, 2, x_4/BLOCK_NX, y_4/BLOCK_NY, z_0/BLOCK_NZ)];
-
-
-    
-   printf("%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\t%0.7e\n",p_rho_0,p_ux_0,p_uy_0,p_uz_0,p_ux_1,p_uy_1,p_ux_2,p_uy_2,p_ux_3,p_uy_3,p_ux_4,p_uy_4);
-
-*/
+    //copy full macroscopic field
+    checkCudaErrors(cudaDeviceSynchronize());
+    checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaDeviceSynchronize());
 
 
 
+    std::ostringstream strDataInfo("");
+    strDataInfo << std::scientific;
+    strDataInfo << std::setprecision(6);
 
-    dfloat t_ux0, t_ux1;
-    dfloat dy_ux = 0.0;
+
+        dfloat t_ux0, t_ux1;
+    dfloat m_ux0, m_ux1;
     int y0 = NY-1;
     int y1 = NY-2;
     int count = 0;
+    m_ux0 = 0.0;
+    m_ux1 = 0.0;
 
     //right side of the equation 10
-    for (int z = 1 ; z <NZ_TOTAL-1 ; z++){
-        for (int x = 1; x< NX-1;x++){
+    for (int z = 0 ; z <NZ_TOTAL-1 ; z++){
+        for (int x = 0; x< NX-1;x++){
             t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
             t_ux1 = h_fMom[idxMom(x%BLOCK_NX, y1%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y1/BLOCK_NY, z/BLOCK_NZ)];
 
-            dy_ux += (t_ux0-t_ux1)*(t_ux0-t_ux1);
+            m_ux0 += (t_ux0 * t_ux0);
+            m_ux1 += (t_ux1 * t_ux1);
             count++;
         }
     }
-    dfloat LS = dy_ux/count;
-    LS /= 4*N;
+    m_ux0 /= count;
+    m_ux1 /= count;
 
 
+    dfloat LS = (m_ux0-m_ux1);
+    LS = LS/(4*N);
 
     dfloat t_uy0,t_uz0;
     dfloat t_mxx0,t_mxy0,t_mxz0,t_myy0,t_myz0,t_mzz0;
@@ -92,10 +59,11 @@ void probeExport(
     dfloat Szz = 0;
     dfloat SS = 0;
 
+    count = 0;
     //left side of the equation
-    for (int z = 0 ; z <NZ_TOTAL; z++){
-        for(int y = 0; y< NY;y++){
-            for(int x = 0; x< NX;x++){
+    for (int z = 0 ; z <NZ_TOTAL-1; z++){
+        for(int y = 0; y< NY-1;y++){
+            for(int x = 0; x< NX-1;x++){
                 t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
                 t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
@@ -107,27 +75,121 @@ void probeExport(
                 t_myz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 8, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_mzz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 9, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
-
-
                 Sxx = (as2/(2*TAU))*(t_ux0*t_ux0-t_mxx0);
                 Sxy = (as2/(2*TAU))*(t_ux0*t_uy0-t_mxy0);
                 Sxz = (as2/(2*TAU))*(t_ux0*t_uz0-t_mxz0);
+
                 Syy = (as2/(2*TAU))*(t_uy0*t_uy0-t_myy0);
                 Syz = (as2/(2*TAU))*(t_uy0*t_uz0-t_myz0);
+
                 Szz = (as2/(2*TAU))*(t_uz0*t_uz0-t_mzz0);
-                SS += ( Sxx * Sxx + Syy * Syy + Szz * Szz + 2*(Sxy * Sxy + Sxz * Sxz +  Syz * Syz)) ;
+                SS += ( Sxx * Sxx + 
+                        Syy * Syy + 
+                        Szz * Szz + 2*(
+                        Sxy * Sxy + 
+                        Sxz * Sxz + 
+                        Syz * Syz)) ;
+                count++;
 
             }
         }
     }
 
-    SS = SS / (NUMBER_LBM_NODES);
+    SS = SS / (count);
+    //printf("%0.7e\t%0.7e\t%0.7e\n",LS,SS,SS/LS);
+    strDataInfo <<"step "<< step<< " " << LS << " " << SS << " " <<SS/LS;
+
+
+
+    saveTreatData("_treatData",strDataInfo.str(),step);
+}
+
+__host__
+void probeExport(
+    dfloat* fMom,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    unsigned int step
+){
+    std::ostringstream strDataInfo("");
+    strDataInfo << std::scientific;
+    strDataInfo << std::setprecision(6);
+    strDataInfo <<"step "<< step;
+
+
+    int probeNumber = 5;
+    
+    //probe locations
+    int x[5] = {probe_x,(NX/4),(NX/4),(3*NX/4),(3*NX/4)};
+    int y[5] = {probe_y,(NY/4),(3*NY/4),(3*NY/4),(NY/4)};
+    int z[5] = {probe_z,probe_z,probe_z,probe_z,probe_z};
+
+    dfloat* rho;
+
+    dfloat* ux;
+    dfloat* uy;
+    dfloat* uz;
+
+    dfloat* mxx;
+    dfloat* mxy;
+    dfloat* mxz;
+    dfloat* myy;
+    dfloat* myz;
+    dfloat* mzz;
+    
+    checkCudaErrors(cudaMallocHost((void**)&(rho), sizeof(dfloat)));    
+    checkCudaErrors(cudaMallocHost((void**)&(ux), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(uy), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(uz), sizeof(dfloat)));    
+    checkCudaErrors(cudaMallocHost((void**)&(mxx), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(mxy), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(mxz), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(myy), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(myz), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(mzz), sizeof(dfloat)));
+
+    checkCudaErrors(cudaDeviceSynchronize());
+    for(int i=0; i< probeNumber; i++){
+        checkCudaErrors(cudaMemcpy(rho, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 0, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(ux , fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 1, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(uy , fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 2, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(uz , fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 3, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(mxx, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 4, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(mxy, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 5, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(mxz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 6, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(myy, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 7, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(myz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 8, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(mzz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 9, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        sizeof(dfloat), cudaMemcpyDeviceToHost));
+
+        strDataInfo <<"\t"<< *ux << "\t" << *uy << "\t" << *uz;
+
+    }
+    saveTreatData("_probeData",strDataInfo.str(),step);
 
 
 
 
-    printf("%0.7e\t%0.7e\t%0.7e\n",LS,SS,SS/LS);
-
+    cudaFree(rho);
+    cudaFree(ux);
+    cudaFree(uy);
+    cudaFree(uz);
+    cudaFree(mxx);
+    cudaFree(mxy);
+    cudaFree(mxz);
+    cudaFree(myy);
+    cudaFree(myz);
+    cudaFree(mzz);
 
 }
 
@@ -343,4 +405,34 @@ void saveSimInfo(int step)
         printf("Error saving \"%s\" \nProbably wrong path!\n", strInf.c_str());
     }
     
+}
+/**/
+
+
+void saveTreatData(std::string fileName, std::string dataString, int step)
+{
+
+    std::string strInf = PATH_FILES;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += fileName;
+    strInf += ".txt"; // generate file name (with path)
+    std::ifstream file(strInf.c_str());
+    std::ofstream outfile;
+
+    if(step == MACR_SAVE){ //check if first time step to save data
+        outfile.open(strInf.c_str());
+    }else{
+        if (file.good()) {
+            outfile.open(strInf.c_str(), std::ios::app);
+        }else{ 
+            outfile.open(strInf.c_str());
+        }
+    }
+
+
+    outfile << dataString.c_str() << std::endl; 
+    outfile.close(); 
 }

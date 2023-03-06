@@ -15,23 +15,38 @@
 #include <iomanip>      // std::setprecision
 
 #include "globalFunctions.h"
+#include <cuda.h>
+#include <curand.h>
+#include <cuda_runtime.h>
+#include <builtin_types.h>
+#include "errorDef.h"
 
 /*
 *   @brief Change field vector order to be used saved in binary
 *   @param h_fMom: host macroscopic field based on block and thread index
-*   @param rho: rho field
-*   @param ux: ux field
-*   @param uy: uy field
-*   @param uz: uz field
+*   @param fMom: device macroscopic field based on block and thread index
+*   @param omega: omega field if non-Newtonian
+*   @param nSteps: number of steps of the simulation
+*/
+__host__
+void treatData(
+    dfloat* h_fMom,
+    dfloat* fMom,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    unsigned int step
+);
+
+/*
+*   @brief Change field vector order to be used saved in binary
+*   @param h_fMom: host macroscopic field based on block and thread index
+*   @param omega: omega field if non-Newtonian
 *   @param nSteps: number of steps of the simulation
 */
 __host__
 void probeExport(
-    dfloat* h_fMom,
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
+    dfloat* fMom,
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
@@ -127,5 +142,16 @@ std::string getSimInfoString(int step);
 *   @param info: simulation's informations
 */
 void saveSimInfo(int step);
+
+
+
+/*
+*   @brief Saves in a ".txt" file the required treated data
+*   @param fileName: primary file name
+*   @param dataString: dataString to be saved
+*   @param step: time step
+*/
+void saveTreatData(std::string fileName, std::string dataString, int step);
+
 
 #endif __SAVE_DATA_H
