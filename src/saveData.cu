@@ -435,4 +435,8 @@ void saveTreatData(std::string fileName, std::string dataString, int step)
 
     outfile << dataString.c_str() << std::endl; 
     outfile.close(); 
+
+    #if CONSOLEPRINT
+    printf("%s \n",dataString.c_str());
+    #endif
 }

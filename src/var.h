@@ -42,6 +42,9 @@ constexpr dfloat RE = 2000;
 #define RANDOM_NUMBERS false    // to generate random numbers 
                                 // (useful for turbulence)
 
+#define TREATFIELD (true)
+#define TREATPOINT (false)
+#define CONSOLEPRINT (true)
 
 
 #define GPU_INDEX 0
