@@ -20,15 +20,16 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
+#define lidDrivenCavity_3D_
 #define BC_PROBLEM lidDrivenCavity_3D
 
 //#define BC_POPULATION_BASED
 #define BC_MOMENT_BASED
 
-#define DENSITY_CORRECTION
+//#define DENSITY_CORRECTION
 
 /* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
-#define BINGHAM
+//#define BINGHAM
 
 
 #if defined(POWERLAW) || defined(BINGHAM)
@@ -36,15 +37,16 @@
 #endif
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
-    #define ID_SIM "020a"            // prefix for simulation's files
+    #define ID_SIM "000"            // prefix for simulation's files
 constexpr dfloat RE = 2000;
-#define PATH_FILES "LidDrivenCavity_3D"  // path to save simulation's files
+#define PATH_FILES "TEST"  // path to save simulation's files
 #define RANDOM_NUMBERS false    // to generate random numbers 
                                 // (useful for turbulence)
 
-#define TREATFIELD (true)
+#define TREATFIELD (false)
 #define TREATPOINT (false)
-#define CONSOLEPRINT (true)
+#define SAVEDATA (false)
+#define CONSOLEPRINT (false)
 
 
 #define GPU_INDEX 0
@@ -69,7 +71,7 @@ constexpr dfloat VISC = L*U_MAX / RE;
 constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
 
 constexpr dfloat turn_over_time = L / U_MAX;
-constexpr int N_STEPS = 250*((int)turn_over_time);
+constexpr int N_STEPS = 100*((int)turn_over_time);
 constexpr dfloat total_time = N_STEPS *Ct;
 
 

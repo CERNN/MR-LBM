@@ -23,7 +23,7 @@ void treatData(
     strDataInfo << std::setprecision(6);
 
 
-        dfloat t_ux0, t_ux1;
+    dfloat t_ux0, t_ux1;
     dfloat m_ux0, m_ux1;
     int y0 = NY-1;
     int y1 = NY-2;
@@ -411,7 +411,7 @@ void saveSimInfo(int step)
 
 void saveTreatData(std::string fileName, std::string dataString, int step)
 {
-
+    #if SAVEDATA
     std::string strInf = PATH_FILES;
     strInf += "/";
     strInf += ID_SIM;
@@ -435,7 +435,7 @@ void saveTreatData(std::string fileName, std::string dataString, int step)
 
     outfile << dataString.c_str() << std::endl; 
     outfile.close(); 
-
+    #endif
     #if CONSOLEPRINT
     printf("%s \n",dataString.c_str());
     #endif
