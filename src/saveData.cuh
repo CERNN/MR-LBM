@@ -20,6 +20,7 @@
 #include <cuda_runtime.h>
 #include <builtin_types.h>
 #include "errorDef.h"
+#include "globalStructs.h"
 
 /*
 *   @brief Change field vector order to be used saved in binary

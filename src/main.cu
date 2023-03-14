@@ -9,9 +9,13 @@
 
 // FILES INCLUDES
 #include "var.h"
+#include "globalStructs.h"
 #include "auxFunctions.cuh"
 #ifdef NON_NEWTONIAN_FLUID
     #include "nnf.h"
+#endif
+#ifdef PARTICLE_TRACER
+    #include "particleTracer.cuh"
 #endif
 #include "errorDef.h"
 //#include "structs.h"
@@ -54,6 +58,10 @@ int main() {
     dfloat* d_mean_rho;
     #endif
 
+    #ifdef PARTICLE_TRACER
+    dfloat3* h_particlePos;
+    dfloat3* d_particlePos;
+    #endif
 
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     dfloat* h_fMom;
@@ -75,6 +83,9 @@ int main() {
     checkCudaErrors(cudaMallocHost((void**)&(uz), MEM_SIZE_SCALAR));
     #ifdef NON_NEWTONIAN_FLUID
     checkCudaErrors(cudaMallocHost((void**)&(omega), MEM_SIZE_SCALAR));
+    #endif
+    #ifdef PARTICLE_TRACER
+    checkCudaErrors(cudaMallocHost((void**)&(h_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
     #endif
     randomNumbers = (float**)malloc(sizeof(float*));
 
@@ -105,6 +116,9 @@ int main() {
     checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
     cudaMalloc((void**)&d_mean_rho, sizeof(dfloat));  
     #endif
+    #ifdef PARTICLE_TRACER
+    checkCudaErrors(cudaMalloc((void**)&(d_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
+    #endif
 
     //printf("Allocated memory \n");fflush(stdout);
     
@@ -114,6 +128,10 @@ int main() {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
+    #ifdef PARTICLE_TRACER
+    cudaStream_t streamsPart[1];
+    checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
+    #endif
 
     if(RANDOM_NUMBERS)
     {   
@@ -149,6 +167,10 @@ int main() {
     checkCudaErrors(cudaMemcpy(d_mean_rho, h_mean_rho, sizeof(dfloat), cudaMemcpyHostToDevice)); 
     #endif
     checkCudaErrors(cudaDeviceSynchronize());
+
+    #ifdef PARTICLE_TRACER
+        initializeParticles(h_particlePos,d_particlePos);
+    #endif
 
     size_t step = 0;
     //printf("step %zu\t",step); fflush(stdout);
@@ -199,7 +221,10 @@ int main() {
         #ifdef DENSITY_CORRECTION
             mean_moment(fMom,d_mean_rho,0,step);
         #endif
-
+        #ifdef PARTICLE_TRACER
+            checkCudaErrors(cudaDeviceSynchronize());
+            updateParticlePos(d_particlePos, h_particlePos, fMom, streamsPart[0],step);
+        #endif
 
 
         
@@ -267,6 +292,11 @@ int main() {
             #endif
             step);
 
+    #ifdef PARTICLE_TRACER
+        checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
+        saveParticleInfo(h_particlePos,step);
+    #endif
+
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */
     //Calculate MLUPS
@@ -311,6 +341,10 @@ int main() {
     #ifdef DENSITY_CORRECTION
     cudaFree(d_mean_rho);
     free(h_mean_rho);
+    #endif
+    #ifdef PARTICLE_TRACER
+    cudaFree(h_particlePos);
+    cudaFree(d_particlePos);
     #endif
 
     return 0;

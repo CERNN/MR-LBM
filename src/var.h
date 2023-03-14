@@ -48,6 +48,8 @@ constexpr dfloat RE = 2000;
 #define SAVEDATA (false)
 #define CONSOLEPRINT (false)
 
+#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
+#define PARTICLE_TRACER_SAVE 128
 
 #define GPU_INDEX 0
 /* --------------------------  SIMULATION DEFINES -------------------------- */
