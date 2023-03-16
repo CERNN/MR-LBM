@@ -37,19 +37,32 @@
 #endif
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
-    #define ID_SIM "000"            // prefix for simulation's files
-constexpr dfloat RE = 2000;
-#define PATH_FILES "TEST"  // path to save simulation's files
+#define TREATFIELD (false)
+#define TREATPOINT (true)
+#define SAVEDATA (true)
+#define CONSOLEPRINT (false)
+
+//#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
+#define PARTICLE_TRACER_SAVE false
+
+
+
+/* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
+constexpr int INI_STEP = 0; // initial simulation step (0 default)
+#define LOAD_CHECKPOINT false   // loads simulation checkpoint from folder 
+                                // (folder name defined below)
 #define RANDOM_NUMBERS false    // to generate random numbers 
                                 // (useful for turbulence)
 
-#define TREATFIELD (false)
-#define TREATPOINT (false)
-#define SAVEDATA (false)
-#define CONSOLEPRINT (false)
+// Folder with simulation to load data from last checkpoint. 
+// WITHOUT ID_SIM (change it in ID_SIM) AND "/" AT THE END
+#define SIMULATION_FOLDER_LOAD_CHECKPOINT "TEST"
+// Interval to make checkpoint to save all simulation data and restart from it.
+// It must not be very frequent (10000 or more), because it takes a long time
+#define CHECKPOINT_SAVE false
+/* ------------------------------------------------------------------------- */
 
-#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
-#define PARTICLE_TRACER_SAVE 128
+
 
 #define GPU_INDEX 0
 /* --------------------------  SIMULATION DEFINES -------------------------- */

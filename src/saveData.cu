@@ -97,7 +97,7 @@ void treatData(
 
     SS = SS / (count);
     //printf("%0.7e\t%0.7e\t%0.7e\n",LS,SS,SS/LS);
-    strDataInfo <<"step "<< step<< " " << LS << " " << SS << " " <<SS/LS;
+    strDataInfo <<"step,"<< step<< "," << LS << "," << SS << "," <<SS/LS;
 
 
 
