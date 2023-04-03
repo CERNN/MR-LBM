@@ -194,7 +194,7 @@ void velocityInterpolation(
                         posBase[2]+zk
                     #endif //BC_Z_WALL
                     #ifdef BC_Z_PERIODIC
-                        (posBase[2]+zj + NZ)%(NZ)
+                        (posBase[2]+zk + NZ)%(NZ)
                     #endif //BC_Z_PERIODIC
                     ;
 

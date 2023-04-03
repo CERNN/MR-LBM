@@ -168,7 +168,7 @@ int main() {
         checkCudaErrors(cudaMallocHost((void**)&(h_fGhostZ_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF));
     }
     if(LOAD_CHECKPOINT){
-
+        step = INI_STEP;
         loadSimCheckpoint(h_fMom, h_fGhostX_0,h_fGhostX_1,h_fGhostY_0,h_fGhostY_1,h_fGhostZ_0,h_fGhostZ_1,&step);
 
         checkCudaErrors(cudaMemcpy(fMom, h_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyHostToDevice));
@@ -182,7 +182,6 @@ int main() {
        
 
     }else{
-        step = INI_STEP;
         gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom, randomNumbers[0]);
         //printf("Moments initialized \n");fflush(stdout);
         gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
@@ -359,7 +358,21 @@ int main() {
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
         saveParticleInfo(h_particlePos,step);
     #endif
+    if(CHECKPOINT_SAVE){
+        printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
+            
+        checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(h_fGhostX_0,gGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(h_fGhostX_1,gGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(h_fGhostY_0,gGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(h_fGhostY_1,gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(h_fGhostZ_0,gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(h_fGhostZ_1,gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaDeviceSynchronize());
+        
+        saveSimCheckpoint(fMom,gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,&step);
 
+    }
     checkCudaErrors(cudaDeviceSynchronize());
     /* ------------------------------ POST ------------------------------ */
     //Calculate MLUPS
