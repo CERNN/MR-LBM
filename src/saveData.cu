@@ -380,6 +380,37 @@ std::string getSimInfoString(int step)
     strSimInfo << "             Nsteps: " << step << "\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
+    strSimInfo << "\n------------------------------ BOUNDARY CONDITIONS -----------------------------\n";
+    #ifdef BC_POPULATION_BASED
+    strSimInfo << "            BC mode: Population Based \n";
+    #endif
+    #ifdef BC_MOMENT_BASED
+    strSimInfo << "            BC mode: Moment Based \n";
+    #endif
+    strSimInfo << "            BC type: " << TOSTRING(BC_PROBLEM) << "\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+
+
+    #ifdef NON_NEWTONIAN_FLUID
+    strSimInfo << "\n------------------------------ NON NEWTONIAN FLUID -----------------------------\n";
+    strSimInfo << std::scientific << std::setprecision(6);
+    
+    #ifdef POWERLAW
+    strSimInfo << "              Model: Power-Law\n";
+    strSimInfo << "        Power index: " << N_INDEX << "\n";
+    strSimInfo << " Consistency factor: " << K_CONSISTENCY << "\n";
+    strSimInfo << "            Gamma 0: " << GAMMA_0 << "\n";
+    #endif // POWERLAW
+
+    #ifdef BINGHAM
+    strSimInfo << "              Model: Bingham\n";
+    strSimInfo << "  Plastic viscosity: " << ETA_P << "\n";
+    strSimInfo << "       Yield stress: " << S_Y << "\n";
+    strSimInfo << "      Plastic omega: " << OMEGA_P << "\n";
+    #endif // BINGHAM
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif // NON_NEWTONIAN_FLUID
+
     return strSimInfo.str();
 }
 
