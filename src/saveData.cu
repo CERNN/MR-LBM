@@ -1,5 +1,7 @@
 #include "saveData.cuh"
-
+#ifdef NON_NEWTONIAN_FLUID
+#include "nnf.h"
+#endif
 
 __host__
 void treatData(
@@ -404,7 +406,7 @@ std::string getSimInfoString(int step)
 
     #ifdef BINGHAM
     strSimInfo << "              Model: Bingham\n";
-    strSimInfo << "  Plastic viscosity: " << ETA_P << "\n";
+    strSimInfo << "  Plastic viscosity: " << VISC << "\n";
     strSimInfo << "       Yield stress: " << S_Y << "\n";
     strSimInfo << "      Plastic omega: " << OMEGA_P << "\n";
     #endif // BINGHAM
