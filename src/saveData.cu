@@ -205,12 +205,17 @@ void linearMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
+    #ifdef SAVE_BC
+    dfloat* nodeTypeSave,
+    unsigned char* hNodeType,
+    #endif
     unsigned int step
 ){
     size_t indexMacr;
 
     dfloat meanRho;
     meanRho  =  0;
+    dfloat bc;
 
     for(int z = 0; z< NZ;z++){
         ///printf("z %d \n", z);
@@ -225,8 +230,11 @@ void linearMacr(
                 #ifdef NON_NEWTONIAN_FLUID
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 10, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
+                #ifdef SAVE_BC
+                nodeTypeSave[indexMacr] = (dfloat)hNodeType[idxNodeType(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
+                #endif
                 //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
-                meanRho += rho[indexMacr];
+                //meanRho += rho[indexMacr];
             }
         }
     }
@@ -242,10 +250,13 @@ void saveMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
+    #ifdef SAVE_BC
+    dfloat* nodeTypeSave,
+    #endif
     unsigned int nSteps
 ){
 // Names of files
-    std::string strFileRho, strFileUx, strFileUy, strFileUz, strFileOmega;
+    std::string strFileRho, strFileUx, strFileUy, strFileUz, strFileOmega, strFileBc;
 
     strFileRho = getVarFilename("rho", nSteps, ".bin");
     strFileUx = getVarFilename("ux", nSteps, ".bin");
@@ -254,6 +265,9 @@ void saveMacr(
     #ifdef NON_NEWTONIAN_FLUID
     strFileOmega = getVarFilename("omega", nSteps, ".bin");
     #endif
+    #ifdef SAVE_BC
+    strFileBc = getVarFilename("bc", nSteps, ".bin");
+    #endif
     // saving files
     saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
@@ -261,6 +275,9 @@ void saveMacr(
     saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
     #ifdef NON_NEWTONIAN_FLUID
     saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef SAVE_BC
+    saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
     #endif
 }
 

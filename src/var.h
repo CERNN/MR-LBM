@@ -20,8 +20,7 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-#define lidDrivenCavity_3D_
-#define BC_PROBLEM lidDrivenCavity_3D
+#define VOXEL_FILENAME "sphere.csv"
 
 //#define BC_POPULATION_BASED
 #define BC_MOMENT_BASED
@@ -37,10 +36,11 @@
 #endif
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
-#define TREATFIELD (false)
-#define TREATPOINT (true)
-#define SAVEDATA (true)
-#define CONSOLEPRINT (false)
+#define TREATFIELD (false) //treat data over the entire field
+#define TREATPOINT (true) //treat data in a single or several points
+#define SAVEDATA (true) //save treat data
+#define CONSOLEPRINT (false) // print the console the data is being saved
+#define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
 
 //#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
 #define PARTICLE_TRACER_SAVE false
@@ -59,7 +59,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define SIMULATION_FOLDER_LOAD_CHECKPOINT "TEST"
 // Interval to make checkpoint to save all simulation data and restart from it.
 // It must not be very frequent (10000 or more), because it takes a long time
-#define CHECKPOINT_SAVE false
+#define CHECKPOINT_SAVE false // the frequency on which the simulation checkpoint is saved
 /* ------------------------------------------------------------------------- */
 
 

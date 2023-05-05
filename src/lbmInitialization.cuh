@@ -49,4 +49,14 @@ __global__ void gpuInitialization_pop(
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1);
 
+/*
+*   @brief Initializes boundary conditions based on csv with the boundary case
+*   @param filename: csv filename
+*   @param dNodeType: nodeType arrary
+*/
+__host__ void read_voxel_csv(
+    const std::string& filename, 
+    unsigned char *dNodeType);
+
+
 #endif // !__LBM_INITIALIZATION_CUH

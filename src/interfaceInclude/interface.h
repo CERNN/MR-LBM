@@ -61,6 +61,11 @@
     #define BC_Z_WALL
 #endif
 
+#ifdef voxel_
+    #define BC_X_PERIODIC
+    #define BC_Y_PERIODIC
+    #define BC_Z_PERIODIC
+#endif
 
 
 

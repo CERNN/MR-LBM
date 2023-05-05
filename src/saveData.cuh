@@ -73,6 +73,10 @@ void linearMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
+    #ifdef SAVE_BC
+    dfloat* nodeTypeSave,
+    unsigned char* hNodeType,
+    #endif
     unsigned int step
 );
 
@@ -95,6 +99,9 @@ void saveMacr(
     dfloat* uz,
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
+    #endif
+    #ifdef SAVE_BC
+    dfloat* nodeTypeSave,
     #endif
     unsigned int nSteps
 );

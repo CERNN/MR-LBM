@@ -1,7 +1,7 @@
 #include "mlbm.cuh"
 
 __global__ void gpuMomCollisionStream(
-    dfloat *fMom, char *dNodeType,
+    dfloat *fMom, unsigned char *dNodeType,
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,
@@ -23,7 +23,8 @@ __global__ void gpuMomCollisionStream(
     // Load moments from global memory
 
     //rho'
-    char nodeType = dNodeType[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
+    unsigned char nodeType = dNodeType[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
+    if (nodeType == 0b11111111)  return;
     dfloat rhoVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat ux_t30     = 3.0*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat uy_t30     = 3.0*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z)];

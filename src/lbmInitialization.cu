@@ -269,7 +269,7 @@ __global__ void gpuInitialization_pop(
 
 
 __global__ void gpuInitialization_nodeType(
-    char *dNodeType)
+    unsigned char *dNodeType)
 {
     int x = threadIdx.x + blockDim.x * blockIdx.x;
     int y = threadIdx.y + blockDim.y * blockIdx.y;
@@ -277,9 +277,49 @@ __global__ void gpuInitialization_nodeType(
     if (x >= NX || y >= NY || z >= NZ)
         return;
     
-    char nodeType;
+    unsigned char nodeType;
 
     #include BC_INIT_PATH
 
     dNodeType[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = nodeType;
+}
+
+
+__host__ void read_voxel_csv(
+    const std::string& filename, 
+    unsigned char *dNodeType
+    ){
+    std::ifstream csv_file(filename);
+    if (!csv_file)
+    {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return;
+    }
+
+    int x,y,z;
+    unsigned char nodeType;
+
+    std::string line;
+    while (std::getline(csv_file, line)) {
+        std::stringstream ss(line);
+        std::string field;
+
+        std::getline(ss, field, ',');
+        x = std::stoi(field);
+
+        std::getline(ss, field, ',');
+        y = std::stoi(field);
+
+        std::getline(ss, field, ',');
+        z = std::stoi(field);
+
+        std::getline(ss, field, ',');
+        nodeType = std::stoi(field);
+
+
+        dNodeType[idxNodeType(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned char)nodeType;
+
+    }
+
+    csv_file.close();
 }

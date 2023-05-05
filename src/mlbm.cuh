@@ -34,7 +34,7 @@
 */
 __global__
 void gpuMomCollisionStream(
-    dfloat *fMom, char *dNodeType,
+    dfloat *fMom, unsigned char *dNodeType,
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,

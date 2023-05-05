@@ -59,7 +59,7 @@ int main() {
     dfloat* h_fGhostZ_0; 
     dfloat* h_fGhostZ_1;
 
-    char* dNodeType;
+    unsigned char* dNodeType;
 
     #ifdef DENSITY_CORRECTION
     dfloat* h_mean_rho;
@@ -321,22 +321,32 @@ int main() {
             step);
             #endif
             /*
-            if (!(step%((int)turn_over_time))){
+            //if (!(step%((int)turn_over_time))){
             //if((step>N_STEPS-6*(int)(turn_over_time))){  
+                checkCudaErrors(cudaDeviceSynchronize()); 
+                checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
                 linearMacr(h_fMom,rho,ux,uy,uz,
                 #ifdef NON_NEWTONIAN_FLUID
                 omega,
                 #endif
+                #ifdef SAVE_BC
+                nodeTypeSave,
+                hNodeType,
+                #endif
                 step); 
 
+                printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
                 fflush(stdout);
 
                 saveMacr(rho,ux,uy,uz,
                 #ifdef NON_NEWTONIAN_FLUID
                 omega,
                 #endif
+                #ifdef SAVE_BC
+                nodeTypeSave,
+                #endif
                 step);
-            }*/
+            //}*/
         }
 
     } // end of the loop
@@ -346,11 +356,18 @@ int main() {
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
+            #ifdef SAVE_BC
+            nodeTypeSave,
+            hNodeType,
+            #endif
             step); 
             fflush(stdout);
             saveMacr(rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
+            #endif
+            #ifdef SAVE_BC
+            nodeTypeSave,
             #endif
             step);
 
@@ -394,6 +411,8 @@ int main() {
     /* ------------------------------ FREE ------------------------------ */
     cudaFree(fMom);
     cudaFree(dNodeType);
+    cudaFree(hNodeType);
+
     cudaFree(fGhostX_0);
     cudaFree(fGhostX_1);
     cudaFree(fGhostY_0);
@@ -431,6 +450,11 @@ int main() {
     cudaFree(h_particlePos);
     cudaFree(d_particlePos);
     #endif
+
+    #ifdef SAVE_BC
+    cudaFree(nodeTypeSave);
+    #endif
+
 
     return 0;
 
