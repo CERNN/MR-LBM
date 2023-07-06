@@ -211,12 +211,12 @@ __global__ void gpuMomCollisionStream(
 
 
             //equation5
-            m_xx_t45 = ( (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) );
-            m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14]);
-            m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16]);
-            m_yy_t45 = ( (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]));
-            m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18]);
-            m_zz_t45 = ( (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]));
+            m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16])* invRho - cs2;
+            m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14])* invRho;
+            m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16])* invRho;
+            m_yy_t45 = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18])* invRho - cs2;
+            m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18])* invRho;
+            m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18])* invRho - cs2;
 
 
         #endif
@@ -227,12 +227,12 @@ __global__ void gpuMomCollisionStream(
             uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
             uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
 
-            m_xx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
-            m_xy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) );
-            m_xz_t90 = (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) );
-            m_yy_t45 = ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
-            m_yz_t90 = (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24])));
-            m_zz_t45 = ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]));
+            m_xx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
+            m_xy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) )* invRho;
+            m_xz_t90 = (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) )* invRho;
+            m_yy_t45 = ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
+            m_yz_t90 = (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24])))* invRho;
+            m_zz_t45 = ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
         #endif
     #endif
 
@@ -242,13 +242,6 @@ __global__ void gpuMomCollisionStream(
             #include BC_PATH
 
             invRho = 1.0 / rho;
-
-            m_xx_t45 = (m_xx_t45 + cs2)* rhoVar; 
-            m_xy_t90 = (m_xy_t90) * rhoVar; 
-            m_xz_t90 = (m_xz_t90) * rhoVar; 
-            m_yy_t45 = (m_yy_t45 + cs2)* rhoVar; 
-            m_yz_t90 = (m_yz_t90) * rhoVar; 
-            m_zz_t45 = (m_zz_t45 + cs2)* rhoVar;
         }else{
 
             //calculate streaming moments
@@ -262,12 +255,12 @@ __global__ void gpuMomCollisionStream(
                 uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + 0.5 * FZ) * invRho;
 
                 //equation5
-                m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]);
-                m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14]);
-                m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16]);
-                m_yy_t45 = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]);
-                m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18]);
-                m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]);
+                m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16])* invRho - cs2;
+                m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14])* invRho;
+                m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16])* invRho;
+                m_yy_t45 = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18])* invRho - cs2;
+                m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18])* invRho;
+                m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18])* invRho - cs2;
 
 
             #endif
@@ -291,12 +284,13 @@ __global__ void gpuMomCollisionStream(
 
     // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
     #ifdef NON_NEWTONIAN_FLUID
-    const dfloat momNeqXX = m_xx_t45 - rhoVar*(ux_t30*ux_t30 + cs2);
-    const dfloat momNeqYY = m_yy_t45 - rhoVar*(uy_t30*uy_t30 + cs2); 
-    const dfloat momNeqZZ = m_zz_t45 - rhoVar*(uz_t30*uz_t30 + cs2);
-    const dfloat momNeqXYt2 = (m_xy_t90 - rhoVar*ux_t30*uy_t30) * 2;
-    const dfloat momNeqXZt2 = (m_xz_t90 - rhoVar*ux_t30*uz_t30) * 2;
-    const dfloat momNeqYZt2 = (m_yz_t90 - rhoVar*uy_t30*uz_t30) * 2;
+
+    const dfloat S_XX = rhoVar * (m_xx_t45 - ux_t30*ux_t30);
+    const dfloat S_YY = rhoVar * (m_yy_t45 - uy_t30*uy_t30);
+    const dfloat S_ZZ = rhoVar * (m_zz_t45 - uz_t30*uz_t30);
+    const dfloat S_XY = rhoVar * (m_xy_t90 - ux_t30*uy_t30);
+    const dfloat S_XZ = rhoVar * (m_xz_t90 - ux_t30*uz_t30);
+    const dfloat S_YZ = rhoVar * (m_yz_t90 - uy_t30*uz_t30);
 
     const dfloat uFxxd2 = ux_t30*FX; // d2 = uFxx Divided by two
     const dfloat uFyyd2 = uy_t30*FY;
@@ -306,12 +300,8 @@ __global__ void gpuMomCollisionStream(
     const dfloat uFyzd2 = (uy_t30*FZ + uz_t30*FY) / 2;
 
     const dfloat auxStressMag = sqrt(0.5 * (
-        (momNeqXX + uFxxd2) * (momNeqXX + uFxxd2) +
-        (momNeqYY + uFyyd2) * (momNeqYY + uFyyd2) +
-        (momNeqZZ + uFzzd2) * (momNeqZZ + uFzzd2) +
-        2 * ((momNeqXYt2/2 + uFxyd2) * (momNeqXYt2/2 + uFxyd2) +
-        (momNeqXZt2/2 + uFxzd2) * (momNeqXZt2/2 + uFxzd2) + 
-        (momNeqYZt2/2 + uFyzd2) * (momNeqYZt2/2 + uFyzd2))));
+        (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
+        2 * ((S_XY + uFxyd2) * (S_XY + uFxyd2) + (S_XZ + uFxzd2) * (S_XZ + uFxzd2) + (S_YZ + uFyzd2) * (S_YZ + uFyzd2))));
 
     /*
     dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
@@ -332,61 +322,109 @@ __global__ void gpuMomCollisionStream(
     // COLLIDE
 
     //Collide Moments
+    // multiply moments by as2 -- as4/2 -- as4 - add correction to m_alpha_beta
     #ifndef HIGH_ORDER_COLLISION
+        ux_t30 = 3.0 * ux_t30;
+        uy_t30 = 3.0 * uy_t30;
+        uz_t30 = 3.0 * uz_t30;
+
+        m_xx_t45 = 4.5 * (m_xx_t45);
+        m_xy_t90 = 9.0 * (m_xy_t90);
+        m_xz_t90 = 9.0 * (m_xz_t90);
+        m_yy_t45 = 4.5 * (m_yy_t45);
+        m_yz_t90 = 9.0 * (m_yz_t90);
+        m_zz_t45 = 4.5 * (m_zz_t45);
+
+        #ifdef DENSITY_CORRECTION
+            //printf("%f ",d_mean_rho[0]-1) ;
+            rhoVar -= (d_mean_rho[0]-1e-7) ;
+            invRho = 1/rhoVar;
+        #endif // DENSITY_CORRECTION
+        #ifdef NON_NEWTONIAN_FLUID
+            dfloat invRho_mt15 = -1.5*invRho;
+            ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * FX ) + omegaVar * ux_t30 + tt_omega_t3 * FX);
+            uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * FY ) + omegaVar * uy_t30 + tt_omega_t3 * FY);
+            uz_t30 = (t_omegaVar * (uz_t30 + invRho_mt15 * FZ ) + omegaVar * uz_t30 + tt_omega_t3 * FZ);
+            
+            //equation 90
+            m_xx_t45 = (t_omegaVar * m_xx_t45  +   omegaVar_d2 * ux_t30 * ux_t30  - invRho_mt15 * tt_omegaVar * (FX * ux_t30 + FX * ux_t30));
+            m_yy_t45 = (t_omegaVar * m_yy_t45  +   omegaVar_d2 * uy_t30 * uy_t30  - invRho_mt15 * tt_omegaVar * (FY * uy_t30 + FY * uy_t30));
+            m_zz_t45 = (t_omegaVar * m_zz_t45  +   omegaVar_d2 * uz_t30 * uz_t30  - invRho_mt15 * tt_omegaVar * (FZ * uz_t30 + FZ * uz_t30));
+
+            m_xy_t90 = (t_omegaVar * m_xy_t90  +   omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (FX * uy_t30 + FY * ux_t30));
+            m_xz_t90 = (t_omegaVar * m_xz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (FX * uz_t30 + FZ * ux_t30));
+            m_yz_t90 = (t_omegaVar * m_yz_t90  +   omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+        #endif // NON_NEWTONIAN_FLUID
+        #ifndef NON_NEWTONIAN_FLUID 
+            dfloat invRho_mt15 = -1.5*invRho;
+            ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * FX ) + OMEGA * ux_t30 + TT_OMEGA_T3 * FX);
+            uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * FY ) + OMEGA * uy_t30 + TT_OMEGA_T3 * FY);
+            uz_t30 = (T_OMEGA * (uz_t30 + invRho_mt15 * FZ ) + OMEGA * uz_t30 + TT_OMEGA_T3 * FZ);
+            
+            //equation 90
+            m_xx_t45 = (T_OMEGA * m_xx_t45  +   OMEGAd2 * ux_t30 * ux_t30    - invRho_mt15 * TT_OMEGA * (FX * ux_t30 + FX * ux_t30));
+            m_yy_t45 = (T_OMEGA * m_yy_t45  +   OMEGAd2 * uy_t30 * uy_t30    - invRho_mt15 * TT_OMEGA * (FY * uy_t30 + FY * uy_t30));
+            m_zz_t45 = (T_OMEGA * m_zz_t45  +   OMEGAd2 * uz_t30 * uz_t30    - invRho_mt15 * TT_OMEGA * (FZ * uz_t30 + FZ * uz_t30));
+
+            m_xy_t90 = (T_OMEGA * m_xy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (FX * uy_t30 + FY * ux_t30));
+            m_xz_t90 = (T_OMEGA * m_xz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FX * uz_t30 + FZ * ux_t30));
+            m_yz_t90 = (T_OMEGA * m_yz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+        #endif //!_NON_NEWTONIAN_FLUID
+    #endif //!_HIGH_ORDER_COLLISION
+
+    //USING HIGH
+    #ifdef HIGH_ORDER_COLLISION
+
+    const dfloat TAU_XX = (0.5-1/omegaVar)*cs2*(rhoVar * (m_xx_t45 - ux_t30*ux_t30));
+    const dfloat TAU_YY = (0.5-1/omegaVar)*cs2*(rhoVar * (m_yy_t45 - uy_t30*uy_t30));
+    const dfloat TAU_ZZ = (0.5-1/omegaVar)*cs2*(rhoVar * (m_zz_t45 - uz_t30*uz_t30));
+    const dfloat TAU_XY = (0.5-1/omegaVar)*cs2*(rhoVar * (m_xy_t90 - ux_t30*uy_t30));
+    const dfloat TAU_XZ = (0.5-1/omegaVar)*cs2*(rhoVar * (m_xz_t90 - ux_t30*uz_t30));
+    const dfloat TAU_YZ = (0.5-1/omegaVar)*cs2*(rhoVar * (m_yz_t90 - uy_t30*uz_t30));
+
+
+
+    dfloat feq;
+    dfloat fneq;
+    for(int i = 0; i<Q ; i++){
+        feq = w[i]*(rhoVar*(3*cx[i]*ux_t30 + 3*cy[i]*uy_t30 + 3*cz[i]*uz_t30 + (ux_t30*ux_t30*(9*cx[i]*cx[i] - 3))/2 + (uy_t30*uy_t30*(9*cy[i]*cy[i] - 3))/2 + (uz_t30*uz_t30*(9*cz[i]*cz[i] - 3))/2 + (9*ux_t30*ux_t30*uy_t30*uy_t30*(3*cx[i]*cx[i] - 1)*(3*cy[i]*cy[i] - 1))/4 + (9*ux_t30*ux_t30*uz_t30*uz_t30*(3*cx[i]*cx[i] - 1)*(3*cz[i]*cz[i] - 1))/4 + (9*uy_t30*uy_t30*uz_t30*uz_t30*(3*cy[i]*cy[i] - 1)*(3*cz[i]*cz[i] - 1))/4 + 9*cx[i]*cy[i]*ux_t30*uy_t30 + 9*cx[i]*cz[i]*ux_t30*uz_t30 + 9*cy[i]*cz[i]*uy_t30*uz_t30 + (9*cx[i]*ux_t30*uy_t30*uy_t30*(3*cy[i]*cy[i] - 1))/2 + (9*cy[i]*ux_t30*ux_t30*uy_t30*(3*cx[i]*cx[i] - 1))/2 + (9*cx[i]*ux_t30*uz_t30*uz_t30*(3*cz[i]*cz[i] - 1))/2 + (9*cz[i]*ux_t30*ux_t30*uz_t30*(3*cx[i]*cx[i] - 1))/2 + (9*cy[i]*uy_t30*uz_t30*uz_t30*(3*cz[i]*cz[i] - 1))/2 + (9*cz[i]*uy_t30*uy_t30*uz_t30*(3*cy[i]*cy[i] - 1))/2 + 1));
+
+        fneq = w[i]*((TAU_XX*(9*cx[i]*cx[i] - 3))/2 + (TAU_YY*(9*cy[i]*cy[i] - 3))/2 + (TAU_ZZ*(9*cz[i]*cz[i] - 3))/2 + (9*(3*cx[i]*cx[i] - 1)*(3*cy[i]*cy[i] - 1)*(TAU_YY*ux_t30*ux_t30 + TAU_XX*uy_t30*uy_t30 + 4*TAU_XY*ux_t30*uy_t30))/4 + (9*(3*cx[i]*cx[i] - 1)*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*ux_t30*ux_t30 + TAU_XX*uz_t30*uz_t30 + 4*TAU_XZ*ux_t30*uz_t30))/4 + (9*(3*cy[i]*cy[i] - 1)*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*uy_t30*uy_t30 + TAU_YY*uz_t30*uz_t30 + 4*TAU_YZ*uy_t30*uz_t30))/4 + 9*TAU_XY*cx[i]*cy[i] + 9*TAU_XZ*cx[i]*cz[i] + 9*TAU_YZ*cy[i]*cz[i] + (9*cy[i]*(3*cx[i]*cx[i] - 1)*(2*TAU_XY*ux_t30 + TAU_XX*uy_t30))/2 + (9*cx[i]*(3*cy[i]*cy[i] - 1)*(TAU_YY*ux_t30 + 2*TAU_XY*uy_t30))/2 + (9*cz[i]*(3*cx[i]*cx[i] - 1)*(2*TAU_XZ*ux_t30 + TAU_XX*uz_t30))/2 + (9*cx[i]*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*ux_t30 + 2*TAU_XZ*uz_t30))/2 + (9*cz[i]*(3*cy[i]*cy[i] - 1)*(2*TAU_YZ*uy_t30 + TAU_YY*uz_t30))/2 + (9*cy[i]*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*uy_t30 + 2*TAU_YZ*uz_t30))/2);
+
+        pop[i] = feq + omegaVar * fneq;
+
+    }
+    rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
+    invRho = 1 / rhoVar;
+
+    ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[8] + pop[9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + 0.5 * FX) * invRho;
+    uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + 0.5 * FY) * invRho;
+    uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + 0.5 * FZ) * invRho;
+
+    m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16])* invRho - cs2;
+    m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14])* invRho;
+    m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16])* invRho;
+    m_yy_t45 = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18])* invRho - cs2;
+    m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18])* invRho;
+    m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18])* invRho - cs2;
+
+
     ux_t30 = 3.0 * ux_t30;
     uy_t30 = 3.0 * uy_t30;
     uz_t30 = 3.0 * uz_t30;
 
-    m_xx_t45 = 4.5 * (m_xx_t45 * invRho - cs2);
-    m_xy_t90 = 9.0 * (m_xy_t90 * invRho);
-    m_xz_t90 = 9.0 * (m_xz_t90 * invRho);
-    m_yy_t45 = 4.5 * (m_yy_t45 * invRho - cs2);
-    m_yz_t90 = 9.0 * (m_yz_t90 * invRho);
-    m_zz_t45 = 4.5 * (m_zz_t45 * invRho - cs2);
-
-    #ifdef DENSITY_CORRECTION
-    //printf("%f ",d_mean_rho[0]-1) ;
-    rhoVar -= (d_mean_rho[0]-1e-7) ;
-    invRho = 1/rhoVar;
-    #endif // DENSITY_CORRECTION
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat invRho_mt15 = -1.5*invRho;
-    ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * FX ) + omegaVar * ux_t30 + tt_omega_t3 * FX);
-    uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * FY ) + omegaVar * uy_t30 + tt_omega_t3 * FY);
-    uz_t30 = (t_omegaVar * (uz_t30 + invRho_mt15 * FZ ) + omegaVar * uz_t30 + tt_omega_t3 * FZ);
-    
-    //equation 90
-    m_xx_t45 = (t_omegaVar * m_xx_t45  +   omegaVar_d2 * ux_t30 * ux_t30  - invRho_mt15 * tt_omegaVar * (FX * ux_t30 + FX * ux_t30));
-    m_yy_t45 = (t_omegaVar * m_yy_t45  +   omegaVar_d2 * uy_t30 * uy_t30  - invRho_mt15 * tt_omegaVar * (FY * uy_t30 + FY * uy_t30));
-    m_zz_t45 = (t_omegaVar * m_zz_t45  +   omegaVar_d2 * uz_t30 * uz_t30  - invRho_mt15 * tt_omegaVar * (FZ * uz_t30 + FZ * uz_t30));
-
-    m_xy_t90 = (t_omegaVar * m_xy_t90  +   omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (FX * uy_t30 + FY * ux_t30));
-    m_xz_t90 = (t_omegaVar * m_xz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (FX * uz_t30 + FZ * ux_t30));
-    m_yz_t90 = (t_omegaVar * m_yz_t90  +   omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (FY * uz_t30 + FZ * uy_t30));
-    #endif // NON_NEWTONIAN_FLUID
-    #ifndef NON_NEWTONIAN_FLUID
-    
-    dfloat invRho_mt15 = -1.5*invRho;
-    ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * FX ) + OMEGA * ux_t30 + TT_OMEGA_T3 * FX);
-    uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * FY ) + OMEGA * uy_t30 + TT_OMEGA_T3 * FY);
-    uz_t30 = (T_OMEGA * (uz_t30 + invRho_mt15 * FZ ) + OMEGA * uz_t30 + TT_OMEGA_T3 * FZ);
-    
-    //equation 90
-    m_xx_t45 = (T_OMEGA * m_xx_t45  +   OMEGAd2 * ux_t30 * ux_t30    - invRho_mt15 * TT_OMEGA * (FX * ux_t30 + FX * ux_t30));
-    m_yy_t45 = (T_OMEGA * m_yy_t45  +   OMEGAd2 * uy_t30 * uy_t30    - invRho_mt15 * TT_OMEGA * (FY * uy_t30 + FY * uy_t30));
-    m_zz_t45 = (T_OMEGA * m_zz_t45  +   OMEGAd2 * uz_t30 * uz_t30    - invRho_mt15 * TT_OMEGA * (FZ * uz_t30 + FZ * uz_t30));
-
-    m_xy_t90 = (T_OMEGA * m_xy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (FX * uy_t30 + FY * ux_t30));
-    m_xz_t90 = (T_OMEGA * m_xz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FX * uz_t30 + FZ * ux_t30));
-    m_yz_t90 = (T_OMEGA * m_yz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FY * uz_t30 + FZ * uy_t30));
-    #endif //!_NON_NEWTONIAN_FLUID
-    #endif //!_HIGH_ORDER_COLLISION
+    m_xx_t45 = 4.5*(m_xx_t45);
+    m_xy_t90 = 9.0*(m_xy_t90);
+    m_xz_t90 = 9.0*(m_xz_t90);
+    m_yy_t45 = 4.5*(m_yy_t45);
+    m_yz_t90 = 9.0*(m_yz_t90);
+    m_zz_t45 = 4.5*(m_zz_t45);
 
 
-    pixy_t90 = (T_OMEGA * pixy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (FX * uy_t30 + FY * ux_t30));
-    pixz_t90 = (T_OMEGA * pixz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FX * uz_t30 + FZ * ux_t30));
-    piyz_t90 = (T_OMEGA * piyz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FY * uz_t30 + FZ * uy_t30));
-    #endif
+
+    #endif //HIGH_ORDER_COLLISION
+
+
 
     //calculate post collision populations
     
