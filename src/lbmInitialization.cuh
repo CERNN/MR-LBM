@@ -12,6 +12,11 @@
 #include "var.h"
 #include "nodeTypeMap.h"
 
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
 /*
 *   @brief Initializes random numbers (useful to initialize turbulence)
 *   @param randomNumbers: vector of random numbers (size is NX*NY*NZ)

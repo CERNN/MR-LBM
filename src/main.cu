@@ -60,6 +60,10 @@ int main() {
     dfloat* h_fGhostZ_1;
 
     unsigned char* dNodeType;
+    unsigned char* hNodeType;
+    #ifdef SAVE_BC
+    dfloat* nodeTypeSave;
+    #endif
 
     #ifdef DENSITY_CORRECTION
     dfloat* h_mean_rho;
@@ -187,9 +191,18 @@ int main() {
         gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
     }
 
+    checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned char) * NUMBER_LBM_NODES));
+    checkCudaErrors(cudaMallocHost((void**)&(nodeTypeSave), sizeof(dfloat) * NUMBER_LBM_NODES));
+    
+    #ifndef voxel_
     gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
     checkCudaErrors(cudaDeviceSynchronize());
-
+    #endif
+    #ifdef voxel_
+    read_voxel_csv(VOXEL_FILENAME,hNodeType);
+    checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned char) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
+    checkCudaErrors(cudaDeviceSynchronize());  
+    #endif
 
     //printf("Interface Populations initialized \n");fflush(stdout);
     checkCudaErrors(cudaDeviceSynchronize());
@@ -219,6 +232,10 @@ int main() {
     linearMacr(h_fMom,rho,ux,uy,uz,
     #ifdef NON_NEWTONIAN_FLUID
     omega,
+    #endif
+    #ifdef SAVE_BC
+    nodeTypeSave,
+    hNodeType,
     #endif
     step);
 
@@ -320,33 +337,35 @@ int main() {
             #endif
             step);
             #endif
-            /*
-            //if (!(step%((int)turn_over_time))){
-            //if((step>N_STEPS-6*(int)(turn_over_time))){  
-                checkCudaErrors(cudaDeviceSynchronize()); 
-                checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-                linearMacr(h_fMom,rho,ux,uy,uz,
-                #ifdef NON_NEWTONIAN_FLUID
-                omega,
-                #endif
-                #ifdef SAVE_BC
-                nodeTypeSave,
-                hNodeType,
-                #endif
-                step); 
+            
+            //if (!(step%((int)turn_over_time/10))){
+            //if((step>N_STEPS-500*(int)(turn_over_time))){ 
+                if((step%((int)(turn_over_time))) == 0){
+                    checkCudaErrors(cudaDeviceSynchronize()); 
+                    checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+                    linearMacr(h_fMom,rho,ux,uy,uz,
+                    #ifdef NON_NEWTONIAN_FLUID
+                    omega,
+                    #endif
+                    #ifdef SAVE_BC
+                    nodeTypeSave,
+                    hNodeType,
+                    #endif
+                    step); 
 
-                printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
-                fflush(stdout);
+                    printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
+                    fflush(stdout);
 
-                saveMacr(rho,ux,uy,uz,
-                #ifdef NON_NEWTONIAN_FLUID
-                omega,
-                #endif
-                #ifdef SAVE_BC
-                nodeTypeSave,
-                #endif
-                step);
-            //}*/
+                    saveMacr(rho,ux,uy,uz,
+                    #ifdef NON_NEWTONIAN_FLUID
+                    omega,
+                    #endif
+                    #ifdef SAVE_BC
+                    nodeTypeSave,
+                    #endif
+                    step);
+                }
+            //}
         }
 
     } // end of the loop
