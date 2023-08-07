@@ -20,12 +20,21 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-#define VOXEL_FILENAME "sphere.csv"
+#define lidDrivenCavity_3D_
+#define BC_PROBLEM lidDrivenCavity_3D
+//#define VOXEL_FILENAME "bc.csv"
+
+//#define testBC_
+//#define BC_PROBLEM testBC
 
 //#define BC_POPULATION_BASED
 #define BC_MOMENT_BASED
 
 //#define DENSITY_CORRECTION
+
+//#define HO_RR //http://dx.doi.org/10.1063/1.4981227
+
+
 
 /* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
 //#define BINGHAM
@@ -36,10 +45,14 @@
 #endif
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
+    #define ID_SIM "000"            // prefix for simulation's files
+constexpr dfloat RE = 23000;
+#define PATH_FILES "TEST"  // path to save simulation's files
+
 #define TREATFIELD (false) //treat data over the entire field
 #define TREATPOINT (true) //treat data in a single or several points
-#define SAVEDATA (true) //save treat data
-#define CONSOLEPRINT (false) // print the console the data is being saved
+#define SAVEDATA (false) //save treat data
+#define CONSOLEPRINT (true) // print the console the data is being saved
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
 
 //#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
@@ -252,6 +265,9 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
     #define BC_DIRECTORY BoundaryConditions/IncludeMlbmBc_MOM
 
     #define BC_PATH STR(BC_DIRECTORY/BC_PROBLEM)
+#endif
+#ifdef HO_RR
+    #define HIGH_ORDER_COLLISION
 #endif
 
 #define BC_DIRECTORY_INIT BoundaryConditions/Boundary_initialization_files
