@@ -97,6 +97,7 @@ constexpr dfloat U_MAX = 0.1;
 constexpr dfloat L = N;
 constexpr dfloat VISC = L*U_MAX / RE;
 constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
+constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 constexpr dfloat turn_over_time = L / U_MAX;
 constexpr int N_STEPS = 100*((int)turn_over_time);
@@ -182,7 +183,13 @@ constexpr dfloat ONETHIRD = 1.0/3.0;
 /* ------------------------------ MEMORY SIZE ------------------------------ */
 #define BLOCK_NX 8
 #define BLOCK_NY 8
-#define BLOCK_NZ 8
+#ifdef SINGLE_PRECISION //some easy fix so doesnt forget to change size when changing float size
+    #define BLOCK_NZ 8
+#endif
+#ifdef DOUBLE_PRECISION
+    #define BLOCK_NZ 4
+#endif
+
 #define BLOCK_LBM_SIZE (BLOCK_NX * BLOCK_NY * BLOCK_NZ)
 
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;

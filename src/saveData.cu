@@ -205,18 +205,13 @@ void linearMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
-    #ifdef SAVE_BC
+    #if SAVE_BC
     dfloat* nodeTypeSave,
     unsigned char* hNodeType,
     #endif
     unsigned int step
 ){
     size_t indexMacr;
-
-    dfloat meanRho;
-    meanRho  =  0;
-    dfloat bc;
-
     for(int z = 0; z< NZ;z++){
         ///printf("z %d \n", z);
         for(int y = 0; y< NY;y++){
@@ -230,7 +225,7 @@ void linearMacr(
                 #ifdef NON_NEWTONIAN_FLUID
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 10, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
-                #ifdef SAVE_BC
+                #if SAVE_BC
                 nodeTypeSave[indexMacr] = (dfloat)hNodeType[idxNodeType(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
                 //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
@@ -250,7 +245,7 @@ void saveMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
-    #ifdef SAVE_BC
+    #if SAVE_BC
     dfloat* nodeTypeSave,
     #endif
     unsigned int nSteps
@@ -265,7 +260,7 @@ void saveMacr(
     #ifdef NON_NEWTONIAN_FLUID
     strFileOmega = getVarFilename("omega", nSteps, ".bin");
     #endif
-    #ifdef SAVE_BC
+    #if SAVE_BC
     strFileBc = getVarFilename("bc", nSteps, ".bin");
     #endif
     // saving files
@@ -276,7 +271,7 @@ void saveMacr(
     #ifdef NON_NEWTONIAN_FLUID
     saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
     #endif
-    #ifdef SAVE_BC
+    #if SAVE_BC
     saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
     #endif
 }
@@ -365,7 +360,7 @@ std::string getVarFilename(
     return strFile;
 }
 
-std::string getSimInfoString(int step)
+std::string getSimInfoString(int step,dfloat MLUPS)
 {
     std::ostringstream strSimInfo("");
     
@@ -397,6 +392,7 @@ std::string getSimInfoString(int step)
     strSimInfo << "                 FZ: " << FZ << "\n";
     strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
     strSimInfo << "             Nsteps: " << step << "\n";
+    strSimInfo << "              MLUPS: " << MLUPS << "\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
     strSimInfo << "\n------------------------------ BOUNDARY CONDITIONS -----------------------------\n";
@@ -433,7 +429,7 @@ std::string getSimInfoString(int step)
     return strSimInfo.str();
 }
 
-void saveSimInfo(int step)
+void saveSimInfo(int step,dfloat MLUPS)
 {
     std::string strInf = PATH_FILES;
     strInf += "/";
@@ -446,7 +442,7 @@ void saveSimInfo(int step)
     outFile = fopen(strInf.c_str(), "w");
     if(outFile != nullptr)
     {
-        std::string strSimInfo = getSimInfoString(step);
+        std::string strSimInfo = getSimInfoString(step,MLUPS);
         fprintf(outFile, strSimInfo.c_str());
         fclose(outFile);
     }

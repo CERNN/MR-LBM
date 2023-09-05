@@ -61,7 +61,7 @@ int main() {
 
     unsigned char* dNodeType;
     unsigned char* hNodeType;
-    #ifdef SAVE_BC
+    #if SAVE_BC
     dfloat* nodeTypeSave;
     #endif
 
@@ -192,8 +192,10 @@ int main() {
     }
 
     checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned char) * NUMBER_LBM_NODES));
+    #if SAVE_BC
     checkCudaErrors(cudaMallocHost((void**)&(nodeTypeSave), sizeof(dfloat) * NUMBER_LBM_NODES));
-    
+    #endif 
+
     #ifndef voxel_
     gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
     checkCudaErrors(cudaDeviceSynchronize());
@@ -233,7 +235,7 @@ int main() {
     #ifdef NON_NEWTONIAN_FLUID
     omega,
     #endif
-    #ifdef SAVE_BC
+    #if SAVE_BC
     nodeTypeSave,
     hNodeType,
     #endif
@@ -260,7 +262,11 @@ int main() {
     for (step=1; step<N_STEPS;step++){
 
         int aux = step-INI_STEP;
-        bool checkpoint = false, densityCorrection = false,  save =false;
+        bool checkpoint = false;
+        #if DENSITY_CORRECTION
+        bool densityCorrection = false;
+        #endif 
+        bool save =false;
         if(aux != 0){
             if(MACR_SAVE)
                 save = !(step % MACR_SAVE);
@@ -292,7 +298,7 @@ int main() {
 
         if(checkpoint){
             printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
-            
+            // throwing a warning for being used without being initialized. But does not matter since we are overwriting it;
             checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaMemcpy(h_fGhostX_0,gGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaMemcpy(h_fGhostX_1,gGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToHost));
@@ -331,11 +337,11 @@ int main() {
             #endif
 
             #if TREATPOINT
-            probeExport(fMom,
-            #ifdef NON_NEWTONIAN_FLUID
-            omega,
-            #endif
-            step);
+                probeExport(fMom,
+                #ifdef NON_NEWTONIAN_FLUID
+                omega,
+                #endif
+                step);
             #endif
             
             //if (!(step%((int)turn_over_time/10))){
@@ -347,7 +353,7 @@ int main() {
                     #ifdef NON_NEWTONIAN_FLUID
                     omega,
                     #endif
-                    #ifdef SAVE_BC
+                    #if SAVE_BC
                     nodeTypeSave,
                     hNodeType,
                     #endif
@@ -360,7 +366,7 @@ int main() {
                     #ifdef NON_NEWTONIAN_FLUID
                     omega,
                     #endif
-                    #ifdef SAVE_BC
+                    #if SAVE_BC
                     nodeTypeSave,
                     #endif
                     step);
@@ -375,7 +381,7 @@ int main() {
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
-            #ifdef SAVE_BC
+            #if SAVE_BC
             nodeTypeSave,
             hNodeType,
             #endif
@@ -385,7 +391,7 @@ int main() {
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
-            #ifdef SAVE_BC
+            #if SAVE_BC
             nodeTypeSave,
             #endif
             step);
@@ -424,7 +430,7 @@ int main() {
     printf("MLUPS: %f\n",MLUPS);
 
     //save info file
-    saveSimInfo(step);
+    saveSimInfo(step,MLUPS);
 
 
     /* ------------------------------ FREE ------------------------------ */
@@ -470,7 +476,7 @@ int main() {
     cudaFree(d_particlePos);
     #endif
 
-    #ifdef SAVE_BC
+    #if SAVE_BC
     cudaFree(nodeTypeSave);
     #endif
 

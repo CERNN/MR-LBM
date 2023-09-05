@@ -73,7 +73,7 @@ void linearMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
-    #ifdef SAVE_BC
+    #if SAVE_BC
     dfloat* nodeTypeSave,
     unsigned char* hNodeType,
     #endif
@@ -100,7 +100,7 @@ void saveMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
-    #ifdef SAVE_BC
+    #if SAVE_BC
     dfloat* nodeTypeSave,
     #endif
     unsigned int nSteps
@@ -143,13 +143,13 @@ void folderSetup();
 *   @param step: simulation's step
 *   @return string with simulation info
 */
-std::string getSimInfoString(int step);
+std::string getSimInfoString(int step,dfloat MLUPS);
 
 /*
 *   Save simulation's information
 *   @param info: simulation's informations
 */
-void saveSimInfo(int step);
+void saveSimInfo(int step,dfloat MLUPS);
 
 
 
