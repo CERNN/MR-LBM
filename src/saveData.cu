@@ -107,6 +107,65 @@ void treatData(
 }
 
 __host__
+void velocityProfile(
+    dfloat* fMom,
+    int moment_index,
+    unsigned int step
+){
+
+    std::ostringstream strDataInfo("");
+    strDataInfo << std::scientific;
+    strDataInfo << std::setprecision(6);
+    strDataInfo <<"step "<< step;
+
+    int x_loc,y_loc,z_loc;
+    switch (moment_index)
+    {
+    case 1:
+        dfloat* ux;
+        checkCudaErrors(cudaMallocHost((void**)&(ux), sizeof(dfloat)));
+
+        x_loc = NX/2;
+        z_loc = NZ/2;
+        
+        for (y_loc = 0; y_loc < NY ; y_loc++){
+
+            checkCudaErrors(cudaMemcpy(ux, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, moment_index, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            sizeof(dfloat), cudaMemcpyDeviceToHost));
+            strDataInfo <<"\t"<< *ux;
+        }
+        saveTreatData("_vx_prof",strDataInfo.str(),step);
+
+        cudaFree(ux);
+        break;
+    case 2:
+        dfloat* uy;
+        checkCudaErrors(cudaMallocHost((void**)&(uy), sizeof(dfloat)));
+
+        y_loc = NY/2;
+        z_loc = NZ/2;
+        
+
+
+        for (x_loc = 0; x_loc < NX ; x_loc++){
+
+            checkCudaErrors(cudaMemcpy(uy, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, moment_index, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            sizeof(dfloat), cudaMemcpyDeviceToHost));
+            strDataInfo <<"\t"<< *uy;
+        }
+        saveTreatData("_vy_prof",strDataInfo.str(),step);
+
+        cudaFree(uy);
+        break;
+        break;
+    default:
+        break;
+    }
+}
+
+
+
+__host__
 void probeExport(
     dfloat* fMom,
     #ifdef NON_NEWTONIAN_FLUID

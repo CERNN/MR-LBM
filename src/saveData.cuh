@@ -40,6 +40,20 @@ void treatData(
 );
 
 /*
+*   @brief save the velocity profile in the middle of the domian
+*   @param fMom: device macroscopic field based on block and thread index
+*   @param moment_index: which velocity and direction will be saved
+*   @param nSteps: number of steps of the simulation
+*/
+__host__
+void velocityProfile(
+    dfloat* fMom,
+    int moment_index,
+    unsigned int step
+);
+
+
+/*
 *   @brief Change field vector order to be used saved in binary
 *   @param h_fMom: host macroscopic field based on block and thread index
 *   @param omega: omega field if non-Newtonian

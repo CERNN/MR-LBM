@@ -342,6 +342,8 @@ int main() {
                 omega,
                 #endif
                 step);
+                velocityProfile(fMom,1,step);
+                velocityProfile(fMom,2,step);
             #endif
             
             //if (!(step%((int)turn_over_time/10))){
