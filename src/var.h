@@ -51,8 +51,10 @@ constexpr dfloat RE = 23000;
 
 #define TREATFIELD (false) //treat data over the entire field
 #define TREATPOINT (true) //treat data in a single or several points
-#define SAVEDATA (false) //save treat data
-#define CONSOLEPRINT (true) // print the console the data is being saved
+#define TREATLINE (true) //save the macro in a line
+#define SAVEDATA (true) //save treat data
+#define CONSOLEPRINT (false) // print the console the data is being saved
+#define MEAN_FLOW (true) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
 
 //#define PARTICLE_TRACER  // define if will traces massless particles inside the flow

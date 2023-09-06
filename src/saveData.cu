@@ -7,8 +7,8 @@ __host__
 void treatData(
     dfloat* h_fMom,
     dfloat* fMom,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
+    #if MEAN_FLOW
+    dfloat* fMom_mean,
     #endif
     unsigned int step
 ){
@@ -24,14 +24,14 @@ void treatData(
     strDataInfo << std::scientific;
     strDataInfo << std::setprecision(6);
 
-
+    /*
     dfloat t_ux0, t_ux1;
-    dfloat m_ux0, m_ux1;
+    dfloat m_ux0_s, m_ux1_s;
     int y0 = NY-1;
     int y1 = NY-2;
     int count = 0;
-    m_ux0 = 0.0;
-    m_ux1 = 0.0;
+    m_ux0_s = 0.0;
+    m_ux1_s = 0.0;
 
     //right side of the equation 10
     for (int z = 0 ; z <NZ_TOTAL-1 ; z++){
@@ -39,19 +39,22 @@ void treatData(
             t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
             t_ux1 = h_fMom[idxMom(x%BLOCK_NX, y1%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y1/BLOCK_NY, z/BLOCK_NZ)];
 
-            m_ux0 += (t_ux0 * t_ux0);
-            m_ux1 += (t_ux1 * t_ux1);
+            m_ux0_s += (t_ux0 * t_ux0);
+            m_ux1_s += (t_ux1 * t_ux1);
             count++;
         }
     }
-    m_ux0 /= count;
-    m_ux1 /= count;
+    m_ux0_s /= count;
+    m_ux1_s /= count;
 
 
-    dfloat LS = (m_ux0-m_ux1);
+    dfloat LS = (m_ux0_s-m_ux1_s);
     LS = LS/(4*N);
+    */
 
-    dfloat t_uy0,t_uz0;
+    //LEFT SIDE
+
+    dfloat t_ux0, t_uy0,t_uz0;
     dfloat t_mxx0,t_mxy0,t_mxz0,t_myy0,t_myz0,t_mzz0;
     dfloat Sxx = 0;
     dfloat Sxy = 0;
@@ -60,15 +63,48 @@ void treatData(
     dfloat Syz = 0;
     dfloat Szz = 0;
     dfloat SS = 0;
+    int count = 0;
+    int y0 = NY-1;
 
+    #if MEAN_FLOW
+    dfloat f_ux = 0;
+    dfloat f_uy = 0;
+    dfloat f_uz = 0;
+
+    dfloat f_Sxx = 0;
+    dfloat f_Sxy = 0;
+    dfloat f_Sxz = 0;
+    dfloat f_Syy = 0;
+    dfloat f_Syz = 0;
+    dfloat f_Szz = 0;
+
+    dfloat f_SS;
+
+    dfloat m_ux = 0.0;
+    dfloat m_uy = 0.0;
+    dfloat m_uz = 0.0;
+
+    dfloat m_Sxx = 0;
+    dfloat m_Sxy = 0;
+    dfloat m_Sxz = 0;
+    dfloat m_Syy = 0;
+    dfloat m_Syz = 0;
+    dfloat m_Szz = 0;
+    #endif 
+    #ifdef NON_NEWTONIAN_FLUID
+        dfloat omegaVar;
+        dfloat tau, eta,energy = 0;
+    #endif
+
+    dfloat mean_counter = 1.0/((dfloat)(step/MACR_SAVE)+1.0);
     count = 0;
     //left side of the equation
     for (int z = 0 ; z <NZ_TOTAL-1; z++){
         for(int y = 0; y< NY-1;y++){
             for(int x = 0; x< NX-1;x++){
                 t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
-                t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+                t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
                 t_mxx0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 4, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_mxy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
@@ -91,15 +127,89 @@ void treatData(
                         Sxy * Sxy + 
                         Sxz * Sxz + 
                         Syz * Syz)) ;
+
+                #if MEAN_FLOW
+                //STORE AND UPDATE MEANS
+
+                //retrive mean values
+                m_ux = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_uy = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_uz = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                
+                m_Sxx = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 4, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_Sxy = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_Sxz = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 6, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_Syy = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 7, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_Syz = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 8, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_Szz = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 9, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+
+                //update and store mean values
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_ux + (t_ux0 - m_ux)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_uy + (t_uy0 - m_uy)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_uz + (t_uz0 - m_uz)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 4, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_Sxx + (Sxx - m_Sxx)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_Sxy + (Sxy - m_Sxy)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 6, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_Sxz + (Sxz - m_Sxz)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 7, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_Syy + (Syy - m_Syy)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 8, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_Syz + (Syz - m_Syz)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 9, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_Szz + (Szz - m_Szz)*(mean_counter);
+            
+                f_ux = t_ux0 - m_ux;
+                f_uy = t_uy0 - m_uy;
+                f_uz = t_uz0 - m_uz;
+                f_Sxx = Sxx - m_Sxx;
+                f_Sxy = Sxy - m_Sxy;
+                f_Sxz = Sxz - m_Sxz;
+                f_Syy = Syy - m_Syy;
+                f_Syz = Syz - m_Syz;
+                f_Szz = Szz - m_Szz;
+
+                f_SS += ( f_Sxx * f_Sxx + f_Syy * f_Syy + f_Szz * f_Szz + 2*( f_Sxy * f_Sxy + f_Sxz * f_Sxz + f_Syz * f_Syz));
+
+
+                #endif
                 count++;
 
             }
         }
     }
+    SS = SS;
+    #if MEAN_FLOW
+    f_SS = f_SS / (count);
+    #endif
+    
 
-    SS = SS / (count);
+
+    dfloat mean_prod = 0.0;
+    for (int z = 0 ; z <NZ_TOTAL-1 ; z++){
+        for (int x = 0; x< NX-1;x++){
+            t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+            t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+            t_mxy0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+
+            Sxz = (as2/(2*TAU))*(t_ux0*t_uz0-t_mxy0); //the velocity terms are 0
+
+            mean_prod += t_ux0*Sxz/2;
+        }
+    }
+
+
+    #if MEAN_FLOW
+    dfloat epsilon = 2*((TAU-0.5)/3)*f_SS;
+    #endif
+
+
+
+
     //printf("%0.7e\t%0.7e\t%0.7e\n",LS,SS,SS/LS);
-    strDataInfo <<"step,"<< step<< "," << LS << "," << SS << "," <<SS/LS;
+    // step << total_energy_dissipated, total_energy_produced, error , epsilon, omega
+    strDataInfo <<"step,"<< step<< "," << SS << "," << mean_prod << "," << abs(-SS/mean_prod - 1.0);// << "," << mean_counter;
+    #if MEAN_FLOW
+        strDataInfo <<"," <<  epsilon;
+    #endif
+    #ifdef NON_NEWTONIAN_FLUID
+        strDataInfo <<"," <<  energy;
+    #endif
 
 
 

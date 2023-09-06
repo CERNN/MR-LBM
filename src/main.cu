@@ -75,6 +75,13 @@ int main() {
     dfloat3* d_particlePos;
     #endif
 
+    #if MEAN_FLOW
+        dfloat* m_fMom;
+        dfloat* m_rho;
+        dfloat* m_ux;
+        dfloat* m_uy;
+        dfloat* m_uz;
+    #endif
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     dfloat* h_fMom;
     dfloat* rho;
@@ -100,6 +107,13 @@ int main() {
     #endif
     #ifdef PARTICLE_TRACER
     checkCudaErrors(cudaMallocHost((void**)&(h_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
+    #endif
+    #if MEAN_FLOW
+        checkCudaErrors(cudaMallocHost((void**)&(m_fMom), MEM_SIZE_MOM));
+        checkCudaErrors(cudaMallocHost((void**)&(m_rho), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(m_ux), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(m_uy), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(m_uz), MEM_SIZE_SCALAR));
     #endif
     randomNumbers = (float**)malloc(sizeof(float*));
 
@@ -191,6 +205,10 @@ int main() {
         gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
     }
 
+    #if MEAN_FLOW
+        //initialize mean moments
+        checkCudaErrors(cudaMemcpy(fMom, m_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyHostToDevice));
+    #endif
     checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned char) * NUMBER_LBM_NODES));
     #if SAVE_BC
     checkCudaErrors(cudaMallocHost((void**)&(nodeTypeSave), sizeof(dfloat) * NUMBER_LBM_NODES));
@@ -330,8 +348,8 @@ int main() {
 
             #if TREATFIELD
             treatData(h_fMom,fMom,
-            #ifdef NON_NEWTONIAN_FLUID
-            omega,
+            #if MEAN_FLOW
+            m_fMom,
             #endif
             step);
             #endif
@@ -418,6 +436,26 @@ int main() {
 
     }
     checkCudaErrors(cudaDeviceSynchronize());
+    #if MEAN_FLOW
+            linearMacr(m_fMom,m_rho,m_ux,m_uy,m_uz,
+            #ifdef NON_NEWTONIAN_FLUID
+            omega,
+            #endif
+            #if SAVE_BC
+            nodeTypeSave,
+            hNodeType,
+            #endif
+            INT_MAX); 
+            saveMacr(m_rho,m_ux,m_uy,m_uz,
+            #ifdef NON_NEWTONIAN_FLUID
+            omega,
+            #endif
+            #if SAVE_BC
+            nodeTypeSave,
+            #endif
+            INT_MAX);
+    #endif
+
     /* ------------------------------ POST ------------------------------ */
     //Calculate MLUPS
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
@@ -459,6 +497,14 @@ int main() {
     cudaFree(ux);
     cudaFree(uy);
     cudaFree(uz);
+
+    #if MEAN_FLOW
+        cudaFree(m_fMom);
+        cudaFree(m_rho);
+        cudaFree(m_ux);
+        cudaFree(m_uy);
+        cudaFree(m_uz);
+    #endif
 
     if(LOAD_CHECKPOINT){
         cudaFree(h_fGhostX_0);

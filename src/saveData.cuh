@@ -26,15 +26,15 @@
 *   @brief Change field vector order to be used saved in binary
 *   @param h_fMom: host macroscopic field based on block and thread index
 *   @param fMom: device macroscopic field based on block and thread index
-*   @param omega: omega field if non-Newtonian
+*   @param fMom_mean: mean flow moments
 *   @param nSteps: number of steps of the simulation
 */
 __host__
 void treatData(
     dfloat* h_fMom,
     dfloat* fMom,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
+    #if MEAN_FLOW
+    dfloat* fMom_mean,
     #endif
     unsigned int step
 );
