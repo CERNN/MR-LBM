@@ -66,6 +66,40 @@ void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index)
 }
 
 __global__ 
+void sumReductionThread_EK(dfloat* g_idata, dfloat* g_odata)
+{
+    #if (BLOCK_LBM_SIZE == 512)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #else
+        extern __shared__ dfloat sdata[];
+    #endif
+
+
+    //global index in the array
+    unsigned int ix =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z);
+    unsigned int iy =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z);
+    unsigned int iz =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z);
+    //thread index in the array
+    unsigned int tid = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z));
+    //block index
+    unsigned int bid = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z));
+
+    sdata[tid] = sqrt(g_idata[ix]*g_idata[ix] + g_idata[iy]*g_idata[iy]+g_idata[iz]*g_idata[iz]);
+    __syncthreads();
+    for (unsigned int s = (blockDim.x * blockDim.y * blockDim.z) / 2; s > 0; s >>= 1) {
+        if (tid < s) {
+            sdata[tid] += sdata[tid + s];
+        }
+        __syncthreads();
+    }
+    
+    if (tid == 0) {
+        g_odata[bid] = sdata[0];
+    }
+}
+
+
+__global__ 
 void sumReductionBlock(dfloat* g_idata, dfloat* g_odata)
 {
     #if (BLOCK_LBM_SIZE == 512)

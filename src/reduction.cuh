@@ -45,11 +45,32 @@ https://docs.nvidia.com/cuda/eula/index.html
 #include "var.h"
 #include "nodeTypeMap.h"
 
+
+/*
+*   @brief Perform paralel reduction of all threads of a block of a moment
+*   @param g_idata: moment point
+*   @param g_odata: sum of moments inside the block
+*   @param m_index: moment index
+*/
 __global__ 
 void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index);
 
+/*
+*   @brief Perform paralel reduction of all threads of a block of for kinetic energy
+*   @param g_idata: moment point
+*   @param g_odata: sum of moments inside the block
+*/
+__global__ 
+void sumReductionThread_EK(dfloat* g_idata, dfloat* g_odata);
+
+/*
+*   @brief Perform paralel reduction of reduced block point
+*   @param g_idata: reduced pointer
+*   @param g_odata: reduced pointer
+*/
 __global__ 
 void sumReductionBlock(dfloat* g_idata, dfloat* g_odata);
+
 
 
 
