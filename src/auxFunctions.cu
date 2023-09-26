@@ -57,7 +57,7 @@ void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step){
 }
 
 
-__global__ 
+__host__ 
 void totalKineticEnergy(
     dfloat *fMom, 
     dfloat *SEK, 

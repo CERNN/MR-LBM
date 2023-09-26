@@ -31,7 +31,7 @@ void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step);
 *   @param SEK: sum of kinetic energy
 *   @param step: current time step
 */
-__global__ 
+__host__ 
 void totalKineticEnergy(dfloat *fMom, dfloat *SEK, size_t step);
 
 
