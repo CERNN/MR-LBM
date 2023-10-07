@@ -33,7 +33,7 @@
 //#define DENSITY_CORRECTION
 
 //#define HO_RR //http://dx.doi.org/10.1063/1.4981227
-
+//#define HOME_LBM //https://inria.hal.science/hal-04223237/
 
 
 /* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
@@ -275,7 +275,7 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 
     #define BC_PATH STR(BC_DIRECTORY/BC_PROBLEM)
 #endif
-#ifdef HO_RR
+#if defined(HO_RR) || defined(HOME_LBM)
     #define HIGH_ORDER_COLLISION
 #endif
 

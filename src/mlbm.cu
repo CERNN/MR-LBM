@@ -46,11 +46,12 @@ __global__ void gpuMomCollisionStream(
     dfloat omegaVar = OMEGA;
     #endif
 
-    
+    dfloat pics2;
+    #ifndef HIGH_ORDER_COLLISION
     //calculate post collision populations
     dfloat multiplyTerm;
     multiplyTerm = rhoVar * W0;
-    dfloat pics2 = 1.0 - cs2 * (m_xx_t45 + m_yy_t45 + m_zz_t45);
+    pics2 = 1.0 - cs2 * (m_xx_t45 + m_yy_t45 + m_zz_t45);
 
     pop[ 0] = multiplyTerm * (pics2);
     multiplyTerm = rhoVar * W1;
@@ -84,6 +85,36 @@ __global__ void gpuMomCollisionStream(
     pop[25] = multiplyTerm * (pics2 - ux_t30 + uy_t30 + uz_t30 + m_xx_t45 + m_yy_t45 + m_zz_t45 - (m_xy_t90 + m_xz_t90 - m_yz_t90));
     pop[26] = multiplyTerm * (pics2 + ux_t30 - uy_t30 - uz_t30 + m_xx_t45 + m_yy_t45 + m_zz_t45 - (m_xy_t90 + m_xz_t90 - m_yz_t90));
     #endif //D3Q27
+    #endif //!HIGH_ORDER_COLLISION
+    #ifdef HIGH_ORDER_COLLISION
+            #ifdef HOME_LBM
+            dfloat multiplyTerm;
+            multiplyTerm = rhoVar * W0;
+            pics2 = 1.0 - cs2 * (m_xx_t45 + m_yy_t45 + m_zz_t45);
+
+            pop[ 0] = multiplyTerm * (pics2);
+            multiplyTerm = rhoVar * W1;
+            pop[ 1] = multiplyTerm * (pics2 + ux_t30 + m_xx_t45 + (ux_t30*uy_t30*uy_t30)/3 - (m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yy_t45*ux_t30)/3 + (ux_t30*uz_t30*uz_t30)/3);
+            pop[ 2] = multiplyTerm * (pics2 - ux_t30 + m_xx_t45 + (m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3);
+            pop[ 3] = multiplyTerm * (pics2 + uy_t30 + m_yy_t45 + (ux_t30*ux_t30*uy_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_yz_t90*uz_t30)/3 - (m_xy_t90*ux_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
+            pop[ 4] = multiplyTerm * (pics2 - uy_t30 + m_yy_t45 + (m_xy_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
+            pop[ 5] = multiplyTerm * (pics2 + uz_t30 + m_zz_t45 + (ux_t30*ux_t30*uz_t30)/3 - (m_yz_t90*uy_t30)/3 - (m_xx_t45*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (m_xz_t90*ux_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
+            pop[ 6] = multiplyTerm * (pics2 - uz_t30 + m_zz_t45 + (m_xz_t90*ux_t30)/3 + (m_yz_t90*uy_t30)/3 + (m_xx_t45*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
+            multiplyTerm = rhoVar * W2;
+            pop[ 7] = multiplyTerm * (pics2 +ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 + m_xy_t90 + (2*m_xy_t90*ux_t30)/3 + (2*m_yy_t45*ux_t30)/3 - (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
+            pop[ 8] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uy_t30 + m_yy_t45 + m_xy_t90 + (m_zz_t45*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
+            pop[ 9] = multiplyTerm * (pics2 +ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 + m_xz_t90 + (2*m_xz_t90*ux_t30)/3 - (m_yy_t45*ux_t30)/3 + (2*m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
+            pop[10] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uz_t30 + m_zz_t45 + m_xz_t90 + (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
+            pop[11] = multiplyTerm * (pics2 +uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 + m_yz_t90 + (2*m_yz_t90*uy_t30)/3 - (m_xz_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_xy_t90*ux_t30)/3 + (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
+            pop[12] = multiplyTerm * (pics2 -uy_t30 + m_yy_t45 - uz_t30 + m_zz_t45 + m_yz_t90 + (m_xy_t90*ux_t30)/3 + (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
+            pop[13] = multiplyTerm * (pics2 +ux_t30 - uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (m_zz_t45*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
+            pop[14] = multiplyTerm * (pics2 -ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_xy_t90*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
+            pop[15] = multiplyTerm * (pics2 +ux_t30 - uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_zz_t45*ux_t30)/3 - (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
+            pop[16] = multiplyTerm * (pics2 -ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_xz_t90*ux_t30)/3 + (m_yy_t45*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
+            pop[17] = multiplyTerm * (pics2 +uy_t30 - uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xz_t90*ux_t30)/3 - (m_xy_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 + (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
+            pop[18] = multiplyTerm * (pics2 -uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xy_t90*ux_t30)/3 - (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
+           #endif
+    #endif //HIGH_ORDER_COLLISION
 
     __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q - 1)];
 
@@ -389,29 +420,23 @@ __global__ void gpuMomCollisionStream(
     for(int i = 0; i<Q ; i++){
         feq = w[i]*(rhoVar*(3*cx[i]*ux_t30 + 3*cy[i]*uy_t30 + 3*cz[i]*uz_t30 + (ux_t30*ux_t30*(9*cx[i]*cx[i] - 3))/2 + (uy_t30*uy_t30*(9*cy[i]*cy[i] - 3))/2 + (uz_t30*uz_t30*(9*cz[i]*cz[i] - 3))/2 + (9*ux_t30*ux_t30*uy_t30*uy_t30*(3*cx[i]*cx[i] - 1)*(3*cy[i]*cy[i] - 1))/4 + (9*ux_t30*ux_t30*uz_t30*uz_t30*(3*cx[i]*cx[i] - 1)*(3*cz[i]*cz[i] - 1))/4 + (9*uy_t30*uy_t30*uz_t30*uz_t30*(3*cy[i]*cy[i] - 1)*(3*cz[i]*cz[i] - 1))/4 + 9*cx[i]*cy[i]*ux_t30*uy_t30 + 9*cx[i]*cz[i]*ux_t30*uz_t30 + 9*cy[i]*cz[i]*uy_t30*uz_t30 + (9*cx[i]*ux_t30*uy_t30*uy_t30*(3*cy[i]*cy[i] - 1))/2 + (9*cy[i]*ux_t30*ux_t30*uy_t30*(3*cx[i]*cx[i] - 1))/2 + (9*cx[i]*ux_t30*uz_t30*uz_t30*(3*cz[i]*cz[i] - 1))/2 + (9*cz[i]*ux_t30*ux_t30*uz_t30*(3*cx[i]*cx[i] - 1))/2 + (9*cy[i]*uy_t30*uz_t30*uz_t30*(3*cz[i]*cz[i] - 1))/2 + (9*cz[i]*uy_t30*uy_t30*uz_t30*(3*cy[i]*cy[i] - 1))/2 + 1));
 
-        fneq = w[i]*((TAU_XX*(9*cx[i]*cx[i] - 3))/2 + (TAU_YY*(9*cy[i]*cy[i] - 3))/2 + (TAU_ZZ*(9*cz[i]*cz[i] - 3))/2 + (9*(3*cx[i]*cx[i] - 1)*(3*cy[i]*cy[i] - 1)*(TAU_YY*ux_t30*ux_t30 + TAU_XX*uy_t30*uy_t30 + 4*TAU_XY*ux_t30*uy_t30))/4 + (9*(3*cx[i]*cx[i] - 1)*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*ux_t30*ux_t30 + TAU_XX*uz_t30*uz_t30 + 4*TAU_XZ*ux_t30*uz_t30))/4 + (9*(3*cy[i]*cy[i] - 1)*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*uy_t30*uy_t30 + TAU_YY*uz_t30*uz_t30 + 4*TAU_YZ*uy_t30*uz_t30))/4 + 9*TAU_XY*cx[i]*cy[i] + 9*TAU_XZ*cx[i]*cz[i] + 9*TAU_YZ*cy[i]*cz[i] + (9*cy[i]*(3*cx[i]*cx[i] - 1)*(2*TAU_XY*ux_t30 + TAU_XX*uy_t30))/2 + (9*cx[i]*(3*cy[i]*cy[i] - 1)*(TAU_YY*ux_t30 + 2*TAU_XY*uy_t30))/2 + (9*cz[i]*(3*cx[i]*cx[i] - 1)*(2*TAU_XZ*ux_t30 + TAU_XX*uz_t30))/2 + (9*cx[i]*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*ux_t30 + 2*TAU_XZ*uz_t30))/2 + (9*cz[i]*(3*cy[i]*cy[i] - 1)*(2*TAU_YZ*uy_t30 + TAU_YY*uz_t30))/2 + (9*cy[i]*(3*cz[i]*cz[i] - 1)*(TAU_ZZ*uy_t30 + 2*TAU_YZ*uz_t30))/2);
-
-        pop[i] = feq + omegaVar * fneq;
-
-    }
-    rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
-    invRho = 1 / rhoVar;
-
-    ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[8] + pop[9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + 0.5 * FX) * invRho;
-    uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + 0.5 * FY) * invRho;
-    uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + 0.5 * FZ) * invRho;
-
-    m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16])* invRho - cs2;
-    m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14])* invRho;
-    m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16])* invRho;
-    m_yy_t45 = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18])* invRho - cs2;
-    m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18])* invRho;
-    m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18])* invRho - cs2;
+    #ifdef HOME_LBM
+        dfloat ux = ux_t30 + FX*invRho/2;
+        dfloat uy = uy_t30 + FY*invRho/2;
+        dfloat uz = uz_t30 + FZ*invRho/2;
 
 
-    ux_t30 = 3 * ux_t30;
-    uy_t30 = 3 * uy_t30;
-    uz_t30 = 3 * uz_t30;
+        dfloat m_xy = T_OMEGA * m_xy_t90 + OMEGA*ux_t30*uy_t30 + TT_OMEGA * invRho * (FX * uy_t30 + FY * ux_t30);
+        dfloat m_xz = T_OMEGA * m_xz_t90 + OMEGA*ux_t30*uz_t30 + TT_OMEGA * invRho * (FX * uz_t30 + FZ * ux_t30);
+        dfloat m_yz = T_OMEGA * m_yz_t90 + OMEGA*uy_t30*uz_t30 + TT_OMEGA * invRho * (FY * uz_t30 + FZ * uy_t30);
+
+        dfloat m_xx = ONETHIRD* (T_OMEGA * (2*m_xx_t45 - m_yy_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*ux_t30*ux_t30 - uy_t30*uy_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(FX*ux_t30*2 - FY*uy_t30 - FZ*uz_t30)) + invRho*FX*ux_t30;
+        dfloat m_yy = ONETHIRD* (T_OMEGA * (2*m_yy_t45 - m_xx_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uy_t30*uy_t30 - ux_t30*ux_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(FY*uy_t30*2 - FX*ux_t30 - FZ*uz_t30)) + invRho*FY*uy_t30;
+        dfloat m_zz = ONETHIRD* (T_OMEGA * (2*m_zz_t45 - m_xx_t45 - m_yy_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uz_t30*uz_t30 - ux_t30*ux_t30 - uy_t30*uy_t30) + invRho*T_OMEGA*(FZ*uz_t30*2 - FX*ux_t30 - FY*uy_t30)) + invRho*FZ*uz_t30;
+    #endif
+    ux_t30 = 3 * ux;
+    uy_t30 = 3 * uy;
+    uz_t30 = 3 * uz;
 
     m_xx_t45 = 9*(m_xx)/2;
     m_xy_t90 = 9*(m_xy);
@@ -427,7 +452,7 @@ __global__ void gpuMomCollisionStream(
 
 
     //calculate post collision populations
-    
+    #ifndef HIGH_ORDER_COLLISION
     multiplyTerm = rhoVar * W0;
     pics2 = 1.0 - cs2 * (m_xx_t45 + m_yy_t45 + m_zz_t45);
 
@@ -463,6 +488,39 @@ __global__ void gpuMomCollisionStream(
     pop[25] = multiplyTerm * (pics2 - ux_t30 + uy_t30 + uz_t30 + m_xx_t45 + m_yy_t45 + m_zz_t45 - (m_xy_t90 + m_xz_t90 - m_yz_t90));
     pop[26] = multiplyTerm * (pics2 + ux_t30 - uy_t30 - uz_t30 + m_xx_t45 + m_yy_t45 + m_zz_t45 - (m_xy_t90 + m_xz_t90 - m_yz_t90));
     #endif //D3Q27
+    #endif //!HIGH_ORDER_COLLISION
+    #ifdef HIGH_ORDER_COLLISION
+    
+        #ifdef HOME_LBM
+    multiplyTerm = rhoVar * W0;
+    pics2 = 1.0 - cs2 * (m_xx_t45 + m_yy_t45 + m_zz_t45);
+
+    pop[ 0] = multiplyTerm * (pics2);
+    multiplyTerm = rhoVar * W1;
+    pop[ 1] = multiplyTerm * (pics2 + ux_t30 + m_xx_t45 + (ux_t30*uy_t30*uy_t30)/3 - (m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yy_t45*ux_t30)/3 + (ux_t30*uz_t30*uz_t30)/3);
+    pop[ 2] = multiplyTerm * (pics2 - ux_t30 + m_xx_t45 + (m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3);
+    pop[ 3] = multiplyTerm * (pics2 + uy_t30 + m_yy_t45 + (ux_t30*ux_t30*uy_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_yz_t90*uz_t30)/3 - (m_xy_t90*ux_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
+    pop[ 4] = multiplyTerm * (pics2 - uy_t30 + m_yy_t45 + (m_xy_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
+    pop[ 5] = multiplyTerm * (pics2 + uz_t30 + m_zz_t45 + (ux_t30*ux_t30*uz_t30)/3 - (m_yz_t90*uy_t30)/3 - (m_xx_t45*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (m_xz_t90*ux_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
+    pop[ 6] = multiplyTerm * (pics2 - uz_t30 + m_zz_t45 + (m_xz_t90*ux_t30)/3 + (m_yz_t90*uy_t30)/3 + (m_xx_t45*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
+    
+    multiplyTerm = rhoVar * W2;
+    pop[ 7] = multiplyTerm * (pics2 +ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 + m_xy_t90 + (2*m_xy_t90*ux_t30)/3 + (2*m_yy_t45*ux_t30)/3 - (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
+    pop[ 8] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uy_t30 + m_yy_t45 + m_xy_t90 + (m_zz_t45*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
+    pop[ 9] = multiplyTerm * (pics2 +ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 + m_xz_t90 + (2*m_xz_t90*ux_t30)/3 - (m_yy_t45*ux_t30)/3 + (2*m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
+    pop[10] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uz_t30 + m_zz_t45 + m_xz_t90 + (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
+    pop[11] = multiplyTerm * (pics2 +uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 + m_yz_t90 + (2*m_yz_t90*uy_t30)/3 - (m_xz_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_xy_t90*ux_t30)/3 + (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
+    pop[12] = multiplyTerm * (pics2 -uy_t30 + m_yy_t45 - uz_t30 + m_zz_t45 + m_yz_t90 + (m_xy_t90*ux_t30)/3 + (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
+    pop[13] = multiplyTerm * (pics2 +ux_t30 - uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (m_zz_t45*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
+    pop[14] = multiplyTerm * (pics2 -ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_xy_t90*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
+    pop[15] = multiplyTerm * (pics2 +ux_t30 - uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_zz_t45*ux_t30)/3 - (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
+    pop[16] = multiplyTerm * (pics2 -ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_xz_t90*ux_t30)/3 + (m_yy_t45*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
+    pop[17] = multiplyTerm * (pics2 +uy_t30 - uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xz_t90*ux_t30)/3 - (m_xy_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 + (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
+    pop[18] = multiplyTerm * (pics2 -uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xy_t90*ux_t30)/3 - (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
+
+        #endif
+    #endif //HIGH_ORDER_COLLISION
+    
     
     /* write to global mom */
 
