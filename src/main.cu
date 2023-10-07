@@ -360,8 +360,14 @@ int main() {
                 omega,
                 #endif
                 step);
-                velocityProfile(fMom,1,step);
-                velocityProfile(fMom,2,step);
+            #endif
+            #if TREATLINE
+            velocityProfile(fMom,1,step);
+            velocityProfile(fMom,2,step);
+            velocityProfile(fMom,3,step);
+            velocityProfile(fMom,4,step);
+            velocityProfile(fMom,5,step);
+            velocityProfile(fMom,6,step);
             #endif
             
             //if (!(step%((int)turn_over_time/10))){

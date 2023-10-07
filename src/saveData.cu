@@ -91,11 +91,7 @@ void treatData(
     dfloat m_Syz = 0;
     dfloat m_Szz = 0;
     #endif 
-    #ifdef NON_NEWTONIAN_FLUID
-        dfloat omegaVar;
-        dfloat tau, eta,energy = 0;
-    #endif
-
+    //TODO: FOR SOME REASON THE NODES IN THE BOUNDARY HAVE ZERO VELOCITY;
     dfloat mean_counter = 1.0/((dfloat)(step/MACR_SAVE)+1.0);
     count = 0;
     //left side of the equation
@@ -184,12 +180,12 @@ void treatData(
     for (int z = 0 ; z <NZ_TOTAL-1 ; z++){
         for (int x = 0; x< NX-1;x++){
             t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
-            t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
+            t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
             t_mxy0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
 
-            Sxz = (as2/(2*TAU))*(t_ux0*t_uz0-t_mxy0); //the velocity terms are 0
+            Sxy = (as2/(2*TAU))*(t_ux0*t_uy0-t_mxy0); //the velocity terms are 0
 
-            mean_prod += t_ux0*Sxz/2;
+            mean_prod += t_ux0*Sxy/2;
         }
     }
 
@@ -207,9 +203,6 @@ void treatData(
     #if MEAN_FLOW
         strDataInfo <<"," <<  epsilon;
     #endif
-    #ifdef NON_NEWTONIAN_FLUID
-        strDataInfo <<"," <<  energy;
-    #endif
 
 
 
@@ -219,7 +212,7 @@ void treatData(
 __host__
 void velocityProfile(
     dfloat* fMom,
-    int moment_index,
+    int dir_index,
     unsigned int step
 ){
 
@@ -229,10 +222,13 @@ void velocityProfile(
     strDataInfo <<"step "<< step;
 
     int x_loc,y_loc,z_loc;
-    switch (moment_index)
+    dfloat* ux;
+    dfloat* uy;
+    dfloat* uz;
+    switch (dir_index)
     {
-    case 1:
-        dfloat* ux;
+    case 1: //ux on y-direction
+        
         checkCudaErrors(cudaMallocHost((void**)&(ux), sizeof(dfloat)));
 
         x_loc = NX/2;
@@ -240,33 +236,90 @@ void velocityProfile(
         
         for (y_loc = 0; y_loc < NY ; y_loc++){
 
-            checkCudaErrors(cudaMemcpy(ux, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, moment_index, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            checkCudaErrors(cudaMemcpy(ux, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, 1, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
             sizeof(dfloat), cudaMemcpyDeviceToHost));
             strDataInfo <<"\t"<< *ux;
         }
-        saveTreatData("_vx_prof",strDataInfo.str(),step);
+        saveTreatData("_ux_dy",strDataInfo.str(),step);
 
         cudaFree(ux);
         break;
-    case 2:
-        dfloat* uy;
+    case 2: //uy on y-direction
+        checkCudaErrors(cudaMallocHost((void**)&(uy), sizeof(dfloat)));
+
+        x_loc = NX/2;
+        z_loc = NZ/2;
+        
+        for (y_loc = 0; y_loc < NY ; y_loc++){
+
+            checkCudaErrors(cudaMemcpy(uy, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, 2, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            sizeof(dfloat), cudaMemcpyDeviceToHost));
+            strDataInfo <<"\t"<< *uy;
+        }
+        saveTreatData("_uy_dy",strDataInfo.str(),step);
+
+        cudaFree(uy);
+        break;
+    case 3: //uz on y-direction
+        checkCudaErrors(cudaMallocHost((void**)&(uz), sizeof(dfloat)));
+
+        x_loc = NX/2;
+        z_loc = NZ/2;
+        
+        for (y_loc = 0; y_loc < NY ; y_loc++){
+
+            checkCudaErrors(cudaMemcpy(uz, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, 3, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            sizeof(dfloat), cudaMemcpyDeviceToHost));
+            strDataInfo <<"\t"<< *uz;
+        }
+        saveTreatData("_uz_dy",strDataInfo.str(),step);
+
+        cudaFree(uz);
+        break;
+    case 4: //ux on x-direction
+        checkCudaErrors(cudaMallocHost((void**)&(ux), sizeof(dfloat)));
+
+        y_loc = NY/2;
+        z_loc = NZ/2;
+        for (x_loc = 0; x_loc < NX ; x_loc++){
+
+            checkCudaErrors(cudaMemcpy(ux, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, 1, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            sizeof(dfloat), cudaMemcpyDeviceToHost));
+            strDataInfo <<"\t"<< *ux;
+        }
+        saveTreatData("_ux_dx",strDataInfo.str(),step);
+
+        cudaFree(ux);
+        break;
+    case 5: //uy on x-direction
         checkCudaErrors(cudaMallocHost((void**)&(uy), sizeof(dfloat)));
 
         y_loc = NY/2;
         z_loc = NZ/2;
-        
-
-
         for (x_loc = 0; x_loc < NX ; x_loc++){
 
-            checkCudaErrors(cudaMemcpy(uy, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, moment_index, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            checkCudaErrors(cudaMemcpy(uy, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, 2, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
             sizeof(dfloat), cudaMemcpyDeviceToHost));
             strDataInfo <<"\t"<< *uy;
         }
-        saveTreatData("_vy_prof",strDataInfo.str(),step);
+        saveTreatData("_uy_dx",strDataInfo.str(),step);
 
         cudaFree(uy);
         break;
+    case 6: //uz on x-direction
+        checkCudaErrors(cudaMallocHost((void**)&(uz), sizeof(dfloat)));
+
+        y_loc = NY/2;
+        z_loc = NZ/2;
+        for (x_loc = 0; x_loc < NX ; x_loc++){
+
+            checkCudaErrors(cudaMemcpy(uz, fMom + idxMom(x_loc%BLOCK_NX,y_loc%BLOCK_NY, z_loc%BLOCK_NZ, 3, x_loc/BLOCK_NX, y_loc/BLOCK_NY, z_loc/BLOCK_NZ),
+            sizeof(dfloat), cudaMemcpyDeviceToHost));
+            strDataInfo <<"\t"<< *ux;
+        }
+        saveTreatData("_uz_dx",strDataInfo.str(),step);
+
+        cudaFree(uz);
         break;
     default:
         break;
@@ -289,12 +342,13 @@ void probeExport(
     strDataInfo <<"step "<< step;
 
 
-    int probeNumber = 5;
+    int probeNumber = 7;
     
     //probe locations
-    int x[5] = {probe_x,(NX/4),(NX/4),(3*NX/4),(3*NX/4)};
-    int y[5] = {probe_y,(NY/4),(3*NY/4),(3*NY/4),(NY/4)};
-    int z[5] = {probe_z,probe_z,probe_z,probe_z,probe_z};
+                //0        1       2       3        4       5   6
+    int x[7] = {probe_x,(NX/4),(NX/4),(3*NX/4),(3*NX/4),(NX/4),(NX/4)};
+    int y[7] = {probe_y,(NY/4),(3*NY/4),(3*NY/4),(NY/4),(NY/4),(NY/4)};
+    int z[7] = {probe_z,probe_z,probe_z,probe_z,probe_z,(NZ_TOTAL/4),(3*NZ_TOTAL/4)};
 
     dfloat* rho;
 
@@ -302,23 +356,23 @@ void probeExport(
     dfloat* uy;
     dfloat* uz;
 
-    dfloat* mxx;
+    /*dfloat* mxx;
     dfloat* mxy;
     dfloat* mxz;
     dfloat* myy;
     dfloat* myz;
-    dfloat* mzz;
+    dfloat* mzz;*/
     
     checkCudaErrors(cudaMallocHost((void**)&(rho), sizeof(dfloat)));    
     checkCudaErrors(cudaMallocHost((void**)&(ux), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(uy), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(uz), sizeof(dfloat)));    
-    checkCudaErrors(cudaMallocHost((void**)&(mxx), sizeof(dfloat)));
+    /*checkCudaErrors(cudaMallocHost((void**)&(mxx), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(mxy), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(mxz), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(myy), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(myz), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(mzz), sizeof(dfloat)));
+    checkCudaErrors(cudaMallocHost((void**)&(mzz), sizeof(dfloat)));*/
 
     checkCudaErrors(cudaDeviceSynchronize());
     for(int i=0; i< probeNumber; i++){
@@ -330,7 +384,7 @@ void probeExport(
         sizeof(dfloat), cudaMemcpyDeviceToHost));
         checkCudaErrors(cudaMemcpy(uz , fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 3, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
         sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(mxx, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 4, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
+        /*checkCudaErrors(cudaMemcpy(mxx, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 4, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
         sizeof(dfloat), cudaMemcpyDeviceToHost));
         checkCudaErrors(cudaMemcpy(mxy, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 5, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
         sizeof(dfloat), cudaMemcpyDeviceToHost));
@@ -341,7 +395,7 @@ void probeExport(
         checkCudaErrors(cudaMemcpy(myz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 8, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
         sizeof(dfloat), cudaMemcpyDeviceToHost));
         checkCudaErrors(cudaMemcpy(mzz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, 9, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
+        sizeof(dfloat), cudaMemcpyDeviceToHost));*/
 
         strDataInfo <<"\t"<< *ux << "\t" << *uy << "\t" << *uz;
 
@@ -355,12 +409,12 @@ void probeExport(
     cudaFree(ux);
     cudaFree(uy);
     cudaFree(uz);
-    cudaFree(mxx);
+    /*cudaFree(mxx);
     cudaFree(mxy);
     cudaFree(mxz);
     cudaFree(myy);
     cudaFree(myz);
-    cudaFree(mzz);
+    cudaFree(mzz);*/
 
 }
 
