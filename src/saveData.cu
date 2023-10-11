@@ -78,7 +78,7 @@ void treatData(
     dfloat f_Syz = 0;
     dfloat f_Szz = 0;
 
-    dfloat f_SS;
+    dfloat f_SS = 0;
 
     dfloat m_ux = 0.0;
     dfloat m_uy = 0.0;
@@ -95,9 +95,9 @@ void treatData(
     dfloat mean_counter = 1.0/((dfloat)(step/MACR_SAVE)+1.0);
     count = 0;
     //left side of the equation
-    for (int z = 0 ; z <NZ_TOTAL-1; z++){
-        for(int y = 0; y< NY-1;y++){
-            for(int x = 0; x< NX-1;x++){
+    for (int z = 0 ; z <NZ_TOTAL; z++){
+        for(int y = 0; y< NY;y++){
+            for(int x = 0; x< NX;x++){
                 t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, 3, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];

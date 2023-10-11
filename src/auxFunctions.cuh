@@ -12,6 +12,12 @@
 #include "var.h"
 #include "nodeTypeMap.h"
 #include "reduction.cuh"
+#include "saveData.cuh"
+
+#include <fstream>
+#include <sstream>
+#include <iostream>     // std::cout, std::fixed
+#include <iomanip>      // std::setprecision
 
 
 /*
@@ -28,11 +34,10 @@ void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step);
 /*
 *   @brief Calculate the total kinetic energy of the flow
 *   @param fMom: device macroscopic field based on block and thread index
-*   @param SEK: sum of kinetic energy
 *   @param step: current time step
 */
 __host__ 
-void totalKineticEnergy(dfloat *fMom, dfloat *SEK, size_t step);
+void totalKineticEnergy(dfloat *fMom, size_t step);
 
 
 #endif // !__AUX_FUNCTION_CUH

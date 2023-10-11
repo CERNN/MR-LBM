@@ -60,7 +60,6 @@ void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step){
 __host__ 
 void totalKineticEnergy(
     dfloat *fMom, 
-    dfloat *SEK, 
     size_t step
 ){
     dfloat* sumEK;
@@ -107,11 +106,16 @@ void totalKineticEnergy(
     dfloat temp;
     
     checkCudaErrors(cudaMemcpy(&temp, sumEK, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
+    temp = (temp)/(U_MAX*U_MAX*NUMBER_LBM_NODES);
 
-    //printf("step %d temp %e \n ",step, temp);
-    checkCudaErrors(cudaMemcpy(SEK, &temp, sizeof(dfloat), cudaMemcpyHostToDevice)); 
+    std::ostringstream strDataInfo("");
+    strDataInfo << std::scientific;
+    strDataInfo << std::setprecision(6);
+
+    strDataInfo <<"step,"<< step<< "," << temp;// << "," << mean_counter;
+
+
+
+    saveTreatData("_totalKineticEnergy",strDataInfo.str(),step);
     cudaFree(sumEK);
-
-
-
 }
