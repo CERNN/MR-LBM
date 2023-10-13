@@ -66,7 +66,7 @@ void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index)
 }
 
 __global__ 
-void sumReductionThread_EK(dfloat* g_idata, dfloat* g_odata)
+void sumReductionThread_TKE(dfloat* g_idata, dfloat* g_odata, dfloat *meanMom)
 {
     #if (BLOCK_LBM_SIZE == 512)
         __shared__ dfloat sdata[BLOCK_LBM_SIZE];
@@ -84,7 +84,44 @@ void sumReductionThread_EK(dfloat* g_idata, dfloat* g_odata)
     //block index
     unsigned int bid = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z));
 
-    sdata[tid] = sqrt(g_idata[ix]*g_idata[ix] + g_idata[iy]*g_idata[iy]+g_idata[iz]*g_idata[iz]);
+    dfloat fluc_ux = (g_idata[ix] - meanMom[ix])*(g_idata[ix] - meanMom[ix]);
+    dfloat fluc_uy = (g_idata[iy] - meanMom[iy])*(g_idata[iy] - meanMom[iy]);
+    dfloat fluc_uz = (g_idata[iz] - meanMom[iz])*(g_idata[iz] - meanMom[iz]);
+
+    sdata[tid] = (fluc_ux*fluc_ux + fluc_uy*fluc_uy + fluc_uz*fluc_uz)/2;
+    __syncthreads();
+    for (unsigned int s = (blockDim.x * blockDim.y * blockDim.z) / 2; s > 0; s >>= 1) {
+        if (tid < s) {
+            sdata[tid] += sdata[tid + s];
+        }
+        __syncthreads();
+    }
+    
+    if (tid == 0) {
+        g_odata[bid] = sdata[0];
+    }
+}
+
+__global__ 
+void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata)
+{
+    #if (BLOCK_LBM_SIZE == 512)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #else
+        extern __shared__ dfloat sdata[];
+    #endif
+
+
+    //global index in the array
+    unsigned int ix =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 1, blockIdx.x, blockIdx.y, blockIdx.z);
+    unsigned int iy =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 2, blockIdx.x, blockIdx.y, blockIdx.z);
+    unsigned int iz =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 3, blockIdx.x, blockIdx.y, blockIdx.z);
+    //thread index in the array
+    unsigned int tid = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z));
+    //block index
+    unsigned int bid = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z));
+
+    sdata[tid] = (g_idata[ix]*g_idata[ix] + g_idata[iy]*g_idata[iy]+g_idata[iz]*g_idata[iz])/2;
     __syncthreads();
     for (unsigned int s = (blockDim.x * blockDim.y * blockDim.z) / 2; s > 0; s >>= 1) {
         if (tid < s) {

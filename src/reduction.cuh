@@ -61,7 +61,17 @@ void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index);
 *   @param g_odata: sum of moments inside the block
 */
 __global__ 
-void sumReductionThread_EK(dfloat* g_idata, dfloat* g_odata);
+void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata);
+
+/*
+*   @brief Perform paralel reduction of all threads of a block of for kinetic energy
+*   @param g_idata: moment point
+*   @param g_odata: sum of moments inside the block
+*   @param m_fMom: mean moment array
+*/
+__global__ 
+void sumReductionThread_TKE(dfloat* g_idata, dfloat* g_odata, dfloat *m_fMom);
+
 
 /*
 *   @brief Perform paralel reduction of reduced block point
