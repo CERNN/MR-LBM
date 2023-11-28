@@ -64,7 +64,7 @@ void treatData(
     dfloat Szz = 0;
     dfloat SS = 0;
     int count = 0;
-    int y0 = NY-1;
+
 
     #if MEAN_FLOW
     dfloat f_ux = 0;
@@ -91,7 +91,7 @@ void treatData(
     dfloat m_Syz = 0;
     dfloat m_Szz = 0;
     #endif 
-    //TODO: FOR SOME REASON THE NODES IN THE BOUNDARY HAVE ZERO VELOCITY;
+
     dfloat mean_counter = 1.0/((dfloat)(step/MACR_SAVE)+1.0);
     count = 0;
     //left side of the equation
@@ -169,26 +169,26 @@ void treatData(
             }
         }
     }
-    SS = SS;
+
+    SS = SS/(N*N*N);
     #if MEAN_FLOW
     f_SS = f_SS / (count);
     #endif
+
+
+    int y0 = NY-1;
+    int y1 = NY-2;
+    dfloat t_ux1;
     
-
-
     dfloat mean_prod = 0.0;
     for (int z = 0 ; z <NZ_TOTAL-1 ; z++){
         for (int x = 0; x< NX-1;x++){
             t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
-            t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 2, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
-            t_mxy0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, 5, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
-
-            Sxy = (as2/(2*TAU))*(t_ux0*t_uy0-t_mxy0); //the velocity terms are 0
-
-            mean_prod += t_ux0*Sxy/2;
+            t_ux1 = h_fMom[idxMom(x%BLOCK_NX, y1%BLOCK_NY, z%BLOCK_NZ, 1, x/BLOCK_NX, y1/BLOCK_NY, z/BLOCK_NZ)];
+            mean_prod +=(t_ux0*t_ux0-t_ux1*t_ux1)/4;
         }
     }
-
+    mean_prod = mean_prod/(N*N*N);
 
     #if MEAN_FLOW
     dfloat epsilon = 2*((TAU-0.5)/3)*f_SS;
@@ -199,7 +199,7 @@ void treatData(
 
     //printf("%0.7e\t%0.7e\t%0.7e\n",LS,SS,SS/LS);
     // step << total_energy_dissipated, total_energy_produced, error , epsilon, omega
-    strDataInfo <<"step,"<< step<< "," << SS << "," << mean_prod << "," << abs(-SS/mean_prod - 1.0);// << "," << mean_counter;
+    strDataInfo <<"step,"<< step<< "," << SS << "," << mean_prod << "," << abs(SS/mean_prod - 1.0);// << "," << mean_counter;
     #if MEAN_FLOW
         strDataInfo <<"," <<  epsilon;
     #endif

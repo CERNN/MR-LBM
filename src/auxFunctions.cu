@@ -56,7 +56,7 @@ void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step){
     
 }
 
-
+//TODO: there is some error in the sum when the blocks arent equal
 __host__ 
 void totalKineticEnergy(
     dfloat *fMom, 

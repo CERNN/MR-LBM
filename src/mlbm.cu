@@ -116,6 +116,7 @@ __global__ void gpuMomCollisionStream(
            #endif
     #endif //HIGH_ORDER_COLLISION
 
+    //extern __shared__ dfloat s_pop[]; // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
     __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q - 1)];
 
     //save populations in shared memory
@@ -406,20 +407,28 @@ __global__ void gpuMomCollisionStream(
     //USING HIGH
     #ifdef HIGH_ORDER_COLLISION
 
-    const dfloat TAU_XX = (0.5-1/omegaVar)*cs2*(rhoVar * (m_xx_t45 - ux_t30*ux_t30));
-    const dfloat TAU_YY = (0.5-1/omegaVar)*cs2*(rhoVar * (m_yy_t45 - uy_t30*uy_t30));
-    const dfloat TAU_ZZ = (0.5-1/omegaVar)*cs2*(rhoVar * (m_zz_t45 - uz_t30*uz_t30));
-    const dfloat TAU_XY = (0.5-1/omegaVar)*cs2*(rhoVar * (m_xy_t90 - ux_t30*uy_t30));
-    const dfloat TAU_XZ = (0.5-1/omegaVar)*cs2*(rhoVar * (m_xz_t90 - ux_t30*uz_t30));
-    const dfloat TAU_YZ = (0.5-1/omegaVar)*cs2*(rhoVar * (m_yz_t90 - uy_t30*uz_t30));
+    #ifdef HO_RR
+
+        dfloat ux = ux_t30 + FX*invRho/2;
+        dfloat uy = uy_t30 + FY*invRho/2;
+        dfloat uz = uz_t30 + FZ*invRho/2;
+
+        //matlab original
+        dfloat m_xx = (ux_t30*ux_t30 - (9*uy_t30*uy_t30*uz_t30*uz_t30)/2 + (3*m_zz_t45*uy_t30*uy_t30)/4 + 3*m_yz_t90*uy_t30*uz_t30 + (3*m_yy_t45*uz_t30*uz_t30)/4 - m_xx_t45)*omegaVar + ((15*uy_t30*uy_t30*uz_t30*uz_t30)/4 - (3*m_zz_t45*uy_t30*uy_t30)/4 - 3*m_yz_t90*uy_t30*uz_t30 - (3*m_yy_t45*uz_t30*uz_t30)/4 + m_xx_t45);
+        dfloat m_yy = ((3*m_zz_t45*ux_t30*ux_t30)/4 - (9*ux_t30*ux_t30*uz_t30*uz_t30)/2 + 3*m_xz_t90*ux_t30*uz_t30 + uy_t30*uy_t30 + (3*m_xx_t45*uz_t30*uz_t30)/4 - m_yy_t45)*omegaVar + ((15*ux_t30*ux_t30*uz_t30*uz_t30)/4 - (3*m_zz_t45*ux_t30*ux_t30)/4 - 3*m_xz_t90*ux_t30*uz_t30 - (3*m_xx_t45*uz_t30*uz_t30)/4 + m_yy_t45);
+        dfloat m_zz = ((3*m_yy_t45*ux_t30*ux_t30)/4 - (9*ux_t30*ux_t30*uy_t30*uy_t30)/2 + 3*m_xy_t90*ux_t30*uy_t30 + (3*m_xx_t45*uy_t30*uy_t30)/4 + uz_t30*uz_t30 - m_zz_t45)*omegaVar + ((15*ux_t30*ux_t30*uy_t30*uy_t30)/4 - (3*m_yy_t45*ux_t30*ux_t30)/4 - 3*m_xy_t90*ux_t30*uy_t30 - (3*m_xx_t45*uy_t30*uy_t30)/4 + m_zz_t45);
+        dfloat m_xy = (ux_t30*uy_t30 - m_xy_t90)*omegaVar + m_xy_t90;
+        dfloat m_xz = (ux_t30*uz_t30 - m_xz_t90)*omegaVar + m_xz_t90;
+        dfloat m_yz = (uy_t30*uz_t30 - m_yz_t90)*omegaVar + m_yz_t90;
 
 
-
-    dfloat feq;
-    dfloat fneq;
-    for(int i = 0; i<Q ; i++){
-        feq = w[i]*(rhoVar*(3*cx[i]*ux_t30 + 3*cy[i]*uy_t30 + 3*cz[i]*uz_t30 + (ux_t30*ux_t30*(9*cx[i]*cx[i] - 3))/2 + (uy_t30*uy_t30*(9*cy[i]*cy[i] - 3))/2 + (uz_t30*uz_t30*(9*cz[i]*cz[i] - 3))/2 + (9*ux_t30*ux_t30*uy_t30*uy_t30*(3*cx[i]*cx[i] - 1)*(3*cy[i]*cy[i] - 1))/4 + (9*ux_t30*ux_t30*uz_t30*uz_t30*(3*cx[i]*cx[i] - 1)*(3*cz[i]*cz[i] - 1))/4 + (9*uy_t30*uy_t30*uz_t30*uz_t30*(3*cy[i]*cy[i] - 1)*(3*cz[i]*cz[i] - 1))/4 + 9*cx[i]*cy[i]*ux_t30*uy_t30 + 9*cx[i]*cz[i]*ux_t30*uz_t30 + 9*cy[i]*cz[i]*uy_t30*uz_t30 + (9*cx[i]*ux_t30*uy_t30*uy_t30*(3*cy[i]*cy[i] - 1))/2 + (9*cy[i]*ux_t30*ux_t30*uy_t30*(3*cx[i]*cx[i] - 1))/2 + (9*cx[i]*ux_t30*uz_t30*uz_t30*(3*cz[i]*cz[i] - 1))/2 + (9*cz[i]*ux_t30*ux_t30*uz_t30*(3*cx[i]*cx[i] - 1))/2 + (9*cy[i]*uy_t30*uz_t30*uz_t30*(3*cz[i]*cz[i] - 1))/2 + (9*cz[i]*uy_t30*uy_t30*uz_t30*(3*cy[i]*cy[i] - 1))/2 + 1));
-
+        //dfloat m_xx = ((((m_zz_t45*uy_t30*uy_t30 + m_yy_t45*uz_t30*uz_t30) - 6*uy_t30*uy_t30*uz_t30*uz_t30)/4 + m_yz_t90*uy_t30*uz_t30)*3 + ux_t30*ux_t30 - m_xx_t45)*omegaVar + (((5*uy_t30*uy_t30*uz_t30*uz_t30 - m_zz_t45*uy_t30*uy_t30 - m_yy_t45*uz_t30*uz_t30)/4 - m_yz_t90*uy_t30*uz_t30)*3 + m_xx_t45);
+        //dfloat m_yy = ((((m_zz_t45*ux_t30*ux_t30 + m_xx_t45*uz_t30*uz_t30) - 6*ux_t30*ux_t30*uz_t30*uz_t30)/4 + m_xz_t90*ux_t30*uz_t30)*3 + uy_t30*uy_t30 - m_yy_t45)*omegaVar + (((5*ux_t30*ux_t30*uz_t30*uz_t30 - m_zz_t45*ux_t30*ux_t30 - m_xx_t45*uz_t30*uz_t30)/4 - m_xz_t90*ux_t30*uz_t30)*3 + m_yy_t45);
+        //dfloat m_zz = ((((m_yy_t45*ux_t30*ux_t30 + m_xx_t45*uy_t30*uy_t30) - 6*ux_t30*ux_t30*uy_t30*uy_t30)/4 + m_xy_t90*ux_t30*uy_t30)*3 + uz_t30*uz_t30 - m_zz_t45)*omegaVar + (((5*ux_t30*ux_t30*uy_t30*uy_t30 - m_yy_t45*ux_t30*ux_t30 - m_xx_t45*uy_t30*uy_t30)/4 - m_xy_t90*ux_t30*uy_t30)*3 + m_zz_t45);
+        //dfloat m_xy = (ux_t30*uy_t30 - m_xy_t90)*omegaVar + m_xy_t90;
+        //dfloat m_xz = (ux_t30*uz_t30 - m_xz_t90)*omegaVar + m_xz_t90;
+        //dfloat m_yz = (uy_t30*uz_t30 - m_yz_t90)*omegaVar + m_yz_t90;
+    #endif //HO_RR
     #ifdef HOME_LBM
         dfloat ux = ux_t30 + FX*invRho/2;
         dfloat uy = uy_t30 + FY*invRho/2;

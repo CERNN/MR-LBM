@@ -55,7 +55,7 @@
     #define BC_Z_PERIODIC
 #endif
 
-#ifdef testBC_
+#ifdef lidDrivenCavity_new_3D_
     #define BC_X_WALL
     #define BC_Y_WALL
     #define BC_Z_WALL

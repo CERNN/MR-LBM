@@ -148,7 +148,7 @@ int main() {
     checkCudaErrors(cudaMalloc((void**)&(d_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
     #endif
 
-    //printf("Allocated memory \n");fflush(stdout);
+    //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
     
 
 
@@ -163,13 +163,13 @@ int main() {
 
     if(RANDOM_NUMBERS)
     {   
-        //printf("Initializing random numbers\n");fflush(stdout);
+        //printf("Initializing random numbers\n");if(console_flush){fflush(stdout);}
         checkCudaErrors(cudaMallocManaged((void**)&randomNumbers[0], 
             sizeof(float)*NUMBER_LBM_NODES));
         initializationRandomNumbers(randomNumbers[0], CURAND_SEED);
         checkCudaErrors(cudaDeviceSynchronize());
         getLastCudaError("random numbers transfer error");
-        //printf("random numbers initialized \n");fflush(stdout);
+        //printf("random numbers initialized \n");if(console_flush){fflush(stdout);}
     }
 
     /* ----------------- GRID AND THREADS DEFINITION FOR LBM ---------------- */
@@ -201,7 +201,7 @@ int main() {
 
     }else{
         gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom, randomNumbers[0]);
-        //printf("Moments initialized \n");fflush(stdout);
+        //printf("Moments initialized \n");if(console_flush){fflush(stdout);}
         gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
     }
 
@@ -224,7 +224,7 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());  
     #endif
 
-    //printf("Interface Populations initialized \n");fflush(stdout);
+    //printf("Interface Populations initialized \n");if(console_flush){fflush(stdout);}
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaMemcpy(gGhostX_0, fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemcpy(gGhostX_1, fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, cudaMemcpyDeviceToDevice));
@@ -243,7 +243,7 @@ int main() {
     #endif
 
     
-    //printf("step %zu\t",step); fflush(stdout);
+    //printf("step %zu\t",step); if(console_flush){fflush(stdout);}
 
 
     checkCudaErrors(cudaDeviceSynchronize());
@@ -277,6 +277,7 @@ int main() {
     checkCudaErrors(cudaEventRecord(start, 0));
     checkCudaErrors(cudaEventRecord(start_step, 0));
     /* ------------------------------ LBM LOOP ------------------------------ */
+    //cudaFuncSetAttribute(gpuMomCollisionStream, cudaFuncAttributeMaxDynamicSharedMemorySize, SHARED_MEMORY_SIZE); // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
     for (step=1; step<N_STEPS;step++){
 
         int aux = step-INI_STEP;
@@ -350,9 +351,10 @@ int main() {
             treatData(h_fMom,fMom,
             #if MEAN_FLOW
             m_fMom,
-            #endif
+            #endif //MEAN_FLOW
             step);
-            #endif
+            totalKineticEnergy(fMom,step);
+            #endif //TREATFIELD
 
             #if TREATPOINT
                 probeExport(fMom,
@@ -371,8 +373,8 @@ int main() {
             #endif
             
             //if (!(step%((int)turn_over_time/10))){
-            //if((step>N_STEPS-500*(int)(turn_over_time))){ 
-                if((step%((int)(turn_over_time))) == 0){
+            //if((step>N_STEPS-25*(int)(turn_over_time))){ 
+            //    if((step%((int)(turn_over_time/2))) == 0){
                     checkCudaErrors(cudaDeviceSynchronize()); 
                     checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
                     linearMacr(h_fMom,rho,ux,uy,uz,
@@ -386,7 +388,7 @@ int main() {
                     step); 
 
                     printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
-                    fflush(stdout);
+                    if(console_flush){fflush(stdout);}
 
                     saveMacr(rho,ux,uy,uz,
                     #ifdef NON_NEWTONIAN_FLUID
@@ -396,7 +398,7 @@ int main() {
                     nodeTypeSave,
                     #endif
                     step);
-                }
+                //}
             //}
         }
 
@@ -412,7 +414,7 @@ int main() {
             hNodeType,
             #endif
             step); 
-            fflush(stdout);
+            if(console_flush){fflush(stdout);}
             saveMacr(rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,

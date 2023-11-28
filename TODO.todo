@@ -3,24 +3,30 @@ Projects:
   ✔ Particle Tracer @done(14-03-04 12:53)
   ✔ Create a checkpoint save file @done(23-03-16 18:47)
   ✔ Add option for voxel based boundary condition @done(23-05-04 23:22)
+  ✔ Add option for mean flow statistics @done(23-09-06 19:39)
   ☐ Eliminate the necessity of two arrays to save the boundary conditions
     ☐ Also it need edit the post processing files to allow different data types (unsigned char for example)
     ☐ Edit the saveVarBin fuction to allow differnt data types
     ☐ eliminate the necessity of nodeType = 0b00000000 from the csv file (matlab generator script)
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
-  ☐ Method for calculation the total kinetic energy 
+  ✔ Method for calculation the total kinetic energy @done(23-09-06 19:39)
+    ✔ Using parallel reduction @done(23-09-21 14:34)
   ☐ Organize source files into folders
   ☐ Remove the duplicate arrays used for interface between blocks
 
   ☐ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char)
 
-  ☐ Make a graphical interface, which change the variables in the source files, compile the code, execute, and post process.
   ☐ Incorporate thermal model
   ☐ Incorporate LES model
-  ☐ Incorporate thixotropic model
+  ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
   ☐ Incorporate IBM
   ☐ Curved boundary conditions
+  ☐ Moving boudnary conditions (e.g. moving particles using voxels)
+  ☐ Multi Block Implementation (Multi GPU)
 
 
 
-Archive:
+
+Archive:\
+✘ higher shared memory size for cuda compute 8.0+ (requires dynamic shared memory which has worse performance 70% of original
+                                                ✘  only situation it might be usefull if memory is a contraint which could free some memory due to bigger blocks) @cancelled(23-11-19 18:39)

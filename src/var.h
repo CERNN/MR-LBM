@@ -20,12 +20,12 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-#define lidDrivenCavity_3D_
-#define BC_PROBLEM lidDrivenCavity_3D
-//#define VOXEL_FILENAME "bc.csv"
+//#define lidDrivenCavity_3D_
+//#define BC_PROBLEM lidDrivenCavity_3D
+//#define VOXEL_FILENAME "sphere.csv"
 
-//#define testBC_
-//#define BC_PROBLEM testBC
+#define lidDrivenCavity_new_3D_
+#define BC_PROBLEM lidDrivenCavity_new_3D_
 
 //#define BC_POPULATION_BASED
 #define BC_MOMENT_BASED
@@ -46,16 +46,16 @@
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
     #define ID_SIM "000"            // prefix for simulation's files
-constexpr dfloat RE = 23000;
 #define PATH_FILES "TEST"  // path to save simulation's files
 
 #define TREATFIELD (false) //treat data over the entire field
-#define TREATPOINT (true) //treat data in a single or several points
-#define TREATLINE (true) //save the macro in a line
-#define SAVEDATA (true) //save treat data
+#define TREATPOINT (false) //treat data in a single or several points
+#define TREATLINE (false) //save the macro in a line
+#define SAVEDATA (false) //save treat data
 #define CONSOLEPRINT (false) // print the console the data is being saved
-#define MEAN_FLOW (true) // store the mean flow of the domain (used to calculate turbulent statistics)
+#define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
+constexpr bool console_flush = false;
 
 //#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
 #define PARTICLE_TRACER_SAVE false
@@ -83,11 +83,11 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
 constexpr int SCALE = 1;
+constexpr dfloat RE = 1000;
+#define MACR_SAVE (1000)
 
-#define MACR_SAVE (32)
 
-
-constexpr int N = 512 * SCALE;
+constexpr int N = 128 * SCALE;
 constexpr int NX = N;        // size x of the grid 
                                     // (32 multiple for better performance)
 constexpr int NY = N;        // size y of the grid
@@ -102,7 +102,7 @@ constexpr dfloat Ct = (1.0/L)/(1.0/U_MAX);
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 constexpr dfloat turn_over_time = L / U_MAX;
-constexpr int N_STEPS = 100*((int)turn_over_time);
+constexpr int N_STEPS = 10000;//100*((int)turn_over_time);
 constexpr dfloat total_time = N_STEPS *Ct;
 
 
