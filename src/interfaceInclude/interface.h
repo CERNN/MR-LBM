@@ -73,6 +73,12 @@
     #define BC_Z_PERIODIC
 #endif
 
+#ifdef expansion_
+    #define BC_X_PERIODIC
+    #define BC_Y_WALL
+    #define BC_Z_PERIODIC
+#endif
+
 
 
 #ifdef BC_X_WALL
