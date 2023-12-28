@@ -31,6 +31,12 @@
     #define BC_Z_PERIODIC
 #endif
 
+#ifdef closeCavity_
+    #define BC_X_WALL
+    #define BC_Y_WALL
+    #define BC_Z_WALL
+#endif
+
 #ifdef taylorGreen_
     #define BC_X_PERIODIC
     #define BC_Y_PERIODIC
