@@ -285,4 +285,12 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 #define BC_DIRECTORY_INIT BoundaryConditions/Boundary_initialization_files
 #define BC_INIT_PATH STR(BC_DIRECTORY_INIT/BC_PROBLEM)
 
+
+#define DYNAMIC_SHARED_MEMORY
+#ifdef DYNAMIC_SHARED_MEMORY
+#define SHARED_MEMORY_SIZE 101376 //
+#endif
+
+
+
 #endif //__VAR_H

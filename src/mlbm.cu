@@ -129,9 +129,11 @@ __global__ void gpuMomCollisionStream(
            #endif
     #endif //HIGH_ORDER_COLLISION
 
-    //extern __shared__ dfloat s_pop[]; // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
+    #ifdef DYNAMIC_SHARED_MEMORY
+    extern __shared__ dfloat s_pop[]; 
+    #else
     __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q - 1)];
-
+    #endif
     //save populations in shared memory
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = pop[ 1];
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1)] = pop[ 2];

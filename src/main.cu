@@ -299,7 +299,9 @@ int main() {
     checkCudaErrors(cudaEventRecord(start, 0));
     checkCudaErrors(cudaEventRecord(start_step, 0));
     /* ------------------------------ LBM LOOP ------------------------------ */
-    //cudaFuncSetAttribute(gpuMomCollisionStream, cudaFuncAttributeMaxDynamicSharedMemorySize, SHARED_MEMORY_SIZE); // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
+    #ifdef DYNAMIC_SHARED_MEMORY
+    cudaFuncSetAttribute(gpuMomCollisionStream, cudaFuncAttributeMaxDynamicSharedMemorySize, SHARED_MEMORY_SIZE); // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
+    #endif
     for (step=1; step<N_STEPS;step++){
 
         int aux = step-INI_STEP;
@@ -321,7 +323,11 @@ int main() {
 
 
 
-        gpuMomCollisionStream << <gridBlock, threadBlock >> > (fMom,dNodeType,
+        gpuMomCollisionStream << <gridBlock, threadBlock 
+        #ifdef DYNAMIC_SHARED_MEMORY
+        , SHARED_MEMORY_SIZE
+        #endif
+        >> > (fMom,dNodeType,
         fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1,
         gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,
         #ifdef DENSITY_CORRECTION
