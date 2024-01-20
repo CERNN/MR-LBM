@@ -38,6 +38,11 @@ case 0b00000001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00000010:
@@ -65,6 +70,11 @@ case 0b00000010:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00000011:
@@ -92,6 +102,11 @@ case 0b00000011:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I + 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I + 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00000100:
@@ -119,6 +134,11 @@ case 0b00000100:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00000101:
@@ -146,6 +166,11 @@ case 0b00000101:
     m_zz_t45 = (144*m_xx_I + 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I - 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I + 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00000110:
@@ -173,6 +198,11 @@ case 0b00000110:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00000111:
@@ -200,6 +230,11 @@ case 0b00000111:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001000:
@@ -227,6 +262,11 @@ case 0b00001000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001001:
@@ -254,6 +294,11 @@ case 0b00001001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001010:
@@ -281,6 +326,11 @@ case 0b00001010:
     m_zz_t45 = (144*m_xx_I - 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I - 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001011:
@@ -308,6 +358,11 @@ case 0b00001011:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001100:
@@ -335,6 +390,11 @@ case 0b00001100:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I - 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I - 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001101:
@@ -362,6 +422,11 @@ case 0b00001101:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001110:
@@ -389,6 +454,11 @@ case 0b00001110:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00001111:
@@ -416,6 +486,11 @@ case 0b00001111:
     m_zz_t45 = (15*m_zz_I + 2)/(3*(3*m_zz_I - 3*omegaVar*m_zz_I + 4));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -mxz*rho;
+    L_Fy = -myz*rho;
+    L_Fz = -myz*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010000:
@@ -443,6 +518,11 @@ case 0b00010000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010001:
@@ -470,6 +550,11 @@ case 0b00010001:
     m_zz_t45 = (792*m_zz_I - 108*m_xy_I - 36*m_yy_I - 36*m_xx_I + omegaVar*m_xx_I + 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I + 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010010:
@@ -497,6 +582,11 @@ case 0b00010010:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010011:
@@ -524,6 +614,11 @@ case 0b00010011:
     m_zz_t45 = (90*m_yy_I - 234*m_xy_I - 162*m_xx_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I - 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010100:
@@ -551,6 +646,11 @@ case 0b00010100:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010101:
@@ -578,6 +678,11 @@ case 0b00010101:
     m_zz_t45 = (90*m_xx_I - 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I - 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I + 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010110:
@@ -605,6 +710,11 @@ case 0b00010110:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00010111:
@@ -632,6 +742,11 @@ case 0b00010111:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011000:
@@ -659,6 +774,11 @@ case 0b00011000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011001:
@@ -686,6 +806,11 @@ case 0b00011001:
     m_zz_t45 = (792*m_zz_I - 108*m_xy_I - 36*m_yy_I - 36*m_xx_I + omegaVar*m_xx_I + 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I + 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011010:
@@ -713,6 +838,11 @@ case 0b00011010:
     m_zz_t45 = (144*m_xx_I - 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I - 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011011:
@@ -740,6 +870,11 @@ case 0b00011011:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(2*mxy + 2*mxz + myy - mzz))/4;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011100:
@@ -767,6 +902,11 @@ case 0b00011100:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I - 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I - 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011101:
@@ -794,6 +934,11 @@ case 0b00011101:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(mxx + 2*mxy + 2*myz - mzz))/4;
+    L_Fz = -(rho*(mxx + 2*mxy + 2*myz - mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011110:
@@ -821,6 +966,11 @@ case 0b00011110:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00011111:
@@ -848,6 +998,11 @@ case 0b00011111:
     m_zz_t45 = -(72*m_xx_I + 198*m_xy_I + 72*m_yy_I - 2358*m_zz_I + 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I + 44*omegaVar*m_yy_I - 49*omegaVar*m_zz_I - 288)/(18*(12*m_xx_I + 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100000:
@@ -875,6 +1030,11 @@ case 0b00100000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100001:
@@ -902,6 +1062,11 @@ case 0b00100001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100010:
@@ -929,6 +1094,11 @@ case 0b00100010:
     m_zz_t45 = (108*m_xy_I - 36*m_xx_I - 36*m_yy_I + 792*m_zz_I + omegaVar*m_xx_I - 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I - 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100011:
@@ -956,6 +1126,11 @@ case 0b00100011:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100100:
@@ -983,6 +1158,11 @@ case 0b00100100:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100101:
@@ -1010,6 +1190,11 @@ case 0b00100101:
     m_zz_t45 = (144*m_xx_I + 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I - 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I + 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100110:
@@ -1037,6 +1222,11 @@ case 0b00100110:
     m_zz_t45 = (108*m_xy_I - 36*m_xx_I - 36*m_yy_I + 792*m_zz_I + omegaVar*m_xx_I - 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I - 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00100111:
@@ -1064,6 +1254,11 @@ case 0b00100111:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(2*mxy + 2*mxz - myy + mzz))/4;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101000:
@@ -1091,6 +1286,11 @@ case 0b00101000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101001:
@@ -1118,6 +1318,11 @@ case 0b00101001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101010:
@@ -1145,6 +1350,11 @@ case 0b00101010:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I - 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101011:
@@ -1172,6 +1382,11 @@ case 0b00101011:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101100:
@@ -1199,6 +1414,11 @@ case 0b00101100:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I - 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I - 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101101:
@@ -1226,6 +1446,11 @@ case 0b00101101:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101110:
@@ -1253,6 +1478,11 @@ case 0b00101110:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(mxx - 2*mxy + 2*myz - mzz))/4;
+    L_Fz = -(rho*(mxx - 2*mxy + 2*myz - mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00101111:
@@ -1280,6 +1510,11 @@ case 0b00101111:
     m_zz_t45 = (198*m_xy_I - 72*m_xx_I - 72*m_yy_I + 2358*m_zz_I - 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I - 44*omegaVar*m_yy_I + 49*omegaVar*m_zz_I + 288)/(18*(12*m_xx_I - 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy - 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110000:
@@ -1307,6 +1542,11 @@ case 0b00110000:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I - 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I - 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110001:
@@ -1334,6 +1574,11 @@ case 0b00110001:
     m_zz_t45 = -(162*m_xx_I + 234*m_xy_I - 90*m_yy_I + 504*m_yz_I - 2052*m_zz_I + 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 73*omegaVar*m_zz_I - 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110010:
@@ -1361,6 +1606,11 @@ case 0b00110010:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I - 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110011:
@@ -1388,6 +1638,11 @@ case 0b00110011:
     m_zz_t45 = -(4*(m_xx_I - 10*m_zz_I)*(omegaVar + 9))/(99*(3*m_yy_I - 3*omegaVar*m_yy_I + 4));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -mxy*rho;
+    L_Fy = -(rho*(3*myy + 1))/3;
+    L_Fz = -(rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110100:
@@ -1415,6 +1670,11 @@ case 0b00110100:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I - 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I - 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110101:
@@ -1442,6 +1702,11 @@ case 0b00110101:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110110:
@@ -1469,6 +1734,11 @@ case 0b00110110:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I - 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00110111:
@@ -1496,6 +1766,11 @@ case 0b00110111:
     m_zz_t45 = (648*m_xz_I - 18*m_xx_I - 108*m_yy_I + 2772*m_zz_I - 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I - 66*omegaVar*m_yy_I + 302*omegaVar*m_zz_I + 72)/(27*(12*m_xx_I + 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 36*mxy + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(3*myy + 1))/3;
+    L_Fz = -(rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111000:
@@ -1523,6 +1798,11 @@ case 0b00111000:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I - 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I - 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111001:
@@ -1550,6 +1830,11 @@ case 0b00111001:
     m_zz_t45 = -(162*m_xx_I + 234*m_xy_I - 90*m_yy_I + 504*m_yz_I - 2052*m_zz_I + 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 73*omegaVar*m_zz_I - 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111010:
@@ -1577,6 +1862,11 @@ case 0b00111010:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111011:
@@ -1604,6 +1894,11 @@ case 0b00111011:
     m_zz_t45 = -(18*m_xx_I + 648*m_xz_I + 108*m_yy_I - 2772*m_zz_I + 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I + 66*omegaVar*m_yy_I - 302*omegaVar*m_zz_I - 72)/(27*(12*m_xx_I - 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 36*mxy - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(3*myy + 1))/3;
+    L_Fz = -(rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111100:
@@ -1631,6 +1926,11 @@ case 0b00111100:
     m_zz_t45 = (72*m_yy_I - 36*m_xx_I - 216*m_yz_I + 198*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 24)/(54*(2*m_yy_I - m_xx_I - 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 3));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111101:
@@ -1658,6 +1958,11 @@ case 0b00111101:
     m_zz_t45 = -(2*(135*m_xx_I + 27*m_xy_I - 252*m_xz_I - 369*m_yy_I + 1260*m_yz_I - 1206*m_zz_I + 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 12*omegaVar*m_xz_I + 49*omegaVar*m_yy_I - 60*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(6*m_xy_I - m_xx_I + 6*m_xz_I + 11*m_yy_I - 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111110:
@@ -1685,6 +1990,11 @@ case 0b00111110:
     m_zz_t45 = (2*(27*m_xy_I - 135*m_xx_I - 252*m_xz_I + 369*m_yy_I - 1260*m_yz_I + 1206*m_zz_I - 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 12*omegaVar*m_xz_I - 49*omegaVar*m_yy_I + 60*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(11*m_yy_I - 6*m_xy_I - 6*m_xz_I - m_xx_I - 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b00111111:
@@ -1712,6 +2022,11 @@ case 0b00111111:
     m_zz_t45 = (216*m_yy_I - 144*m_xx_I - 1008*m_yz_I + 936*m_zz_I - 6*omegaVar*m_xx_I - 191*omegaVar*m_yy_I + 158*omegaVar*m_yz_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_yy_I - 6*m_xx_I - 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I + 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -rho*(mxy + mxz);
+    L_Fy = -(rho*(3*mxx + 30*myy + 18*myz - 6*mzz + 10))/36;
+    L_Fz = -(rho*(3*mxx + 30*myy + 18*myz - 6*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000000:
@@ -1739,6 +2054,11 @@ case 0b01000000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000001:
@@ -1766,6 +2086,11 @@ case 0b01000001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000010:
@@ -1793,6 +2118,11 @@ case 0b01000010:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000011:
@@ -1820,6 +2150,11 @@ case 0b01000011:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I + 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I + 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000100:
@@ -1847,6 +2182,11 @@ case 0b01000100:
     m_zz_t45 = (108*m_xy_I - 36*m_xx_I - 36*m_yy_I + 792*m_zz_I + omegaVar*m_xx_I - 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I - 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000101:
@@ -1874,6 +2214,11 @@ case 0b01000101:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000110:
@@ -1901,6 +2246,11 @@ case 0b01000110:
     m_zz_t45 = (108*m_xy_I - 36*m_xx_I - 36*m_yy_I + 792*m_zz_I + omegaVar*m_xx_I - 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I - 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01000111:
@@ -1928,6 +2278,11 @@ case 0b01000111:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(2*mxy - mxx + 2*myz + mzz))/4;
+    L_Fz = -(rho*(2*mxy - mxx + 2*myz + mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001000:
@@ -1955,6 +2310,11 @@ case 0b01001000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001001:
@@ -1982,6 +2342,11 @@ case 0b01001001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001010:
@@ -2009,6 +2374,11 @@ case 0b01001010:
     m_zz_t45 = (144*m_xx_I - 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I - 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001011:
@@ -2036,6 +2406,11 @@ case 0b01001011:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001100:
@@ -2063,6 +2438,11 @@ case 0b01001100:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I - 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001101:
@@ -2090,6 +2470,11 @@ case 0b01001101:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001110:
@@ -2117,6 +2502,11 @@ case 0b01001110:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(2*mxy - 2*mxz - myy + mzz))/4;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01001111:
@@ -2144,6 +2534,11 @@ case 0b01001111:
     m_zz_t45 = (198*m_xy_I - 72*m_xx_I - 72*m_yy_I + 2358*m_zz_I - 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I - 44*omegaVar*m_yy_I + 49*omegaVar*m_zz_I + 288)/(18*(12*m_xx_I - 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010000:
@@ -2171,6 +2566,11 @@ case 0b01010000:
     m_zz_t45 = (144*m_xx_I - 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I - 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010001:
@@ -2198,6 +2598,11 @@ case 0b01010001:
     m_zz_t45 = -(234*m_xy_I - 90*m_xx_I + 504*m_xz_I + 162*m_yy_I - 2052*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I + 8*omegaVar*m_yy_I - 73*omegaVar*m_zz_I - 30)/(135*(4*m_xx_I + 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010010:
@@ -2225,6 +2630,11 @@ case 0b01010010:
     m_zz_t45 = (144*m_xx_I - 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I - 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010011:
@@ -2252,6 +2662,11 @@ case 0b01010011:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010100:
@@ -2279,6 +2694,11 @@ case 0b01010100:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I - 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010101:
@@ -2306,6 +2726,11 @@ case 0b01010101:
     m_zz_t45 = -(4*(m_yy_I - 10*m_zz_I)*(omegaVar + 9))/(99*(3*m_xx_I - 3*omegaVar*m_xx_I + 4));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(3*mxx + 1))/3;
+    L_Fy = -mxy*rho;
+    L_Fz = -mxy*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010110:
@@ -2333,6 +2758,11 @@ case 0b01010110:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I - 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01010111:
@@ -2360,6 +2790,11 @@ case 0b01010111:
     m_zz_t45 = (648*m_yz_I - 18*m_yy_I - 108*m_xx_I + 2772*m_zz_I - 66*omegaVar*m_xx_I - 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I + 302*omegaVar*m_zz_I + 72)/(27*(72*m_xx_I + 12*m_yy_I + 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I - 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(3*mxx + 1))/3;
+    L_Fy = -(rho*(36*mxy - 3*mxx + 6*myy + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(36*mxy - 3*mxx + 6*myy + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011000:
@@ -2387,6 +2822,11 @@ case 0b01011000:
     m_zz_t45 = (144*m_xx_I - 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I - 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011001:
@@ -2414,6 +2854,11 @@ case 0b01011001:
     m_zz_t45 = -(234*m_xy_I - 90*m_xx_I + 504*m_xz_I + 162*m_yy_I - 2052*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I + 8*omegaVar*m_yy_I - 73*omegaVar*m_zz_I - 30)/(135*(4*m_xx_I + 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011010:
@@ -2441,6 +2886,11 @@ case 0b01011010:
     m_zz_t45 = (72*m_xx_I - 216*m_xz_I - 36*m_yy_I + 198*m_zz_I - 4*omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 24)/(54*(2*m_xx_I - 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 3));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011011:
@@ -2468,6 +2918,11 @@ case 0b01011011:
     m_zz_t45 = -(2*(27*m_xy_I - 369*m_xx_I + 1260*m_xz_I + 135*m_yy_I - 252*m_yz_I - 1206*m_zz_I + 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 60*omegaVar*m_xz_I + 25*omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(11*m_xx_I + 6*m_xy_I - 30*m_xz_I - m_yy_I + 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 30*omegaVar*m_xz_I + omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011100:
@@ -2495,6 +2950,11 @@ case 0b01011100:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011101:
@@ -2522,6 +2982,11 @@ case 0b01011101:
     m_zz_t45 = -(108*m_xx_I + 18*m_yy_I + 648*m_yz_I - 2772*m_zz_I + 66*omegaVar*m_xx_I + 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I - 302*omegaVar*m_zz_I - 72)/(27*(72*m_xx_I + 12*m_yy_I - 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I + 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(3*mxx + 1))/3;
+    L_Fy = -(rho*(3*mxx + 36*mxy - 6*myy + 18*myz - 6*mzz - 2))/36;
+    L_Fz = -(rho*(3*mxx + 36*mxy - 6*myy + 18*myz - 6*mzz - 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011110:
@@ -2549,6 +3014,11 @@ case 0b01011110:
     m_zz_t45 = (2*(369*m_xx_I + 27*m_xy_I - 1260*m_xz_I - 135*m_yy_I - 252*m_yz_I + 1206*m_zz_I - 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 60*omegaVar*m_xz_I - 25*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(11*m_xx_I - 6*m_xy_I - 30*m_xz_I - m_yy_I - 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 30*omegaVar*m_xz_I + omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01011111:
@@ -2576,6 +3046,11 @@ case 0b01011111:
     m_zz_t45 = (216*m_xx_I - 1008*m_xz_I - 144*m_yy_I + 936*m_zz_I - 191*omegaVar*m_xx_I + 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I - 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(30*mxx + 18*mxz + 3*myy - 6*mzz + 10))/36;
+    L_Fy = -rho*(mxy + myz);
+    L_Fz = -rho*(mxy + myz);
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100000:
@@ -2603,6 +3078,11 @@ case 0b01100000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100001:
@@ -2630,6 +3110,11 @@ case 0b01100001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100010:
@@ -2657,6 +3142,11 @@ case 0b01100010:
     m_zz_t45 = (108*m_xy_I - 36*m_xx_I - 36*m_yy_I + 792*m_zz_I + omegaVar*m_xx_I - 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I - 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100011:
@@ -2684,6 +3174,11 @@ case 0b01100011:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100100:
@@ -2711,6 +3206,11 @@ case 0b01100100:
     m_zz_t45 = (108*m_xy_I - 36*m_xx_I - 36*m_yy_I + 792*m_zz_I + omegaVar*m_xx_I - 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I - 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100101:
@@ -2738,6 +3238,11 @@ case 0b01100101:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100110:
@@ -2765,6 +3270,11 @@ case 0b01100110:
     m_zz_t45 = (54*m_xy_I - 18*m_xx_I - 18*m_yy_I + 72*m_zz_I + omegaVar*m_xx_I - 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 6)/(27*(2*m_xx_I - 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 3));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01100111:
@@ -2792,6 +3302,11 @@ case 0b01100111:
     m_zz_t45 = (2*(99*m_xy_I - 27*m_xx_I + 36*m_xz_I - 27*m_yy_I + 36*m_yz_I + 180*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 12*omegaVar*m_xz_I - 5*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 52*omegaVar*m_zz_I - 3))/(27*(11*m_xx_I - 30*m_xy_I + 6*m_xz_I + 11*m_yy_I + 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I + 30*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101000:
@@ -2819,6 +3334,11 @@ case 0b01101000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101001:
@@ -2846,6 +3366,11 @@ case 0b01101001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101010:
@@ -2873,6 +3398,11 @@ case 0b01101010:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I - 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101011:
@@ -2900,6 +3430,11 @@ case 0b01101011:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101100:
@@ -2927,6 +3462,11 @@ case 0b01101100:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I - 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101101:
@@ -2954,6 +3494,11 @@ case 0b01101101:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101110:
@@ -2981,6 +3526,11 @@ case 0b01101110:
     m_zz_t45 = -(2*(27*m_xx_I - 99*m_xy_I + 36*m_xz_I + 27*m_yy_I + 36*m_yz_I - 180*m_zz_I + 5*omegaVar*m_xx_I - 21*omegaVar*m_xy_I + 12*omegaVar*m_xz_I + 5*omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 52*omegaVar*m_zz_I + 3))/(27*(11*m_xx_I - 30*m_xy_I - 6*m_xz_I + 11*m_yy_I - 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I + 30*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01101111:
@@ -3008,6 +3558,11 @@ case 0b01101111:
     m_zz_t45 = (99*m_xy_I - 36*m_xx_I - 36*m_yy_I + 189*m_zz_I - 20*omegaVar*m_xx_I + 55*omegaVar*m_xy_I - 20*omegaVar*m_yy_I + 49*omegaVar*m_zz_I + 12)/(9*(12*m_xx_I - 33*m_xy_I + 12*m_yy_I + 6*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -mxz*rho;
+    L_Fy = -myz*rho;
+    L_Fz = -myz*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110000:
@@ -3035,6 +3590,11 @@ case 0b01110000:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110001:
@@ -3062,6 +3622,11 @@ case 0b01110001:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110010:
@@ -3089,6 +3654,11 @@ case 0b01110010:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(2*mxy - 2*mxz - myy + mzz))/4;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110011:
@@ -3116,6 +3686,11 @@ case 0b01110011:
     m_zz_t45 = -(18*m_xx_I + 648*m_xz_I + 108*m_yy_I - 2772*m_zz_I + 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I + 66*omegaVar*m_yy_I - 302*omegaVar*m_zz_I - 72)/(27*(12*m_xx_I - 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 36*mxy - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(3*myy + 1))/3;
+    L_Fz = -(rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110100:
@@ -3143,6 +3718,11 @@ case 0b01110100:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(mxx - 2*mxy + 2*myz - mzz))/4;
+    L_Fz = (rho*(mxx - 2*mxy + 2*myz - mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110101:
@@ -3170,6 +3750,11 @@ case 0b01110101:
     m_zz_t45 = -(108*m_xx_I + 18*m_yy_I + 648*m_yz_I - 2772*m_zz_I + 66*omegaVar*m_xx_I + 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I - 302*omegaVar*m_zz_I - 72)/(27*(72*m_xx_I + 12*m_yy_I - 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I + 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(3*mxx + 1))/3;
+    L_Fy = -(rho*(36*mxy - 3*mxx + 6*myy - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(36*mxy - 3*mxx + 6*myy - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110110:
@@ -3197,6 +3782,11 @@ case 0b01110110:
     m_zz_t45 = -(2*(27*m_xx_I - 99*m_xy_I + 36*m_xz_I + 27*m_yy_I + 36*m_yz_I - 180*m_zz_I + 5*omegaVar*m_xx_I - 21*omegaVar*m_xy_I + 12*omegaVar*m_xz_I + 5*omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 52*omegaVar*m_zz_I + 3))/(27*(11*m_xx_I - 30*m_xy_I - 6*m_xz_I + 11*m_yy_I - 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I + 30*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01110111:
@@ -3224,6 +3814,11 @@ case 0b01110111:
     m_zz_t45 = -(72*m_xx_I - 216*m_xy_I + 72*m_yy_I - 288*m_zz_I + 3*omegaVar*m_xx_I - 34*omegaVar*m_xy_I + 3*omegaVar*m_yy_I - 162*omegaVar*m_zz_I + 24)/(18*(24*m_xx_I - 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(30*mxx + 18*mxy - 6*myy + 3*mzz + 10))/36;
+    L_Fy = -(rho*(18*mxy - 6*mxx + 30*myy + 3*mzz + 10))/36;
+    L_Fz = -(rho*(18*mxy - 6*mxx + 30*myy + 3*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111000:
@@ -3251,6 +3846,11 @@ case 0b01111000:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111001:
@@ -3278,6 +3878,11 @@ case 0b01111001:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111010:
@@ -3305,6 +3910,11 @@ case 0b01111010:
     m_zz_t45 = (2*(369*m_xx_I + 27*m_xy_I - 1260*m_xz_I - 135*m_yy_I - 252*m_yz_I + 1206*m_zz_I - 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 60*omegaVar*m_xz_I - 25*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(11*m_xx_I - 6*m_xy_I - 30*m_xz_I - m_yy_I - 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 30*omegaVar*m_xz_I + omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111011:
@@ -3332,6 +3942,11 @@ case 0b01111011:
     m_zz_t45 = -(2*(324*m_xz_I - 99*m_xx_I + 54*m_yy_I - 306*m_zz_I + omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 30*omegaVar*m_yy_I - 58*omegaVar*m_zz_I - 36))/(27*(12*m_xx_I - 33*m_xz_I + 6*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -mxy*rho;
+    L_Fy = -(rho*(3*myy + 1))/3;
+    L_Fz = -(rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111100:
@@ -3359,6 +3974,11 @@ case 0b01111100:
     m_zz_t45 = (2*(27*m_xy_I - 135*m_xx_I - 252*m_xz_I + 369*m_yy_I - 1260*m_yz_I + 1206*m_zz_I - 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 12*omegaVar*m_xz_I - 49*omegaVar*m_yy_I + 60*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(11*m_yy_I - 6*m_xy_I - 6*m_xz_I - m_xx_I - 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I + 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111101:
@@ -3386,6 +4006,11 @@ case 0b01111101:
     m_zz_t45 = -(2*(54*m_xx_I - 99*m_yy_I + 324*m_yz_I - 306*m_zz_I + 30*omegaVar*m_xx_I + omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 58*omegaVar*m_zz_I - 36))/(27*(6*m_xx_I + 12*m_yy_I - 33*m_yz_I + 12*m_zz_I - 6*omegaVar*m_xx_I - 12*omegaVar*m_yy_I + 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(3*mxx + 1))/3;
+    L_Fy = -mxy*rho;
+    L_Fz = -mxy*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111110:
@@ -3413,6 +4038,11 @@ case 0b01111110:
     m_zz_t45 = -(2*m_xy_I - 2*m_xx_I + 8*m_xz_I - 2*m_yy_I + 8*m_yz_I - 8*m_zz_I + 2*omegaVar*m_xx_I - 7*omegaVar*m_xy_I + 2*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 2*omegaVar*m_yz_I - 7*omegaVar*m_zz_I - 2)/(9*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b01111111:
@@ -3440,6 +4070,11 @@ case 0b01111111:
     m_zz_t45 = -(2*m_xy_I - 2*m_xx_I + 14*m_xz_I - 2*m_yy_I + 14*m_yz_I - 14*m_zz_I + 9*omegaVar*m_xx_I - 23*omegaVar*m_xy_I + 7*omegaVar*m_xz_I + 9*omegaVar*m_yy_I + 7*omegaVar*m_yz_I - 21*omegaVar*m_zz_I - 4)/(18*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(24*mxx + 18*mxy + 18*mxz - 3*myy - 3*mzz + 8))/36;
+    L_Fy = -(rho*(18*mxy - 3*mxx + 24*myy + 18*myz - 3*mzz + 8))/36;
+    L_Fz = -(rho*(18*mxy - 3*mxx + 24*myy + 18*myz - 3*mzz + 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000000:
@@ -3467,6 +4102,11 @@ case 0b10000000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000001:
@@ -3494,6 +4134,11 @@ case 0b10000001:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000010:
@@ -3521,6 +4166,11 @@ case 0b10000010:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000011:
@@ -3548,6 +4198,11 @@ case 0b10000011:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I + 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I + 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000100:
@@ -3575,6 +4230,11 @@ case 0b10000100:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000101:
@@ -3602,6 +4262,11 @@ case 0b10000101:
     m_zz_t45 = (144*m_xx_I + 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I - 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I + 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000110:
@@ -3629,6 +4294,11 @@ case 0b10000110:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10000111:
@@ -3656,6 +4326,11 @@ case 0b10000111:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001000:
@@ -3683,6 +4358,11 @@ case 0b10001000:
     m_zz_t45 = (792*m_zz_I - 108*m_xy_I - 36*m_yy_I - 36*m_xx_I + omegaVar*m_xx_I + 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I + 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001001:
@@ -3710,6 +4390,11 @@ case 0b10001001:
     m_zz_t45 = (792*m_zz_I - 108*m_xy_I - 36*m_yy_I - 36*m_xx_I + omegaVar*m_xx_I + 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I + 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001010:
@@ -3737,6 +4422,11 @@ case 0b10001010:
     m_zz_t45 = -(234*m_xy_I - 90*m_xx_I + 504*m_xz_I + 162*m_yy_I - 2052*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I + 8*omegaVar*m_yy_I - 73*omegaVar*m_zz_I - 30)/(135*(4*m_xx_I + 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001011:
@@ -3764,6 +4454,11 @@ case 0b10001011:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(mxx + 2*mxy - 2*myz - mzz))/4;
+    L_Fz = (rho*(mxx + 2*mxy - 2*myz - mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001100:
@@ -3791,6 +4486,11 @@ case 0b10001100:
     m_zz_t45 = -(162*m_xx_I + 234*m_xy_I - 90*m_yy_I + 504*m_yz_I - 2052*m_zz_I + 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 73*omegaVar*m_zz_I - 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001101:
@@ -3818,6 +4518,11 @@ case 0b10001101:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(2*mxy - 2*mxz + myy - mzz))/4;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001110:
@@ -3845,6 +4550,11 @@ case 0b10001110:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10001111:
@@ -3872,6 +4582,11 @@ case 0b10001111:
     m_zz_t45 = -(72*m_xx_I + 198*m_xy_I + 72*m_yy_I - 2358*m_zz_I + 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I + 44*omegaVar*m_yy_I - 49*omegaVar*m_zz_I - 288)/(18*(12*m_xx_I + 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy - 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010000:
@@ -3899,6 +4614,11 @@ case 0b10010000:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010001:
@@ -3926,6 +4646,11 @@ case 0b10010001:
     m_zz_t45 = (792*m_zz_I - 108*m_xy_I - 36*m_yy_I - 36*m_xx_I + omegaVar*m_xx_I + 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I + 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010010:
@@ -3953,6 +4678,11 @@ case 0b10010010:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010011:
@@ -3980,6 +4710,11 @@ case 0b10010011:
     m_zz_t45 = (90*m_yy_I - 234*m_xy_I - 162*m_xx_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I - 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010100:
@@ -4007,6 +4742,11 @@ case 0b10010100:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010101:
@@ -4034,6 +4774,11 @@ case 0b10010101:
     m_zz_t45 = (90*m_xx_I - 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I - 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I + 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010110:
@@ -4061,6 +4806,11 @@ case 0b10010110:
     m_zz_t45 = m_zz_I;
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10010111:
@@ -4088,6 +4838,11 @@ case 0b10010111:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011000:
@@ -4115,6 +4870,11 @@ case 0b10011000:
     m_zz_t45 = (792*m_zz_I - 108*m_xy_I - 36*m_yy_I - 36*m_xx_I + omegaVar*m_xx_I + 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 12)/(54*(2*m_xx_I + 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011001:
@@ -4142,6 +4902,11 @@ case 0b10011001:
     m_zz_t45 = (72*m_zz_I - 54*m_xy_I - 18*m_yy_I - 18*m_xx_I + omegaVar*m_xx_I + 3*omegaVar*m_xy_I + omegaVar*m_yy_I + 13*omegaVar*m_zz_I - 6)/(27*(2*m_xx_I + 6*m_xy_I + 2*m_yy_I - m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 2*omegaVar*m_yy_I + omegaVar*m_zz_I + 3));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011010:
@@ -4169,6 +4934,11 @@ case 0b10011010:
     m_zz_t45 = -(234*m_xy_I - 90*m_xx_I + 504*m_xz_I + 162*m_yy_I - 2052*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I + 8*omegaVar*m_yy_I - 73*omegaVar*m_zz_I - 30)/(135*(4*m_xx_I + 6*m_xy_I - 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011011:
@@ -4196,6 +4966,11 @@ case 0b10011011:
     m_zz_t45 = -(2*(27*m_xx_I + 99*m_xy_I + 36*m_xz_I + 27*m_yy_I - 36*m_yz_I - 180*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 12*omegaVar*m_xz_I + 5*omegaVar*m_yy_I - 12*omegaVar*m_yz_I - 52*omegaVar*m_zz_I + 3))/(27*(11*m_xx_I + 30*m_xy_I - 6*m_xz_I + 11*m_yy_I + 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I - 30*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011100:
@@ -4223,6 +4998,11 @@ case 0b10011100:
     m_zz_t45 = -(162*m_xx_I + 234*m_xy_I - 90*m_yy_I + 504*m_yz_I - 2052*m_zz_I + 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 73*omegaVar*m_zz_I - 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I - 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I + 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011101:
@@ -4250,6 +5030,11 @@ case 0b10011101:
     m_zz_t45 = -(2*(27*m_xx_I + 99*m_xy_I - 36*m_xz_I + 27*m_yy_I + 36*m_yz_I - 180*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 12*omegaVar*m_xz_I + 5*omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 52*omegaVar*m_zz_I + 3))/(27*(11*m_xx_I + 30*m_xy_I + 6*m_xz_I + 11*m_yy_I - 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I - 30*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011110:
@@ -4277,6 +5062,11 @@ case 0b10011110:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10011111:
@@ -4304,6 +5094,11 @@ case 0b10011111:
     m_zz_t45 = -(36*m_xx_I + 99*m_xy_I + 36*m_yy_I - 189*m_zz_I + 20*omegaVar*m_xx_I + 55*omegaVar*m_xy_I + 20*omegaVar*m_yy_I - 49*omegaVar*m_zz_I - 12)/(9*(12*m_xx_I + 33*m_xy_I + 12*m_yy_I + 6*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -mxz*rho;
+    L_Fy = -myz*rho;
+    L_Fz = -myz*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100000:
@@ -4331,6 +5126,11 @@ case 0b10100000:
     m_zz_t45 = (144*m_xx_I + 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I - 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I + 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100001:
@@ -4358,6 +5158,11 @@ case 0b10100001:
     m_zz_t45 = (144*m_xx_I + 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I - 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I + 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100010:
@@ -4385,6 +5190,11 @@ case 0b10100010:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100011:
@@ -4412,6 +5222,11 @@ case 0b10100011:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100100:
@@ -4439,6 +5254,11 @@ case 0b10100100:
     m_zz_t45 = (144*m_xx_I + 432*m_xz_I - 72*m_yy_I + 1692*m_zz_I - 4*omegaVar*m_xx_I - 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_xx_I + 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100101:
@@ -4466,6 +5286,11 @@ case 0b10100101:
     m_zz_t45 = (72*m_xx_I + 216*m_xz_I - 36*m_yy_I + 198*m_zz_I - 4*omegaVar*m_xx_I - 12*omegaVar*m_xz_I + 2*omegaVar*m_yy_I + 23*omegaVar*m_zz_I + 24)/(54*(2*m_xx_I + 6*m_xz_I - m_yy_I + 2*m_zz_I - 2*omegaVar*m_xx_I - 6*omegaVar*m_xz_I + omegaVar*m_yy_I - 2*omegaVar*m_zz_I + 3));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100110:
@@ -4493,6 +5318,11 @@ case 0b10100110:
     m_zz_t45 = (90*m_xx_I + 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I - 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10100111:
@@ -4520,6 +5350,11 @@ case 0b10100111:
     m_zz_t45 = (2*(369*m_xx_I + 27*m_xy_I + 1260*m_xz_I - 135*m_yy_I + 252*m_yz_I + 1206*m_zz_I - 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 60*omegaVar*m_xz_I - 25*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(11*m_xx_I - 6*m_xy_I + 30*m_xz_I - m_yy_I + 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 30*omegaVar*m_xz_I + omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101000:
@@ -4547,6 +5382,11 @@ case 0b10101000:
     m_zz_t45 = (90*m_xx_I - 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I - 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I + 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101001:
@@ -4574,6 +5414,11 @@ case 0b10101001:
     m_zz_t45 = (90*m_xx_I - 234*m_xy_I + 504*m_xz_I - 162*m_yy_I + 2052*m_zz_I - 5*omegaVar*m_xx_I - 21*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 8*omegaVar*m_yy_I + 73*omegaVar*m_zz_I + 30)/(135*(4*m_xx_I + 6*m_xy_I + 6*m_xz_I + m_yy_I + m_zz_I - 4*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101010:
@@ -4601,6 +5446,11 @@ case 0b10101010:
     m_zz_t45 = -(4*(m_yy_I - 10*m_zz_I)*(omegaVar + 9))/(99*(3*m_xx_I - 3*omegaVar*m_xx_I + 4));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(3*mxx + 1))/3;
+    L_Fy = mxy*rho;
+    L_Fz = mxy*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101011:
@@ -4628,6 +5478,11 @@ case 0b10101011:
     m_zz_t45 = (648*m_yz_I - 18*m_yy_I - 108*m_xx_I + 2772*m_zz_I - 66*omegaVar*m_xx_I - 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I + 302*omegaVar*m_zz_I + 72)/(27*(72*m_xx_I + 12*m_yy_I + 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I - 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(3*mxx + 1))/3;
+    L_Fy = -(rho*(6*myy - 36*mxy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 36*mxy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101100:
@@ -4655,6 +5510,11 @@ case 0b10101100:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101101:
@@ -4682,6 +5542,11 @@ case 0b10101101:
     m_zz_t45 = -(2*(27*m_xy_I - 369*m_xx_I - 1260*m_xz_I + 135*m_yy_I + 252*m_yz_I - 1206*m_zz_I + 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 60*omegaVar*m_xz_I + 25*omegaVar*m_yy_I - 12*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(11*m_xx_I + 6*m_xy_I + 30*m_xz_I - m_yy_I - 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 30*omegaVar*m_xz_I + omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101110:
@@ -4709,6 +5574,11 @@ case 0b10101110:
     m_zz_t45 = -(108*m_xx_I + 18*m_yy_I + 648*m_yz_I - 2772*m_zz_I + 66*omegaVar*m_xx_I + 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I - 302*omegaVar*m_zz_I - 72)/(27*(72*m_xx_I + 12*m_yy_I - 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I + 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(3*mxx + 1))/3;
+    L_Fy = (rho*(36*mxy - 3*mxx + 6*myy - 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(36*mxy - 3*mxx + 6*myy - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10101111:
@@ -4736,6 +5606,11 @@ case 0b10101111:
     m_zz_t45 = (216*m_xx_I + 1008*m_xz_I - 144*m_yy_I + 936*m_zz_I - 191*omegaVar*m_xx_I - 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I + 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(30*mxx - 18*mxz + 3*myy - 6*mzz + 10))/36;
+    L_Fy = rho*(mxy - myz);
+    L_Fz = rho*(mxy - myz);
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110000:
@@ -4763,6 +5638,11 @@ case 0b10110000:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110001:
@@ -4790,6 +5670,11 @@ case 0b10110001:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(2*mxy - 2*mxz + myy - mzz))/4;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110010:
@@ -4817,6 +5702,11 @@ case 0b10110010:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110011:
@@ -4844,6 +5734,11 @@ case 0b10110011:
     m_zz_t45 = (648*m_xz_I - 18*m_xx_I - 108*m_yy_I + 2772*m_zz_I - 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I - 66*omegaVar*m_yy_I + 302*omegaVar*m_zz_I + 72)/(27*(12*m_xx_I + 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 36*mxy + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(3*myy + 1))/3;
+    L_Fz = -(rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110100:
@@ -4871,6 +5766,11 @@ case 0b10110100:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I - 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I - 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110101:
@@ -4898,6 +5798,11 @@ case 0b10110101:
     m_zz_t45 = -(2*(27*m_xy_I - 369*m_xx_I - 1260*m_xz_I + 135*m_yy_I + 252*m_yz_I - 1206*m_zz_I + 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 60*omegaVar*m_xz_I + 25*omegaVar*m_yy_I - 12*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(11*m_xx_I + 6*m_xy_I + 30*m_xz_I - m_yy_I - 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 30*omegaVar*m_xz_I + omegaVar*m_yy_I + 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110110:
@@ -4925,6 +5830,11 @@ case 0b10110110:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy + 12*myy - 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10110111:
@@ -4952,6 +5862,11 @@ case 0b10110111:
     m_zz_t45 = (2*(99*m_xx_I + 324*m_xz_I - 54*m_yy_I + 306*m_zz_I - omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 30*omegaVar*m_yy_I + 58*omegaVar*m_zz_I + 36))/(27*(12*m_xx_I + 33*m_xz_I + 6*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -mxy*rho;
+    L_Fy = -(rho*(3*myy + 1))/3;
+    L_Fz = -(rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111000:
@@ -4979,6 +5894,11 @@ case 0b10111000:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I - 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(mxx + 2*mxy + 2*myz - mzz))/4;
+    L_Fz = (rho*(mxx + 2*mxy + 2*myz - mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111001:
@@ -5006,6 +5926,11 @@ case 0b10111001:
     m_zz_t45 = -(2*(27*m_xx_I + 99*m_xy_I - 36*m_xz_I + 27*m_yy_I + 36*m_yz_I - 180*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 12*omegaVar*m_xz_I + 5*omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 52*omegaVar*m_zz_I + 3))/(27*(11*m_xx_I + 30*m_xy_I + 6*m_xz_I + 11*m_yy_I - 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I - 30*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    L_Fz = -(rho*(6*myy - 3*mxx - 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111010:
@@ -5033,6 +5958,11 @@ case 0b10111010:
     m_zz_t45 = -(108*m_xx_I + 18*m_yy_I + 648*m_yz_I - 2772*m_zz_I + 66*omegaVar*m_xx_I + 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I - 302*omegaVar*m_zz_I - 72)/(27*(72*m_xx_I + 12*m_yy_I - 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I + 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(3*mxx + 1))/3;
+    L_Fy = (rho*(3*mxx + 36*mxy - 6*myy + 18*myz - 6*mzz - 2))/36;
+    L_Fz = (rho*(3*mxx + 36*mxy - 6*myy + 18*myz - 6*mzz - 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111011:
@@ -5060,6 +5990,11 @@ case 0b10111011:
     m_zz_t45 = -(72*m_xx_I + 216*m_xy_I + 72*m_yy_I - 288*m_zz_I + 3*omegaVar*m_xx_I + 34*omegaVar*m_xy_I + 3*omegaVar*m_yy_I - 162*omegaVar*m_zz_I + 24)/(18*(24*m_xx_I + 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(30*mxx - 18*mxy - 6*myy + 3*mzz + 10))/36;
+    L_Fy = -(rho*(30*myy - 18*mxy - 6*mxx + 3*mzz + 10))/36;
+    L_Fz = -(rho*(30*myy - 18*mxy - 6*mxx + 3*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111100:
@@ -5087,6 +6022,11 @@ case 0b10111100:
     m_zz_t45 = -(2*(135*m_xx_I + 27*m_xy_I - 252*m_xz_I - 369*m_yy_I + 1260*m_yz_I - 1206*m_zz_I + 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I + 12*omegaVar*m_xz_I + 49*omegaVar*m_yy_I - 60*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(6*m_xy_I - m_xx_I + 6*m_xz_I + 11*m_yy_I - 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I + 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111101:
@@ -5114,6 +6054,11 @@ case 0b10111101:
     m_zz_t45 = (2*m_xx_I + 2*m_xy_I + 8*m_xz_I + 2*m_yy_I - 8*m_yz_I + 8*m_zz_I - 2*omegaVar*m_xx_I - 7*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 7*omegaVar*m_zz_I + 2)/(9*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111110:
@@ -5141,6 +6086,11 @@ case 0b10111110:
     m_zz_t45 = -(2*(54*m_xx_I - 99*m_yy_I + 324*m_yz_I - 306*m_zz_I + 30*omegaVar*m_xx_I + omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 58*omegaVar*m_zz_I - 36))/(27*(6*m_xx_I + 12*m_yy_I - 33*m_yz_I + 12*m_zz_I - 6*omegaVar*m_xx_I - 12*omegaVar*m_yy_I + 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(3*mxx + 1))/3;
+    L_Fy = mxy*rho;
+    L_Fz = mxy*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b10111111:
@@ -5168,6 +6118,11 @@ case 0b10111111:
     m_zz_t45 = (2*m_xx_I + 2*m_xy_I + 14*m_xz_I + 2*m_yy_I - 14*m_yz_I + 14*m_zz_I - 9*omegaVar*m_xx_I - 23*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I - 7*omegaVar*m_yz_I + 21*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(18*mxy - 24*mxx + 18*mxz + 3*myy + 3*mzz - 8))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy - 24*myy - 18*myz + 3*mzz - 8))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy - 24*myy - 18*myz + 3*mzz - 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000000:
@@ -5195,6 +6150,11 @@ case 0b11000000:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I + 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I + 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000001:
@@ -5222,6 +6182,11 @@ case 0b11000001:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I + 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I + 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000010:
@@ -5249,6 +6214,11 @@ case 0b11000010:
     m_zz_t45 = (144*m_yy_I - 72*m_xx_I + 432*m_yz_I + 1692*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 48)/(108*(2*m_yy_I - m_xx_I + 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000011:
@@ -5276,6 +6246,11 @@ case 0b11000011:
     m_zz_t45 = (72*m_yy_I - 36*m_xx_I + 216*m_yz_I + 198*m_zz_I + 2*omegaVar*m_xx_I - 4*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 24)/(54*(2*m_yy_I - m_xx_I + 6*m_yz_I + 2*m_zz_I + omegaVar*m_xx_I - 2*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 2*omegaVar*m_zz_I + 3));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000100:
@@ -5303,6 +6278,11 @@ case 0b11000100:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000101:
@@ -5330,6 +6310,11 @@ case 0b11000101:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000110:
@@ -5357,6 +6342,11 @@ case 0b11000110:
     m_zz_t45 = (234*m_xy_I - 162*m_xx_I + 90*m_yy_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I + 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I - 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11000111:
@@ -5384,6 +6374,11 @@ case 0b11000111:
     m_zz_t45 = (2*(27*m_xy_I - 135*m_xx_I + 252*m_xz_I + 369*m_yy_I + 1260*m_yz_I + 1206*m_zz_I - 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 12*omegaVar*m_xz_I - 49*omegaVar*m_yy_I - 60*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(6*m_xz_I - 6*m_xy_I - m_xx_I + 11*m_yy_I + 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001000:
@@ -5411,6 +6406,11 @@ case 0b11001000:
     m_zz_t45 = (90*m_yy_I - 234*m_xy_I - 162*m_xx_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I - 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001001:
@@ -5438,6 +6438,11 @@ case 0b11001001:
     m_zz_t45 = (90*m_yy_I - 234*m_xy_I - 162*m_xx_I + 504*m_yz_I + 2052*m_zz_I - 8*omegaVar*m_xx_I - 21*omegaVar*m_xy_I - 5*omegaVar*m_yy_I + 6*omegaVar*m_yz_I + 73*omegaVar*m_zz_I + 30)/(135*(m_xx_I + 6*m_xy_I + 4*m_yy_I + 6*m_yz_I + m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xy_I - 4*omegaVar*m_yy_I - 6*omegaVar*m_yz_I - omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001010:
@@ -5465,6 +6470,11 @@ case 0b11001010:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001011:
@@ -5492,6 +6502,11 @@ case 0b11001011:
     m_zz_t45 = -(2*(135*m_xx_I + 27*m_xy_I + 252*m_xz_I - 369*m_yy_I - 1260*m_yz_I - 1206*m_zz_I + 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 12*omegaVar*m_xz_I + 49*omegaVar*m_yy_I + 60*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(6*m_xy_I - m_xx_I - 6*m_xz_I + 11*m_yy_I + 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001100:
@@ -5519,6 +6534,11 @@ case 0b11001100:
     m_zz_t45 = -(4*(m_xx_I - 10*m_zz_I)*(omegaVar + 9))/(99*(3*m_yy_I - 3*omegaVar*m_yy_I + 4));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = mxy*rho;
+    L_Fy = (rho*(3*myy + 1))/3;
+    L_Fz = (rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001101:
@@ -5546,6 +6566,11 @@ case 0b11001101:
     m_zz_t45 = (648*m_xz_I - 18*m_xx_I - 108*m_yy_I + 2772*m_zz_I - 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I - 66*omegaVar*m_yy_I + 302*omegaVar*m_zz_I + 72)/(27*(12*m_xx_I + 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 36*mxy + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(3*myy + 1))/3;
+    L_Fz = (rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001110:
@@ -5573,6 +6598,11 @@ case 0b11001110:
     m_zz_t45 = -(18*m_xx_I + 648*m_xz_I + 108*m_yy_I - 2772*m_zz_I + 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I + 66*omegaVar*m_yy_I - 302*omegaVar*m_zz_I - 72)/(27*(12*m_xx_I - 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 36*mxy - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(3*myy + 1))/3;
+    L_Fz = (rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11001111:
@@ -5600,6 +6630,11 @@ case 0b11001111:
     m_zz_t45 = (216*m_yy_I - 144*m_xx_I + 1008*m_yz_I + 936*m_zz_I - 6*omegaVar*m_xx_I - 191*omegaVar*m_yy_I - 158*omegaVar*m_yz_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_yy_I - 6*m_xx_I + 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I - 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = rho*(mxy - mxz);
+    L_Fy = (rho*(3*mxx + 30*myy - 18*myz - 6*mzz + 10))/36;
+    L_Fz = (rho*(3*mxx + 30*myy - 18*myz - 6*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010000:
@@ -5627,6 +6662,11 @@ case 0b11010000:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010001:
@@ -5654,6 +6694,11 @@ case 0b11010001:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(mxx + 2*mxy - 2*myz - mzz))/4;
+    L_Fz = -(rho*(mxx + 2*mxy - 2*myz - mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010010:
@@ -5681,6 +6726,11 @@ case 0b11010010:
     m_zz_t45 = (36*m_xx_I - 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I - 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I + 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010011:
@@ -5708,6 +6758,11 @@ case 0b11010011:
     m_zz_t45 = -(2*(135*m_xx_I + 27*m_xy_I + 252*m_xz_I - 369*m_yy_I - 1260*m_yz_I - 1206*m_zz_I + 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 12*omegaVar*m_xz_I + 49*omegaVar*m_yy_I + 60*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(6*m_xy_I - m_xx_I - 6*m_xz_I + 11*m_yy_I + 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx + 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010100:
@@ -5735,6 +6790,11 @@ case 0b11010100:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010101:
@@ -5762,6 +6822,11 @@ case 0b11010101:
     m_zz_t45 = (648*m_yz_I - 18*m_yy_I - 108*m_xx_I + 2772*m_zz_I - 66*omegaVar*m_xx_I - 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I + 302*omegaVar*m_zz_I + 72)/(27*(72*m_xx_I + 12*m_yy_I + 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I - 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(3*mxx + 1))/3;
+    L_Fy = (rho*(6*myy - 36*mxy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 36*mxy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010110:
@@ -5789,6 +6854,11 @@ case 0b11010110:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(12*mxx - 18*mxy - 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11010111:
@@ -5816,6 +6886,11 @@ case 0b11010111:
     m_zz_t45 = (2*(99*m_yy_I - 54*m_xx_I + 324*m_yz_I + 306*m_zz_I - 30*omegaVar*m_xx_I - omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 58*omegaVar*m_zz_I + 36))/(27*(6*m_xx_I + 12*m_yy_I + 33*m_yz_I + 12*m_zz_I - 6*omegaVar*m_xx_I - 12*omegaVar*m_yy_I - 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(3*mxx + 1))/3;
+    L_Fy = -mxy*rho;
+    L_Fz = -mxy*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011000:
@@ -5843,6 +6918,11 @@ case 0b11011000:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I - 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(2*mxy + 2*mxz + myy - mzz))/4;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011001:
@@ -5870,6 +6950,11 @@ case 0b11011001:
     m_zz_t45 = -(2*(27*m_xx_I + 99*m_xy_I + 36*m_xz_I + 27*m_yy_I - 36*m_yz_I - 180*m_zz_I + 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 12*omegaVar*m_xz_I + 5*omegaVar*m_yy_I - 12*omegaVar*m_yz_I - 52*omegaVar*m_zz_I + 3))/(27*(11*m_xx_I + 30*m_xy_I - 6*m_xz_I + 11*m_yy_I + 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I - 30*omegaVar*m_xy_I + 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011010:
@@ -5897,6 +6982,11 @@ case 0b11011010:
     m_zz_t45 = -(2*(27*m_xy_I - 369*m_xx_I + 1260*m_xz_I + 135*m_yy_I - 252*m_yz_I - 1206*m_zz_I + 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 60*omegaVar*m_xz_I + 25*omegaVar*m_yy_I + 12*omegaVar*m_yz_I - 194*omegaVar*m_zz_I - 165))/(135*(11*m_xx_I + 6*m_xy_I - 30*m_xz_I - m_yy_I + 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I - 6*omegaVar*m_xy_I + 30*omegaVar*m_xz_I + omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011011:
@@ -5924,6 +7014,11 @@ case 0b11011011:
     m_zz_t45 = (2*m_xx_I + 2*m_xy_I - 8*m_xz_I + 2*m_yy_I + 8*m_yz_I + 8*m_zz_I - 2*omegaVar*m_xx_I - 7*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 7*omegaVar*m_zz_I + 2)/(9*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011100:
@@ -5951,6 +7046,11 @@ case 0b11011100:
     m_zz_t45 = -(18*m_xx_I + 648*m_xz_I + 108*m_yy_I - 2772*m_zz_I + 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I + 66*omegaVar*m_yy_I - 302*omegaVar*m_zz_I - 72)/(27*(12*m_xx_I - 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 36*mxy - 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(3*myy + 1))/3;
+    L_Fz = (rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011101:
@@ -5978,6 +7078,11 @@ case 0b11011101:
     m_zz_t45 = -(72*m_xx_I + 216*m_xy_I + 72*m_yy_I - 288*m_zz_I + 3*omegaVar*m_xx_I + 34*omegaVar*m_xy_I + 3*omegaVar*m_yy_I - 162*omegaVar*m_zz_I + 24)/(18*(24*m_xx_I + 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(30*mxx - 18*mxy - 6*myy + 3*mzz + 10))/36;
+    L_Fy = (rho*(30*myy - 18*mxy - 6*mxx + 3*mzz + 10))/36;
+    L_Fz = (rho*(30*myy - 18*mxy - 6*mxx + 3*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011110:
@@ -6005,6 +7110,11 @@ case 0b11011110:
     m_zz_t45 = -(2*(324*m_xz_I - 99*m_xx_I + 54*m_yy_I - 306*m_zz_I + omegaVar*m_xx_I + 12*omegaVar*m_xz_I + 30*omegaVar*m_yy_I - 58*omegaVar*m_zz_I - 36))/(27*(12*m_xx_I - 33*m_xz_I + 6*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = mxy*rho;
+    L_Fy = (rho*(3*myy + 1))/3;
+    L_Fz = (rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11011111:
@@ -6032,6 +7142,11 @@ case 0b11011111:
     m_zz_t45 = (2*m_xx_I + 2*m_xy_I - 14*m_xz_I + 2*m_yy_I + 14*m_yz_I + 14*m_zz_I - 9*omegaVar*m_xx_I - 23*omegaVar*m_xy_I - 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I + 7*omegaVar*m_yz_I + 21*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(24*mxx - 18*mxy + 18*mxz - 3*myy - 3*mzz + 8))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100000:
@@ -6059,6 +7174,11 @@ case 0b11100000:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100001:
@@ -6086,6 +7206,11 @@ case 0b11100001:
     m_zz_t45 = (36*m_xx_I + 216*m_xz_I + 36*m_yy_I + 216*m_yz_I + 882*m_zz_I - 2*omegaVar*m_xx_I - 12*omegaVar*m_xz_I - 2*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 19*omegaVar*m_zz_I + 48)/(54*(m_xx_I + 6*m_xz_I + m_yy_I + 6*m_yz_I + 4*m_zz_I - omegaVar*m_xx_I - 6*omegaVar*m_xz_I - omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 4*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100010:
@@ -6113,6 +7238,11 @@ case 0b11100010:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(2*mxy - mxx + 2*myz + mzz))/4;
+    L_Fz = (rho*(2*mxy - mxx + 2*myz + mzz))/4;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100011:
@@ -6140,6 +7270,11 @@ case 0b11100011:
     m_zz_t45 = (2*(27*m_xy_I - 135*m_xx_I + 252*m_xz_I + 369*m_yy_I + 1260*m_yz_I + 1206*m_zz_I - 25*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 12*omegaVar*m_xz_I - 49*omegaVar*m_yy_I - 60*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(6*m_xz_I - 6*m_xy_I - m_xx_I + 11*m_yy_I + 30*m_yz_I + 11*m_zz_I + omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 30*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx - 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100100:
@@ -6167,6 +7302,11 @@ case 0b11100100:
     m_zz_t45 = (4*m_xx_I + 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I + 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(2*mxy + 2*mxz - myy + mzz))/4;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100101:
@@ -6194,6 +7334,11 @@ case 0b11100101:
     m_zz_t45 = (2*(369*m_xx_I + 27*m_xy_I + 1260*m_xz_I - 135*m_yy_I + 252*m_yz_I + 1206*m_zz_I - 49*omegaVar*m_xx_I + 93*omegaVar*m_xy_I - 60*omegaVar*m_xz_I - 25*omegaVar*m_yy_I - 12*omegaVar*m_yz_I + 194*omegaVar*m_zz_I + 165))/(135*(11*m_xx_I - 6*m_xy_I + 30*m_xz_I - m_yy_I + 6*m_yz_I + 11*m_zz_I - 11*omegaVar*m_xx_I + 6*omegaVar*m_xy_I - 30*omegaVar*m_xz_I + omegaVar*m_yy_I - 6*omegaVar*m_yz_I - 11*omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100110:
@@ -6221,6 +7366,11 @@ case 0b11100110:
     m_zz_t45 = (2*(99*m_xy_I - 27*m_xx_I + 36*m_xz_I - 27*m_yy_I + 36*m_yz_I + 180*m_zz_I - 5*omegaVar*m_xx_I + 21*omegaVar*m_xy_I + 12*omegaVar*m_xz_I - 5*omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 52*omegaVar*m_zz_I - 3))/(27*(11*m_xx_I - 30*m_xy_I + 6*m_xz_I + 11*m_yy_I + 6*m_yz_I - m_zz_I - 11*omegaVar*m_xx_I + 30*omegaVar*m_xy_I - 6*omegaVar*m_xz_I - 11*omegaVar*m_yy_I - 6*omegaVar*m_yz_I + omegaVar*m_zz_I + 15));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(6*myy - 3*mxx + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11100111:
@@ -6248,6 +7398,11 @@ case 0b11100111:
     m_zz_t45 = (2*m_xx_I - 2*m_xy_I + 8*m_xz_I + 2*m_yy_I + 8*m_yz_I + 8*m_zz_I - 2*omegaVar*m_xx_I + 7*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - 2*omegaVar*m_yy_I + 2*omegaVar*m_yz_I + 7*omegaVar*m_zz_I + 2)/(9*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = 0;
+    L_Fy = 0;
+    L_Fz = 0;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101000:
@@ -6275,6 +7430,11 @@ case 0b11101000:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101001:
@@ -6302,6 +7462,11 @@ case 0b11101001:
     m_zz_t45 = (4*m_xx_I - 44*m_xy_I + 112*m_xz_I + 4*m_yy_I + 112*m_yz_I + 472*m_zz_I - 4*omegaVar*m_xx_I - 11*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - 4*omegaVar*m_yy_I - 2*omegaVar*m_yz_I + 23*omegaVar*m_zz_I + 20)/(90*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 5));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(12*mxx + 18*mxy + 18*mxz + 3*myy + 3*mzz + 4))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy + 12*myy + 18*myz + 3*mzz + 4))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101010:
@@ -6329,6 +7494,11 @@ case 0b11101010:
     m_zz_t45 = (648*m_yz_I - 18*m_yy_I - 108*m_xx_I + 2772*m_zz_I - 66*omegaVar*m_xx_I - 11*omegaVar*m_yy_I + 48*omegaVar*m_yz_I + 302*omegaVar*m_zz_I + 72)/(27*(72*m_xx_I + 12*m_yy_I + 33*m_yz_I + 12*m_zz_I - 72*omegaVar*m_xx_I - 12*omegaVar*m_yy_I - 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(3*mxx + 1))/3;
+    L_Fy = (rho*(36*mxy - 3*mxx + 6*myy + 18*myz + 6*mzz + 2))/36;
+    L_Fz = (rho*(36*mxy - 3*mxx + 6*myy + 18*myz + 6*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101011:
@@ -6356,6 +7526,11 @@ case 0b11101011:
     m_zz_t45 = (2*(99*m_yy_I - 54*m_xx_I + 324*m_yz_I + 306*m_zz_I - 30*omegaVar*m_xx_I - omegaVar*m_yy_I + 12*omegaVar*m_yz_I + 58*omegaVar*m_zz_I + 36))/(27*(6*m_xx_I + 12*m_yy_I + 33*m_yz_I + 12*m_zz_I - 6*omegaVar*m_xx_I - 12*omegaVar*m_yy_I - 33*omegaVar*m_yz_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(3*mxx + 1))/3;
+    L_Fy = mxy*rho;
+    L_Fz = mxy*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101100:
@@ -6383,6 +7558,11 @@ case 0b11101100:
     m_zz_t45 = (648*m_xz_I - 18*m_xx_I - 108*m_yy_I + 2772*m_zz_I - 11*omegaVar*m_xx_I + 48*omegaVar*m_xz_I - 66*omegaVar*m_yy_I + 302*omegaVar*m_zz_I + 72)/(27*(12*m_xx_I + 33*m_xz_I + 72*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xz_I - 72*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 36*mxy + 18*mxz - 3*myy + 6*mzz + 2))/36;
+    L_Fy = (rho*(3*myy + 1))/3;
+    L_Fz = (rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101101:
@@ -6410,6 +7590,11 @@ case 0b11101101:
     m_zz_t45 = (2*(99*m_xx_I + 324*m_xz_I - 54*m_yy_I + 306*m_zz_I - omegaVar*m_xx_I + 12*omegaVar*m_xz_I - 30*omegaVar*m_yy_I + 58*omegaVar*m_zz_I + 36))/(27*(12*m_xx_I + 33*m_xz_I + 6*m_yy_I + 12*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 12*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = mxy*rho;
+    L_Fy = (rho*(3*myy + 1))/3;
+    L_Fz = (rho*(3*myy + 1))/3;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101110:
@@ -6437,6 +7622,11 @@ case 0b11101110:
     m_zz_t45 = -(72*m_xx_I - 216*m_xy_I + 72*m_yy_I - 288*m_zz_I + 3*omegaVar*m_xx_I - 34*omegaVar*m_xy_I + 3*omegaVar*m_yy_I - 162*omegaVar*m_zz_I + 24)/(18*(24*m_xx_I - 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(30*mxx + 18*mxy - 6*myy + 3*mzz + 10))/36;
+    L_Fy = (rho*(18*mxy - 6*mxx + 30*myy + 3*mzz + 10))/36;
+    L_Fz = (rho*(18*mxy - 6*mxx + 30*myy + 3*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11101111:
@@ -6464,6 +7654,11 @@ case 0b11101111:
     m_zz_t45 = (2*m_xx_I - 2*m_xy_I + 14*m_xz_I + 2*m_yy_I + 14*m_yz_I + 14*m_zz_I - 9*omegaVar*m_xx_I + 23*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I + 7*omegaVar*m_yz_I + 21*omegaVar*m_zz_I + 4)/(18*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(24*mxx + 18*mxy - 18*mxz - 3*myy - 3*mzz + 8))/36;
+    L_Fy = -(rho*(3*mxx - 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    L_Fz = -(rho*(3*mxx - 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110000:
@@ -6491,6 +7686,11 @@ case 0b11110000:
     m_zz_t45 = (15*m_zz_I + 2)/(3*(3*m_zz_I - 3*omegaVar*m_zz_I + 4));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = mxz*rho;
+    L_Fy = myz*rho;
+    L_Fz = myz*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110001:
@@ -6518,6 +7718,11 @@ case 0b11110001:
     m_zz_t45 = -(72*m_xx_I + 198*m_xy_I + 72*m_yy_I - 2358*m_zz_I + 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I + 44*omegaVar*m_yy_I - 49*omegaVar*m_zz_I - 288)/(18*(12*m_xx_I + 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx + 18*mxy - 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx + 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx + 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110010:
@@ -6545,6 +7750,11 @@ case 0b11110010:
     m_zz_t45 = (198*m_xy_I - 72*m_xx_I - 72*m_yy_I + 2358*m_zz_I - 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I - 44*omegaVar*m_yy_I + 49*omegaVar*m_zz_I + 288)/(18*(12*m_xx_I - 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx - 18*mxy + 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = -(rho*(6*mxx - 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    L_Fz = -(rho*(6*mxx - 18*mxy + 6*myy - 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110011:
@@ -6572,6 +7782,11 @@ case 0b11110011:
     m_zz_t45 = (216*m_yy_I - 144*m_xx_I + 1008*m_yz_I + 936*m_zz_I - 6*omegaVar*m_xx_I - 191*omegaVar*m_yy_I - 158*omegaVar*m_yz_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_yy_I - 6*m_xx_I + 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I - 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -rho*(mxy - mxz);
+    L_Fy = -(rho*(3*mxx + 30*myy - 18*myz - 6*mzz + 10))/36;
+    L_Fz = -(rho*(3*mxx + 30*myy - 18*myz - 6*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110100:
@@ -6599,6 +7814,11 @@ case 0b11110100:
     m_zz_t45 = (198*m_xy_I - 72*m_xx_I - 72*m_yy_I + 2358*m_zz_I - 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I - 44*omegaVar*m_yy_I + 49*omegaVar*m_zz_I + 288)/(18*(12*m_xx_I - 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(6*mxx - 18*mxy - 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx - 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx - 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110101:
@@ -6626,6 +7846,11 @@ case 0b11110101:
     m_zz_t45 = (216*m_xx_I + 1008*m_xz_I - 144*m_yy_I + 936*m_zz_I - 191*omegaVar*m_xx_I - 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I + 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(30*mxx - 18*mxz + 3*myy - 6*mzz + 10))/36;
+    L_Fy = -rho*(mxy - myz);
+    L_Fz = -rho*(mxy - myz);
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110110:
@@ -6653,6 +7878,11 @@ case 0b11110110:
     m_zz_t45 = (99*m_xy_I - 36*m_xx_I - 36*m_yy_I + 189*m_zz_I - 20*omegaVar*m_xx_I + 55*omegaVar*m_xy_I - 20*omegaVar*m_yy_I + 49*omegaVar*m_zz_I + 12)/(9*(12*m_xx_I - 33*m_xy_I + 12*m_yy_I + 6*m_zz_I - 12*omegaVar*m_xx_I + 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = mxz*rho;
+    L_Fy = myz*rho;
+    L_Fz = myz*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11110111:
@@ -6680,6 +7910,11 @@ case 0b11110111:
     m_zz_t45 = (2*m_xx_I - 2*m_xy_I + 14*m_xz_I + 2*m_yy_I + 14*m_yz_I + 14*m_zz_I - 9*omegaVar*m_xx_I + 23*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I + 7*omegaVar*m_yz_I + 21*omegaVar*m_zz_I + 4)/(18*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = -(rho*(24*mxx + 18*mxy - 18*mxz - 3*myy - 3*mzz + 8))/36;
+    L_Fy = (rho*(3*mxx - 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    L_Fz = (rho*(3*mxx - 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11111000:
@@ -6707,6 +7942,11 @@ case 0b11111000:
     m_zz_t45 = -(72*m_xx_I + 198*m_xy_I + 72*m_yy_I - 2358*m_zz_I + 44*omegaVar*m_xx_I + 121*omegaVar*m_xy_I + 44*omegaVar*m_yy_I - 49*omegaVar*m_zz_I - 288)/(18*(12*m_xx_I + 33*m_xy_I + 12*m_yy_I + 72*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 72*omegaVar*m_zz_I + 107));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(6*mxx + 18*mxy + 36*mxz + 6*myy - 3*mzz + 2))/36;
+    L_Fy = (rho*(6*mxx + 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    L_Fz = (rho*(6*mxx + 18*mxy + 6*myy + 36*myz - 3*mzz + 2))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11111001:
@@ -6734,6 +7974,11 @@ case 0b11111001:
     m_zz_t45 = -(36*m_xx_I + 99*m_xy_I + 36*m_yy_I - 189*m_zz_I + 20*omegaVar*m_xx_I + 55*omegaVar*m_xy_I + 20*omegaVar*m_yy_I - 49*omegaVar*m_zz_I - 12)/(9*(12*m_xx_I + 33*m_xy_I + 12*m_yy_I + 6*m_zz_I - 12*omegaVar*m_xx_I - 33*omegaVar*m_xy_I - 12*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 19));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = mxz*rho;
+    L_Fy = myz*rho;
+    L_Fz = myz*rho;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11111010:
@@ -6761,6 +8006,11 @@ case 0b11111010:
     m_zz_t45 = (216*m_xx_I - 1008*m_xz_I - 144*m_yy_I + 936*m_zz_I - 191*omegaVar*m_xx_I + 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I - 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(30*mxx + 18*mxz + 3*myy - 6*mzz + 10))/36;
+    L_Fy = rho*(mxy + myz);
+    L_Fz = rho*(mxy + myz);
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11111011:
@@ -6788,6 +8038,11 @@ case 0b11111011:
     m_zz_t45 = (2*m_xx_I + 2*m_xy_I - 14*m_xz_I + 2*m_yy_I + 14*m_yz_I + 14*m_zz_I - 9*omegaVar*m_xx_I - 23*omegaVar*m_xy_I - 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I + 7*omegaVar*m_yz_I + 21*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(24*mxx - 18*mxy + 18*mxz - 3*myy - 3*mzz + 8))/36;
+    L_Fy = (rho*(3*mxx + 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    L_Fz = (rho*(3*mxx + 18*mxy - 24*myy + 18*myz + 3*mzz - 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11111100:
@@ -6815,6 +8070,11 @@ case 0b11111100:
     m_zz_t45 = (216*m_yy_I - 144*m_xx_I - 1008*m_yz_I + 936*m_zz_I - 6*omegaVar*m_xx_I - 191*omegaVar*m_yy_I + 158*omegaVar*m_yz_I + 239*omegaVar*m_zz_I + 192)/(36*(24*m_yy_I - 6*m_xx_I - 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I + 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = rho*(mxy + mxz);
+    L_Fy = (rho*(3*mxx + 30*myy + 18*myz - 6*mzz + 10))/36;
+    L_Fz = (rho*(3*mxx + 30*myy + 18*myz - 6*mzz + 10))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11111101:
@@ -6842,6 +8102,11 @@ case 0b11111101:
     m_zz_t45 = (2*m_xx_I + 2*m_xy_I + 14*m_xz_I + 2*m_yy_I - 14*m_yz_I + 14*m_zz_I - 9*omegaVar*m_xx_I - 23*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I - 7*omegaVar*m_yz_I + 21*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(18*mxy - 24*mxx + 18*mxz + 3*myy + 3*mzz - 8))/36;
+    L_Fy = -(rho*(3*mxx + 18*mxy - 24*myy - 18*myz + 3*mzz - 8))/36;
+    L_Fz = -(rho*(3*mxx + 18*mxy - 24*myy - 18*myz + 3*mzz - 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 case 0b11111110:
@@ -6869,6 +8134,11 @@ case 0b11111110:
     m_zz_t45 = -(2*m_xy_I - 2*m_xx_I + 14*m_xz_I - 2*m_yy_I + 14*m_yz_I - 14*m_zz_I + 9*omegaVar*m_xx_I - 23*omegaVar*m_xy_I + 7*omegaVar*m_xz_I + 9*omegaVar*m_yy_I + 7*omegaVar*m_yz_I - 21*omegaVar*m_zz_I - 4)/(18*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
 
     rhoVar = rho;
+    #ifdef LOCAL_FORCES
+    L_Fx = (rho*(24*mxx + 18*mxy + 18*mxz - 3*myy - 3*mzz + 8))/36;
+    L_Fy = (rho*(18*mxy - 3*mxx + 24*myy + 18*myz - 3*mzz + 8))/36;
+    L_Fz = (rho*(18*mxy - 3*mxx + 24*myy + 18*myz - 3*mzz + 8))/36;
+    #endif //_LOCAL_FORCES 
 
     break;
 }
