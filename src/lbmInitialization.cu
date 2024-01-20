@@ -290,6 +290,22 @@ __global__ void gpuInitialization_nodeType(
 }
 
 
+__global__ void gpuInitialization_force(
+    dfloat *d_L_Fx, dfloat* d_L_Fy, dfloat* d_L_Fz)
+{
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
+    int z = threadIdx.z + blockDim.z * blockIdx.z;
+    if (x >= NX || y >= NY || z >= NZ)
+        return;
+
+    size_t index = idxScalarGlobal(x, y, z);
+
+    d_L_Fx[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
+    d_L_Fy[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = FY;
+    d_L_Fz[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = FZ; 
+}
+
 __host__ void read_voxel_csv(
     const std::string& filename, 
     unsigned char *dNodeType

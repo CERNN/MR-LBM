@@ -82,6 +82,13 @@ int main() {
         dfloat* m_uy;
         dfloat* m_uz;
     #endif
+
+    #ifdef LOCAL_FORCES
+        dfloat* d_L_Fx;
+        dfloat* d_L_Fy;
+        dfloat* d_L_Fz;
+    #endif //_LOCAL_FORCES
+
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     dfloat* h_fMom;
     dfloat* rho;
@@ -115,6 +122,11 @@ int main() {
         checkCudaErrors(cudaMallocHost((void**)&(m_uy), MEM_SIZE_SCALAR));
         checkCudaErrors(cudaMallocHost((void**)&(m_uz), MEM_SIZE_SCALAR));
     #endif
+        #ifdef LOCAL_FORCES
+        checkCudaErrors(cudaMallocHost((void**)&(d_L_Fx), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(d_L_Fy), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(d_L_Fz), MEM_SIZE_SCALAR));
+    #endif //_LOCAL_FORCES
     randomNumbers = (float**)malloc(sizeof(float*));
 
 
@@ -147,6 +159,12 @@ int main() {
     #ifdef PARTICLE_TRACER
     checkCudaErrors(cudaMalloc((void**)&(d_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
     #endif
+
+    #ifdef LOCAL_FORCES
+        cudaMalloc((void**)&d_L_Fx, MEM_SIZE_SCALAR);    
+        cudaMalloc((void**)&d_L_Fy, MEM_SIZE_SCALAR);    
+        cudaMalloc((void**)&d_L_Fz, MEM_SIZE_SCALAR);    
+    #endif //_LOCAL_FORCES
 
     //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
     
@@ -223,6 +241,10 @@ int main() {
     checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned char) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
     checkCudaErrors(cudaDeviceSynchronize());  
     #endif
+
+    #ifdef LOCAL_FORCES
+    gpuInitialization_force << <gridBlock, threadBlock >> >(d_L_Fx,d_L_Fy,d_L_Fz);
+    #endif //_LOCAL_FORCES
 
     //printf("Interface Populations initialized \n");if(console_flush){fflush(stdout);}
     checkCudaErrors(cudaDeviceSynchronize());
@@ -305,6 +327,9 @@ int main() {
         #ifdef DENSITY_CORRECTION
         d_mean_rho,
         #endif
+        #ifdef LOCAL_FORCES
+        d_L_Fx,d_L_Fy,d_L_Fz,
+        #endif 
         step); 
 
         #ifdef DENSITY_CORRECTION

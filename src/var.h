@@ -55,6 +55,9 @@
 #define CONSOLEPRINT (false) // print the console the data is being saved
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
+
+#define LOCAL_FORCES //create a local force field for the domain;
+
 constexpr bool console_flush = false;
 
 //#define PARTICLE_TRACER  // define if will traces massless particles inside the flow

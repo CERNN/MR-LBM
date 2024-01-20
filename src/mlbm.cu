@@ -11,6 +11,9 @@ __global__ void gpuMomCollisionStream(
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif
+    #ifdef LOCAL_FORCES
+    dfloat *d_L_Fx, dfloat *d_L_Fy, dfloat *d_L_Fz,
+    #endif 
     unsigned int step)
 {
     const int x = threadIdx.x + blockDim.x * blockIdx.x;
@@ -45,6 +48,16 @@ __global__ void gpuMomCollisionStream(
     #else
     dfloat omegaVar = OMEGA;
     #endif
+
+    #ifdef LOCAL_FORCES
+    dfloat L_Fx = d_L_Fx[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fy = d_L_Fy[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fz = d_L_Fz[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
+    #else
+    dfloat L_Fx = FX;
+    dfloat L_Fy = FY;
+    dfloat L_Fz = FZ;
+    #endif 
 
     dfloat pics2;
     #ifndef HIGH_ORDER_COLLISION
@@ -237,9 +250,9 @@ __global__ void gpuMomCollisionStream(
             rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
             dfloat invRho = 1 / rhoVar;
             //equation4 + force correction
-            ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[8] + pop[9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + 0.5 * FX) * invRho;
-            uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + 0.5 * FY) * invRho;
-            uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + 0.5 * FZ) * invRho;
+            ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[8] + pop[9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + 0.5 * L_Fx) * invRho;
+            uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + 0.5 * L_Fy) * invRho;
+            uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + 0.5 * L_Fz) * invRho;
 
 
             //equation5
@@ -255,9 +268,9 @@ __global__ void gpuMomCollisionStream(
         #ifdef D3Q27
             rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             dfloat invRho = 1 / rhoVar;
-            ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
-            uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
-            uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
+            ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * L_Fx) * invRho;
+            uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * L_Fy) * invRho;
+            uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * L_Fz) * invRho;
 
             m_xx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
             m_xy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) )* invRho;
@@ -282,9 +295,9 @@ __global__ void gpuMomCollisionStream(
                 rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
                 invRho = 1 / rhoVar;
                 //equation4 + force correction
-                ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[ 8] + pop[ 9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + FX/2) * invRho;
-                uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[ 8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + FY/2) * invRho;
-                uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + FZ/2) * invRho;
+                ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[ 8] + pop[ 9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + L_Fx/2) * invRho;
+                uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[ 8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + L_Fy/2) * invRho;
+                uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + L_Fz/2) * invRho;
 
                 //equation5
                 m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16])* invRho - cs2;
@@ -299,9 +312,9 @@ __global__ void gpuMomCollisionStream(
             #ifdef D3Q27
                 rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
                 invRho = 1 / rhoVar;
-                ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * FX) * invRho;
-                uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * FY) * invRho;
-                uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * FZ) * invRho;
+                ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * L_Fx) * invRho;
+                uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * L_Fy) * invRho;
+                uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * L_Fz) * invRho;
 
                 m_xx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
                 m_xy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) )* invRho;
@@ -324,12 +337,12 @@ __global__ void gpuMomCollisionStream(
     const dfloat S_XZ = rhoVar * (m_xz_t90 - ux_t30*uz_t30);
     const dfloat S_YZ = rhoVar * (m_yz_t90 - uy_t30*uz_t30);
 
-    const dfloat uFxxd2 = ux_t30*FX; // d2 = uFxx Divided by two
-    const dfloat uFyyd2 = uy_t30*FY;
-    const dfloat uFzzd2 = uz_t30*FZ;
-    const dfloat uFxyd2 = (ux_t30*FY + uy_t30*FX) / 2;
-    const dfloat uFxzd2 = (ux_t30*FZ + uz_t30*FX) / 2;
-    const dfloat uFyzd2 = (uy_t30*FZ + uz_t30*FY) / 2;
+    const dfloat uFxxd2 = ux_t30*L_Fx; // d2 = uFxx Divided by two
+    const dfloat uFyyd2 = uy_t30*L_Fy;
+    const dfloat uFzzd2 = uz_t30*L_Fz;
+    const dfloat uFxyd2 = (ux_t30*L_Fy + uy_t30*L_Fx) / 2;
+    const dfloat uFxzd2 = (ux_t30*L_Fz + uz_t30*L_Fx) / 2;
+    const dfloat uFyzd2 = (uy_t30*L_Fz + uz_t30*L_Fy) / 2;
 
     const dfloat auxStressMag = sqrt(0.5 * (
         (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
@@ -374,33 +387,33 @@ __global__ void gpuMomCollisionStream(
         #endif // DENSITY_CORRECTION
         #ifdef NON_NEWTONIAN_FLUID
             dfloat invRho_mt15 = -3*invRho/2;
-            ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * FX ) + omegaVar * ux_t30 + tt_omega_t3 * FX);
-            uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * FY ) + omegaVar * uy_t30 + tt_omega_t3 * FY);
-            uz_t30 = (t_omegaVar * (uz_t30 + invRho_mt15 * FZ ) + omegaVar * uz_t30 + tt_omega_t3 * FZ);
+            ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * L_Fx ) + omegaVar * ux_t30 + tt_omega_t3 * L_Fx);
+            uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * L_Fy ) + omegaVar * uy_t30 + tt_omega_t3 * L_Fy);
+            uz_t30 = (t_omegaVar * (uz_t30 + invRho_mt15 * L_Fz ) + omegaVar * uz_t30 + tt_omega_t3 * L_Fz);
             
             //equation 90
-            m_xx_t45 = (t_omegaVar * m_xx_t45  +   omegaVar_d2 * ux_t30 * ux_t30  - invRho_mt15 * tt_omegaVar * (FX * ux_t30 + FX * ux_t30));
-            m_yy_t45 = (t_omegaVar * m_yy_t45  +   omegaVar_d2 * uy_t30 * uy_t30  - invRho_mt15 * tt_omegaVar * (FY * uy_t30 + FY * uy_t30));
-            m_zz_t45 = (t_omegaVar * m_zz_t45  +   omegaVar_d2 * uz_t30 * uz_t30  - invRho_mt15 * tt_omegaVar * (FZ * uz_t30 + FZ * uz_t30));
+            m_xx_t45 = (t_omegaVar * m_xx_t45  +   omegaVar_d2 * ux_t30 * ux_t30  - invRho_mt15 * tt_omegaVar * (L_Fx * ux_t30 + L_Fx * ux_t30));
+            m_yy_t45 = (t_omegaVar * m_yy_t45  +   omegaVar_d2 * uy_t30 * uy_t30  - invRho_mt15 * tt_omegaVar * (L_Fy * uy_t30 + L_Fy * uy_t30));
+            m_zz_t45 = (t_omegaVar * m_zz_t45  +   omegaVar_d2 * uz_t30 * uz_t30  - invRho_mt15 * tt_omegaVar * (L_Fz * uz_t30 + L_Fz * uz_t30));
 
-            m_xy_t90 = (t_omegaVar * m_xy_t90  +   omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (FX * uy_t30 + FY * ux_t30));
-            m_xz_t90 = (t_omegaVar * m_xz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (FX * uz_t30 + FZ * ux_t30));
-            m_yz_t90 = (t_omegaVar * m_yz_t90  +   omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+            m_xy_t90 = (t_omegaVar * m_xy_t90  +   omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (L_Fx * uy_t30 + L_Fy * ux_t30));
+            m_xz_t90 = (t_omegaVar * m_xz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (L_Fx * uz_t30 + L_Fz * ux_t30));
+            m_yz_t90 = (t_omegaVar * m_yz_t90  +   omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (L_Fy * uz_t30 + L_Fz * uy_t30));
         #endif // NON_NEWTONIAN_FLUID
         #ifndef NON_NEWTONIAN_FLUID 
             dfloat invRho_mt15 = -3*invRho/2;
-            ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * FX ) + OMEGA * ux_t30 + TT_OMEGA_T3 * FX);
-            uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * FY ) + OMEGA * uy_t30 + TT_OMEGA_T3 * FY);
-            uz_t30 = (T_OMEGA * (uz_t30 + invRho_mt15 * FZ ) + OMEGA * uz_t30 + TT_OMEGA_T3 * FZ);
+            ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * L_Fx ) + OMEGA * ux_t30 + TT_OMEGA_T3 * L_Fx);
+            uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * L_Fy ) + OMEGA * uy_t30 + TT_OMEGA_T3 * L_Fy);
+            uz_t30 = (T_OMEGA * (uz_t30 + invRho_mt15 * L_Fz ) + OMEGA * uz_t30 + TT_OMEGA_T3 * L_Fz);
             
             //equation 90
-            m_xx_t45 = (T_OMEGA * m_xx_t45  +   OMEGAd2 * ux_t30 * ux_t30    - invRho_mt15 * TT_OMEGA * (FX * ux_t30 + FX * ux_t30));
-            m_yy_t45 = (T_OMEGA * m_yy_t45  +   OMEGAd2 * uy_t30 * uy_t30    - invRho_mt15 * TT_OMEGA * (FY * uy_t30 + FY * uy_t30));
-            m_zz_t45 = (T_OMEGA * m_zz_t45  +   OMEGAd2 * uz_t30 * uz_t30    - invRho_mt15 * TT_OMEGA * (FZ * uz_t30 + FZ * uz_t30));
+            m_xx_t45 = (T_OMEGA * m_xx_t45  +   OMEGAd2 * ux_t30 * ux_t30    - invRho_mt15 * TT_OMEGA * (L_Fx * ux_t30 + L_Fx * ux_t30));
+            m_yy_t45 = (T_OMEGA * m_yy_t45  +   OMEGAd2 * uy_t30 * uy_t30    - invRho_mt15 * TT_OMEGA * (L_Fy * uy_t30 + L_Fy * uy_t30));
+            m_zz_t45 = (T_OMEGA * m_zz_t45  +   OMEGAd2 * uz_t30 * uz_t30    - invRho_mt15 * TT_OMEGA * (L_Fz * uz_t30 + L_Fz * uz_t30));
 
-            m_xy_t90 = (T_OMEGA * m_xy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (FX * uy_t30 + FY * ux_t30));
-            m_xz_t90 = (T_OMEGA * m_xz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FX * uz_t30 + FZ * ux_t30));
-            m_yz_t90 = (T_OMEGA * m_yz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (FY * uz_t30 + FZ * uy_t30));
+            m_xy_t90 = (T_OMEGA * m_xy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (L_Fx * uy_t30 + L_Fy * ux_t30));
+            m_xz_t90 = (T_OMEGA * m_xz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (L_Fx * uz_t30 + L_Fz * ux_t30));
+            m_yz_t90 = (T_OMEGA * m_yz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (L_Fy * uz_t30 + L_Fz * uy_t30));
         #endif //!_NON_NEWTONIAN_FLUID
     #endif //!_HIGH_ORDER_COLLISION
 
@@ -409,9 +422,9 @@ __global__ void gpuMomCollisionStream(
 
     #ifdef HO_RR
 
-        dfloat ux = ux_t30 + FX*invRho/2;
-        dfloat uy = uy_t30 + FY*invRho/2;
-        dfloat uz = uz_t30 + FZ*invRho/2;
+        dfloat ux = ux_t30 + L_Fx*invRho/2;
+        dfloat uy = uy_t30 + L_Fy*invRho/2;
+        dfloat uz = uz_t30 + L_Fz*invRho/2;
 
         //matlab original
         dfloat m_xx = (ux_t30*ux_t30 - (9*uy_t30*uy_t30*uz_t30*uz_t30)/2 + (3*m_zz_t45*uy_t30*uy_t30)/4 + 3*m_yz_t90*uy_t30*uz_t30 + (3*m_yy_t45*uz_t30*uz_t30)/4 - m_xx_t45)*omegaVar + ((15*uy_t30*uy_t30*uz_t30*uz_t30)/4 - (3*m_zz_t45*uy_t30*uy_t30)/4 - 3*m_yz_t90*uy_t30*uz_t30 - (3*m_yy_t45*uz_t30*uz_t30)/4 + m_xx_t45);
@@ -430,18 +443,18 @@ __global__ void gpuMomCollisionStream(
         //dfloat m_yz = (uy_t30*uz_t30 - m_yz_t90)*omegaVar + m_yz_t90;
     #endif //HO_RR
     #ifdef HOME_LBM
-        dfloat ux = ux_t30 + FX*invRho/2;
-        dfloat uy = uy_t30 + FY*invRho/2;
-        dfloat uz = uz_t30 + FZ*invRho/2;
+        dfloat ux = ux_t30 + L_Fx*invRho/2;
+        dfloat uy = uy_t30 + L_Fy*invRho/2;
+        dfloat uz = uz_t30 + L_Fz*invRho/2;
 
 
-        dfloat m_xy = T_OMEGA * m_xy_t90 + OMEGA*ux_t30*uy_t30 + TT_OMEGA * invRho * (FX * uy_t30 + FY * ux_t30);
-        dfloat m_xz = T_OMEGA * m_xz_t90 + OMEGA*ux_t30*uz_t30 + TT_OMEGA * invRho * (FX * uz_t30 + FZ * ux_t30);
-        dfloat m_yz = T_OMEGA * m_yz_t90 + OMEGA*uy_t30*uz_t30 + TT_OMEGA * invRho * (FY * uz_t30 + FZ * uy_t30);
+        dfloat m_xy = T_OMEGA * m_xy_t90 + OMEGA*ux_t30*uy_t30 + TT_OMEGA * invRho * (L_Fx * uy_t30 + L_Fy * ux_t30);
+        dfloat m_xz = T_OMEGA * m_xz_t90 + OMEGA*ux_t30*uz_t30 + TT_OMEGA * invRho * (L_Fx * uz_t30 + L_Fz * ux_t30);
+        dfloat m_yz = T_OMEGA * m_yz_t90 + OMEGA*uy_t30*uz_t30 + TT_OMEGA * invRho * (L_Fy * uz_t30 + L_Fz * uy_t30);
 
-        dfloat m_xx = ONETHIRD* (T_OMEGA * (2*m_xx_t45 - m_yy_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*ux_t30*ux_t30 - uy_t30*uy_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(FX*ux_t30*2 - FY*uy_t30 - FZ*uz_t30)) + invRho*FX*ux_t30;
-        dfloat m_yy = ONETHIRD* (T_OMEGA * (2*m_yy_t45 - m_xx_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uy_t30*uy_t30 - ux_t30*ux_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(FY*uy_t30*2 - FX*ux_t30 - FZ*uz_t30)) + invRho*FY*uy_t30;
-        dfloat m_zz = ONETHIRD* (T_OMEGA * (2*m_zz_t45 - m_xx_t45 - m_yy_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uz_t30*uz_t30 - ux_t30*ux_t30 - uy_t30*uy_t30) + invRho*T_OMEGA*(FZ*uz_t30*2 - FX*ux_t30 - FY*uy_t30)) + invRho*FZ*uz_t30;
+        dfloat m_xx = ONETHIRD* (T_OMEGA * (2*m_xx_t45 - m_yy_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*ux_t30*ux_t30 - uy_t30*uy_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(L_Fx*ux_t30*2 - L_Fy*uy_t30 - L_Fz*uz_t30)) + invRho*L_Fx*ux_t30;
+        dfloat m_yy = ONETHIRD* (T_OMEGA * (2*m_yy_t45 - m_xx_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uy_t30*uy_t30 - ux_t30*ux_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(L_Fy*uy_t30*2 - L_Fx*ux_t30 - L_Fz*uz_t30)) + invRho*L_Fy*uy_t30;
+        dfloat m_zz = ONETHIRD* (T_OMEGA * (2*m_zz_t45 - m_xx_t45 - m_yy_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uz_t30*uz_t30 - ux_t30*ux_t30 - uy_t30*uy_t30) + invRho*T_OMEGA*(L_Fz*uz_t30*2 - L_Fx*ux_t30 - L_Fy*uy_t30)) + invRho*L_Fz*uz_t30;
     #endif
     ux_t30 = 3 * ux;
     uy_t30 = 3 * uy;
@@ -549,6 +562,15 @@ __global__ void gpuMomCollisionStream(
     #ifdef NON_NEWTONIAN_FLUID
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 10, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
     #endif
- 
+
+
+    #ifdef LOCAL_FORCES
+    //update local forces
+    d_L_Fx[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fx;
+    d_L_Fy[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fy;
+    d_L_Fz[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fz;
+    #endif 
+
+
     #include "interfaceInclude/popSave"
 }

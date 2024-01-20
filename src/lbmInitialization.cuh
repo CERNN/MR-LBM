@@ -55,6 +55,22 @@ __global__ void gpuInitialization_pop(
     dfloat *fGhostZ_0, dfloat *fGhostZ_1);
 
 /*
+*   @brief Initialize the boundary condition node type
+*   @param nodeType: node type ID
+*/
+__global__ void gpuInitialization_nodeType(
+    unsigned char *dNodeType);
+
+/*
+*   @brief Initialize the local forces
+*   @param d_L_Fx: local force in the x direction
+*   @param d_L_Fy: local force in the y direction
+*   @param d_L_Fz: local force in the z direction
+*/
+__global__ void gpuInitialization_force(
+    dfloat *d_L_Fx, dfloat* d_L_Fy, dfloat* d_L_Fz);   
+
+/*
 *   @brief Initializes boundary conditions based on csv with the boundary case
 *   @param filename: csv filename
 *   @param dNodeType: nodeType arrary
