@@ -199,9 +199,9 @@ void velocityInterpolation(
                     ;
 
     
-                uxVar += fMom[idxMom(posX%BLOCK_NX, posY%BLOCK_NY, posZ%BLOCK_NZ, 1, posX/BLOCK_NX, posY/BLOCK_NY, posZ/BLOCK_NZ)] * aux;
-                uyVar += fMom[idxMom(posX%BLOCK_NX, posY%BLOCK_NY, posZ%BLOCK_NZ, 2, posX/BLOCK_NX, posY/BLOCK_NY, posZ/BLOCK_NZ)] * aux;
-                uzVar += fMom[idxMom(posX%BLOCK_NX, posY%BLOCK_NY, posZ%BLOCK_NZ, 3, posX/BLOCK_NX, posY/BLOCK_NY, posZ/BLOCK_NZ)] * aux;
+                uxVar += fMom[idxMom(posX%BLOCK_NX, posY%BLOCK_NY, posZ%BLOCK_NZ, M_UX_INDEX, posX/BLOCK_NX, posY/BLOCK_NY, posZ/BLOCK_NZ)] * aux;
+                uyVar += fMom[idxMom(posX%BLOCK_NX, posY%BLOCK_NY, posZ%BLOCK_NZ, M_UY_INDEX, posX/BLOCK_NX, posY/BLOCK_NY, posZ/BLOCK_NZ)] * aux;
+                uzVar += fMom[idxMom(posX%BLOCK_NX, posY%BLOCK_NY, posZ%BLOCK_NZ, M_UZ_INDEX, posX/BLOCK_NX, posY/BLOCK_NY, posZ/BLOCK_NZ)] * aux;
             }
         }
     }

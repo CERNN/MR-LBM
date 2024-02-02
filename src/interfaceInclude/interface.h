@@ -61,7 +61,7 @@
     #define BC_Z_PERIODIC
 #endif
 
-#ifdef lidDrivenCavity_new_3D_
+#ifdef lidDrivenCavity_3D_new_
     #define BC_X_WALL
     #define BC_Y_WALL
     #define BC_Z_WALL
