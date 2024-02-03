@@ -40,7 +40,7 @@ __global__ void gpuMomCollisionStream(
     dfloat m_zz_t45   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/2;
 
     #ifdef NON_NEWTONIAN_FLUID
-    dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 10, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat t_omegaVar = 1 - omegaVar;
     dfloat tt_omegaVar = 1 - omegaVar/2;
     dfloat omegaVar_d2 = omegaVar / 2;
