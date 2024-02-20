@@ -41,4 +41,5 @@ constexpr int M_MZZ_INDEX = 9;
 
 
 
+const size_t NUMBER_MOMENTS = M_OFFSET+1;
 #endif

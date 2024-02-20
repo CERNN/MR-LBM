@@ -2,7 +2,7 @@
 #include "auxFunctions.cuh"
 
 __host__
-void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step){
+void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step, int target){
 
     dfloat* sum;
     cudaMalloc((void**)&sum, NUM_BLOCK * sizeof(dfloat));
@@ -49,10 +49,23 @@ void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step){
     
     checkCudaErrors(cudaMemcpy(&temp, sum, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
 
-    temp = (temp/(dfloat)NUMBER_LBM_NODES) - RHO_0; 
-    //printf("step %d temp %e \n ",step, temp);
-    checkCudaErrors(cudaMemcpy(meanMom, &temp, sizeof(dfloat), cudaMemcpyHostToDevice)); 
+    if (m_index == M_RHO_INDEX){
+        temp = (temp/(dfloat)NUMBER_LBM_NODES) - RHO_0; 
+    }else{
+        temp = (temp/(dfloat)NUMBER_LBM_NODES);
+    }
+                
+    if (target == 0){
+        checkCudaErrors(cudaMemcpy(meanMom, &temp, sizeof(dfloat), cudaMemcpyHostToDevice)); 
+    }
+    else{
+        checkCudaErrors(cudaMemcpy(meanMom, &temp, sizeof(dfloat), cudaMemcpyHostToHost)); 
+    }
+
+
     cudaFree(sum);
+
+
     
 }
 

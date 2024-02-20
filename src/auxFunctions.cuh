@@ -26,9 +26,10 @@
 *   @param meanMon: meanMoment for return
 *   @param m_index: moment_index
 *   @param step: current time step
+*   @param target: 0 if meanMom is a device pointer, 1 if is host
 */
 __host__
-void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step);
+void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step, int target);
 
 
 /*

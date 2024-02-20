@@ -80,6 +80,9 @@ constexpr dfloat ONESIXTH = 1.0/6.0;
 constexpr dfloat ONETHIRD = 1.0/3.0;
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
+#include  "arrayIndex.h"
+
+
 #define BLOCK_NX 8
 #define BLOCK_NY 8
 #ifdef SINGLE_PRECISION //some easy fix so doesnt forget to change size when changing float size
@@ -109,13 +112,15 @@ const size_t NUMBER_GHOST_FACE_XY = BLOCK_NX*BLOCK_NY*NUM_BLOCK_X*NUM_BLOCK_Y*NU
 const size_t NUMBER_GHOST_FACE_XZ = BLOCK_NX*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 const size_t NUMBER_GHOST_FACE_YZ = BLOCK_NY*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 
-#define MOMENT_ORDER (1+2)
-#ifdef NON_NEWTONIAN_FLUID
-const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6 + 1;
-#endif
-#ifndef NON_NEWTONIAN_FLUID
-const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6;
-#endif
+//#define MOMENT_ORDER (1+2)
+//#ifdef NON_NEWTONIAN_FLUID
+//const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6 + 1;
+//#endif
+//#ifndef NON_NEWTONIAN_FLUID
+//const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6;
+//#endif
+
+
 
 
 const size_t MEM_SIZE_BLOCK_LBM = sizeof(dfloat) * BLOCK_LBM_SIZE * NUMBER_MOMENTS;
@@ -188,7 +193,7 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 
 
 
-#include  "arrayIndex.h"
+
 
 
 

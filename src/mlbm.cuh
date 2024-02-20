@@ -44,9 +44,9 @@ void gpuMomCollisionStream(
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif
-    #ifdef LOCAL_FORCES
-    dfloat *d_L_Fx,dfloat *d_L_Fy,dfloat *d_L_Fz,
-    #endif 
+    //#ifdef LOCAL_FORCES
+    //dfloat *d_L_Fx,dfloat *d_L_Fy,dfloat *d_L_Fz,
+    //#endif 
     unsigned int step);
 
 

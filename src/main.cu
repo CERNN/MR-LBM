@@ -84,9 +84,13 @@ int main() {
     #endif
 
     #ifdef LOCAL_FORCES
-        dfloat* d_L_Fx;
-        dfloat* d_L_Fy;
-        dfloat* d_L_Fz;
+        dfloat* h_L_Fx;
+        dfloat* h_L_Fy;
+        dfloat* h_L_Fz;
+
+        dfloat* sum_L_Fx;
+        dfloat* sum_L_Fy;
+        dfloat* sum_L_Fz;
     #endif //_LOCAL_FORCES
 
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
@@ -122,10 +126,15 @@ int main() {
         checkCudaErrors(cudaMallocHost((void**)&(m_uy), MEM_SIZE_SCALAR));
         checkCudaErrors(cudaMallocHost((void**)&(m_uz), MEM_SIZE_SCALAR));
     #endif
-        #ifdef LOCAL_FORCES
-        checkCudaErrors(cudaMallocHost((void**)&(d_L_Fx), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(d_L_Fy), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(d_L_Fz), MEM_SIZE_SCALAR));
+    #ifdef LOCAL_FORCES
+        checkCudaErrors(cudaMallocHost((void**)&(h_L_Fx), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(h_L_Fy), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(h_L_Fz), MEM_SIZE_SCALAR));
+
+        checkCudaErrors(cudaMallocHost((void**)&(sum_L_Fx), sizeof(dfloat)));
+        checkCudaErrors(cudaMallocHost((void**)&(sum_L_Fy), sizeof(dfloat)));
+        checkCudaErrors(cudaMallocHost((void**)&(sum_L_Fz), sizeof(dfloat)));
+        
     #endif //_LOCAL_FORCES
     randomNumbers = (float**)malloc(sizeof(float*));
 
@@ -160,15 +169,8 @@ int main() {
     checkCudaErrors(cudaMalloc((void**)&(d_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
     #endif
 
-    #ifdef LOCAL_FORCES
-        cudaMalloc((void**)&d_L_Fx, MEM_SIZE_SCALAR);    
-        cudaMalloc((void**)&d_L_Fy, MEM_SIZE_SCALAR);    
-        cudaMalloc((void**)&d_L_Fz, MEM_SIZE_SCALAR);    
-    #endif //_LOCAL_FORCES
-
     //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
     
-
 
     cudaStream_t streamsLBM[1];
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
@@ -242,9 +244,9 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());  
     #endif
 
-    #ifdef LOCAL_FORCES
-    gpuInitialization_force << <gridBlock, threadBlock >> >(d_L_Fx,d_L_Fy,d_L_Fz);
-    #endif //_LOCAL_FORCES
+    //#ifdef LOCAL_FORCES
+    //gpuInitialization_force << <gridBlock, threadBlock >> >(d_L_Fx,d_L_Fy,d_L_Fz);
+    //#endif //_LOCAL_FORCES
 
     //printf("Interface Populations initialized \n");if(console_flush){fflush(stdout);}
     checkCudaErrors(cudaDeviceSynchronize());
@@ -278,6 +280,11 @@ int main() {
     #if SAVE_BC
     nodeTypeSave,
     hNodeType,
+    #endif
+    #ifdef LOCAL_FORCES
+    h_L_Fx,
+    h_L_Fy,
+    h_L_Fz,
     #endif
     step);
 
@@ -333,13 +340,13 @@ int main() {
         #ifdef DENSITY_CORRECTION
         d_mean_rho,
         #endif
-        #ifdef LOCAL_FORCES
-        d_L_Fx,d_L_Fy,d_L_Fz,
-        #endif 
+        //#ifdef LOCAL_FORCES
+        //d_L_Fx,d_L_Fy,d_L_Fz,
+        //#endif 
         step); 
 
         #ifdef DENSITY_CORRECTION
-            mean_moment(fMom,d_mean_rho,0,step);
+            mean_moment(fMom,d_mean_rho,M_RHO_INDEX,step,0);
         #endif
         #ifdef PARTICLE_TRACER
             checkCudaErrors(cudaDeviceSynchronize());
@@ -416,6 +423,11 @@ int main() {
                     nodeTypeSave,
                     hNodeType,
                     #endif
+                    #ifdef LOCAL_FORCES
+                    h_L_Fx,
+                    h_L_Fy,
+                    h_L_Fz,
+                    #endif
                     step); 
 
                     printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
@@ -428,9 +440,23 @@ int main() {
                     #if SAVE_BC
                     nodeTypeSave,
                     #endif
+                    #ifdef LOCAL_FORCES
+                    h_L_Fx,
+                    h_L_Fy,
+                    h_L_Fz,
+                    #endif
                     step);
                 //}
             //}
+
+            #ifdef LOCAL_FORCES
+                mean_moment(fMom,sum_L_Fx,M_FX_INDEX,step,1);
+                mean_moment(fMom,sum_L_Fy,M_FY_INDEX,step,1);
+                mean_moment(fMom,sum_L_Fz,M_FZ_INDEX,step,1);
+
+                //printf("Fx: %e Fy: %e Fz: %e \n", sum_L_Fx[0],sum_L_Fy[0],sum_L_Fz[0]);
+            #endif
+
         }
 
     } // end of the loop
@@ -444,6 +470,11 @@ int main() {
             nodeTypeSave,
             hNodeType,
             #endif
+            #ifdef LOCAL_FORCES
+            h_L_Fx,
+            h_L_Fy,
+            h_L_Fz,
+            #endif
             step); 
             if(console_flush){fflush(stdout);}
             saveMacr(rho,ux,uy,uz,
@@ -452,6 +483,11 @@ int main() {
             #endif
             #if SAVE_BC
             nodeTypeSave,
+            #endif
+            #ifdef LOCAL_FORCES
+            h_L_Fx,
+            h_L_Fy,
+            h_L_Fz,
             #endif
             step);
 
@@ -484,6 +520,11 @@ int main() {
             nodeTypeSave,
             hNodeType,
             #endif
+            #ifdef LOCAL_FORCES
+            h_L_Fx,
+            h_L_Fy,
+            h_L_Fz,
+            #endif
             INT_MAX); 
             saveMacr(m_rho,m_ux,m_uy,m_uz,
             #ifdef NON_NEWTONIAN_FLUID
@@ -491,6 +532,11 @@ int main() {
             #endif
             #if SAVE_BC
             nodeTypeSave,
+            #endif
+            #ifdef LOCAL_FORCES
+            h_L_Fx,
+            h_L_Fy,
+            h_L_Fz,
             #endif
             INT_MAX);
     #endif

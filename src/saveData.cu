@@ -432,6 +432,11 @@ void linearMacr(
     dfloat* nodeTypeSave,
     unsigned char* hNodeType,
     #endif
+    #ifdef LOCAL_FORCES
+    dfloat* h_L_Fx,
+    dfloat* h_L_Fy,
+    dfloat* h_L_Fz,
+    #endif
     unsigned int step
 ){
     size_t indexMacr;
@@ -455,6 +460,12 @@ void linearMacr(
                 #endif
                 //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
                 //meanRho += rho[indexMacr];
+
+                #ifdef LOCAL_FORCES
+                h_L_Fx[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_FX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                h_L_Fy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_FY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                h_L_Fz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_FZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
             }
         }
     }
@@ -473,10 +484,18 @@ void saveMacr(
     #if SAVE_BC
     dfloat* nodeTypeSave,
     #endif
+    #ifdef LOCAL_FORCES
+    dfloat* h_L_Fx,
+    dfloat* h_L_Fy,
+    dfloat* h_L_Fz,
+    #endif
     unsigned int nSteps
 ){
 // Names of files
-    std::string strFileRho, strFileUx, strFileUy, strFileUz, strFileOmega, strFileBc;
+    std::string strFileRho, strFileUx, strFileUy, strFileUz;
+    std::string strFileOmega;
+    std::string strFileBc; 
+    std::string strFileFx, strFileFy, strFileFz;
 
     strFileRho = getVarFilename("rho", nSteps, ".bin");
     strFileUx = getVarFilename("ux", nSteps, ".bin");
@@ -488,6 +507,11 @@ void saveMacr(
     #if SAVE_BC
     strFileBc = getVarFilename("bc", nSteps, ".bin");
     #endif
+    #ifdef LOCAL_FORCES
+    strFileFx = getVarFilename("fx", nSteps, ".bin");
+    strFileFy = getVarFilename("fy", nSteps, ".bin");
+    strFileFz = getVarFilename("fz", nSteps, ".bin");
+    #endif
     // saving files
     saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
@@ -498,6 +522,11 @@ void saveMacr(
     #endif
     #if SAVE_BC
     saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef LOCAL_FORCES
+    saveVarBin(strFileFx, h_L_Fx, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileFy, h_L_Fy, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileFz, h_L_Fz, MEM_SIZE_SCALAR, false);
     #endif
 }
 

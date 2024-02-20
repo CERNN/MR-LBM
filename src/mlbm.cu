@@ -11,9 +11,9 @@ __global__ void gpuMomCollisionStream(
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif
-    #ifdef LOCAL_FORCES
-    dfloat *d_L_Fx, dfloat *d_L_Fy, dfloat *d_L_Fz,
-    #endif 
+    //#ifdef LOCAL_FORCES
+    //dfloat *d_L_Fx, dfloat *d_L_Fy, dfloat *d_L_Fz,
+    //#endif 
     unsigned int step)
 {
     const int x = threadIdx.x + blockDim.x * blockIdx.x;
@@ -50,9 +50,9 @@ __global__ void gpuMomCollisionStream(
     #endif
 
     #ifdef LOCAL_FORCES
-    dfloat L_Fx = d_L_Fx[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat L_Fy = d_L_Fy[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat L_Fz = d_L_Fz[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     #else
     dfloat L_Fx = FX;
     dfloat L_Fy = FY;
@@ -562,15 +562,15 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 2*m_zz_t45/9;
     
     #ifdef NON_NEWTONIAN_FLUID
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 10, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
     #endif
 
 
     #ifdef LOCAL_FORCES
     //update local forces
-    d_L_Fx[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fx;
-    d_L_Fy[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fy;
-    d_L_Fz[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fz;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fx;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fy;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fz;
     #endif 
 
 

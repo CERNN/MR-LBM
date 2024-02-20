@@ -13,8 +13,28 @@ Projects:
     ✔ Using parallel reduction @done(23-09-21 14:34)
   ☐ Organize source files into folders
   ☐ Remove the duplicate arrays used for interface between blocks
+  ✔ Option for local force field @done(24-01-19 22:26)
+    ✔ Export local force field @done(24-02-20 13:38)
+    ✔ compute the sum of the force field @done(24-02-20 13:38)
+    ☐ Bugfix: Figure out why the force field is equal to zero when using LOCAL_FORCES
+    ☐ computation of force field over selected lattices.
+  ☐ Test the performance if instead of storing the populations in the shared memory, store the moments, which can be pulled and used to reconstructed the populations
+      %it will increase the number of arithmetic operations, however the shared memory array will use 10 scalars per lattice instead of the 18 populations
+      %allowing to use a higher block size than orginally planned. The performance might be benefical when using a D3Q27 velocity set since the reduced from to 26 to 10 scalars per lattice.
+  ☐ test perfomance Z-curve array pattern for indexing within the same block structure
+  ☐ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ...
+
+
 
   ☐ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char)
+  ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
+    ☐ Edit local force field to moment array
+    ☐ change the name moment array to something more descreptive
+
+  ✔ higher shared memory size for cuda compute 8.0+ (requires dynamic shared memory which has worse performance 70% of original @done(24-01-19 22:27)
+    ☐ find a way to compute the best block size on runtime
+    ☐ allocatate the correct ammount of shared memory based on the blockSize
+
 
   ☐ Incorporate thermal model
   ☐ Incorporate LES model
@@ -22,11 +42,9 @@ Projects:
   ☐ Incorporate IBM
   ☐ Curved boundary conditions
   ☐ Moving boudnary conditions (e.g. moving particles using voxels)
-  ☐ Multi Block Implementation (Multi GPU)
-
+  ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
+  ☐ Implementation of DDF-Shift (density is done)
 
 
 
 Archive:\
-✘ higher shared memory size for cuda compute 8.0+ (requires dynamic shared memory which has worse performance 70% of original
-                                                ✘  only situation it might be usefull if memory is a contraint which could free some memory due to bigger blocks) @cancelled(23-11-19 18:39)
