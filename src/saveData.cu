@@ -432,10 +432,10 @@ void linearMacr(
     dfloat* nodeTypeSave,
     unsigned char* hNodeType,
     #endif
-    #ifdef LOCAL_FORCES
-    dfloat* h_L_Fx,
-    dfloat* h_L_Fy,
-    dfloat* h_L_Fz,
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    dfloat* h_BC_Fx,
+    dfloat* h_BC_Fy,
+    dfloat* h_BC_Fz,
     #endif
     unsigned int step
 ){
@@ -456,19 +456,45 @@ void linearMacr(
                 #endif
                 
                 #if SAVE_BC
-                nodeTypeSave[indexMacr] = (dfloat)hNodeType[idxNodeType(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
+                nodeTypeSave[indexMacr] = (dfloat)hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
                 //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
                 //meanRho += rho[indexMacr];
-
-                #ifdef LOCAL_FORCES
-                h_L_Fx[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_FX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                h_L_Fy[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_FY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                h_L_Fz[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_FZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                #endif
             }
         }
     }
+
+
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+        dfloat* temp_x; 
+        dfloat* temp_y;
+        dfloat* temp_z;
+        checkCudaErrors(cudaMallocHost((void**)&(temp_x), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(temp_y), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(temp_z), MEM_SIZE_SCALAR));
+
+
+        for(int z = 0; z< NZ;z++){
+            for(int y = 0; y< NY;y++){
+                for(int x = 0; x< NX;x++){
+                    indexMacr = idxScalarGlobal(x,y,z);
+                    temp_x[indexMacr] = h_BC_Fx[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                    temp_y[indexMacr] = h_BC_Fy[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                    temp_z[indexMacr] = h_BC_Fz[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                }
+            }
+        }
+
+        checkCudaErrors(cudaMemcpy(h_BC_Fx, temp_x, MEM_SIZE_SCALAR, cudaMemcpyHostToHost));
+        checkCudaErrors(cudaMemcpy(h_BC_Fy, temp_y, MEM_SIZE_SCALAR, cudaMemcpyHostToHost));
+        checkCudaErrors(cudaMemcpy(h_BC_Fz, temp_z, MEM_SIZE_SCALAR, cudaMemcpyHostToHost));
+
+
+        cudaFreeHost(temp_x);
+        cudaFreeHost(temp_y);
+        cudaFreeHost(temp_z);
+    #endif
+
 }
 
 
@@ -484,10 +510,10 @@ void saveMacr(
     #if SAVE_BC
     dfloat* nodeTypeSave,
     #endif
-    #ifdef LOCAL_FORCES
-    dfloat* h_L_Fx,
-    dfloat* h_L_Fy,
-    dfloat* h_L_Fz,
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    dfloat* h_BC_Fx,
+    dfloat* h_BC_Fy,
+    dfloat* h_BC_Fz,
     #endif
     unsigned int nSteps
 ){
@@ -507,7 +533,7 @@ void saveMacr(
     #if SAVE_BC
     strFileBc = getVarFilename("bc", nSteps, ".bin");
     #endif
-    #ifdef LOCAL_FORCES
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
     strFileFx = getVarFilename("fx", nSteps, ".bin");
     strFileFy = getVarFilename("fy", nSteps, ".bin");
     strFileFz = getVarFilename("fz", nSteps, ".bin");
@@ -523,10 +549,10 @@ void saveMacr(
     #if SAVE_BC
     saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
     #endif
-    #ifdef LOCAL_FORCES
-    saveVarBin(strFileFx, h_L_Fx, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFy, h_L_Fy, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFz, h_L_Fz, MEM_SIZE_SCALAR, false);
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
     #endif
 }
 

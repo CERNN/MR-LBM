@@ -11,10 +11,11 @@ __global__ void gpuMomCollisionStream(
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif
-    //#ifdef LOCAL_FORCES
-    //dfloat *d_L_Fx, dfloat *d_L_Fy, dfloat *d_L_Fz,
-    //#endif 
-    unsigned int step)
+    #ifdef BC_FORCES
+    dfloat *d_BC_Fx, dfloat *d_BC_Fy, dfloat *d_BC_Fz,
+    #endif 
+    unsigned int step,
+    bool save)
 {
     const int x = threadIdx.x + blockDim.x * blockIdx.x;
     const int y = threadIdx.y + blockDim.y * blockIdx.y;
@@ -26,7 +27,7 @@ __global__ void gpuMomCollisionStream(
     // Load moments from global memory
 
     //rho'
-    unsigned char nodeType = dNodeType[idxNodeType(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
+    unsigned char nodeType = dNodeType[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
     if (nodeType == 0b11111111)  return;
     dfloat rhoVar = RHO_0 + fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_RHO_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat ux_t30     = 3*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -49,15 +50,17 @@ __global__ void gpuMomCollisionStream(
     dfloat omegaVar = OMEGA;
     #endif
 
-    #ifdef LOCAL_FORCES
-    dfloat L_Fx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat L_Fy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat L_Fz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    #else
-    dfloat L_Fx = FX;
-    dfloat L_Fy = FY;
-    dfloat L_Fz = FZ;
-    #endif 
+    //Local forces
+    const dfloat L_Fx = FX;
+    const dfloat L_Fy = FY;
+    const dfloat L_Fz = FZ;
+
+    #ifdef BC_FORCES
+    dfloat L_BC_Fx = 0.0;
+    dfloat L_BC_Fy = 0.0;
+    dfloat L_BC_Fz = 0.0;
+    #endif
+
 
     dfloat pics2;
     #ifndef HIGH_ORDER_COLLISION
@@ -566,12 +569,15 @@ __global__ void gpuMomCollisionStream(
     #endif
 
 
-    #ifdef LOCAL_FORCES
-    //update local forces
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fx;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fy;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  L_Fz;
-    #endif 
+    if(save){
+        #ifdef BC_FORCES
+        //update local forces
+        d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = L_BC_Fx;
+        d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = L_BC_Fy;
+        d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = L_BC_Fz; 
+        #endif 
+    }
+
 
 
     #include "interfaceInclude/popSave"

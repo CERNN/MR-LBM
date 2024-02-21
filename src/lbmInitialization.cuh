@@ -61,14 +61,14 @@ __global__ void gpuInitialization_pop(
 __global__ void gpuInitialization_nodeType(
     unsigned char *dNodeType);
 
-///*
-//*   @brief Initialize the local forces
-//*   @param d_L_Fx: local force in the x direction
-//*   @param d_L_Fy: local force in the y direction
-//*   @param d_L_Fz: local force in the z direction
-//*/
-//__global__ void gpuInitialization_force(
-//    dfloat *d_L_Fx, dfloat* d_L_Fy, dfloat* d_L_Fz);   
+/*
+*   @brief Initialize the local forces
+*   @param d_L_Fx: local force in the x direction
+*   @param d_L_Fy: local force in the y direction
+*   @param d_L_Fz: local force in the z direction
+*/
+__global__ void gpuInitialization_force(
+    dfloat *d_BC_Fx, dfloat* d_BC_Fy, dfloat* d_BC_Fz);   
 
 /*
 *   @brief Initializes boundary conditions based on csv with the boundary case

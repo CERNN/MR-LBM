@@ -91,10 +91,10 @@ void linearMacr(
     dfloat* nodeTypeSave,
     unsigned char* hNodeType,
     #endif
-    #ifdef LOCAL_FORCES
-    dfloat* h_L_Fx,
-    dfloat* h_L_Fy,
-    dfloat* h_L_Fz,
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    dfloat* h_BC_Fx,
+    dfloat* h_BC_Fy,
+    dfloat* h_BC_Fz,
     #endif
     unsigned int step
 );
@@ -122,10 +122,10 @@ void saveMacr(
     #if SAVE_BC
     dfloat* nodeTypeSave,
     #endif
-    #ifdef LOCAL_FORCES
-    dfloat* h_L_Fx,
-    dfloat* h_L_Fy,
-    dfloat* h_L_Fz,
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    dfloat* h_BC_Fx,
+    dfloat* h_BC_Fy,
+    dfloat* h_BC_Fz,
     #endif
     unsigned int nSteps
 );

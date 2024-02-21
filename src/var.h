@@ -52,7 +52,8 @@
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
 
-//#define LOCAL_FORCES //create a local force field for the domain;
+#define BC_FORCES //create scalar field to export the reaction forces from BC;
+//#define SAVE_BC_FORCES // define if it will export BC force field to bin
 
 constexpr bool console_flush = false;
 

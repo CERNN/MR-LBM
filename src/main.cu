@@ -83,15 +83,17 @@ int main() {
         dfloat* m_uz;
     #endif
 
-    #ifdef LOCAL_FORCES
-        dfloat* h_L_Fx;
-        dfloat* h_L_Fy;
-        dfloat* h_L_Fz;
+    #ifdef BC_FORCES
+        #ifdef SAVE_BC_FORCES
+        dfloat* h_BC_Fx;
+        dfloat* h_BC_Fy;
+        dfloat* h_BC_Fz;
+        #endif
 
-        dfloat* sum_L_Fx;
-        dfloat* sum_L_Fy;
-        dfloat* sum_L_Fz;
-    #endif //_LOCAL_FORCES
+        dfloat* d_BC_Fx;
+        dfloat* d_BC_Fy;
+        dfloat* d_BC_Fz;
+    #endif //_BC_FORCES
 
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     dfloat* h_fMom;
@@ -126,16 +128,13 @@ int main() {
         checkCudaErrors(cudaMallocHost((void**)&(m_uy), MEM_SIZE_SCALAR));
         checkCudaErrors(cudaMallocHost((void**)&(m_uz), MEM_SIZE_SCALAR));
     #endif
-    #ifdef LOCAL_FORCES
-        checkCudaErrors(cudaMallocHost((void**)&(h_L_Fx), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(h_L_Fy), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(h_L_Fz), MEM_SIZE_SCALAR));
-
-        checkCudaErrors(cudaMallocHost((void**)&(sum_L_Fx), sizeof(dfloat)));
-        checkCudaErrors(cudaMallocHost((void**)&(sum_L_Fy), sizeof(dfloat)));
-        checkCudaErrors(cudaMallocHost((void**)&(sum_L_Fz), sizeof(dfloat)));
-        
-    #endif //_LOCAL_FORCES
+    #ifdef BC_FORCES
+        #ifdef SAVE_BC_FORCES
+        checkCudaErrors(cudaMallocHost((void**)&(h_BC_Fx), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(h_BC_Fy), MEM_SIZE_SCALAR));
+        checkCudaErrors(cudaMallocHost((void**)&(h_BC_Fz), MEM_SIZE_SCALAR));
+        #endif
+    #endif //_BC_FORCES
     randomNumbers = (float**)malloc(sizeof(float*));
 
 
@@ -169,6 +168,11 @@ int main() {
     checkCudaErrors(cudaMalloc((void**)&(d_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
     #endif
 
+    #ifdef BC_FORCES
+        cudaMalloc((void**)&d_BC_Fx, MEM_SIZE_SCALAR);    
+        cudaMalloc((void**)&d_BC_Fy, MEM_SIZE_SCALAR);    
+        cudaMalloc((void**)&d_BC_Fz, MEM_SIZE_SCALAR);            
+    #endif //_BC_FORCES
     //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
     
 
@@ -244,9 +248,9 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());  
     #endif
 
-    //#ifdef LOCAL_FORCES
-    //gpuInitialization_force << <gridBlock, threadBlock >> >(d_L_Fx,d_L_Fy,d_L_Fz);
-    //#endif //_LOCAL_FORCES
+    #ifdef BC_FORCES
+    gpuInitialization_force << <gridBlock, threadBlock >> >(d_BC_Fx,d_BC_Fy,d_BC_Fz);
+    #endif //_BC_FORCES
 
     //printf("Interface Populations initialized \n");if(console_flush){fflush(stdout);}
     checkCudaErrors(cudaDeviceSynchronize());
@@ -281,12 +285,12 @@ int main() {
     nodeTypeSave,
     hNodeType,
     #endif
-    #ifdef LOCAL_FORCES
-    h_L_Fx,
-    h_L_Fy,
-    h_L_Fz,
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    h_BC_Fx,
+    h_BC_Fy,
+    h_BC_Fz,
     #endif
-    step);
+    step); 
 
     // Free random numbers
     if (RANDOM_NUMBERS) {
@@ -340,10 +344,11 @@ int main() {
         #ifdef DENSITY_CORRECTION
         d_mean_rho,
         #endif
-        //#ifdef LOCAL_FORCES
-        //d_L_Fx,d_L_Fy,d_L_Fz,
-        //#endif 
-        step); 
+        #ifdef BC_FORCES
+        d_BC_Fx,d_BC_Fy,d_BC_Fz,
+        #endif 
+        step,
+        save); 
 
         #ifdef DENSITY_CORRECTION
             mean_moment(fMom,d_mean_rho,M_RHO_INDEX,step,0);
@@ -410,6 +415,12 @@ int main() {
             velocityProfile(fMom,6,step);
             #endif
             
+            #if defined BC_FORCES && defined SAVE_BC_FORCES
+            checkCudaErrors(cudaDeviceSynchronize()); 
+            checkCudaErrors(cudaMemcpy(h_BC_Fx, d_BC_Fx, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+            checkCudaErrors(cudaMemcpy(h_BC_Fy, d_BC_Fy, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+            checkCudaErrors(cudaMemcpy(h_BC_Fz, d_BC_Fz, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+            #endif
             //if (!(step%((int)turn_over_time/10))){
             //if((step>N_STEPS-25*(int)(turn_over_time))){ 
             //    if((step%((int)(turn_over_time/2))) == 0){
@@ -423,10 +434,10 @@ int main() {
                     nodeTypeSave,
                     hNodeType,
                     #endif
-                    #ifdef LOCAL_FORCES
-                    h_L_Fx,
-                    h_L_Fy,
-                    h_L_Fz,
+                    #if defined BC_FORCES && defined SAVE_BC_FORCES
+                    h_BC_Fx,
+                    h_BC_Fy,
+                    h_BC_Fz,
                     #endif
                     step); 
 
@@ -440,10 +451,10 @@ int main() {
                     #if SAVE_BC
                     nodeTypeSave,
                     #endif
-                    #ifdef LOCAL_FORCES
-                    h_L_Fx,
-                    h_L_Fy,
-                    h_L_Fz,
+                    #if defined BC_FORCES && defined SAVE_BC_FORCES
+                    h_BC_Fx,
+                    h_BC_Fy,
+                    h_BC_Fz,
                     #endif
                     step);
                 //}
@@ -462,34 +473,44 @@ int main() {
     } // end of the loop
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-            linearMacr(h_fMom,rho,ux,uy,uz,
-            #ifdef NON_NEWTONIAN_FLUID
-            omega,
-            #endif
-            #if SAVE_BC
-            nodeTypeSave,
-            hNodeType,
-            #endif
-            #ifdef LOCAL_FORCES
-            h_L_Fx,
-            h_L_Fy,
-            h_L_Fz,
-            #endif
-            step); 
-            if(console_flush){fflush(stdout);}
-            saveMacr(rho,ux,uy,uz,
-            #ifdef NON_NEWTONIAN_FLUID
-            omega,
-            #endif
-            #if SAVE_BC
-            nodeTypeSave,
-            #endif
-            #ifdef LOCAL_FORCES
-            h_L_Fx,
-            h_L_Fy,
-            h_L_Fz,
-            #endif
-            step);
+
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    checkCudaErrors(cudaDeviceSynchronize()); 
+    checkCudaErrors(cudaMemcpy(h_BC_Fx, d_BC_Fx, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy(h_BC_Fy, d_BC_Fy, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+    checkCudaErrors(cudaMemcpy(h_BC_Fz, d_BC_Fz, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+    #endif
+
+    linearMacr(h_fMom,rho,ux,uy,uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    omega,
+    #endif
+    #if SAVE_BC
+    nodeTypeSave,
+    hNodeType,
+    #endif
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    h_BC_Fx,
+    h_BC_Fy,
+    h_BC_Fz,
+    #endif
+    step); 
+
+    if(console_flush){fflush(stdout);}
+    
+    saveMacr(rho,ux,uy,uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    omega,
+    #endif
+    #if SAVE_BC
+    nodeTypeSave,
+    #endif
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    h_BC_Fx,
+    h_BC_Fy,
+    h_BC_Fz,
+    #endif
+    step);
 
     #ifdef PARTICLE_TRACER
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
@@ -512,7 +533,7 @@ int main() {
     }
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
-            linearMacr(m_fMom,m_rho,m_ux,m_uy,m_uz,
+            linearMacr(h_fMom,rho,ux,uy,uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
@@ -520,12 +541,13 @@ int main() {
             nodeTypeSave,
             hNodeType,
             #endif
-            #ifdef LOCAL_FORCES
-            h_L_Fx,
-            h_L_Fy,
-            h_L_Fz,
+            #if defined BC_FORCES && defined SAVE_BC_FORCES
+            h_BC_Fx,
+            h_BC_Fy,
+            h_BC_Fz,
             #endif
             INT_MAX); 
+
             saveMacr(m_rho,m_ux,m_uy,m_uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
@@ -533,10 +555,10 @@ int main() {
             #if SAVE_BC
             nodeTypeSave,
             #endif
-            #ifdef LOCAL_FORCES
-            h_L_Fx,
-            h_L_Fy,
-            h_L_Fz,
+            #if defined BC_FORCES && defined SAVE_BC_FORCES
+            h_BC_Fx,
+            h_BC_Fy,
+            h_BC_Fz,
             #endif
             INT_MAX);
     #endif

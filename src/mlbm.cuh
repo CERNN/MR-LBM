@@ -31,6 +31,12 @@
 *   @param gGhostY_1: populations to be saved when threadIdx.y == NY-1
 *   @param gGhostZ_0: populations to be saved when threadIdx.z == 0
 *   @param gGhostZ_1: populations to be saved when threadIdx.z == NZ-1
+*   @param d_mean_rho: mean density, used for density correction
+*   @param d_BC_Fx: boundary condition force x
+*   @param d_BC_Fy: boundary condition force x
+*   @param d_BC_Fz: boundary condition force x
+*   @param step: current time step
+*   @param save: if is necessary save some data
 */
 __global__
 void gpuMomCollisionStream(
@@ -44,10 +50,11 @@ void gpuMomCollisionStream(
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif
-    //#ifdef LOCAL_FORCES
-    //dfloat *d_L_Fx,dfloat *d_L_Fy,dfloat *d_L_Fz,
-    //#endif 
-    unsigned int step);
+    #ifdef BC_FORCES
+    dfloat *d_BC_Fx,dfloat *d_BC_Fy,dfloat *d_BC_Fz,
+    #endif 
+    unsigned int step,
+    bool save);
 
 
 #endif __MLBM_H

@@ -132,7 +132,7 @@ __host__ __device__
 
 __host__ __device__
     size_t __forceinline__
-    idxNodeType(
+    idxScalarBlock(
         const int tx,
         const int ty,
         const int tz,
