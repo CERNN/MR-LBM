@@ -41,4 +41,15 @@ __host__
 void totalKineticEnergy(dfloat *fMom, size_t step);
 
 
+/*
+*   @brief Calculate the total drag caused by boudary conditions
+*   @param d_BC_Fx: device boundary condition force field
+*   @param d_BC_Fy: device boundary condition force field
+*   @param d_BC_Fz: device boundary condition force field
+*   @param step: current time step
+*/
+__host__ 
+void totalBcDrag(dfloat *d_BC_Fx, dfloat* d_BC_Fy, dfloat* d_BC_Fz, size_t step);
+ 
+
 #endif // !__AUX_FUNCTION_CUH

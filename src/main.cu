@@ -460,12 +460,8 @@ int main() {
                 //}
             //}
 
-            #ifdef LOCAL_FORCES
-                mean_moment(fMom,sum_L_Fx,M_FX_INDEX,step,1);
-                mean_moment(fMom,sum_L_Fy,M_FY_INDEX,step,1);
-                mean_moment(fMom,sum_L_Fz,M_FZ_INDEX,step,1);
-
-                //printf("Fx: %e Fy: %e Fz: %e \n", sum_L_Fx[0],sum_L_Fy[0],sum_L_Fz[0]);
+            #ifdef BC_FORCES
+                totalBcDrag(d_BC_Fx, d_BC_Fy, d_BC_Fz, step);
             #endif
 
         }
