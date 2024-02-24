@@ -273,7 +273,7 @@ __global__ void gpuInitialization_pop(
 
 
 __global__ void gpuInitialization_nodeType(
-    unsigned char *dNodeType)
+    unsigned int *dNodeType)
 {
     int x = threadIdx.x + blockDim.x * blockIdx.x;
     int y = threadIdx.y + blockDim.y * blockIdx.y;
@@ -281,7 +281,7 @@ __global__ void gpuInitialization_nodeType(
     if (x >= NX || y >= NY || z >= NZ)
         return;
     
-    unsigned char nodeType;
+    unsigned int nodeType;
 
     #include BC_INIT_PATH
 
@@ -307,7 +307,7 @@ __global__ void gpuInitialization_force(
 
 __host__ void read_voxel_csv(
     const std::string& filename, 
-    unsigned char *dNodeType
+    unsigned int *dNodeType
     ){
     std::ifstream csv_file(filename);
     if (!csv_file)
@@ -317,7 +317,7 @@ __host__ void read_voxel_csv(
     }
 
     int x,y,z;
-    unsigned char nodeType;
+    unsigned int nodeType;
 
     std::string line;
     while (std::getline(csv_file, line)) {

@@ -14,7 +14,7 @@
 
 __device__ 
 void gpuBoundaryConditionMom(    
-    dfloat* pop, dfloat &rhoVar, unsigned char dNodeType,
+    dfloat* pop, dfloat &rhoVar, unsigned int dNodeType,
     dfloat &uxVar , dfloat &uyVar , dfloat &uzVar, 
     dfloat &pixx  , dfloat &pixy  , dfloat &pixz , 
     dfloat &piyy  , dfloat &piyz  , dfloat &pizz 
@@ -22,7 +22,7 @@ void gpuBoundaryConditionMom(
 
 __global__ 
 void gpuInitialization_nodeType(
-    unsigned char *dNodeType
+    unsigned int *dNodeType
 );
 
 

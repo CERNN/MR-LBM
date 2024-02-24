@@ -59,7 +59,7 @@ __global__ void gpuInitialization_pop(
 *   @param nodeType: node type ID
 */
 __global__ void gpuInitialization_nodeType(
-    unsigned char *dNodeType);
+    unsigned int *dNodeType);
 
 /*
 *   @brief Initialize the local forces

@@ -59,8 +59,8 @@ int main() {
     dfloat* h_fGhostZ_0; 
     dfloat* h_fGhostZ_1;
 
-    unsigned char* dNodeType;
-    unsigned char* hNodeType;
+    unsigned int* dNodeType;
+    unsigned int* hNodeType;
     #if SAVE_BC
     dfloat* nodeTypeSave;
     #endif
@@ -144,7 +144,7 @@ int main() {
     /* -------------- ALLOCATION AND CONFIGURATION FOR EACH GPU ------------- */
 
     cudaMalloc((void**)&fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS);  
-    cudaMalloc((void**)&dNodeType, sizeof(char) * NUMBER_LBM_NODES);  
+    cudaMalloc((void**)&dNodeType, sizeof(int) * NUMBER_LBM_NODES);  
 
     cudaMalloc((void**)&fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
     cudaMalloc((void**)&fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF);    
@@ -233,18 +233,18 @@ int main() {
         //initialize mean moments
         checkCudaErrors(cudaMemcpy(fMom, m_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyHostToDevice));
     #endif
-    checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned char) * NUMBER_LBM_NODES));
+    checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned int) * NUMBER_LBM_NODES));
     #if SAVE_BC
     checkCudaErrors(cudaMallocHost((void**)&(nodeTypeSave), sizeof(dfloat) * NUMBER_LBM_NODES));
     #endif 
 
-    #ifndef voxel_
+    #ifndef VOXEL_FILENAME
     gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
     checkCudaErrors(cudaDeviceSynchronize());
     #endif
-    #ifdef voxel_
+    #ifdef VOXEL_FILENAME
     read_voxel_csv(VOXEL_FILENAME,hNodeType);
-    checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned char) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
+    checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
     checkCudaErrors(cudaDeviceSynchronize());  
     #endif
 

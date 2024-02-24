@@ -430,7 +430,7 @@ void linearMacr(
     #endif
     #if SAVE_BC
     dfloat* nodeTypeSave,
-    unsigned char* hNodeType,
+    unsigned int* hNodeType,
     #endif
     #if defined BC_FORCES && defined SAVE_BC_FORCES
     dfloat* h_BC_Fx,
