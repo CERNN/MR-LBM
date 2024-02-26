@@ -239,8 +239,11 @@ int main() {
     #endif 
 
     #ifndef VOXEL_FILENAME
-    gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
-    checkCudaErrors(cudaDeviceSynchronize());
+    //gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
+    //checkCudaErrors(cudaDeviceSynchronize());
+        hostInitialization_nodeType(hNodeType);
+        checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
+        checkCudaErrors(cudaDeviceSynchronize());
     #endif
     #ifdef VOXEL_FILENAME
         read_voxel_csv(VOXEL_FILENAME,hNodeType);

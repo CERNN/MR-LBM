@@ -62,6 +62,14 @@ __global__ void gpuInitialization_nodeType(
     unsigned int *dNodeType);
 
 /*
+*   @brief Initialize the boundary condition node type
+*   @param nodeType: node type ID
+*/
+__host__ void hostInitialization_nodeType(
+    unsigned int *hNodeType);
+
+
+/*
 *   @brief Initialize the local forces
 *   @param d_L_Fx: local force in the x direction
 *   @param d_L_Fy: local force in the y direction

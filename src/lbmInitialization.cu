@@ -305,6 +305,26 @@ __global__ void gpuInitialization_force(
     d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0; 
 }
 
+
+__host__ void hostInitialization_nodeType(
+    unsigned int *hNodeType)
+{
+    int x,y,z;
+    unsigned int nodeType;
+
+    for (x = 0; x<NX;x++){
+        for (y = 0; y<NY;y++){
+            for (z = 0; z<NZ_TOTAL;z++){
+                #include BC_INIT_PATH
+                hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned int)nodeType;
+            }
+        }
+    }
+
+    printf("boundary condition done");
+}
+
+
 __host__ void read_voxel_csv(
     const std::string& filename, 
     unsigned int *dNodeType
