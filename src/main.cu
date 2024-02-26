@@ -243,9 +243,9 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
     #endif
     #ifdef VOXEL_FILENAME
-    read_voxel_csv(VOXEL_FILENAME,hNodeType);
-    checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
-    checkCudaErrors(cudaDeviceSynchronize());  
+        read_voxel_csv(VOXEL_FILENAME,hNodeType);
+        checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
+        checkCudaErrors(cudaDeviceSynchronize());
     #endif
 
     #ifdef BC_FORCES

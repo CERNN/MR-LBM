@@ -325,19 +325,20 @@ __host__ void read_voxel_csv(
         std::string field;
 
         std::getline(ss, field, ',');
-        x = std::stoi(field);
+        x = std::stoul(field);
 
         std::getline(ss, field, ',');
-        y = std::stoi(field);
+        y = std::stoul(field);
 
         std::getline(ss, field, ',');
-        z = std::stoi(field);
+        z = std::stoul(field);
 
         std::getline(ss, field, ',');
-        nodeType = std::stoi(field);
+        nodeType = std::stoul(field);
 
+        #include BC_INIT_PATH
 
-        dNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned char)nodeType;
+        dNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned int)nodeType;
 
     }
 
