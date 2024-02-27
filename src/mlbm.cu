@@ -40,8 +40,12 @@ __global__ void gpuMomCollisionStream(
     dfloat m_yz_t90   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat m_zz_t45   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/2;
 
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
+        #ifdef NON_NEWTONIAN_FLUID
+            dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        #else
+            dfloat omegaVar = OMEGA;
+        #endif
     dfloat t_omegaVar = 1 - omegaVar;
     dfloat tt_omegaVar = 1 - omegaVar/2;
     dfloat omegaVar_d2 = omegaVar / 2;
@@ -333,7 +337,7 @@ __global__ void gpuMomCollisionStream(
 
 
     // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
-    #ifdef NON_NEWTONIAN_FLUID
+    #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
 
     const dfloat S_XX = rhoVar * (m_xx_t45 - ux_t30*ux_t30);
     const dfloat S_YY = rhoVar * (m_yy_t45 - uy_t30*uy_t30);
@@ -352,22 +356,27 @@ __global__ void gpuMomCollisionStream(
     const dfloat auxStressMag = sqrt(0.5 * (
         (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
         2 * ((S_XY + uFxyd2) * (S_XY + uFxyd2) + (S_XZ + uFxzd2) * (S_XZ + uFxzd2) + (S_YZ + uFyzd2) * (S_YZ + uFyzd2))));
+        #ifdef NON_NEWTONIAN_FLUID
+            /*
+            dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
+            dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
+            eta = VISC + S_Y/gamma_dot;
+            omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
+            */
 
-    /*
-    dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
-    dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
-    eta = VISC + S_Y/gamma_dot;
-    omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
-    */
+            omegaVar = calcOmega(omegaVar, auxStressMag);
+            #endif//  NON_NEWTONIAN_FLUID
+        #ifdef LES_MODEL
+            dfloat tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
+            dfloat visc_turb_var = tau_t/3.0;
 
-    omegaVar = calcOmega(omegaVar, auxStressMag);
-
-    t_omegaVar = 1 - omegaVar;
-    tt_omegaVar = 1 - 0.5*omegaVar;
-    omegaVar_d2 = omegaVar / 2.0;
-    tt_omega_t3 = tt_omegaVar * 3.0;
-    #endif//  NON_NEWTONIAN_FLUID
-
+            omegaVar = 1.0/(TAU + tau_t);
+        #endif
+            t_omegaVar = 1 - omegaVar;
+            tt_omegaVar = 1 - 0.5*omegaVar;
+            omegaVar_d2 = omegaVar / 2.0;
+            tt_omega_t3 = tt_omegaVar * 3.0;
+    #endif 
 
     // COLLIDE
 
@@ -390,7 +399,7 @@ __global__ void gpuMomCollisionStream(
             rhoVar -= (d_mean_rho[0]-1e-7) ;
             invRho = 1/rhoVar;
         #endif // DENSITY_CORRECTION
-        #ifdef NON_NEWTONIAN_FLUID
+        #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
             dfloat invRho_mt15 = -3*invRho/2;
             ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * L_Fx ) + omegaVar * ux_t30 + tt_omega_t3 * L_Fx);
             uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * L_Fy ) + omegaVar * uy_t30 + tt_omega_t3 * L_Fy);

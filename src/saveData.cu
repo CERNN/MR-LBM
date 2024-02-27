@@ -705,6 +705,10 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     #endif // BINGHAM
     strSimInfo << "--------------------------------------------------------------------------------\n";
     #endif // NON_NEWTONIAN_FLUID
+    #ifdef LES_MODEL
+    strSimInfo << "\t Smagorisky Constant:" << CONST_SMAGORINSKY <<"\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif //LES
 
     return strSimInfo.str();
 }

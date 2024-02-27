@@ -14,8 +14,8 @@ Projects:
   ☐ Organize source files into folders
   ☐ Remove the duplicate arrays used for interface between blocks
   ✔ Option for local force field @done(24-01-19 22:26)
-    ✔ Export local force field @done(24-02-20 13:38)
-    ✔ compute the sum of the force field @done(24-02-20 13:38)
+    ✔ Export local force field @done(24-02-20 18:50)
+    ✔ compute the sum of the force field @done(24-02-20 21:50)
     ☐ Bugfix: Figure out why the force field is equal to zero when using LOCAL_FORCES
     ☐ computation of force field over selected lattices.
   ☐ Test the performance if instead of storing the populations in the shared memory, store the moments, which can be pulled and used to reconstructed the populations
@@ -27,6 +27,8 @@ Projects:
 
 
   ☐ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char)
+    ✔ change nodeType from char to int @done(24-02-24 10:41)
+    
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
     ☐ Edit local force field to moment array
     ☐ change the name moment array to something more descreptive
@@ -37,7 +39,8 @@ Projects:
 
 
   ☐ Incorporate thermal model
-  ☐ Incorporate LES model
+  ✔ Incorporate LES 
+    ☐ Change macro condition from (non_newtonian || les model to local viscosity)
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
   ☐ Incorporate IBM
   ☐ Curved boundary conditions

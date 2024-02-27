@@ -40,6 +40,11 @@
 /* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
 //#define BINGHAM
 
+/* --------------------------- LES DEFINITIONS TYPE ------------------------- */
+// Uncomment the one to use. Comment all to simulate newtonian fluid
+//#define LES_MODEL
+//#define MODEL_CONST_SMAGORINSKY //https://doi.org/10.1016/j.jcp.2005.03.022
+
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
     #define ID_SIM "000"            // prefix for simulation's files
 #define PATH_FILES "TEST"  // path to save simulation's files
