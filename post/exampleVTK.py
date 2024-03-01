@@ -2,7 +2,7 @@ from dataSave import *
 from fileTreat import *
 import math
 import sys
-path = "./../bin/TEST/" + sys.argv[1] + "/"
+path = "./../bin/" + sys.argv[1] + "/"
 
 # Get the macroscopics in the folder
 macrSteps = getMacrSteps(path)

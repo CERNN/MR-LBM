@@ -85,7 +85,7 @@ __global__ void gpuInitialization_force(
 */
 __host__ void read_voxel_csv(
     const std::string& filename, 
-    unsigned char *dNodeType);
+    unsigned int *dNodeType);
 
 
 #endif // !__LBM_INITIALIZATION_CUH

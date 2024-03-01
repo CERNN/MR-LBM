@@ -295,7 +295,7 @@ __global__ void gpuMomCollisionStream(
         if(nodeType != BULK){
             #include BC_PATH
 
-            invRho = 1.0 / rho;
+            invRho = 1.0 / rhoVar;               
         }else{
 
             //calculate streaming moments
@@ -414,7 +414,7 @@ __global__ void gpuMomCollisionStream(
             m_xz_t90 = (t_omegaVar * m_xz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (L_Fx * uz_t30 + L_Fz * ux_t30));
             m_yz_t90 = (t_omegaVar * m_yz_t90  +   omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (L_Fy * uz_t30 + L_Fz * uy_t30));
         #endif // NON_NEWTONIAN_FLUID
-        #ifndef NON_NEWTONIAN_FLUID 
+        #if !(defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL))
             dfloat invRho_mt15 = -3*invRho/2;
             ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * L_Fx ) + OMEGA * ux_t30 + TT_OMEGA_T3 * L_Fx);
             uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * L_Fy ) + OMEGA * uy_t30 + TT_OMEGA_T3 * L_Fy);

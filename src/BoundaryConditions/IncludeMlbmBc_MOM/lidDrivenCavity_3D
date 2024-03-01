@@ -28,7 +28,7 @@ case SOUTH_WEST_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12]);
 
     rho = (12*(rho_I + m_xx_I*rho_I - 2*m_xy_I*rho_I - 2*m_xz_I*rho_I + m_yy_I*rho_I - 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I + 2*omegaVar*m_xy_I*rho_I + 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I + 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = -(14*m_xy_I - 14*m_xx_I + 14*m_xz_I - 2*m_yy_I + 2*m_yz_I - 2*m_zz_I - 21*omegaVar*m_xx_I + 7*omegaVar*m_xy_I + 7*omegaVar*m_xz_I + 9*omegaVar*m_yy_I - 23*omegaVar*m_yz_I + 9*omegaVar*m_zz_I - 4)/(18*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = -(14*m_xx_I - 50*m_xy_I - 14*m_xz_I + 14*m_yy_I - 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I - 69*omegaVar*m_xy_I + 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I + 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -55,7 +55,7 @@ case SOUTH_WEST_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
 
     rho = (12*(rho_I + m_xx_I*rho_I - 2*m_xy_I*rho_I + 2*m_xz_I*rho_I + m_yy_I*rho_I + 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I + 2*omegaVar*m_xy_I*rho_I - 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I - 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (14*m_xx_I - 14*m_xy_I + 14*m_xz_I + 2*m_yy_I + 2*m_yz_I + 2*m_zz_I + 21*omegaVar*m_xx_I - 7*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I - 23*omegaVar*m_yz_I - 9*omegaVar*m_zz_I + 4)/(18*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = -(14*m_xx_I - 50*m_xy_I + 14*m_xz_I + 14*m_yy_I + 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I - 69*omegaVar*m_xy_I - 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I - 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -82,7 +82,7 @@ case NORTH_WEST_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[17]);
 
     rho = (12*(rho_I + m_xx_I*rho_I + 2*m_xy_I*rho_I - 2*m_xz_I*rho_I + m_yy_I*rho_I + 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I - 2*omegaVar*m_xy_I*rho_I + 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I - 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (14*m_xx_I + 14*m_xy_I - 14*m_xz_I + 2*m_yy_I + 2*m_yz_I + 2*m_zz_I + 21*omegaVar*m_xx_I + 7*omegaVar*m_xy_I - 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I - 23*omegaVar*m_yz_I - 9*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = (14*m_xx_I + 50*m_xy_I - 14*m_xz_I + 14*m_yy_I + 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I + 69*omegaVar*m_xy_I + 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I - 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -109,7 +109,7 @@ case NORTH_WEST_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16]);
 
     rho = (12*(rho_I + m_xx_I*rho_I + 2*m_xy_I*rho_I + 2*m_xz_I*rho_I + m_yy_I*rho_I - 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I - 2*omegaVar*m_xy_I*rho_I - 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I + 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (14*m_xx_I + 14*m_xy_I + 14*m_xz_I + 2*m_yy_I - 2*m_yz_I + 2*m_zz_I + 21*omegaVar*m_xx_I + 7*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I + 23*omegaVar*m_yz_I - 9*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = (14*m_xx_I + 50*m_xy_I + 14*m_xz_I + 14*m_yy_I - 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I + 69*omegaVar*m_xy_I - 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I + 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -136,7 +136,7 @@ case SOUTH_EAST_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15]);
 
     rho = (12*(rho_I + m_xx_I*rho_I + 2*m_xy_I*rho_I + 2*m_xz_I*rho_I + m_yy_I*rho_I - 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I - 2*omegaVar*m_xy_I*rho_I - 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I + 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (14*m_xx_I + 14*m_xy_I + 14*m_xz_I + 2*m_yy_I - 2*m_yz_I + 2*m_zz_I + 21*omegaVar*m_xx_I + 7*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I + 23*omegaVar*m_yz_I - 9*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = (14*m_xx_I + 50*m_xy_I + 14*m_xz_I + 14*m_yy_I - 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I + 69*omegaVar*m_xy_I - 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I + 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I + 2*m_xy_I + 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -163,7 +163,7 @@ case SOUTH_EAST_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[18]);
 
     rho = (12*(rho_I + m_xx_I*rho_I + 2*m_xy_I*rho_I - 2*m_xz_I*rho_I + m_yy_I*rho_I + 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I - 2*omegaVar*m_xy_I*rho_I + 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I - 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (14*m_xx_I + 14*m_xy_I - 14*m_xz_I + 2*m_yy_I + 2*m_yz_I + 2*m_zz_I + 21*omegaVar*m_xx_I + 7*omegaVar*m_xy_I - 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I - 23*omegaVar*m_yz_I - 9*omegaVar*m_zz_I + 4)/(18*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = (14*m_xx_I + 50*m_xy_I - 14*m_xz_I + 14*m_yy_I + 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I + 69*omegaVar*m_xy_I + 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I - 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I + 2*m_xy_I - 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I - 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -190,7 +190,7 @@ case NORTH_EAST_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
 
     rho = (12*(rho_I + m_xx_I*rho_I - 2*m_xy_I*rho_I + 2*m_xz_I*rho_I + m_yy_I*rho_I + 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I + 2*omegaVar*m_xy_I*rho_I - 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I - 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (14*m_xx_I - 14*m_xy_I + 14*m_xz_I + 2*m_yy_I + 2*m_yz_I + 2*m_zz_I + 21*omegaVar*m_xx_I - 7*omegaVar*m_xy_I + 7*omegaVar*m_xz_I - 9*omegaVar*m_yy_I - 23*omegaVar*m_yz_I - 9*omegaVar*m_zz_I + 4)/(18*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = -(14*m_xx_I - 50*m_xy_I + 14*m_xz_I + 14*m_yy_I + 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I - 69*omegaVar*m_xy_I - 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I - 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I - 2*m_xy_I + 2*m_xz_I + m_yy_I + 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I - 2*omegaVar*m_xz_I - omegaVar*m_yy_I - 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -217,7 +217,7 @@ case NORTH_EAST_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11]);
 
     rho = (12*(rho_I + m_xx_I*rho_I - 2*m_xy_I*rho_I - 2*m_xz_I*rho_I + m_yy_I*rho_I - 2*m_yz_I*rho_I + m_zz_I*rho_I - omegaVar*m_xx_I*rho_I + 2*omegaVar*m_xy_I*rho_I + 2*omegaVar*m_xz_I*rho_I - omegaVar*m_yy_I*rho_I + 2*omegaVar*m_yz_I*rho_I - omegaVar*m_zz_I*rho_I))/(5*omegaVar + 2);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = -(14*m_xy_I - 14*m_xx_I + 14*m_xz_I - 2*m_yy_I + 2*m_yz_I - 2*m_zz_I - 21*omegaVar*m_xx_I + 7*omegaVar*m_xy_I + 7*omegaVar*m_xz_I + 9*omegaVar*m_yy_I - 23*omegaVar*m_yz_I + 9*omegaVar*m_zz_I - 4)/(18*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
     m_xy_t90 = -(14*m_xx_I - 50*m_xy_I - 14*m_xz_I + 14*m_yy_I - 14*m_yz_I + 2*m_zz_I + 7*omegaVar*m_xx_I - 69*omegaVar*m_xy_I + 21*omegaVar*m_xz_I + 7*omegaVar*m_yy_I + 21*omegaVar*m_yz_I - 23*omegaVar*m_zz_I + 8)/(36*(m_xx_I - 2*m_xy_I - 2*m_xz_I + m_yy_I - 2*m_yz_I + m_zz_I - omegaVar*m_xx_I + 2*omegaVar*m_xy_I + 2*omegaVar*m_xz_I - omegaVar*m_yy_I + 2*omegaVar*m_yz_I - omegaVar*m_zz_I + 1));
@@ -244,7 +244,7 @@ case SOUTH_WEST:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I - 57*m_xy_I*rho_I + 24*m_yy_I*rho_I - 6*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I + 57*omegaVar*m_xy_I*rho_I - 24*omegaVar*m_yy_I*rho_I + 6*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I - 1008*m_xy_I + 216*m_yy_I - 144*m_zz_I + 239*omegaVar*m_xx_I + 158*omegaVar*m_xy_I - 191*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I - 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
     m_xy_t90 = (2412*m_xy_I - 504*m_xx_I - 504*m_yy_I + 216*m_zz_I + 79*omegaVar*m_xx_I + 538*omegaVar*m_xy_I + 79*omegaVar*m_yy_I + 34*omegaVar*m_zz_I - 228)/(36*(24*m_xx_I - 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
@@ -271,7 +271,7 @@ case NORTH_WEST:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[17]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I + 57*m_xy_I*rho_I + 24*m_yy_I*rho_I - 6*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I - 57*omegaVar*m_xy_I*rho_I - 24*omegaVar*m_yy_I*rho_I + 6*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I + 1008*m_xy_I + 216*m_yy_I - 144*m_zz_I + 239*omegaVar*m_xx_I - 158*omegaVar*m_xy_I - 191*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I + 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
     m_xy_t90 = (504*m_xx_I + 2412*m_xy_I + 504*m_yy_I - 216*m_zz_I - 79*omegaVar*m_xx_I + 538*omegaVar*m_xy_I - 79*omegaVar*m_yy_I - 34*omegaVar*m_zz_I + 228)/(36*(24*m_xx_I + 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
@@ -298,7 +298,7 @@ case SOUTH_EAST:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[18]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I + 57*m_xy_I*rho_I + 24*m_yy_I*rho_I - 6*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I - 57*omegaVar*m_xy_I*rho_I - 24*omegaVar*m_yy_I*rho_I + 6*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I + 1008*m_xy_I + 216*m_yy_I - 144*m_zz_I + 239*omegaVar*m_xx_I - 158*omegaVar*m_xy_I - 191*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I + 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
     m_xy_t90 = (504*m_xx_I + 2412*m_xy_I + 504*m_yy_I - 216*m_zz_I - 79*omegaVar*m_xx_I + 538*omegaVar*m_xy_I - 79*omegaVar*m_yy_I - 34*omegaVar*m_zz_I + 228)/(36*(24*m_xx_I + 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
@@ -325,7 +325,7 @@ case NORTH_EAST:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I - 57*m_xy_I*rho_I + 24*m_yy_I*rho_I - 6*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I + 57*omegaVar*m_xy_I*rho_I - 24*omegaVar*m_yy_I*rho_I + 6*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I - 1008*m_xy_I + 216*m_yy_I - 144*m_zz_I + 239*omegaVar*m_xx_I + 158*omegaVar*m_xy_I - 191*omegaVar*m_yy_I - 6*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I - 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
     m_xy_t90 = (2412*m_xy_I - 504*m_xx_I - 504*m_yy_I + 216*m_zz_I + 79*omegaVar*m_xx_I + 538*omegaVar*m_xy_I + 79*omegaVar*m_yy_I + 34*omegaVar*m_zz_I - 228)/(36*(24*m_xx_I - 57*m_xy_I + 24*m_yy_I - 6*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xy_I - 24*omegaVar*m_yy_I + 6*omegaVar*m_zz_I + 23));
@@ -352,7 +352,7 @@ case WEST_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[17]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I - 57*m_xz_I*rho_I - 6*m_yy_I*rho_I + 24*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I + 57*omegaVar*m_xz_I*rho_I + 6*omegaVar*m_yy_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I - 1008*m_xz_I - 144*m_yy_I + 216*m_zz_I + 239*omegaVar*m_xx_I + 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 191*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I - 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_xx_I - 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
@@ -379,7 +379,7 @@ case WEST_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I + 57*m_xz_I*rho_I - 6*m_yy_I*rho_I + 24*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I - 57*omegaVar*m_xz_I*rho_I + 6*omegaVar*m_yy_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I + 1008*m_xz_I - 144*m_yy_I + 216*m_zz_I + 239*omegaVar*m_xx_I - 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 191*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I + 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_xx_I + 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
@@ -406,7 +406,7 @@ case EAST_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I + 57*m_xz_I*rho_I - 6*m_yy_I*rho_I + 24*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I - 57*omegaVar*m_xz_I*rho_I + 6*omegaVar*m_yy_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I + 1008*m_xz_I - 144*m_yy_I + 216*m_zz_I + 239*omegaVar*m_xx_I - 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 191*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I + 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_xx_I + 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I - 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
@@ -433,7 +433,7 @@ case EAST_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[18]);
 
     rho = (36*(23*rho_I + 24*m_xx_I*rho_I - 57*m_xz_I*rho_I - 6*m_yy_I*rho_I + 24*m_zz_I*rho_I - 24*omegaVar*m_xx_I*rho_I + 57*omegaVar*m_xz_I*rho_I + 6*omegaVar*m_yy_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (936*m_xx_I - 1008*m_xz_I - 144*m_yy_I + 216*m_zz_I + 239*omegaVar*m_xx_I + 158*omegaVar*m_xz_I - 6*omegaVar*m_yy_I - 191*omegaVar*m_zz_I + 192)/(36*(24*m_xx_I - 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_xx_I - 57*m_xz_I - 6*m_yy_I + 24*m_zz_I - 24*omegaVar*m_xx_I + 57*omegaVar*m_xz_I + 6*omegaVar*m_yy_I - 24*omegaVar*m_zz_I + 23));
@@ -460,7 +460,7 @@ case SOUTH_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15]);
 
     rho = (36*(23*rho_I - 6*m_xx_I*rho_I + 24*m_yy_I*rho_I - 57*m_yz_I*rho_I + 24*m_zz_I*rho_I + 6*omegaVar*m_xx_I*rho_I - 24*omegaVar*m_yy_I*rho_I + 57*omegaVar*m_yz_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = -(72*m_yy_I - 288*m_xx_I - 216*m_yz_I + 72*m_zz_I - 162*omegaVar*m_xx_I + 3*omegaVar*m_yy_I - 34*omegaVar*m_yz_I + 3*omegaVar*m_zz_I + 24)/(18*(24*m_yy_I - 6*m_xx_I - 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I + 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_yy_I - 6*m_xx_I - 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I + 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
@@ -487,7 +487,7 @@ case SOUTH_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[9] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
 
     rho = (36*(23*rho_I - 6*m_xx_I*rho_I + 24*m_yy_I*rho_I + 57*m_yz_I*rho_I + 24*m_zz_I*rho_I + 6*omegaVar*m_xx_I*rho_I - 24*omegaVar*m_yy_I*rho_I - 57*omegaVar*m_yz_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = -(72*m_yy_I - 288*m_xx_I + 216*m_yz_I + 72*m_zz_I - 162*omegaVar*m_xx_I + 3*omegaVar*m_yy_I + 34*omegaVar*m_yz_I + 3*omegaVar*m_zz_I + 24)/(18*(24*m_yy_I - 6*m_xx_I + 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I - 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_yy_I - 6*m_xx_I + 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I - 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
@@ -514,7 +514,7 @@ case NORTH_BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[10] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
 
     rho = (36*(23*rho_I - 6*m_xx_I*rho_I + 24*m_yy_I*rho_I + 57*m_yz_I*rho_I + 24*m_zz_I*rho_I + 6*omegaVar*m_xx_I*rho_I - 24*omegaVar*m_yy_I*rho_I - 57*omegaVar*m_yz_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = -(72*m_yy_I - 288*m_xx_I + 216*m_yz_I + 72*m_zz_I - 162*omegaVar*m_xx_I + 3*omegaVar*m_yy_I + 34*omegaVar*m_yz_I + 3*omegaVar*m_zz_I + 24)/(18*(24*m_yy_I - 6*m_xx_I + 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I - 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_yy_I - 6*m_xx_I + 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I - 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
@@ -541,7 +541,7 @@ case NORTH_FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16]);
 
     rho = (36*(23*rho_I - 6*m_xx_I*rho_I + 24*m_yy_I*rho_I - 57*m_yz_I*rho_I + 24*m_zz_I*rho_I + 6*omegaVar*m_xx_I*rho_I - 24*omegaVar*m_yy_I*rho_I + 57*omegaVar*m_yz_I*rho_I - 24*omegaVar*m_zz_I*rho_I))/(5*(43*omegaVar + 72));
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = -(72*m_yy_I - 288*m_xx_I - 216*m_yz_I + 72*m_zz_I - 162*omegaVar*m_xx_I + 3*omegaVar*m_yy_I - 34*omegaVar*m_yz_I + 3*omegaVar*m_zz_I + 24)/(18*(24*m_yy_I - 6*m_xx_I - 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I + 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
     m_xy_t90 = (5*m_xy_I*(43*omegaVar + 72))/(18*(24*m_yy_I - 6*m_xx_I - 57*m_yz_I + 24*m_zz_I + 6*omegaVar*m_xx_I - 24*omegaVar*m_yy_I + 57*omegaVar*m_yz_I - 24*omegaVar*m_zz_I + 23));
@@ -568,7 +568,7 @@ case WEST:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[17] + (2.0/3.0)*pop[18]);
 
     rho = (3*rho_I*(3*m_xx_I - 3*omegaVar*m_xx_I + 4))/(omegaVar + 9);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (15*m_xx_I + 2)/(3*(3*m_xx_I - 3*omegaVar*m_xx_I + 4));
     m_xy_t90 = (2*m_xy_I*(omegaVar + 9))/(3*(3*m_xx_I - 3*omegaVar*m_xx_I + 4));
@@ -595,7 +595,7 @@ case EAST:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17] + (2.0/3.0)*pop[18]);
 
     rho = (3*rho_I*(3*m_xx_I - 3*omegaVar*m_xx_I + 4))/(omegaVar + 9);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (15*m_xx_I + 2)/(3*(3*m_xx_I - 3*omegaVar*m_xx_I + 4));
     m_xy_t90 = (2*m_xy_I*(omegaVar + 9))/(3*(3*m_xx_I - 3*omegaVar*m_xx_I + 4));
@@ -622,7 +622,7 @@ case SOUTH:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
 
     rho = (3*rho_I*(3*m_yy_I - 3*omegaVar*m_yy_I + 4))/(omegaVar + 9);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (4*(omegaVar + 9)*(10*m_xx_I - m_zz_I))/(99*(3*m_yy_I - 3*omegaVar*m_yy_I + 4));
     m_xy_t90 = (2*m_xy_I*(omegaVar + 9))/(3*(3*m_yy_I - 3*omegaVar*m_yy_I + 4));
@@ -649,7 +649,7 @@ case NORTH:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] + (2.0/3.0)*pop[5] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[17]);
 
     rho = (3*rho_I*(3*m_yy_I - 3*omegaVar*m_yy_I + 4))/(omegaVar + 9);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (4*(omegaVar + 9)*(10*m_xx_I - m_zz_I))/(99*(3*m_yy_I - 3*omegaVar*m_yy_I + 4));
     m_xy_t90 = (18*m_xy_I - 4*U_MAX + 2*omegaVar*m_xy_I - 3*U_MAX*m_yy_I + 3*omegaVar*U_MAX*m_yy_I)/(3*(3*m_yy_I - 3*omegaVar*m_yy_I + 4));
@@ -676,7 +676,7 @@ case BACK:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[6] - (1.0/3.0)*pop[7] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[10] + (2.0/3.0)*pop[12] - (1.0/3.0)*pop[13] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[15] + (2.0/3.0)*pop[17]);
 
     rho = (3*rho_I*(3*m_zz_I - 3*omegaVar*m_zz_I + 4))/(omegaVar + 9);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (4*(omegaVar + 9)*(10*m_xx_I - m_yy_I))/(99*(3*m_zz_I - 3*omegaVar*m_zz_I + 4));
     m_xy_t90 = (m_xy_I*(omegaVar + 9))/(3*(3*m_zz_I - 3*omegaVar*m_zz_I + 4));
@@ -703,7 +703,7 @@ case FRONT:
     m_zz_I = inv_rho_I * (-(1.0/3.0)*pop[0] - (1.0/3.0)*pop[1] - (1.0/3.0)*pop[2] - (1.0/3.0)*pop[3] - (1.0/3.0)*pop[4] + (2.0/3.0)*pop[5] - (1.0/3.0)*pop[7] - (1.0/3.0)*pop[8] + (2.0/3.0)*pop[9] + (2.0/3.0)*pop[11] - (1.0/3.0)*pop[13] - (1.0/3.0)*pop[14] + (2.0/3.0)*pop[16] + (2.0/3.0)*pop[18]);
 
     rho = (3*rho_I*(3*m_zz_I - 3*omegaVar*m_zz_I + 4))/(omegaVar + 9);
-    inv_rho = 1.0 / rho;
+    
 
     m_xx_t45 = (4*(omegaVar + 9)*(10*m_xx_I - m_yy_I))/(99*(3*m_zz_I - 3*omegaVar*m_zz_I + 4));
     m_xy_t90 = (m_xy_I*(omegaVar + 9))/(3*(3*m_zz_I - 3*omegaVar*m_zz_I + 4));

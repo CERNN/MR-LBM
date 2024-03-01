@@ -320,7 +320,7 @@ int main() {
 
         int aux = step-INI_STEP;
         bool checkpoint = false;
-        #if DENSITY_CORRECTION
+        #ifdef DENSITY_CORRECTION
         bool densityCorrection = false;
         #endif 
         bool save =false;
