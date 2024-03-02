@@ -45,9 +45,9 @@ __global__ void gpuInitialization_mom(
 
     //Taylor Green
 	rho = RHO_0;
-	ux = 0.0;
-	uy = 0.0;
-    uz = 0.0;
+	ux = U_0_X;
+	uy = U_0_Y;
+    uz = U_0_Z;
 
     //if(y == NY-1 && (( x%(NX-1) != 0 ||z%(NZ-1) != 0)))
     //    ux = U_MAX;
@@ -321,14 +321,14 @@ __host__ void hostInitialization_nodeType(
         }
     }
 
-    printf("boundary condition done");
+    printf("bulk boundary condition done\n");
 }
 
 
-__host__ void read_voxel_csv(
-    const std::string& filename, 
-    unsigned int *dNodeType
-    ){
+void read_xyz_file(
+    const std::string& filename,
+    unsigned int* dNodeType
+) {
     std::ifstream csv_file(filename);
     if (!csv_file)
     {
@@ -336,8 +336,11 @@ __host__ void read_voxel_csv(
         return;
     }
 
-    int x,y,z;
-    unsigned int nodeType;
+    int x, y, z;
+    int value;
+    size_t index, index_n;
+
+    int xi, yi, zi;
 
     std::string line;
     while (std::getline(csv_file, line)) {
@@ -345,22 +348,229 @@ __host__ void read_voxel_csv(
         std::string field;
 
         std::getline(ss, field, ',');
-        x = std::stoul(field);
+        x = std::stol(field);
 
         std::getline(ss, field, ',');
-        y = std::stoul(field);
+        y = std::stol(field);
 
         std::getline(ss, field, ',');
-        z = std::stoul(field);
+        z = std::stol(field);
 
-        std::getline(ss, field, ',');
-        nodeType = std::stoul(field);
 
-        #include BC_INIT_PATH
+        index = idxScalarBlock(x % BLOCK_NX, y % BLOCK_NY, z % BLOCK_NZ, x / BLOCK_NX, y / BLOCK_NY, z / BLOCK_NZ);
+        //printf("x %d y %d z %d \n",x,y,z); fflush(stdout);
+        dNodeType[idxScalarBlock(x % BLOCK_NX, y % BLOCK_NY, z % BLOCK_NZ, x / BLOCK_NX, y / BLOCK_NY, z / BLOCK_NZ)] = SOLID_NODE;
 
-        dNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned int)nodeType;
 
+        //set neighborings to be BC
+        for (int xn = -1; xn < 2; xn++) {
+            for (int yn = -1; yn < 2; yn++) {
+                for (int zn = -1; zn < 2; zn++) {
+
+                    xi = (x + xn + NX) % NX;
+                    yi = (y + yn + NY) % NY;
+                    zi = (z + zn + NZ) % NZ;
+
+
+                    index_n = idxScalarBlock(xi% BLOCK_NX, yi % BLOCK_NY, zi % BLOCK_NZ, xi / BLOCK_NX, yi / BLOCK_NY, zi / BLOCK_NZ);
+
+                    if ((index_n == index) || dNodeType[index_n] == 255) // check if is the center of the cuboid or if is already a solid node
+                        continue;
+                    else //set flag to max int 
+                        dNodeType[index_n] = MISSING_DEFINITION;
+                }
+            }
+        }
+    }
+    csv_file.close();
+    printf("voxels imported \n");
+}
+
+/*
+void define_voxel_bc(
+    unsigned int *dNodeType
+){
+    for(int x= 0;x<NX;x++){
+        for(int y =0; y<NY;y++){
+            for(int z =0; z<NZ_TOTAL;z++){
+                unsigned int index = idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ);
+                if(dNodeType[index] == MISSING_DEFINITION){
+                    dNodeType[index] = bc_id(dNodeType,x,y,z);
+                }
+            }
+        }
+    }
+}
+*/
+
+__global__ 
+void define_voxel_bc(
+    unsigned int *dNodeType
+){
+    const int x = threadIdx.x + blockDim.x * blockIdx.x;
+    const int y = threadIdx.y + blockDim.y * blockIdx.y;
+    const int z = threadIdx.z + blockDim.z * blockIdx.z;
+    if (x >= NX || y >= NY || z >= NZ)
+        return;
+
+    unsigned int index = idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ);
+    if(dNodeType[index] == MISSING_DEFINITION){
+        dNodeType[index] = bc_id(dNodeType,x,y,z);
+    }
+}
+
+
+
+/*
+Note: Due to the way the BC are set up, it possible when setting a solid node to also set the bit flags of neighboring nodes
+However if attempt to perform in device, need to pay attention of two solid nodes setting the same flag at same time 
+*/
+__host__ __device__
+unsigned int bc_id(unsigned int *dNodeType, int x, int y, int z){
+
+    unsigned int bc_d = BULK;
+
+    int xp1 = (x+1+NX)%NX;
+    int xm1 = (x-1+NX)%NX;
+    int yp1 = (y+1+NY)%NY;
+    int ym1 = (y-1+NY)%NY;
+    int zp1 = (z+1+NZ)%NZ;
+    int zm1 = (z-1+NZ)%NZ;
+
+    // 1
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, xp1/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 1);
+        bc_d |= (1 << 3);
+        bc_d |= (1 << 5);
+        bc_d |= (1 << 7);
+    }
+     // 2
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, xm1/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 0);
+        bc_d |= (1 << 2);
+        bc_d |= (1 << 4);
+        bc_d |= (1 << 6);
+    }
+    // 3
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, yp1%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, yp1/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 2);
+        bc_d |= (1 << 3);
+        bc_d |= (1 << 6);
+        bc_d |= (1 << 7);
+    }
+    // 4
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, ym1%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, ym1/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 0);
+        bc_d |= (1 << 1);
+        bc_d |= (1 << 4);
+        bc_d |= (1 << 5);
+    }
+    // 5
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, zp1%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 4);
+        bc_d |= (1 << 5);
+        bc_d |= (1 << 6);
+        bc_d |= (1 << 7);
+    }
+    // 6
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, zm1%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 0);
+        bc_d |= (1 << 1);
+        bc_d |= (1 << 2);
+        bc_d |= (1 << 3);
+    }
+    // 7
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, yp1%BLOCK_NY, z%BLOCK_NZ, xp1/BLOCK_NX, yp1/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 3);
+        bc_d |= (1 << 7);
+    }
+    // 8
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, ym1%BLOCK_NY, z%BLOCK_NZ, xm1/BLOCK_NX, ym1/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 0);
+        bc_d |= (1 << 4);
+    }
+    // 9
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, y%BLOCK_NY, zp1%BLOCK_NZ, xp1/BLOCK_NX, y/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 5);
+        bc_d |= (1 << 7);
+    }
+    // 10
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, y%BLOCK_NY, zm1%BLOCK_NZ, xm1/BLOCK_NX, y/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 0);
+        bc_d |= (1 << 2);
+    }
+    // 11
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, yp1%BLOCK_NY, zp1%BLOCK_NZ, x/BLOCK_NX, yp1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 6);
+        bc_d |= (1 << 7);
+    }
+    // 12
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, ym1%BLOCK_NY, zm1%BLOCK_NZ, x/BLOCK_NX, ym1/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 0);
+        bc_d |= (1 << 1);
+    }
+    // 13
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, ym1%BLOCK_NY, z%BLOCK_NZ, xp1/BLOCK_NX, ym1/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 1);
+        bc_d |= (1 << 5);
+    }
+    // 14
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, yp1%BLOCK_NY, z%BLOCK_NZ, xm1/BLOCK_NX, yp1/BLOCK_NY, z/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 2);
+        bc_d |= (1 << 6);
+    }
+    // 15
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, y%BLOCK_NY, zm1%BLOCK_NZ, xp1/BLOCK_NX, y/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 1);
+        bc_d |= (1 << 3);
+    }
+    // 16
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, y%BLOCK_NY, zp1%BLOCK_NZ, xm1/BLOCK_NX, y/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 4);
+        bc_d |= (1 << 6);
+    }
+    // 17
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, yp1%BLOCK_NY, zm1%BLOCK_NZ, x/BLOCK_NX, yp1/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 2);
+        bc_d |= (1 << 3);
+    }
+    // 18
+    if(dNodeType[idxScalarBlock(x%BLOCK_NX, ym1%BLOCK_NY, zp1%BLOCK_NZ, x/BLOCK_NX, ym1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 4);
+        bc_d |= (1 << 5);
+    }
+    // 19
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, yp1%BLOCK_NY, zp1%BLOCK_NZ, xp1/BLOCK_NX, yp1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 7);
+    }
+    // 20
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, ym1%BLOCK_NY, zm1%BLOCK_NZ, xm1/BLOCK_NX, ym1/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 0);
+    }
+    // 21
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, yp1%BLOCK_NY, zm1%BLOCK_NZ, xp1/BLOCK_NX, yp1/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 3);
+    }
+    // 22
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, ym1%BLOCK_NY, zp1%BLOCK_NZ, xm1/BLOCK_NX, ym1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 4);
+    }
+    // 23
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, ym1%BLOCK_NY, zp1%BLOCK_NZ, xp1/BLOCK_NX, ym1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 5);
+    }
+    // 24
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, ym1%BLOCK_NY, zp1%BLOCK_NZ, xp1/BLOCK_NX, ym1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 2);
+    }
+    // 25
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, yp1%BLOCK_NY, zp1%BLOCK_NZ, xm1/BLOCK_NX, yp1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 6);
+    }
+    // 26
+    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, ym1%BLOCK_NY, zm1%BLOCK_NZ, xp1/BLOCK_NX, ym1/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
+        bc_d |= (1 << 1);   
     }
 
-    csv_file.close();
+    return bc_d;
 }

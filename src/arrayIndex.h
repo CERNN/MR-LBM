@@ -42,4 +42,9 @@ constexpr int M_MZZ_INDEX = 9;
 
 
 const size_t NUMBER_MOMENTS = M_OFFSET+1;
+
+__device__ const dfloat MOMENT_SCALE[10]   =  {1, 3, 3, 3, 4.5, 9.0, 9.0, 4.5, 9.0, 4.5};
+__device__ const dfloat MOMENT_OFFSENT[10] =  {RHO_0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+
 #endif

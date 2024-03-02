@@ -1,0 +1,1533 @@
+switch (nodeType)
+{
+case 0b00000000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00000001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00000010:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00000011:
+    L_Fx_pc = 0;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00000100:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00000101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00000110:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00000111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00001000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00001001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00001010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00001011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00001100:
+    L_Fx_pc = 0;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00001101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00001110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00001111:
+    L_Fx_pc = (m_xz_t90*rhoVar)/18;
+    L_Fy_pc = (m_yz_t90*rhoVar)/18;
+    L_Fz_pc = (rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b00010000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00010001:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00010010:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00010011:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00010100:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00010101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00010110:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00010111:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00011000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00011001:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00011010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00011011:
+    L_Fx_pc = (rhoVar*(m_xy_t90 + m_xz_t90 + m_yy_t45 - m_zz_t45))/36;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00011100:
+    L_Fx_pc = 0;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00011101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + m_xy_t90 + m_yz_t90 - m_zz_t45))/36;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00011110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00011111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 + 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b00100000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00100001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00100010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00100011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00100100:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00100101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00100110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00100111:
+    L_Fx_pc = (rhoVar*(m_xy_t90 + m_xz_t90 - m_yy_t45 + m_zz_t45))/36;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00101000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00101001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00101010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00101011:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00101100:
+    L_Fx_pc = 0;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00101101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00101110:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - m_xy_t90 + m_yz_t90 - m_zz_t45))/36;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b00101111:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 - 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 + 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b00110000:
+    L_Fx_pc = 0;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00110001:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00110010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00110011:
+    L_Fx_pc = (m_xy_t90*rhoVar)/18;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = (m_yz_t90*rhoVar)/18;
+
+    break;
+case 0b00110100:
+    L_Fx_pc = 0;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00110101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + m_xz_t90 - m_yy_t45 + m_yz_t90))/36;
+
+    break;
+case 0b00110110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00110111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 6*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00111000:
+    L_Fx_pc = 0;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00111001:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00111010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - m_xz_t90 - m_yy_t45 + m_yz_t90))/36;
+
+    break;
+case 0b00111011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 6*m_xy_t90 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00111100:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b00111101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00111110:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b00111111:
+    L_Fx_pc = (rhoVar*(m_xy_t90 + m_xz_t90))/18;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 10*m_yy_t45 + 3*m_yz_t90 - 2*m_zz_t45 + 15))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 2*m_yy_t45 + 3*m_yz_t90 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b01000000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01000001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01000010:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01000011:
+    L_Fx_pc = 0;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01000100:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01000101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01000110:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01000111:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xy_t90 - m_xx_t45 + m_yz_t90 + m_zz_t45))/36;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01001000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01001001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01001010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01001011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01001100:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01001101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01001110:
+    L_Fx_pc = -(rhoVar*(m_xy_t90 - m_xz_t90 - m_yy_t45 + m_zz_t45))/36;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01001111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b01010000:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01010001:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01010010:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01010011:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xz_t90 - m_xx_t45 + m_yy_t45 + m_yz_t90))/36;
+
+    break;
+case 0b01010100:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01010101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = (m_xy_t90*rhoVar)/18;
+    L_Fz_pc = (m_xz_t90*rhoVar)/18;
+
+    break;
+case 0b01010110:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01010111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = (rhoVar*(6*m_xy_t90 - m_xx_t45 + 2*m_yy_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(6*m_xz_t90 - m_xx_t45 + 2*m_yy_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01011000:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01011001:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01011010:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01011011:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01011100:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - m_xz_t90 - m_yy_t45 + m_yz_t90))/36;
+
+    break;
+case 0b01011101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 6*m_xy_t90 - 2*m_yy_t45 + 3*m_yz_t90 - 2*m_zz_t45 - 3))/108;
+    L_Fz_pc = (rhoVar*(6*m_xz_t90 - m_xx_t45 + 2*m_yy_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01011110:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01011111:
+    L_Fx_pc = (rhoVar*(10*m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 2*m_zz_t45 + 15))/108;
+    L_Fy_pc = (rhoVar*(m_xy_t90 + m_yz_t90))/18;
+    L_Fz_pc = (rhoVar*(3*m_xz_t90 - 2*m_xx_t45 + m_yy_t45 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b01100000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01100001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01100010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01100011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01100100:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01100101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01100110:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01100111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01101000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01101001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01101010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01101011:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01101100:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01101101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01101110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01101111:
+    L_Fx_pc = (m_xz_t90*rhoVar)/18;
+    L_Fy_pc = (m_yz_t90*rhoVar)/18;
+    L_Fz_pc = (rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b01110000:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01110001:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01110010:
+    L_Fx_pc = (rhoVar*(m_xy_t90 - m_xz_t90 - m_yy_t45 + m_zz_t45))/36;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01110011:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 6*m_xy_t90 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 - 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01110100:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - m_xy_t90 + m_yz_t90 - m_zz_t45))/36;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01110101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = (rhoVar*(6*m_xy_t90 - m_xx_t45 + 2*m_yy_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 6*m_xz_t90 - 2*m_yy_t45 + 3*m_yz_t90 - 2*m_zz_t45 - 3))/108;
+
+    break;
+case 0b01110110:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01110111:
+    L_Fx_pc = (rhoVar*(10*m_xx_t45 + 3*m_xy_t90 - 2*m_yy_t45 + m_zz_t45 + 15))/108;
+    L_Fy_pc = (rhoVar*(3*m_xy_t90 - 2*m_xx_t45 + 10*m_yy_t45 + m_zz_t45 + 15))/108;
+    L_Fz_pc = (rhoVar*(m_xz_t90 + m_yz_t90))/18;
+
+    break;
+case 0b01111000:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01111001:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b01111010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01111011:
+    L_Fx_pc = (m_xy_t90*rhoVar)/18;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = (m_yz_t90*rhoVar)/18;
+
+    break;
+case 0b01111100:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b01111101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = (m_xy_t90*rhoVar)/18;
+    L_Fz_pc = (m_xz_t90*rhoVar)/18;
+
+    break;
+case 0b01111110:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b01111111:
+    L_Fx_pc = (rhoVar*(8*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 - m_zz_t45 + 12))/108;
+    L_Fy_pc = (rhoVar*(3*m_xy_t90 - m_xx_t45 + 8*m_yy_t45 + 3*m_yz_t90 - m_zz_t45 + 12))/108;
+    L_Fz_pc = (rhoVar*(3*m_xz_t90 - m_xx_t45 - m_yy_t45 + 3*m_yz_t90 + 8*m_zz_t45 + 12))/108;
+
+    break;
+case 0b10000000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10000001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10000010:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10000011:
+    L_Fx_pc = 0;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10000100:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10000101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10000110:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10000111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10001000:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10001001:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10001010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10001011:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + m_xy_t90 - m_yz_t90 - m_zz_t45))/36;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10001100:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10001101:
+    L_Fx_pc = -(rhoVar*(m_xy_t90 - m_xz_t90 + m_yy_t45 - m_zz_t45))/36;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10001110:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10001111:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 - 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b10010000:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10010001:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10010010:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10010011:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10010100:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10010101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10010110:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10010111:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10011000:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10011001:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10011010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10011011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10011100:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10011101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10011110:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10011111:
+    L_Fx_pc = (m_xz_t90*rhoVar)/18;
+    L_Fy_pc = (m_yz_t90*rhoVar)/18;
+    L_Fz_pc = (rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b10100000:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10100001:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10100010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10100011:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + m_xz_t90 - m_yy_t45 - m_yz_t90))/36;
+
+    break;
+case 0b10100100:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = 0;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10100101:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10100110:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10100111:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10101000:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10101001:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10101010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = -(m_xy_t90*rhoVar)/18;
+    L_Fz_pc = -(m_xz_t90*rhoVar)/18;
+
+    break;
+case 0b10101011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - 6*m_xy_t90 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - 6*m_xz_t90 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10101100:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + m_xz_t90 - m_yy_t45 + m_yz_t90))/36;
+
+    break;
+case 0b10101101:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10101110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = -(rhoVar*(6*m_xy_t90 - m_xx_t45 + 2*m_yy_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 6*m_xz_t90 - 2*m_yy_t45 + 3*m_yz_t90 - 2*m_zz_t45 - 3))/108;
+
+    break;
+case 0b10101111:
+    L_Fx_pc = -(rhoVar*(10*m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 2*m_zz_t45 + 15))/108;
+    L_Fy_pc = -(rhoVar*(m_xy_t90 - m_yz_t90))/18;
+    L_Fz_pc = (rhoVar*(m_yy_t45 - 3*m_xz_t90 - 2*m_xx_t45 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b10110000:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10110001:
+    L_Fx_pc = (rhoVar*(m_xy_t90 - m_xz_t90 + m_yy_t45 - m_zz_t45))/36;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10110010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10110011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 6*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 - 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10110100:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10110101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10110110:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10110111:
+    L_Fx_pc = (m_xy_t90*rhoVar)/18;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = (m_yz_t90*rhoVar)/18;
+
+    break;
+case 0b10111000:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + m_xy_t90 + m_yz_t90 - m_zz_t45))/36;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10111001:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_yy_t45 - m_xx_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b10111010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 6*m_xy_t90 - 2*m_yy_t45 + 3*m_yz_t90 - 2*m_zz_t45 - 3))/108;
+    L_Fz_pc = -(rhoVar*(6*m_xz_t90 - m_xx_t45 + 2*m_yy_t45 - 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10111011:
+    L_Fx_pc = -(rhoVar*(10*m_xx_t45 - 3*m_xy_t90 - 2*m_yy_t45 + m_zz_t45 + 15))/108;
+    L_Fy_pc = (rhoVar*(10*m_yy_t45 - 3*m_xy_t90 - 2*m_xx_t45 + m_zz_t45 + 15))/108;
+    L_Fz_pc = -(rhoVar*(m_xz_t90 - m_yz_t90))/18;
+
+    break;
+case 0b10111100:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b10111101:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b10111110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = -(m_xy_t90*rhoVar)/18;
+    L_Fz_pc = -(m_xz_t90*rhoVar)/18;
+
+    break;
+case 0b10111111:
+    L_Fx_pc = (rhoVar*(3*m_xy_t90 - 8*m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 - 12))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 - 8*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 - 12))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 - 8*m_zz_t45 - 12))/108;
+
+    break;
+case 0b11000000:
+    L_Fx_pc = 0;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11000001:
+    L_Fx_pc = 0;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11000010:
+    L_Fx_pc = 0;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11000011:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b11000100:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11000101:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + m_xz_t90 - m_yy_t45 - m_yz_t90))/36;
+
+    break;
+case 0b11000110:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11000111:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11001000:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11001001:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11001010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xz_t90 - m_xx_t45 + m_yy_t45 + m_yz_t90))/36;
+
+    break;
+case 0b11001011:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11001100:
+    L_Fx_pc = -(m_xy_t90*rhoVar)/18;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = -(m_yz_t90*rhoVar)/18;
+
+    break;
+case 0b11001101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 6*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 - 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11001110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 6*m_xy_t90 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 - 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11001111:
+    L_Fx_pc = -(rhoVar*(m_xy_t90 - m_xz_t90))/18;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 10*m_yy_t45 - 3*m_yz_t90 - 2*m_zz_t45 + 15))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 2*m_yy_t45 - 3*m_yz_t90 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b11010000:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11010001:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + m_xy_t90 - m_yz_t90 - m_zz_t45))/36;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11010010:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11010011:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11010100:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11010101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - 6*m_xy_t90 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - 6*m_xz_t90 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11010110:
+    L_Fx_pc = (rhoVar*(4*m_xx_t45 - 3*m_xy_t90 - 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11010111:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = (m_xy_t90*rhoVar)/18;
+    L_Fz_pc = (m_xz_t90*rhoVar)/18;
+
+    break;
+case 0b11011000:
+    L_Fx_pc = -(rhoVar*(m_xy_t90 + m_xz_t90 + m_yy_t45 - m_zz_t45))/36;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11011001:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11011010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11011011:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b11011100:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 6*m_xy_t90 - 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xz_t90 - m_yy_t45 + 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11011101:
+    L_Fx_pc = (rhoVar*(10*m_xx_t45 - 3*m_xy_t90 - 2*m_yy_t45 + m_zz_t45 + 15))/108;
+    L_Fy_pc = -(rhoVar*(10*m_yy_t45 - 3*m_xy_t90 - 2*m_xx_t45 + m_zz_t45 + 15))/108;
+    L_Fz_pc = (rhoVar*(m_xz_t90 - m_yz_t90))/18;
+
+    break;
+case 0b11011110:
+    L_Fx_pc = -(m_xy_t90*rhoVar)/18;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = -(m_yz_t90*rhoVar)/18;
+
+    break;
+case 0b11011111:
+    L_Fx_pc = (rhoVar*(8*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 - m_zz_t45 + 12))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 - 8*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 - 12))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 - 8*m_zz_t45 - 12))/108;
+
+    break;
+case 0b11100000:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11100001:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11100010:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xy_t90 - m_xx_t45 + m_yz_t90 + m_zz_t45))/36;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11100011:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11100100:
+    L_Fx_pc = -(rhoVar*(m_xy_t90 + m_xz_t90 - m_yy_t45 + m_zz_t45))/36;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11100101:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11100110:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 - m_xx_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11100111:
+    L_Fx_pc = 0;
+    L_Fy_pc = 0;
+    L_Fz_pc = 0;
+
+    break;
+case 0b11101000:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11101001:
+    L_Fx_pc = -(rhoVar*(4*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 + 6))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 + 4*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 + 6))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 + 4*m_zz_t45 + 6))/108;
+
+    break;
+case 0b11101010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = -(rhoVar*(6*m_xy_t90 - m_xx_t45 + 2*m_yy_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(6*m_xz_t90 - m_xx_t45 + 2*m_yy_t45 + 3*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11101011:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3))/18;
+    L_Fy_pc = -(m_xy_t90*rhoVar)/18;
+    L_Fz_pc = -(m_xz_t90*rhoVar)/18;
+
+    break;
+case 0b11101100:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 6*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 + 2*m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xz_t90 - m_yy_t45 + 6*m_yz_t90 + 2*m_zz_t45 + 3))/108;
+
+    break;
+case 0b11101101:
+    L_Fx_pc = -(m_xy_t90*rhoVar)/18;
+    L_Fy_pc = -(rhoVar*(2*m_yy_t45 + 3))/18;
+    L_Fz_pc = -(m_yz_t90*rhoVar)/18;
+
+    break;
+case 0b11101110:
+    L_Fx_pc = -(rhoVar*(10*m_xx_t45 + 3*m_xy_t90 - 2*m_yy_t45 + m_zz_t45 + 15))/108;
+    L_Fy_pc = -(rhoVar*(3*m_xy_t90 - 2*m_xx_t45 + 10*m_yy_t45 + m_zz_t45 + 15))/108;
+    L_Fz_pc = -(rhoVar*(m_xz_t90 + m_yz_t90))/18;
+
+    break;
+case 0b11101111:
+    L_Fx_pc = -(rhoVar*(8*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 - m_yy_t45 - m_zz_t45 + 12))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 - 3*m_xy_t90 - 8*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 - 12))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 - 8*m_zz_t45 - 12))/108;
+
+    break;
+case 0b11110000:
+    L_Fx_pc = -(m_xz_t90*rhoVar)/18;
+    L_Fy_pc = -(m_yz_t90*rhoVar)/18;
+    L_Fz_pc = -(rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b11110001:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 - 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 - 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b11110010:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 - 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b11110011:
+    L_Fx_pc = (rhoVar*(m_xy_t90 - m_xz_t90))/18;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 10*m_yy_t45 - 3*m_yz_t90 - 2*m_zz_t45 + 15))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 2*m_yy_t45 - 3*m_yz_t90 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b11110100:
+    L_Fx_pc = (rhoVar*(2*m_xx_t45 - 3*m_xy_t90 - 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 - 3*m_xy_t90 + 2*m_yy_t45 + 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b11110101:
+    L_Fx_pc = (rhoVar*(10*m_xx_t45 - 3*m_xz_t90 + m_yy_t45 - 2*m_zz_t45 + 15))/108;
+    L_Fy_pc = (rhoVar*(m_xy_t90 - m_yz_t90))/18;
+    L_Fz_pc = -(rhoVar*(m_yy_t45 - 3*m_xz_t90 - 2*m_xx_t45 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b11110110:
+    L_Fx_pc = -(m_xz_t90*rhoVar)/18;
+    L_Fy_pc = -(m_yz_t90*rhoVar)/18;
+    L_Fz_pc = -(rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b11110111:
+    L_Fx_pc = (rhoVar*(8*m_xx_t45 + 3*m_xy_t90 - 3*m_xz_t90 - m_yy_t45 - m_zz_t45 + 12))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 - 3*m_xy_t90 - 8*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 - 12))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 - 8*m_zz_t45 - 12))/108;
+
+    break;
+case 0b11111000:
+    L_Fx_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 6*m_xz_t90 + 2*m_yy_t45 - m_zz_t45 + 3))/108;
+    L_Fy_pc = -(rhoVar*(2*m_xx_t45 + 3*m_xy_t90 + 2*m_yy_t45 + 6*m_yz_t90 - m_zz_t45 + 3))/108;
+    L_Fz_pc = -(rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b11111001:
+    L_Fx_pc = -(m_xz_t90*rhoVar)/18;
+    L_Fy_pc = -(m_yz_t90*rhoVar)/18;
+    L_Fz_pc = -(rhoVar*(2*m_zz_t45 + 3))/18;
+
+    break;
+case 0b11111010:
+    L_Fx_pc = -(rhoVar*(10*m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 2*m_zz_t45 + 15))/108;
+    L_Fy_pc = -(rhoVar*(m_xy_t90 + m_yz_t90))/18;
+    L_Fz_pc = -(rhoVar*(3*m_xz_t90 - 2*m_xx_t45 + m_yy_t45 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b11111011:
+    L_Fx_pc = -(rhoVar*(8*m_xx_t45 - 3*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 - m_zz_t45 + 12))/108;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 3*m_xy_t90 - 8*m_yy_t45 + 3*m_yz_t90 + m_zz_t45 - 12))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 - 3*m_xz_t90 + m_yy_t45 + 3*m_yz_t90 - 8*m_zz_t45 - 12))/108;
+
+    break;
+case 0b11111100:
+    L_Fx_pc = -(rhoVar*(m_xy_t90 + m_xz_t90))/18;
+    L_Fy_pc = -(rhoVar*(m_xx_t45 + 10*m_yy_t45 + 3*m_yz_t90 - 2*m_zz_t45 + 15))/108;
+    L_Fz_pc = -(rhoVar*(m_xx_t45 - 2*m_yy_t45 + 3*m_yz_t90 + 10*m_zz_t45 + 15))/108;
+
+    break;
+case 0b11111101:
+    L_Fx_pc = -(rhoVar*(3*m_xy_t90 - 8*m_xx_t45 + 3*m_xz_t90 + m_yy_t45 + m_zz_t45 - 12))/108;
+    L_Fy_pc = (rhoVar*(m_xx_t45 + 3*m_xy_t90 - 8*m_yy_t45 - 3*m_yz_t90 + m_zz_t45 - 12))/108;
+    L_Fz_pc = (rhoVar*(m_xx_t45 + 3*m_xz_t90 + m_yy_t45 - 3*m_yz_t90 - 8*m_zz_t45 - 12))/108;
+
+    break;
+case 0b11111110:
+    L_Fx_pc = -(rhoVar*(8*m_xx_t45 + 3*m_xy_t90 + 3*m_xz_t90 - m_yy_t45 - m_zz_t45 + 12))/108;
+    L_Fy_pc = -(rhoVar*(3*m_xy_t90 - m_xx_t45 + 8*m_yy_t45 + 3*m_yz_t90 - m_zz_t45 + 12))/108;
+    L_Fz_pc = -(rhoVar*(3*m_xz_t90 - m_xx_t45 - m_yy_t45 + 3*m_yz_t90 + 8*m_zz_t45 + 12))/108;
+
+    break;
+}

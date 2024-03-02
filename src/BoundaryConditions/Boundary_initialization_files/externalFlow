@@ -106,4 +106,7 @@
     {
         nodeType = (FRONT + BC_VELOCITY_WALL + BC_VELOCITY_INDEX_0);      
     }
-    //else{        nodeType = BULK;   }
+    else
+    {        
+        nodeType = BULK;   
+    }

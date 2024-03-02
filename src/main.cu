@@ -246,9 +246,12 @@ int main() {
         checkCudaErrors(cudaDeviceSynchronize());
     #endif
     #ifdef VOXEL_FILENAME
-        read_voxel_csv(VOXEL_FILENAME,hNodeType);
-        checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
+        hostInitialization_nodeType(hNodeType); //initialize the domain with BC + BULK
+        read_xyz_file(VOXEL_FILENAME,hNodeType); //overwrite the domain with the voxels information + add missing defintion for nearby nodes
+        checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  // copy inform\ation to device
         checkCudaErrors(cudaDeviceSynchronize());
+        define_voxel_bc << <gridBlock, threadBlock >> >(dNodeType); //update information of BC condition nearby the voxels
+        // checkCudaErrors(cudaMemcpy(hNodeType, dNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyDeviceToHost)); only usefull for debugging
     #endif
 
     #ifdef BC_FORCES

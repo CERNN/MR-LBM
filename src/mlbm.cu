@@ -485,6 +485,14 @@ __global__ void gpuMomCollisionStream(
 
     #endif //HIGH_ORDER_COLLISION
 
+    //Compute post colision forces
+    #ifdef BC_FORCES
+    dfloat L_Fx_pc=0;
+    dfloat L_Fy_pc=0;
+    dfloat L_Fz_pc=0;
+    #include "interfaceInclude/postCollisionForces"
+    #endif //_BC_FORCES 
+
 
 
     //calculate post collision populations
@@ -581,9 +589,9 @@ __global__ void gpuMomCollisionStream(
     if(save){
         #ifdef BC_FORCES
         //update local forces
-        d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = L_BC_Fx;
-        d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = L_BC_Fy;
-        d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = L_BC_Fz; 
+        d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = -(L_BC_Fx - L_Fx_pc);
+        d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = -(L_BC_Fy - L_Fy_pc);
+        d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = -(L_BC_Fz - L_Fz_pc);
         #endif 
     }
 

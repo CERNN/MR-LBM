@@ -50,7 +50,7 @@ void mean_moment(dfloat *fMom, dfloat *meanMom, int m_index, size_t step, int ta
     checkCudaErrors(cudaMemcpy(&temp, sum, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
 
     if (m_index == M_RHO_INDEX){
-        temp = (temp/(dfloat)NUMBER_LBM_NODES) - RHO_0; 
+        temp = (temp/(dfloat)NUMBER_LBM_NODES); 
     }else{
         temp = (temp/(dfloat)NUMBER_LBM_NODES);
     }

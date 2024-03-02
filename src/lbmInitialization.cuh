@@ -79,13 +79,31 @@ __global__ void gpuInitialization_force(
     dfloat *d_BC_Fx, dfloat* d_BC_Fy, dfloat* d_BC_Fz);   
 
 /*
-*   @brief Initializes boundary conditions based on csv with the boundary case
+*   @brief Initializes boundary conditions based on csv with voxels coordinates
 *   @param filename: csv filename
 *   @param dNodeType: nodeType arrary
 */
-__host__ void read_voxel_csv(
+__host__ void read_xyz_file(
     const std::string& filename, 
     unsigned int *dNodeType);
+
+
+/*
+*   @brief determines if the lattice is fluid or solid, calls bc_id to define the bc id;
+*   @param dNodeType: nodeType arrary\
+*/
+__global__ void define_voxel_bc(unsigned int *dNodeType);
+
+
+/*
+ *   @brief defines the bc id based on the neighboring lattices;
+ *   @param dNodeType: nodeType arrary
+ *   @param x: x coordinate of the lattice
+ *   @param y: y coordinate of the lattice
+ *   @param y: z coordinate of the lattice
+ */
+__host__ __device__
+unsigned int bc_id(unsigned int *dNodeType, int x,int y,int z);
 
 
 #endif // !__LBM_INITIALIZATION_CUH
