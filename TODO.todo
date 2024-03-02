@@ -7,7 +7,7 @@ Projects:
   ☐ Eliminate the necessity of two arrays to save the boundary conditions
     ☐ Also it need edit the post processing files to allow different data types (unsigned char for example)
     ☐ Edit the saveVarBin fuction to allow differnt data types
-    ☐ eliminate the necessity of nodeType = 0b00000000 from the csv file (matlab generator script)
+    ✔ eliminate the necessity of nodeType = 0b00000000 from the csv file (matlab generator script) @done(24-03-02 17:59)
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
   ✔ Method for calculation the total kinetic energy @done(23-09-06 19:39)
     ✔ Using parallel reduction @done(23-09-21 14:34)
@@ -16,8 +16,9 @@ Projects:
   ✔ Option for local force field @done(24-01-19 22:26)
     ✔ Export local force field @done(24-02-20 18:50)
     ✔ compute the sum of the force field @done(24-02-20 21:50)
-    ☐ Bugfix: Figure out why the force field is equal to zero when using LOCAL_FORCES
-    ☐ computation of force field over selected lattices.
+    ✔ Bugfix: Figure out why the force field is equal to zero when using LOCAL_FORCES @done(24-03-02 17:54)
+    ✔ computation of force field over selected lattices. @done(24-03-02 17:54)
+    ☐ fix the calculation of forces using the moment exchange method for the voxels
   ☐ Test the performance if instead of storing the populations in the shared memory, store the moments, which can be pulled and used to reconstructed the populations
       %it will increase the number of arithmetic operations, however the shared memory array will use 10 scalars per lattice instead of the 18 populations
       %allowing to use a higher block size than orginally planned. The performance might be benefical when using a D3Q27 velocity set since the reduced from to 26 to 10 scalars per lattice.
@@ -28,13 +29,14 @@ Projects:
 
   ☐ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char)
     ✔ change nodeType from char to int @done(24-02-24 10:41)
+    ☐ add new types of boundary conditions
     
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
     ☐ Edit local force field to moment array
     ☐ change the name moment array to something more descreptive
 
   ✔ higher shared memory size for cuda compute 8.0+ (requires dynamic shared memory which has worse performance 70% of original @done(24-01-19 22:27)
-    ☐ find a way to compute the best block size on runtime
+    ☐ find a way to compute the best block size on compílation time
     ☐ allocatate the correct ammount of shared memory based on the blockSize
 
 
