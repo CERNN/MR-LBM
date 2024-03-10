@@ -89,8 +89,11 @@ In order to create a NEW_CASE is necessary to create modify three files:
 
 ## Publications
 https://doi.org/10.1016/j.jnnfm.2024.105198
+
 https://www.researchgate.net/publication/378070516_Evaluating_the_Impact_of_Boundary_Conditions_on_the_MR-LBM
+
 https://doi.org/10.1016/j.jnnfm.2023.105030
+
 https://doi.org/10.1002/fld.5185
 
 ## Update
