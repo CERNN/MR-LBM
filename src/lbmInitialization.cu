@@ -563,7 +563,7 @@ unsigned int bc_id(unsigned int *dNodeType, int x, int y, int z){
         bc_d |= (1 << 5);
     }
     // 24
-    if(dNodeType[idxScalarBlock(xp1%BLOCK_NX, ym1%BLOCK_NY, zp1%BLOCK_NZ, xp1/BLOCK_NX, ym1/BLOCK_NY, zp1/BLOCK_NZ)] == 255){
+    if(dNodeType[idxScalarBlock(xm1%BLOCK_NX, yp1%BLOCK_NY, zm1%BLOCK_NZ, xm1/BLOCK_NX, yp1/BLOCK_NY, zm1/BLOCK_NZ)] == 255){
         bc_d |= (1 << 2);
     }
     // 25
