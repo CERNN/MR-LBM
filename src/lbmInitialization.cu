@@ -356,6 +356,9 @@ void read_xyz_file(
         std::getline(ss, field, ',');
         z = std::stol(field);
 
+        if((x>=NX)||(y>=NY)||(z>=NZ_TOTAL))
+            continue;
+
 
         index = idxScalarBlock(x % BLOCK_NX, y % BLOCK_NY, z % BLOCK_NZ, x / BLOCK_NX, y / BLOCK_NY, z / BLOCK_NZ);
         //printf("x %d y %d z %d \n",x,y,z); fflush(stdout);
