@@ -100,9 +100,9 @@ constexpr dfloat RE = 1000;
 
 
 constexpr int N = 128 * SCALE;
-constexpr int NX = N;        // size x of the grid 
+constexpr int NX = 2*N;        // size x of the grid 
                                     // (32 multiple for better performance)
-constexpr int NY = N;        // size y of the grid
+constexpr int NY = 2*N;        // size y of the grid
 constexpr int NZ = 4*N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
@@ -130,7 +130,7 @@ constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
 // value for the velocity initial condition in the domain
 constexpr dfloat U_0_X = 0.0;
 constexpr dfloat U_0_Y = 0.0;
-constexpr dfloat U_0_Z = 0.1;
+constexpr dfloat U_0_Z = U_MAX;
 
 // values options for boundary conditions //not used yet
 __device__ const dfloat UX_BC[4] =  {0, 0, 0, 0};
