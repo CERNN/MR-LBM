@@ -246,12 +246,13 @@ int main() {
         checkCudaErrors(cudaDeviceSynchronize());
     #endif
     #ifdef VOXEL_FILENAME
-        hostInitialization_nodeType(hNodeType); //initialize the domain with BC + BULK
-        read_xyz_file(VOXEL_FILENAME,hNodeType); //overwrite the domain with the voxels information + add missing defintion for nearby nodes
+        hostInitialization_nodeType_bulk(hNodeType); //initialize the domain with  BULK
+        read_xyz_file(VOXEL_FILENAME,hNodeType); //overwrite the domain with the voxels information + add missing defintion 
+        hostInitialization_nodeType(hNodeType); //initialize the domain with BC
         checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  // copy inform\ation to device
         checkCudaErrors(cudaDeviceSynchronize());
         define_voxel_bc << <gridBlock, threadBlock >> >(dNodeType); //update information of BC condition nearby the voxels
-        // checkCudaErrors(cudaMemcpy(hNodeType, dNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyDeviceToHost)); only usefull for debugging
+        checkCudaErrors(cudaMemcpy(hNodeType, dNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyDeviceToHost)); 
     #endif
 
     #ifdef BC_FORCES
@@ -449,7 +450,7 @@ int main() {
 
                     printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
                     if(console_flush){fflush(stdout);}
-
+                    if(!ONLY_FINAL_MACRO){
                     saveMacr(rho,ux,uy,uz,
                     #ifdef NON_NEWTONIAN_FLUID
                     omega,
@@ -463,6 +464,7 @@ int main() {
                     h_BC_Fz,
                     #endif
                     step);
+                    }
                 //}
             //}
 

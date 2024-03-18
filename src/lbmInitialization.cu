@@ -306,6 +306,23 @@ __global__ void gpuInitialization_force(
 }
 
 
+__host__ void hostInitialization_nodeType_bulk(
+    unsigned int *hNodeType)
+{
+    int x,y,z;
+    unsigned int nodeType;
+
+    for (x = 0; x<NX;x++){
+        for (y = 0; y<NY;y++){
+            for (z = 0; z<NZ_TOTAL;z++){
+                hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = BULK;
+            }
+        }
+    }
+    printf("bulk done\n");
+}
+
+
 __host__ void hostInitialization_nodeType(
     unsigned int *hNodeType)
 {
@@ -316,12 +333,13 @@ __host__ void hostInitialization_nodeType(
         for (y = 0; y<NY;y++){
             for (z = 0; z<NZ_TOTAL;z++){
                 #include BC_INIT_PATH
-                hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned int)nodeType;
+                if (nodeType != BULK)
+                    hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned int)nodeType;
             }
         }
     }
 
-    printf("bulk boundary condition done\n");
+    printf("boundary condition done\n");
 }
 
 

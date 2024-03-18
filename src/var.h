@@ -63,6 +63,7 @@
 #define CONSOLEPRINT (false) // print the console the data is being saved
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
+#define ONLY_FINAL_MACRO (false) //save only the last time step macroscopic
 
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;
 //#define SAVE_BC_FORCES // define if it will export BC force field to bin

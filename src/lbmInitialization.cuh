@@ -65,6 +65,14 @@ __global__ void gpuInitialization_nodeType(
 *   @brief Initialize the boundary condition node type
 *   @param nodeType: node type ID
 */
+__host__ void hostInitialization_nodeType_bulk(
+    unsigned int *hNodeType);
+
+
+/*
+*   @brief Initialize the boundary condition node type
+*   @param nodeType: node type ID
+*/
 __host__ void hostInitialization_nodeType(
     unsigned int *hNodeType);
 

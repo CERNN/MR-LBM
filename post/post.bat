@@ -1,1 +1,1 @@
-python exampleVTK.py "000"
+python exampleVTK.py "TEST/000"
