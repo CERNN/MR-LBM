@@ -103,6 +103,26 @@
     #define BC_Z_WALL// inlet outet
 #endif
 
+#ifdef heleShaw_
+    #define BC_X_WALL
+    #define BC_Y_WALL
+    #define BC_Z_WALL
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifdef BC_X_WALL
     #define INTERFACE_BC_WEST   INTERFACE_BC_WEST_BLOCK
