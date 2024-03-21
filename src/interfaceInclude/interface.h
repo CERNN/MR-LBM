@@ -97,7 +97,11 @@
     #define BC_Z_WALL// inlet outet
 #endif
 
-
+#ifdef viscoplasticJet_
+    #define BC_X_PERIODIC // free slip
+    #define BC_Y_PERIODIC // free slep
+    #define BC_Z_WALL// inlet outet
+#endif
 
 
 #ifdef BC_X_WALL
