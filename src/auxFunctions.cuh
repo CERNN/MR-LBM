@@ -33,6 +33,14 @@ void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step, int 
 
 
 /*
+*   @brief Calculate the mean density value of the field and save it
+*   @param fMom: device macroscopic field based on block and thread index
+*   @param step: current time step
+*/
+__host__ 
+void mean_rho(dfloat *fMom, size_t step);
+
+/*
 *   @brief Calculate the total kinetic energy of the flow
 *   @param fMom: device macroscopic field based on block and thread index
 *   @param step: current time step
