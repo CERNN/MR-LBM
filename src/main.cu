@@ -95,6 +95,32 @@ int main() {
         dfloat* d_BC_Fz;
     #endif //_BC_FORCES
 
+    #ifdef SECOND_DIST
+        dfloat* g_fGhostX_0;
+        dfloat* g_fGhostX_1;
+        dfloat* g_fGhostY_0; 
+        dfloat* g_fGhostY_1;
+        dfloat* g_fGhostZ_0; 
+        dfloat* g_fGhostZ_1;
+
+        dfloat* g_gGhostX_0;
+        dfloat* g_gGhostX_1;
+        dfloat* g_gGhostY_0; 
+        dfloat* g_gGhostY_1;
+        dfloat* g_gGhostZ_0; 
+        dfloat* g_gGhostZ_1;
+
+        dfloat* g_h_fGhostX_0;
+        dfloat* g_h_fGhostX_1;
+        dfloat* g_h_fGhostY_0; 
+        dfloat* g_h_fGhostY_1;
+        dfloat* g_h_fGhostZ_0; 
+        dfloat* g_h_fGhostZ_1;
+    #endif
+
+
+
+
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     dfloat* h_fMom;
     dfloat* rho;
@@ -108,6 +134,11 @@ int main() {
     dfloat* omega;
     #endif
 
+    #ifdef SECOND_DIST
+    dfloat* C;
+    #endif 
+
+
     float** randomNumbers = nullptr; // useful for turbulence
 
     checkCudaErrors(cudaMallocHost((void**)&(h_fMom), MEM_SIZE_MOM));
@@ -118,6 +149,9 @@ int main() {
     #ifdef NON_NEWTONIAN_FLUID
     checkCudaErrors(cudaMallocHost((void**)&(omega), MEM_SIZE_SCALAR));
     #endif
+    #ifdef SECOND_DIST
+    checkCudaErrors(cudaMallocHost((void**)&(C), MEM_SIZE_SCALAR));
+    #endif 
     #ifdef PARTICLE_TRACER
     checkCudaErrors(cudaMallocHost((void**)&(h_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
     #endif
@@ -159,6 +193,23 @@ int main() {
     cudaMalloc((void**)&gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF);    
     cudaMalloc((void**)&gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
     cudaMalloc((void**)&gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF);    
+
+    #ifdef SECOND_DIST
+    cudaMalloc((void**)&g_fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF);    
+    cudaMalloc((void**)&g_fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF);    
+    cudaMalloc((void**)&g_fGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF);    
+    cudaMalloc((void**)&g_fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF);    
+    cudaMalloc((void**)&g_fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF);    
+    cudaMalloc((void**)&g_fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF);
+
+    cudaMalloc((void**)&g_gGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF);    
+    cudaMalloc((void**)&g_gGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF);    
+    cudaMalloc((void**)&g_gGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF);    
+    cudaMalloc((void**)&g_gGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF);    
+    cudaMalloc((void**)&g_gGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF);    
+    cudaMalloc((void**)&g_gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF);    
+    #endif 
+     
 
     #ifdef DENSITY_CORRECTION
     checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
@@ -208,10 +259,23 @@ int main() {
         checkCudaErrors(cudaMallocHost((void**)&(h_fGhostY_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF));
         checkCudaErrors(cudaMallocHost((void**)&(h_fGhostZ_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF));
         checkCudaErrors(cudaMallocHost((void**)&(h_fGhostZ_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF));
+
+        #ifdef SECOND_DIST
+        checkCudaErrors(cudaMallocHost((void**)&(g_h_fGhostX_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF));
+        checkCudaErrors(cudaMallocHost((void**)&(g_h_fGhostX_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF));
+        checkCudaErrors(cudaMallocHost((void**)&(g_h_fGhostY_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF));
+        checkCudaErrors(cudaMallocHost((void**)&(g_h_fGhostY_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF));
+        checkCudaErrors(cudaMallocHost((void**)&(g_h_fGhostZ_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF));
+        checkCudaErrors(cudaMallocHost((void**)&(g_h_fGhostZ_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF));  
+        #endif 
     }
     if(LOAD_CHECKPOINT){
         step = INI_STEP;
-        loadSimCheckpoint(h_fMom, h_fGhostX_0,h_fGhostX_1,h_fGhostY_0,h_fGhostY_1,h_fGhostZ_0,h_fGhostZ_1,&step);
+        loadSimCheckpoint(h_fMom, h_fGhostX_0,h_fGhostX_1,h_fGhostY_0,h_fGhostY_1,h_fGhostZ_0,h_fGhostZ_1,
+        #ifdef SECOND_DIST 
+        g_fGhostX_0, g_fGhostX_1,g_fGhostY_0, g_fGhostY_1, g_fGhostZ_0, g_fGhostZ_1,
+        #endif 
+        &step);
 
         checkCudaErrors(cudaMemcpy(fMom, h_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyHostToDevice));
 
@@ -222,11 +286,24 @@ int main() {
         checkCudaErrors(cudaMemcpy(fGhostZ_0, h_fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyHostToDevice));
         checkCudaErrors(cudaMemcpy(fGhostZ_1, h_fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyHostToDevice));
        
+        #ifdef SECOND_DIST 
+        checkCudaErrors(cudaMemcpy(g_fGhostX_0, g_h_fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(g_fGhostX_1, g_h_fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(g_fGhostY_0, g_h_fGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(g_fGhostY_1, g_h_fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(g_fGhostZ_0, g_h_fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(g_fGhostZ_1, g_h_fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, cudaMemcpyHostToDevice));
+        #endif 
+       
 
     }else{
         gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom, randomNumbers[0]);
         //printf("Moments initialized \n");if(console_flush){fflush(stdout);}
-        gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1);
+        gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1
+        #ifdef SECOND_DIST 
+        ,g_fGhostX_0, g_fGhostX_1, g_fGhostY_0, g_fGhostY_1,g_fGhostZ_0, g_fGhostZ_1
+        #endif 
+        );
     }
 
     #if MEAN_FLOW
@@ -267,6 +344,16 @@ int main() {
     checkCudaErrors(cudaMemcpy(gGhostY_1, fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemcpy(gGhostZ_0, fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
     checkCudaErrors(cudaMemcpy(gGhostZ_1, fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToDevice));
+
+    #ifdef SECOND_DIST 
+    checkCudaErrors(cudaDeviceSynchronize());
+    checkCudaErrors(cudaMemcpy(g_gGhostX_0, g_fGhostX_0, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(g_gGhostX_1, g_fGhostX_1, sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(g_gGhostY_0, g_fGhostY_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(g_gGhostY_1, g_fGhostY_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(g_gGhostZ_0, g_fGhostZ_0, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, cudaMemcpyDeviceToDevice));
+    checkCudaErrors(cudaMemcpy(g_gGhostZ_1, g_fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, cudaMemcpyDeviceToDevice));
+    #endif 
     #ifdef DENSITY_CORRECTION
     h_mean_rho[0] = RHO_0;
     checkCudaErrors(cudaMemcpy(d_mean_rho, h_mean_rho, sizeof(dfloat), cudaMemcpyHostToDevice)); 
@@ -288,6 +375,9 @@ int main() {
     #ifdef NON_NEWTONIAN_FLUID
     omega,
     #endif
+    #ifdef SECOND_DIST 
+    C,
+    #endif 
     #if SAVE_BC
     nodeTypeSave,
     hNodeType,
@@ -348,6 +438,10 @@ int main() {
         >> > (fMom,dNodeType,
         fGhostX_0,fGhostX_1,fGhostY_0,fGhostY_1,fGhostZ_0,fGhostZ_1,
         gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,
+        #ifdef SECOND_DIST 
+        g_fGhostX_0,g_fGhostX_1,g_fGhostY_0,g_fGhostY_1,g_fGhostZ_0,g_fGhostZ_1,
+        g_gGhostX_0,g_gGhostX_1,g_gGhostY_0,g_gGhostY_1,g_gGhostZ_0,g_gGhostZ_1,
+        #endif 
         #ifdef DENSITY_CORRECTION
         d_mean_rho,
         #endif
@@ -377,7 +471,11 @@ int main() {
             checkCudaErrors(cudaMemcpy(h_fGhostZ_1,gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToHost));
             checkCudaErrors(cudaDeviceSynchronize());
            
-            saveSimCheckpoint(fMom,gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,&step);
+            saveSimCheckpoint(fMom,gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,
+            #ifdef SECOND_DIST 
+            g_fGhostX_0, g_fGhostX_1, g_fGhostY_0, g_fGhostY_1,g_fGhostZ_0, g_fGhostZ_1,
+            #endif 
+            &step);
         }
 
 
@@ -390,6 +488,15 @@ int main() {
         interfaceSwap(fGhostY_1,gGhostY_1);
         interfaceSwap(fGhostZ_0,gGhostZ_0);
         interfaceSwap(fGhostZ_1,gGhostZ_1);
+
+        #ifdef SECOND_DIST
+        interfaceSwap(g_fGhostX_0,g_gGhostX_0);
+        interfaceSwap(g_fGhostX_1,g_gGhostX_1);
+        interfaceSwap(g_fGhostY_0,g_gGhostY_0);
+        interfaceSwap(g_fGhostY_1,g_gGhostY_1);
+        interfaceSwap(g_fGhostZ_0,g_gGhostZ_0);
+        interfaceSwap(g_fGhostZ_1,g_gGhostZ_1);
+        #endif
         
 
         //save macroscopics
@@ -437,6 +544,9 @@ int main() {
                     #ifdef NON_NEWTONIAN_FLUID
                     omega,
                     #endif
+                    #ifdef SECOND_DIST 
+                    C,
+                    #endif 
                     #if SAVE_BC
                     nodeTypeSave,
                     hNodeType,
@@ -455,6 +565,9 @@ int main() {
                     #ifdef NON_NEWTONIAN_FLUID
                     omega,
                     #endif
+                    #ifdef SECOND_DIST 
+                    C,
+                    #endif 
                     #if SAVE_BC
                     nodeTypeSave,
                     #endif
@@ -489,6 +602,9 @@ int main() {
     #ifdef NON_NEWTONIAN_FLUID
     omega,
     #endif
+    #ifdef SECOND_DIST 
+    C,
+    #endif 
     #if SAVE_BC
     nodeTypeSave,
     hNodeType,
@@ -506,6 +622,9 @@ int main() {
     #ifdef NON_NEWTONIAN_FLUID
     omega,
     #endif
+    #ifdef SECOND_DIST 
+    C,
+    #endif 
     #if SAVE_BC
     nodeTypeSave,
     #endif
@@ -532,7 +651,11 @@ int main() {
         checkCudaErrors(cudaMemcpy(h_fGhostZ_1,gGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, cudaMemcpyDeviceToHost));
         checkCudaErrors(cudaDeviceSynchronize());
         
-        saveSimCheckpoint(fMom,gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,&step);
+        saveSimCheckpoint(fMom,gGhostX_0,gGhostX_1,gGhostY_0,gGhostY_1,gGhostZ_0,gGhostZ_1,
+        #ifdef SECOND_DIST 
+        g_fGhostX_0, g_fGhostX_1, g_fGhostY_0, g_fGhostY_1,g_fGhostZ_0, g_fGhostZ_1,
+        #endif 
+        &step);
 
     }
     checkCudaErrors(cudaDeviceSynchronize());
@@ -609,6 +732,24 @@ int main() {
     cudaFree(uy);
     cudaFree(uz);
 
+    #ifdef SECOND_DIST 
+    cudaFree(g_fGhostX_0);
+    cudaFree(g_fGhostX_1);
+    cudaFree(g_fGhostY_0);
+    cudaFree(g_fGhostY_1);
+    cudaFree(g_fGhostZ_0);
+    cudaFree(g_fGhostZ_1);
+
+    cudaFree(g_gGhostX_0);
+    cudaFree(g_gGhostX_1);
+    cudaFree(g_gGhostY_0);
+    cudaFree(g_gGhostY_1);
+    cudaFree(g_gGhostZ_0);
+    cudaFree(g_gGhostZ_1);
+
+    cudaFree(C);
+    #endif 
+
     #if MEAN_FLOW
         cudaFree(m_fMom);
         cudaFree(m_rho);
@@ -624,6 +765,14 @@ int main() {
         cudaFree(h_fGhostY_1);
         cudaFree(h_fGhostZ_0);
         cudaFree(h_fGhostZ_1);
+        #ifdef SECOND_DIST 
+        cudaFree(g_h_fGhostX_0);
+        cudaFree(g_h_fGhostX_1);
+        cudaFree(g_h_fGhostY_0);
+        cudaFree(g_h_fGhostY_1);
+        cudaFree(g_h_fGhostZ_0);
+        cudaFree(g_h_fGhostZ_1);
+        #endif 
     }
 
     #ifdef DENSITY_CORRECTION

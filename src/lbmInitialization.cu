@@ -64,6 +64,10 @@ __global__ void gpuInitialization_mom(
     omega = OMEGA;
     #endif
 
+    #ifdef SECOND_DIST 
+    dfloat C = 1.0;//T_HOT - (y/(dfloat)(NY-1))*T_DELTA_T;
+    #endif 
+
 /*    
 	rho = RHO_0 + (1.0/(16.0*cs2))*RHO_0*U_MAX*U_MAX*(cos((dfloat)2.0*(x) / L) + cos((dfloat)2.0*(y) / L))*(cos((dfloat)2.0*(z) / L) + 2.0);
 	ux =   U_MAX * sin((dfloat)(x) / L) * cos((dfloat)(y) / L) * cos((dfloat)(z) / L);
@@ -92,7 +96,13 @@ __global__ void gpuInitialization_mom(
         uz += (ub_f*U_TAU)*pert*randomNumbers[l + z - Nt*((l + z) / Nt)];
         ux += (ub_f*U_TAU)*pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
         uy += (ub_f*U_TAU)*pert*randomNumbers[l + y - Nt*((l + y) / Nt)];
-    */   
+    */ 
+        //dfloat pert = 0.0001;
+        //int l = idxScalarGlobal(x, y, z);
+        //int Nt = NUMBER_LBM_NODES;
+        //uz += (0.0+pert*randomNumbers[l + z - Nt*((l + z) / Nt)]);
+        //ux += (0.0+pert*randomNumbers[l + x - Nt*((l + x) / Nt)]);
+        //uy += (0.0+pert*randomNumbers[l + y - Nt*((l + y) / Nt)]);
 
     
     // zeroth moment
@@ -136,13 +146,28 @@ __global__ void gpuInitialization_mom(
     #ifdef NON_NEWTONIAN_FLUID
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omega;
     #endif   
+    #ifdef SECOND_DIST 
+
+
+
+
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = C;
+
+
+    #endif 
 }
 
 __global__ void gpuInitialization_pop(
     dfloat *fMom,
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1)
+    dfloat *fGhostZ_0, dfloat *fGhostZ_1
+    #ifdef SECOND_DIST 
+    ,dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1
+    #endif 
+    )
 {
     int x = threadIdx.x + blockDim.x * blockIdx.x;
     int y = threadIdx.y + blockDim.y * blockIdx.y;
@@ -269,6 +294,98 @@ __global__ void gpuInitialization_pop(
         fGhostZ_1[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27                                                                                                                                                                                                                    
     }
+
+    #ifdef SECOND_DIST 
+        dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat gNode[GQ];
+        
+        dfloat ux_t30 = uxVar*3.0;
+        dfloat uy_t30 = uyVar*3.0;
+        dfloat uz_t30 = uzVar*3.0;
+        dfloat uu = (uxVar*uxVar + uyVar*uyVar+uzVar*uzVar)*g_as2/2;
+        
+        dfloat multiplyTerm = cVar * gW0;
+        gNode[ 0] =  multiplyTerm*(1.0);// - uu);
+        multiplyTerm = cVar * gW1;
+        gNode[ 1] =  multiplyTerm*(1.0  + ( ux_t30));// + ( ux_t30)*( ux_t30)/2 - uu);
+        gNode[ 2] =  multiplyTerm*(1.0  + (-ux_t30));// + (-ux_t30)*(-ux_t30)/2 - uu);
+        gNode[ 3] =  multiplyTerm*(1.0  + ( uy_t30));// + ( uy_t30)*( uy_t30)/2 - uu);
+        gNode[ 4] =  multiplyTerm*(1.0  + (-uy_t30));// + (-uy_t30)*(-uy_t30)/2 - uu);
+        gNode[ 5] =  multiplyTerm*(1.0  + ( uz_t30));// + ( uz_t30)*( uz_t30)/2 - uu);
+        gNode[ 6] =  multiplyTerm*(1.0  + (-uz_t30));// + (-uz_t30)*(-uz_t30)/2 - uu);
+        #ifdef D3G19
+        multiplyTerm = cVar * gW2;
+        gNode[ 7] =  multiplyTerm*(1.0 + ( ux_t30 + uy_t30));// + ( ux_t30 + uy_t30)*( ux_t30 + uy_t30)/2 -uu );
+        gNode[ 8] =  multiplyTerm*(1.0 + (-ux_t30 - uy_t30));// + (-ux_t30 - uy_t30)*(-ux_t30 - uy_t30)/2 -uu );
+        gNode[ 9] =  multiplyTerm*(1.0 + ( ux_t30 + uz_t30));// + ( ux_t30 + uz_t30)*( ux_t30 + uz_t30)/2 -uu );
+        gNode[10] =  multiplyTerm*(1.0 + (-ux_t30 - uz_t30));// + (-ux_t30 - uz_t30)*(-ux_t30 - uz_t30)/2 -uu );
+        gNode[11] =  multiplyTerm*(1.0 + ( uy_t30 + uz_t30));// + ( uy_t30 + uz_t30)*( uy_t30 + uz_t30)/2 -uu );
+        gNode[12] =  multiplyTerm*(1.0 + (-uy_t30 - uz_t30));// + (-uy_t30 - uz_t30)*(-uy_t30 - uz_t30)/2 -uu );
+        gNode[13] =  multiplyTerm*(1.0 + ( ux_t30 - uy_t30));// + ( ux_t30 - uy_t30)*( ux_t30 - uy_t30)/2 -uu );
+        gNode[14] =  multiplyTerm*(1.0 + (-ux_t30 + uy_t30));// + (-ux_t30 + uy_t30)*(-ux_t30 + uy_t30)/2 -uu );
+        gNode[15] =  multiplyTerm*(1.0 + ( ux_t30 - uz_t30));// + ( ux_t30 - uz_t30)*( ux_t30 - uz_t30)/2 -uu );
+        gNode[16] =  multiplyTerm*(1.0 + (-ux_t30 + uz_t30));// + (-ux_t30 + uz_t30)*(-ux_t30 + uz_t30)/2 -uu );
+        gNode[17] =  multiplyTerm*(1.0 + ( uy_t30 - uz_t30));// + ( uy_t30 - uz_t30)*( uy_t30 - uz_t30)/2 -uu );
+        gNode[18] =  multiplyTerm*(1.0 + (-uy_t30 + uz_t30));// + (-uy_t30 + uz_t30)*(-uy_t30 + uz_t30)/2 -uu );
+        #endif
+
+
+   if (threadIdx.x == 0) { //w
+        g_fGhostX_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 2]; 
+        #ifdef D3G19
+        g_fGhostX_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 8];
+        g_fGhostX_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[10];
+        g_fGhostX_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[14];
+        g_fGhostX_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[16];
+        #endif            
+    }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+        g_fGhostX_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 1];
+        #ifdef D3G19
+        g_fGhostX_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 7];
+        g_fGhostX_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[ 9];
+        g_fGhostX_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[13];
+        g_fGhostX_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[15];     
+        #endif    
+    }
+
+    if (threadIdx.y == 0)  { //s                             
+        g_fGhostY_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 4];
+        #ifdef D3G19
+        g_fGhostY_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 8];
+        g_fGhostY_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[12];
+        g_fGhostY_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[13];
+        g_fGhostY_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[18];           
+        #endif           
+    }else if (threadIdx.y == (BLOCK_NY - 1)){             
+        g_fGhostY_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 3];
+        #ifdef D3G19
+        g_fGhostY_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 7];
+        g_fGhostY_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[11];
+        g_fGhostY_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[14];
+        g_fGhostY_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[17];         
+        #endif        
+    }
+    
+    if (threadIdx.z == 0){ //b                          
+        g_fGhostZ_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 6];
+        #ifdef D3G19
+        g_fGhostZ_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[10];
+        g_fGhostZ_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[12];
+        g_fGhostZ_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[15];
+        g_fGhostZ_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[17]; 
+        #endif    
+    }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+        g_fGhostZ_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 5];
+        #ifdef D3G19
+        g_fGhostZ_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[ 9];
+        g_fGhostZ_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[11];
+        g_fGhostZ_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[16];
+        g_fGhostZ_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[18];    
+        #endif                    
+    }
+    #endif //SECOND_DIST
+
+
 }
 
 

@@ -428,6 +428,9 @@ void linearMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
+    #ifdef SECOND_DIST 
+    dfloat* C,
+    #endif
     #if SAVE_BC
     dfloat* nodeTypeSave,
     unsigned int* hNodeType,
@@ -453,6 +456,10 @@ void linearMacr(
 
                 #ifdef NON_NEWTONIAN_FLUID
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
+                #endif
+
+                #ifdef SECOND_DIST 
+                C[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 #endif
                 
                 #if SAVE_BC
@@ -507,6 +514,9 @@ void saveMacr(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat* omega,
     #endif
+    #ifdef SECOND_DIST 
+    dfloat* C,
+    #endif
     #if SAVE_BC
     dfloat* nodeTypeSave,
     #endif
@@ -520,6 +530,7 @@ void saveMacr(
 // Names of files
     std::string strFileRho, strFileUx, strFileUy, strFileUz;
     std::string strFileOmega;
+    std::string strFileC;
     std::string strFileBc; 
     std::string strFileFx, strFileFy, strFileFz;
 
@@ -529,6 +540,9 @@ void saveMacr(
     strFileUz = getVarFilename("uz", nSteps, ".bin");
     #ifdef NON_NEWTONIAN_FLUID
     strFileOmega = getVarFilename("omega", nSteps, ".bin");
+    #endif
+    #ifdef SECOND_DIST 
+    strFileC = getVarFilename("C", nSteps, ".bin");
     #endif
     #if SAVE_BC
     strFileBc = getVarFilename("bc", nSteps, ".bin");
@@ -545,6 +559,9 @@ void saveMacr(
     saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
     #ifdef NON_NEWTONIAN_FLUID
     saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef SECOND_DIST
+    saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
     #endif
     #if SAVE_BC
     saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);

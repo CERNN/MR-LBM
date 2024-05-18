@@ -8,6 +8,14 @@ __global__ void gpuMomCollisionStream(
     dfloat *gGhostX_0, dfloat *gGhostX_1,
     dfloat *gGhostY_0, dfloat *gGhostY_1,
     dfloat *gGhostZ_0, dfloat *gGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    dfloat *g_gGhostX_0, dfloat *g_gGhostX_1,
+    dfloat *g_gGhostY_0, dfloat *g_gGhostY_1,
+    dfloat *g_gGhostZ_0, dfloat *g_gGhostZ_1,
+    #endif 
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif
@@ -23,6 +31,9 @@ __global__ void gpuMomCollisionStream(
     if (x >= NX || y >= NY || z >= NZ)
         return;
     dfloat pop[Q];
+    #ifdef SECOND_DIST
+    dfloat gNode[GQ];
+    #endif
 
     // Load moments from global memory
 
@@ -54,10 +65,11 @@ __global__ void gpuMomCollisionStream(
     dfloat omegaVar = OMEGA;
     #endif
 
+
     //Local forces
-    const dfloat L_Fx = FX;
-    const dfloat L_Fy = FY;
-    const dfloat L_Fz = FZ;
+    dfloat L_Fx = FX;
+    dfloat L_Fy = FY;
+    dfloat L_Fz = FZ;
 
     #ifdef BC_FORCES
     dfloat L_BC_Fx = 0.0;
@@ -135,6 +147,47 @@ __global__ void gpuMomCollisionStream(
             pop[18] = multiplyTerm * (pics2 -uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xy_t90*ux_t30)/3 - (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
            #endif
     #endif //HIGH_ORDER_COLLISION
+
+    #ifdef SECOND_DIST 
+
+    dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+    dfloat uu;
+
+    dfloat uxVar = ux_t30/3.0;
+    dfloat uyVar = uy_t30/3.0;
+    dfloat uzVar = uz_t30/3.0;
+
+    uu = (uxVar*uxVar + uyVar*uyVar + uzVar*uzVar)*g_as2/2;
+    
+    multiplyTerm = cVar * gW0;
+    gNode[ 0] =  multiplyTerm*(1.0);// - uu);
+    multiplyTerm = cVar * gW1;
+    gNode[ 1] =  multiplyTerm*(1.0 + ( ux_t30));// + ( ux_t30)*( ux_t30)/2 - uu);
+    gNode[ 2] =  multiplyTerm*(1.0 + (-ux_t30));// + (-ux_t30)*(-ux_t30)/2 - uu);
+    gNode[ 3] =  multiplyTerm*(1.0 + ( uy_t30));// + ( uy_t30)*( uy_t30)/2 - uu);
+    gNode[ 4] =  multiplyTerm*(1.0 + (-uy_t30));// + (-uy_t30)*(-uy_t30)/2 - uu);
+    gNode[ 5] =  multiplyTerm*(1.0 + ( uz_t30));// + ( uz_t30)*( uz_t30)/2 - uu);
+    gNode[ 6] =  multiplyTerm*(1.0 + (-uz_t30));// + (-uz_t30)*(-uz_t30)/2 - uu);
+    #ifdef D3G19
+    multiplyTerm = cVar * gW2;
+    gNode[ 7] =  multiplyTerm*(1.0 + ( ux_t30 + uy_t30) + ( ux_t30 + uy_t30)*( ux_t30 + uy_t30)/2 -uu );
+    gNode[ 8] =  multiplyTerm*(1.0 + (-ux_t30 - uy_t30) + (-ux_t30 - uy_t30)*(-ux_t30 - uy_t30)/2 -uu );
+    gNode[ 9] =  multiplyTerm*(1.0 + ( ux_t30 + uz_t30) + ( ux_t30 + uz_t30)*( ux_t30 + uz_t30)/2 -uu );
+    gNode[10] =  multiplyTerm*(1.0 + (-ux_t30 - uz_t30) + (-ux_t30 - uz_t30)*(-ux_t30 - uz_t30)/2 -uu );
+    gNode[11] =  multiplyTerm*(1.0 + ( uy_t30 + uz_t30) + ( uy_t30 + uz_t30)*( uy_t30 + uz_t30)/2 -uu );
+    gNode[12] =  multiplyTerm*(1.0 + (-uy_t30 - uz_t30) + (-uy_t30 - uz_t30)*(-uy_t30 - uz_t30)/2 -uu );
+    gNode[13] =  multiplyTerm*(1.0 + ( ux_t30 - uy_t30) + ( ux_t30 - uy_t30)*( ux_t30 - uy_t30)/2 -uu );
+    gNode[14] =  multiplyTerm*(1.0 + (-ux_t30 + uy_t30) + (-ux_t30 + uy_t30)*(-ux_t30 + uy_t30)/2 -uu );
+    gNode[15] =  multiplyTerm*(1.0 + ( ux_t30 - uz_t30) + ( ux_t30 - uz_t30)*( ux_t30 - uz_t30)/2 -uu );
+    gNode[16] =  multiplyTerm*(1.0 + (-ux_t30 + uz_t30) + (-ux_t30 + uz_t30)*(-ux_t30 + uz_t30)/2 -uu );
+    gNode[17] =  multiplyTerm*(1.0 + ( uy_t30 - uz_t30) + ( uy_t30 - uz_t30)*( uy_t30 - uz_t30)/2 -uu );
+    gNode[18] =  multiplyTerm*(1.0 + (-uy_t30 + uz_t30) + (-uy_t30 + uz_t30)*(-uy_t30 + uz_t30)/2 -uu );
+    #endif
+
+
+
+   #endif
 
     #ifdef DYNAMIC_SHARED_MEMORY
     extern __shared__ dfloat s_pop[]; 
@@ -216,6 +269,59 @@ __global__ void gpuMomCollisionStream(
 
     /* load pop from global in cover nodes */
 
+    #ifdef SECOND_DIST
+    __syncthreads();
+
+    //overwrite values
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = gNode[ 1];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1)] = gNode[ 2];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2)] = gNode[ 3];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3)] = gNode[ 4];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4)] = gNode[ 5];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5)] = gNode[ 6];
+    #ifdef D3G19
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6)] = gNode[ 7];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7)] = gNode[ 8];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8)] = gNode[ 9];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9)] = gNode[10];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10)] = gNode[11];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11)] = gNode[12];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12)] = gNode[13];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13)] = gNode[14];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14)] = gNode[15];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15)] = gNode[16];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16)] = gNode[17];
+    s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17)] = gNode[18];
+    #endif
+
+    
+    //sync threads of the block so all populations are saved
+    __syncthreads();
+
+    /* pull */
+    gNode[ 1] = s_pop[idxPopBlock(xm1, threadIdx.y, threadIdx.z, 0)];
+    gNode[ 2] = s_pop[idxPopBlock(xp1, threadIdx.y, threadIdx.z, 1)];
+    gNode[ 3] = s_pop[idxPopBlock(threadIdx.x, ym1, threadIdx.z, 2)];
+    gNode[ 4] = s_pop[idxPopBlock(threadIdx.x, yp1, threadIdx.z, 3)];
+    gNode[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, zm1, 4)];
+    gNode[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, zp1, 5)];
+    #ifdef D3G19
+    gNode[ 7] = s_pop[idxPopBlock(xm1, ym1, threadIdx.z, 6)];
+    gNode[ 8] = s_pop[idxPopBlock(xp1, yp1, threadIdx.z, 7)];
+    gNode[ 9] = s_pop[idxPopBlock(xm1, threadIdx.y, zm1, 8)];
+    gNode[10] = s_pop[idxPopBlock(xp1, threadIdx.y, zp1, 9)];
+    gNode[11] = s_pop[idxPopBlock(threadIdx.x, ym1, zm1, 10)];
+    gNode[12] = s_pop[idxPopBlock(threadIdx.x, yp1, zp1, 11)];
+    gNode[13] = s_pop[idxPopBlock(xm1, yp1, threadIdx.z, 12)];
+    gNode[14] = s_pop[idxPopBlock(xp1, ym1, threadIdx.z, 13)];
+    gNode[15] = s_pop[idxPopBlock(xm1, threadIdx.y, zp1, 14)];
+    gNode[16] = s_pop[idxPopBlock(xp1, threadIdx.y, zm1, 15)];
+    gNode[17] = s_pop[idxPopBlock(threadIdx.x, ym1, zp1, 16)];
+    gNode[18] = s_pop[idxPopBlock(threadIdx.x, yp1, zm1, 17)];
+    #endif
+            
+    #endif //SECOND_DIST
+
 
    
     const int tx = threadIdx.x;
@@ -246,6 +352,10 @@ __global__ void gpuMomCollisionStream(
 
 
     #include "interfaceInclude/popLoad"
+
+    #ifdef SECOND_DIST
+    #include "interfaceInclude/g_popLoad"
+    #endif
 
     //NOTE : STREAMING DONE, APPLY BOUNDARY CONDITION AND COMPUTE POST STREAMING MOMENTS
     #ifdef BC_POPULATION_BASED
@@ -416,6 +526,11 @@ __global__ void gpuMomCollisionStream(
         #endif // NON_NEWTONIAN_FLUID
         #if !(defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL))
             dfloat invRho_mt15 = -3*invRho/2;
+
+            #ifdef THERMAL_MODEL //Boussinesq Approximation
+            L_Fy = T_gravity_t_beta * RHO_0*((cVar-T_REFERENCE));
+            #endif
+
             ux_t30 = (T_OMEGA * (ux_t30 + invRho_mt15 * L_Fx ) + OMEGA * ux_t30 + TT_OMEGA_T3 * L_Fx);
             uy_t30 = (T_OMEGA * (uy_t30 + invRho_mt15 * L_Fy ) + OMEGA * uy_t30 + TT_OMEGA_T3 * L_Fy);
             uz_t30 = (T_OMEGA * (uz_t30 + invRho_mt15 * L_Fz ) + OMEGA * uz_t30 + TT_OMEGA_T3 * L_Fz);
@@ -492,6 +607,77 @@ __global__ void gpuMomCollisionStream(
     //dfloat L_Fz_pc=0;
     //#include "interfaceInclude/postCollisionForces"
     //#endif //_BC_FORCES 
+
+    #ifdef SECOND_DIST
+
+
+        if(nodeType != BULK){
+                #include BC_SECONDARY_PATH
+        }
+
+        cVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6];
+        #ifdef D3G19
+        cVar += gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
+        #endif
+
+        dfloat geq[GQ];
+        
+        uxVar = ux_t30/3.0;
+        uyVar = uy_t30/3.0;
+        uzVar = uz_t30/3.0;
+        uu = (uxVar*uxVar + uyVar*uyVar+uzVar*uzVar)*g_as2/2;
+        
+        multiplyTerm = cVar * gW0;
+        geq[ 0] =  multiplyTerm*(1.0);// - uu);
+        multiplyTerm = cVar * gW1;
+        geq[ 1] =  multiplyTerm*(1.0  + ( ux_t30));// + ( ux_t30)*( ux_t30)/2 - uu);
+        geq[ 2] =  multiplyTerm*(1.0  + (-ux_t30));// + (-ux_t30)*(-ux_t30)/2 - uu);
+        geq[ 3] =  multiplyTerm*(1.0  + ( uy_t30));// + ( uy_t30)*( uy_t30)/2 - uu);
+        geq[ 4] =  multiplyTerm*(1.0  + (-uy_t30));// + (-uy_t30)*(-uy_t30)/2 - uu);
+        geq[ 5] =  multiplyTerm*(1.0  + ( uz_t30));// + ( uz_t30)*( uz_t30)/2 - uu);
+        geq[ 6] =  multiplyTerm*(1.0  + (-uz_t30));// + (-uz_t30)*(-uz_t30)/2 - uu);
+        #ifdef D3G19
+        multiplyTerm = cVar * gW2;
+        geq[ 7] =  multiplyTerm*(1.0 + ( ux_t30 + uy_t30));// + ( ux_t30 + uy_t30)*( ux_t30 + uy_t30)/2 -uu );
+        geq[ 8] =  multiplyTerm*(1.0 + (-ux_t30 - uy_t30));// + (-ux_t30 - uy_t30)*(-ux_t30 - uy_t30)/2 -uu );
+        geq[ 9] =  multiplyTerm*(1.0 + ( ux_t30 + uz_t30));// + ( ux_t30 + uz_t30)*( ux_t30 + uz_t30)/2 -uu );
+        geq[10] =  multiplyTerm*(1.0 + (-ux_t30 - uz_t30));// + (-ux_t30 - uz_t30)*(-ux_t30 - uz_t30)/2 -uu );
+        geq[11] =  multiplyTerm*(1.0 + ( uy_t30 + uz_t30));// + ( uy_t30 + uz_t30)*( uy_t30 + uz_t30)/2 -uu );
+        geq[12] =  multiplyTerm*(1.0 + (-uy_t30 - uz_t30));// + (-uy_t30 - uz_t30)*(-uy_t30 - uz_t30)/2 -uu );
+        geq[13] =  multiplyTerm*(1.0 + ( ux_t30 - uy_t30));// + ( ux_t30 - uy_t30)*( ux_t30 - uy_t30)/2 -uu );
+        geq[14] =  multiplyTerm*(1.0 + (-ux_t30 + uy_t30));// + (-ux_t30 + uy_t30)*(-ux_t30 + uy_t30)/2 -uu );
+        geq[15] =  multiplyTerm*(1.0 + ( ux_t30 - uz_t30));// + ( ux_t30 - uz_t30)*( ux_t30 - uz_t30)/2 -uu );
+        geq[16] =  multiplyTerm*(1.0 + (-ux_t30 + uz_t30));// + (-ux_t30 + uz_t30)*(-ux_t30 + uz_t30)/2 -uu );
+        geq[17] =  multiplyTerm*(1.0 + ( uy_t30 - uz_t30));// + ( uy_t30 - uz_t30)*( uy_t30 - uz_t30)/2 -uu );
+        geq[18] =  multiplyTerm*(1.0 + (-uy_t30 + uz_t30));// + (-uy_t30 + uz_t30)*(-uy_t30 + uz_t30)/2 -uu );
+        #endif
+
+
+        dfloat q_source = 0.0;
+        gNode[ 0] =  G_T_OMEGA*gNode[ 0] + G_OMEGA*geq[ 0] + G_TT_OMEGA * gW0 * q_source;
+        gNode[ 1] =  G_T_OMEGA*gNode[ 1] + G_OMEGA*geq[ 1] + G_TT_OMEGA * gW1 * q_source;
+        gNode[ 2] =  G_T_OMEGA*gNode[ 2] + G_OMEGA*geq[ 2] + G_TT_OMEGA * gW1 * q_source;
+        gNode[ 3] =  G_T_OMEGA*gNode[ 3] + G_OMEGA*geq[ 3] + G_TT_OMEGA * gW1 * q_source;
+        gNode[ 4] =  G_T_OMEGA*gNode[ 4] + G_OMEGA*geq[ 4] + G_TT_OMEGA * gW1 * q_source;
+        gNode[ 5] =  G_T_OMEGA*gNode[ 5] + G_OMEGA*geq[ 5] + G_TT_OMEGA * gW1 * q_source;
+        gNode[ 6] =  G_T_OMEGA*gNode[ 6] + G_OMEGA*geq[ 6] + G_TT_OMEGA * gW1 * q_source;
+        #ifdef D3G19
+        gNode[ 7] =  G_T_OMEGA*gNode[ 7] + G_OMEGA * geq[ 7] + G_TT_OMEGA * gW2 * q_source;
+        gNode[ 8] =  G_T_OMEGA*gNode[ 8] + G_OMEGA * geq[ 8] + G_TT_OMEGA * gW2 * q_source;
+        gNode[ 9] =  G_T_OMEGA*gNode[ 9] + G_OMEGA * geq[ 9] + G_TT_OMEGA * gW2 * q_source;
+        gNode[10] =  G_T_OMEGA*gNode[10] + G_OMEGA * geq[10] + G_TT_OMEGA * gW2 * q_source;
+        gNode[11] =  G_T_OMEGA*gNode[11] + G_OMEGA * geq[11] + G_TT_OMEGA * gW2 * q_source;
+        gNode[12] =  G_T_OMEGA*gNode[12] + G_OMEGA * geq[12] + G_TT_OMEGA * gW2 * q_source;
+        gNode[13] =  G_T_OMEGA*gNode[13] + G_OMEGA * geq[13] + G_TT_OMEGA * gW2 * q_source;
+        gNode[14] =  G_T_OMEGA*gNode[14] + G_OMEGA * geq[14] + G_TT_OMEGA * gW2 * q_source;
+        gNode[15] =  G_T_OMEGA*gNode[15] + G_OMEGA * geq[15] + G_TT_OMEGA * gW2 * q_source;
+        gNode[16] =  G_T_OMEGA*gNode[16] + G_OMEGA * geq[16] + G_TT_OMEGA * gW2 * q_source;
+        gNode[17] =  G_T_OMEGA*gNode[17] + G_OMEGA * geq[17] + G_TT_OMEGA * gW2 * q_source;
+        gNode[18] =  G_T_OMEGA*gNode[18] + G_OMEGA * geq[18] + G_TT_OMEGA * gW2 * q_source;
+        #endif
+        
+
+    #endif
 
 
 
@@ -598,4 +784,17 @@ __global__ void gpuMomCollisionStream(
 
 
     #include "interfaceInclude/popSave"
+
+    #ifdef SECOND_DIST
+    #include "interfaceInclude/g_popSave"
+
+    cVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6];
+    #ifdef D3G19
+    cVar += gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
+    #endif
+    
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = cVar;
+
+    #endif
+
 }

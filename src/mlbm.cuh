@@ -47,6 +47,14 @@ void gpuMomCollisionStream(
     dfloat *gGhostX_0, dfloat *gGhostX_1,
     dfloat *gGhostY_0, dfloat *gGhostY_1,
     dfloat *gGhostZ_0, dfloat *gGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    dfloat *g_gGhostX_0, dfloat *g_gGhostX_1,
+    dfloat *g_gGhostY_0, dfloat *g_gGhostY_1,
+    dfloat *g_gGhostZ_0, dfloat *g_gGhostZ_1,
+    #endif 
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif

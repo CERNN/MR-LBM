@@ -125,6 +125,11 @@ void operateSimCheckpoint(
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    #endif
     int* step
 );
 
@@ -147,6 +152,11 @@ void loadSimCheckpoint(
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    #endif
     int *step
 );
 
@@ -169,6 +179,11 @@ void saveSimCheckpoint(
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    #endif
     int *step
 );
 

@@ -19,7 +19,7 @@
 #define INTERFACE_BC_FRONT_BLOCK (threadIdx.z == (BLOCK_NZ - 1) && z!=(NZ-1))
 
 
-#ifdef parallelPlatesBounceBack_
+#ifdef parallelPlates_
     #define BC_X_PERIODIC
     #define BC_Y_WALL
     #define BC_Z_PERIODIC

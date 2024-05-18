@@ -18,7 +18,7 @@ Projects:
     ✔ compute the sum of the force field @done(24-02-20 21:50)
     ✔ Bugfix: Figure out why the force field is equal to zero when using LOCAL_FORCES @done(24-03-02 17:54)
     ✔ computation of force field over selected lattices. @done(24-03-02 17:54)
-    ☐ fix the calculation of forces using the moment exchange method for the voxels
+    ✔ fix the calculation of forces using the moment exchange method for the voxels @done(24-03-24 10:58)
   ☐ Test the performance if instead of storing the populations in the shared memory, store the moments, which can be pulled and used to reconstructed the populations
       %it will increase the number of arithmetic operations, however the shared memory array will use 10 scalars per lattice instead of the 18 populations
       %allowing to use a higher block size than orginally planned. The performance might be benefical when using a D3Q27 velocity set since the reduced from to 26 to 10 scalars per lattice.
@@ -27,9 +27,9 @@ Projects:
 
 
 
-  ☐ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char)
+  ✔ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char) @done(24-03-24 10:58)
     ✔ change nodeType from char to int @done(24-02-24 10:41)
-    ☐ add new types of boundary conditions
+    ✔ add new types of boundary conditions @done(24-03-24 10:58)
     
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
     ☐ Edit local force field to moment array
@@ -40,9 +40,13 @@ Projects:
     ☐ allocatate the correct ammount of shared memory based on the blockSize
 
 
-  ☐ Incorporate thermal model
+  ✔ Push thermal model @done(24-05-17 22:52)
+    ✔ First Implementation @done(24-04-13 23:55)
+    ☐ Correct mirror error that occur on the interface between blocks C~1e-4
+    ☐ Transform equations to moment-based
+    ☐ Increase Performance
   ✔ Incorporate LES 
-    ☐ Change macro condition from (non_newtonian || les model to local viscosity)
+  ☐ Change macro condition from (non_newtonian || les model to local viscosity)
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
   ☐ Incorporate IBM
   ☐ Curved boundary conditions

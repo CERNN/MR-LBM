@@ -52,7 +52,13 @@ __global__ void gpuInitialization_pop(
     dfloat *fMom,
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1);
+    dfloat *fGhostZ_0, dfloat *fGhostZ_1
+    #ifdef SECOND_DIST 
+    ,dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1
+    #endif 
+    );
 
 /*
 *   @brief Initialize the boundary condition node type

@@ -121,6 +121,44 @@ idxPopZ(
 
     return tx + BLOCK_NX * (ty + BLOCK_NY * (pop + QF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
+#ifdef SECOND_DIST
+__device__ int __forceinline__
+g_idxPopX(
+    const int ty,
+    const int tz,
+    const int pop,
+    const int bx,
+    const int by,
+    const int bz)
+{
+
+    return ty + BLOCK_NY * (tz + BLOCK_NZ * (pop + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxPopY(
+    const int tx,
+    const int tz,
+    const int pop,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return tx + BLOCK_NX * (tz + BLOCK_NZ * (pop + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxPopZ(
+    const int tx,
+    const int ty,
+    const int pop,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (pop + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+#endif
 
 __host__ __device__
     size_t __forceinline__

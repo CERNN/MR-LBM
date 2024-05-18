@@ -128,6 +128,11 @@ void operateSimCheckpoint(
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    #endif
     int* step
     )
 {
@@ -163,6 +168,15 @@ void operateSimCheckpoint(
     f_arr(fGhostZ_0, f_filename("fGhostZ_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
     f_arr(fGhostZ_1, f_filename("fGhostZ_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
 
+    #ifdef SECOND_DIST 
+    f_arr(g_fGhostX_0, f_filename("g_fGhostX_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
+    f_arr(g_fGhostX_1, f_filename("g_fGhostX_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
+    f_arr(g_fGhostY_0, f_filename("g_fGhostY_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
+    f_arr(g_fGhostY_1, f_filename("g_fGhostY_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
+    f_arr(g_fGhostZ_0, f_filename("g_fGhostZ_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
+    f_arr(g_fGhostZ_1, f_filename("g_fGhostZ_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
+    #endif
+
     free(tmp);
 }
 
@@ -173,12 +187,22 @@ void loadSimCheckpoint(
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    #endif 
     int *step
     ){
     operateSimCheckpoint(__LOAD_CHECKPOINT, fMom,
     fGhostX_0, fGhostX_1,
     fGhostY_0, fGhostY_1,
     fGhostZ_0, fGhostZ_1,
+    #ifdef SECOND_DIST 
+    g_fGhostX_0, g_fGhostX_1,
+    g_fGhostY_0, g_fGhostY_1,
+    g_fGhostZ_0, g_fGhostZ_1,
+    #endif 
     step);
 }
 
@@ -188,6 +212,11 @@ void saveSimCheckpoint(
     dfloat *fGhostX_0, dfloat *fGhostX_1,
     dfloat *fGhostY_0, dfloat *fGhostY_1,
     dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    #ifdef SECOND_DIST 
+    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
+    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
+    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    #endif
     int *step
     ){
     std::string foldername = PATH_FILES; 
@@ -199,5 +228,10 @@ void saveSimCheckpoint(
     fGhostX_0, fGhostX_1,
     fGhostY_0, fGhostY_1,
     fGhostZ_0, fGhostZ_1,
+    #ifdef SECOND_DIST 
+    g_fGhostX_0, g_fGhostX_1,
+    g_fGhostY_0, g_fGhostY_1,
+    g_fGhostZ_0, g_fGhostZ_1,
+    #endif 
     step);
 }

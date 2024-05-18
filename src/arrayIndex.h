@@ -39,6 +39,13 @@ constexpr int M_MZZ_INDEX = 9;
     #define M_OFFSET M_FZ_INDEX
 #endif
 
+#ifdef SECOND_DIST
+    constexpr int M_C_INDEX = (1+M_OFFSET);
+    #ifdef M_OFFSET
+        #undef M_OFFSET
+    #endif
+    #define M_OFFSET M_C_INDEX
+#endif
 
 
 const size_t NUMBER_MOMENTS = M_OFFSET+1;
