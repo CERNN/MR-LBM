@@ -693,9 +693,6 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
     strSimInfo << "\n------------------------------ BOUNDARY CONDITIONS -----------------------------\n";
-    #ifdef BC_POPULATION_BASED
-    strSimInfo << "            BC mode: Population Based \n";
-    #endif
     #ifdef BC_MOMENT_BASED
     strSimInfo << "            BC mode: Moment Based \n";
     #endif

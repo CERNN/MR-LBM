@@ -21,8 +21,8 @@
 
 /* ----------------------------- BC DEFINES ---------------------------- */
 
-//#define parallelPlatesBounceBack_
-//#define BC_PROBLEM parallelPlatesBounceBack
+//#define parallelPlates_
+//#define BC_PROBLEM parallelPlates
 //#define lidDrivenCavity_3D_
 //#define BC_PROBLEM lidDrivenCavity_3D
 
@@ -35,7 +35,6 @@
 //#define benchmark_
 //#define BC_PROBLEM benchmark
 
-//#define BC_POPULATION_BASED
 #define BC_MOMENT_BASED
 
 //#define DENSITY_CORRECTION
