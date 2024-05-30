@@ -55,9 +55,9 @@ Current setup is for the flow around a sphere
 | 9  | BoundaryConditions/Boundary_initialization_files | definition of boundary condition for lattices for each case 
 | 10 | BoundaryConditions/IncludeMlbmBc_MOM | moment based boundary conditions for each case
 | 11 | BoundaryConditions/IncludeMlbmBc_POP | population based boundary conditions for each case
-| 12 | interfaceInclude/popSave | load population from global memory
-| 13 | interfaceInclude/popLoad | save population into global memory
-| 14 | interfaceInclude/interface | definition of the frontier if is wall or periodic for each case
+| 12 | includeFiles/popSave | load population from global memory
+| 13 | includeFiles/popLoad | save population into global memory
+| 14 | includeFiles/interface | definition of the frontier if is wall or periodic for each case
 | 15 | checkpoint | functions to generation simulation checkpoint
 | 16 | errorDef | error definition functions
 | 17 | globalFunctions | index functions
@@ -77,7 +77,7 @@ In order to create a NEW_CASE is necessary to create modify three files:
 
 2. IncludeMlbmBc_###/NEW_CASE : Either moment or population based. This file should contain how the boundary condition is calculated for each case.
 
-3. interfaceInclude/interface : The definition if the frontier in each of the three directions (x,y, and z) will be periodic, otherwise has be defined as a WALL. Necessary to avoid population leakeage between frontiers.
+3. includeFiles/interface : The definition if the frontier in each of the three directions (x,y, and z) will be periodic, otherwise has be defined as a WALL. Necessary to avoid population leakeage between frontiers.
 
 ## using voxels immersed bodies
 1.  create a csv with the coordinates values for solid nodes

@@ -24,6 +24,9 @@ Projects:
       %allowing to use a higher block size than orginally planned. The performance might be benefical when using a D3Q27 velocity set since the reduced from to 26 to 10 scalars per lattice.
   ☐ test perfomance Z-curve array pattern for indexing within the same block structure
   ☐ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ...
+    ☐ Use constant array in defintions.h instead of magic numbers
+
+  ☐ move problem variables to another folder/file system similar to boundary conditions
 
 
 
@@ -42,9 +45,10 @@ Projects:
 
   ✔ Push thermal model @done(24-05-17 22:52)
     ✔ First Implementation @done(24-04-13 23:55)
-    ☐ Correct mirror error that occur on the interface between blocks C~1e-4
-    ☐ Transform equations to moment-based
-    ☐ Increase Performance
+    ✔ Correct mirror error that occur on the interface between blocks C~1e-4 @done(24-05-19 13:03)
+    ✔ Transform equations to moment-based @done(24-05-19 13:03)
+    ✔ Increase Performance @done(24-05-19 13:03)
+    ☐ Correct boundary conditions parallel plates
   ✔ Incorporate LES 
   ☐ Change macro condition from (non_newtonian || les model to local viscosity)
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)

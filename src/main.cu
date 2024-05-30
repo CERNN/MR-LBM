@@ -510,7 +510,7 @@ int main() {
             m_fMom,
             #endif //MEAN_FLOW
             step);
-            totalKineticEnergy(fMom,step);
+            //totalKineticEnergy(fMom,step);
             #endif //TREATFIELD
 
             #if TREATPOINT
@@ -660,7 +660,7 @@ int main() {
     }
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
-            linearMacr(h_fMom,rho,ux,uy,uz,
+            linearMacr(m_fMom,m_rho,m_ux,m_uy,m_uz,
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif

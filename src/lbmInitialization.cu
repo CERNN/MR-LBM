@@ -65,7 +65,7 @@ __global__ void gpuInitialization_mom(
     #endif
 
     #ifdef SECOND_DIST 
-    dfloat C = 1.0;//T_HOT - (y/(dfloat)(NY-1))*T_DELTA_T;
+    dfloat C = T_REFERENCE;//T_HOT - (y/(dfloat)(NY-1))*T_DELTA_T;
     #endif 
 
 /*    
@@ -179,32 +179,20 @@ __global__ void gpuInitialization_pop(
     // zeroth moment
 
     dfloat rhoVar = RHO_0 + fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_RHO_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat uxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat uyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat uzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat pixx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat pixy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat pixz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat piyy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat piyz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat pizz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat ux_t30     = 3*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat uy_t30     = 3*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat uz_t30     = 3*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat m_xx_t45   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/2;
+    dfloat m_xy_t90   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat m_xz_t90   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat m_yy_t45   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/2;
+    dfloat m_yz_t90   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat m_zz_t45   = 9*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/2;
 
     dfloat pop[Q];
-    #pragma unroll //equation 6
-    for (int i = 0; i < Q; i++)
-    {
-        pop[i] = rhoVar * w[i] * (1 
-        + as2 * (uxVar * cx[i] + uyVar * cy[i] + uzVar * cz[i]) 
-        + 0.5 * as2 * as2 * (
-            pixx * (cx[i] * cx[i] - cs2) + 
-            2.0*pixy * (cx[i] * cy[i]) + 
-            2.0*pixz * (cx[i] * cz[i]) + 
-            piyy * (cy[i] * cy[i] - cs2) + 
-            2.0*piyz * (cy[i] * cz[i]) + 
-            pizz * (cz[i] * cz[i] - cs2))
-        );
-    }
-
+    dfloat multiplyTerm;
+    dfloat pics2;
+    #include "includeFiles/popReconstruction"
     
     //thread xyz
     int tx = threadIdx.x;
@@ -299,90 +287,61 @@ __global__ void gpuInitialization_pop(
         dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat gNode[GQ];
         
-        dfloat ux_t30 = uxVar*3.0;
-        dfloat uy_t30 = uyVar*3.0;
-        dfloat uz_t30 = uzVar*3.0;
-        dfloat uu = (uxVar*uxVar + uyVar*uyVar+uzVar*uzVar)*g_as2/2;
+        #include "includeFiles/g_popReconstruction"
+
+        if (threadIdx.x == 0) { //w
+            g_fGhostX_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 2]; 
+            #ifdef D3G19
+            g_fGhostX_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 8];
+            g_fGhostX_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[10];
+            g_fGhostX_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[14];
+            g_fGhostX_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[16];
+            #endif            
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            g_fGhostX_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 1];
+            #ifdef D3G19
+            g_fGhostX_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 7];
+            g_fGhostX_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[ 9];
+            g_fGhostX_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[13];
+            g_fGhostX_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[15];     
+            #endif    
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            g_fGhostY_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 4];
+            #ifdef D3G19
+            g_fGhostY_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 8];
+            g_fGhostY_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[12];
+            g_fGhostY_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[13];
+            g_fGhostY_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[18];           
+            #endif           
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            g_fGhostY_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 3];
+            #ifdef D3G19
+            g_fGhostY_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 7];
+            g_fGhostY_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[11];
+            g_fGhostY_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[14];
+            g_fGhostY_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[17];         
+            #endif        
+        }
         
-        dfloat multiplyTerm = cVar * gW0;
-        gNode[ 0] =  multiplyTerm*(1.0);// - uu);
-        multiplyTerm = cVar * gW1;
-        gNode[ 1] =  multiplyTerm*(1.0  + ( ux_t30));// + ( ux_t30)*( ux_t30)/2 - uu);
-        gNode[ 2] =  multiplyTerm*(1.0  + (-ux_t30));// + (-ux_t30)*(-ux_t30)/2 - uu);
-        gNode[ 3] =  multiplyTerm*(1.0  + ( uy_t30));// + ( uy_t30)*( uy_t30)/2 - uu);
-        gNode[ 4] =  multiplyTerm*(1.0  + (-uy_t30));// + (-uy_t30)*(-uy_t30)/2 - uu);
-        gNode[ 5] =  multiplyTerm*(1.0  + ( uz_t30));// + ( uz_t30)*( uz_t30)/2 - uu);
-        gNode[ 6] =  multiplyTerm*(1.0  + (-uz_t30));// + (-uz_t30)*(-uz_t30)/2 - uu);
-        #ifdef D3G19
-        multiplyTerm = cVar * gW2;
-        gNode[ 7] =  multiplyTerm*(1.0 + ( ux_t30 + uy_t30));// + ( ux_t30 + uy_t30)*( ux_t30 + uy_t30)/2 -uu );
-        gNode[ 8] =  multiplyTerm*(1.0 + (-ux_t30 - uy_t30));// + (-ux_t30 - uy_t30)*(-ux_t30 - uy_t30)/2 -uu );
-        gNode[ 9] =  multiplyTerm*(1.0 + ( ux_t30 + uz_t30));// + ( ux_t30 + uz_t30)*( ux_t30 + uz_t30)/2 -uu );
-        gNode[10] =  multiplyTerm*(1.0 + (-ux_t30 - uz_t30));// + (-ux_t30 - uz_t30)*(-ux_t30 - uz_t30)/2 -uu );
-        gNode[11] =  multiplyTerm*(1.0 + ( uy_t30 + uz_t30));// + ( uy_t30 + uz_t30)*( uy_t30 + uz_t30)/2 -uu );
-        gNode[12] =  multiplyTerm*(1.0 + (-uy_t30 - uz_t30));// + (-uy_t30 - uz_t30)*(-uy_t30 - uz_t30)/2 -uu );
-        gNode[13] =  multiplyTerm*(1.0 + ( ux_t30 - uy_t30));// + ( ux_t30 - uy_t30)*( ux_t30 - uy_t30)/2 -uu );
-        gNode[14] =  multiplyTerm*(1.0 + (-ux_t30 + uy_t30));// + (-ux_t30 + uy_t30)*(-ux_t30 + uy_t30)/2 -uu );
-        gNode[15] =  multiplyTerm*(1.0 + ( ux_t30 - uz_t30));// + ( ux_t30 - uz_t30)*( ux_t30 - uz_t30)/2 -uu );
-        gNode[16] =  multiplyTerm*(1.0 + (-ux_t30 + uz_t30));// + (-ux_t30 + uz_t30)*(-ux_t30 + uz_t30)/2 -uu );
-        gNode[17] =  multiplyTerm*(1.0 + ( uy_t30 - uz_t30));// + ( uy_t30 - uz_t30)*( uy_t30 - uz_t30)/2 -uu );
-        gNode[18] =  multiplyTerm*(1.0 + (-uy_t30 + uz_t30));// + (-uy_t30 + uz_t30)*(-uy_t30 + uz_t30)/2 -uu );
-        #endif
-
-
-   if (threadIdx.x == 0) { //w
-        g_fGhostX_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 2]; 
-        #ifdef D3G19
-        g_fGhostX_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 8];
-        g_fGhostX_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[10];
-        g_fGhostX_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[14];
-        g_fGhostX_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[16];
-        #endif            
-    }else if (threadIdx.x == (BLOCK_NX - 1)){                    
-        g_fGhostX_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 1];
-        #ifdef D3G19
-        g_fGhostX_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 7];
-        g_fGhostX_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[ 9];
-        g_fGhostX_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[13];
-        g_fGhostX_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[15];     
-        #endif    
-    }
-
-    if (threadIdx.y == 0)  { //s                             
-        g_fGhostY_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 4];
-        #ifdef D3G19
-        g_fGhostY_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 8];
-        g_fGhostY_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[12];
-        g_fGhostY_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[13];
-        g_fGhostY_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[18];           
-        #endif           
-    }else if (threadIdx.y == (BLOCK_NY - 1)){             
-        g_fGhostY_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 3];
-        #ifdef D3G19
-        g_fGhostY_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 7];
-        g_fGhostY_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[11];
-        g_fGhostY_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[14];
-        g_fGhostY_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[17];         
-        #endif        
-    }
-    
-    if (threadIdx.z == 0){ //b                          
-        g_fGhostZ_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 6];
-        #ifdef D3G19
-        g_fGhostZ_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[10];
-        g_fGhostZ_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[12];
-        g_fGhostZ_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[15];
-        g_fGhostZ_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[17]; 
-        #endif    
-    }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
-        g_fGhostZ_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 5];
-        #ifdef D3G19
-        g_fGhostZ_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[ 9];
-        g_fGhostZ_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[11];
-        g_fGhostZ_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[16];
-        g_fGhostZ_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[18];    
-        #endif                    
-    }
+        if (threadIdx.z == 0){ //b                          
+            g_fGhostZ_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 6];
+            #ifdef D3G19
+            g_fGhostZ_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[10];
+            g_fGhostZ_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[12];
+            g_fGhostZ_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[15];
+            g_fGhostZ_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[17]; 
+            #endif    
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            g_fGhostZ_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 5];
+            #ifdef D3G19
+            g_fGhostZ_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[ 9];
+            g_fGhostZ_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[11];
+            g_fGhostZ_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[16];
+            g_fGhostZ_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[18];    
+            #endif                    
+        }
     #endif //SECOND_DIST
 
 

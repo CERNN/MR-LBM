@@ -9,12 +9,12 @@
 #endif
 
 constexpr dfloat OMEGA = 1.0 / TAU;        // (tau)^-1
-constexpr dfloat OMEGAd2 = OMEGA/2.0;
-constexpr dfloat OMEGAd9 = OMEGA/9.0; 
-constexpr dfloat T_OMEGA = 1.0 - OMEGA;
-constexpr dfloat TT_OMEGA = 1.0 - 0.5*OMEGA;
-constexpr dfloat OMEGA_P1 = 1.0 + OMEGA;
-constexpr dfloat TT_OMEGA_T3 = TT_OMEGA*3.0;
+constexpr dfloat OMEGAd2 = OMEGA/2.0; //OMEGA/2
+constexpr dfloat OMEGAd9 = OMEGA/9.0;  //OMEGA/9
+constexpr dfloat T_OMEGA = 1.0 - OMEGA; //1-OMEGA
+constexpr dfloat TT_OMEGA = 1.0 - 0.5*OMEGA; //1.0 - OMEGA/2 
+constexpr dfloat OMEGA_P1 = 1.0 + OMEGA; // 1+ OMEGA
+constexpr dfloat TT_OMEGA_T3 = TT_OMEGA*3.0; //3*(1-0.5*OMEGA)
 
 
 #define SQRT_2 (1.41421356237309504880168872420969807856967187537)
@@ -85,13 +85,10 @@ __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 
     constexpr unsigned char GF = 1;         // number of velocities on each face
     constexpr dfloat gW0 = 1.0 / 4.0;         // population 0 weight (0, 0, 0)
     constexpr dfloat gW1 = 1.0 / 8.0;        // adjacent populations (1, 0, 0)
-    //constexpr dfloat gW2 = 1.0 / 36;        // diagonal populations (1, 1, 0)
     // velocities weight vector
     __device__ const dfloat gw[GQ] = { 
         gW0,
-        gW1, gW1, gW1, gW1, gW1, gW1//, 
-    //    gW2, gW2, gW2, gW2, gW2, gW2, gW2, gW2, gW2, gW2, gW2, gW2
-    };
+        gW1, gW1, gW1, gW1, gW1, gW1};
 
     constexpr dfloat g_as2 = 4.0;
     constexpr dfloat g_cs2 = 1.0/g_as2;

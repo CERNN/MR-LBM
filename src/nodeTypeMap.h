@@ -53,11 +53,10 @@
 #define BC_VELOCITY_INDEX_2   (0b00000000000000000001000000000000)
 #define BC_VELOCITY_INDEX_3   (0b00000000000000000001100000000000)
 
-
-//    FEDCBAzy'xwvutsrq'ponmlkji'hgfedcba
+//    ffffffff'fffffeee'dddccbbb'aaaaaaaa
 // (0b00000000'00000000'00000000'00000000) 
-// hgfedcba - nearby solid nodes (0 = fluid node, 255 = solid node)
-// kji - boundary condition type
+// a - nearby solid nodes (0 = fluid node, 255 = solid node)
+// b - boundary condition type
 //      000 - solid wall
 //      001 - fixed velocity (use index of ml for the velocities)
 //      010 - outflow boundary condition (use index of ml for the pressure )
@@ -65,7 +64,18 @@
 //      100 - free-slip boundary condition
 //      101 - EMPTY
 //      111 - EMPTY
-// ml - velocity index (00,01,10,11)
+// c - velocity index (00,01,10,11)
+// d - second pop boundary condition type
+//      000 - EMPTY
+//      001 - EMPTY
+//      010 - EMPTY
+//      011 - EMPTY
+//      100 - EMPTY
+//      101 - EMPTY
+//      111 - EMPTY
+// e - thermal index (00,01,10,11)
+// f- boundary tracking index ( up to 8192 different ids)
+
 
 #define MISSING_DEFINITION   (0b11111111111111111111111111111111)
 

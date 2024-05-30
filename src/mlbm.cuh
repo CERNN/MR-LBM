@@ -9,7 +9,7 @@
 #include <builtin_types.h>
 #include "globalFunctions.h"
 #include "var.h"
-#include "interfaceInclude/interface.h"
+#include "includeFiles/interface.h"
 #include "boundaryCondition.cuh"
 #ifdef NON_NEWTONIAN_FLUID
     #include "nnf.h"

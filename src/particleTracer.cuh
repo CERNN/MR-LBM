@@ -5,7 +5,7 @@
 
 #include "globalStructs.h"
 #include "globalFunctions.h"
-#include "interfaceInclude/interface.h"
+#include "includeFiles/interface.h"
 #include "errorDef.h"
 #include "saveData.cuh"
 #include <random>
