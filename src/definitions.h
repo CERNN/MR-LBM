@@ -48,6 +48,12 @@ constexpr dfloat cs2 = 1.0/as2;
 __device__ const char cx[Q] = { 0, 1,-1, 0, 0, 0, 0, 1,-1, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0 };
 __device__ const char cy[Q] = { 0, 0, 0, 1,-1, 0, 0, 1,-1, 0, 0, 1,-1,-1, 1, 0, 0, 1,-1 };
 __device__ const char cz[Q] = { 0, 0, 0, 0, 0, 1,-1, 0, 0, 1,-1, 1,-1, 0, 0,-1, 1,-1, 1 };
+
+constexpr dfloat F_M_0_SCALE = 1.0;
+constexpr dfloat F_M_I_SCALE = as2;
+constexpr dfloat F_M_II_SCALE = as2*as2/2;
+constexpr dfloat F_M_IJ_SCALE = as2*as2;
+
 #endif //D3Q19
 
 #ifdef D3Q27

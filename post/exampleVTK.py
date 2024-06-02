@@ -13,7 +13,7 @@ for step in macrSteps:
     macr = getMacrsFromStep(step,path)
     # Save macroscopics to VTK format
     print("Processing step", step)
-    saveVTK3D(macr, path, info['ID'] + "macr" + str(step).zfill(6), points=True)
+    saveVTK3D(macr, path, info['ID'] + "macr" + str(step).zfill(6), points=False)
 
     # COUETTE/PARALLEL PLATES PROCESSING
     '''

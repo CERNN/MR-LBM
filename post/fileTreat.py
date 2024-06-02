@@ -13,7 +13,7 @@ __macr_names__ = ['ux', 'uy', 'uz', 'rho']
 # Uncomment below for BC
 # __macr_names__ += ['bc']
 # Uncomment below for C
-# __macr_names__ += ['C']
+__macr_names__ += ['C']
 
 __info__ = dict()
 

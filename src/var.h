@@ -127,34 +127,6 @@ constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
 constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
 
-#ifdef THERMAL_MODEL
-#define SECOND_DIST
-
-#define D3G7
-
-
-constexpr dfloat T_PR_NUMBER = 1.0; //Prandtl Number
-constexpr dfloat T_RA_NUMBER = 1000000.0; // Rayleigh Number
-constexpr dfloat T_GR_NUMBER = T_RA_NUMBER/T_PR_NUMBER; //Grashof number
-
-constexpr dfloat T_DELTA_T = 0.5; //temperature difference
-constexpr dfloat T_COLD = 1.0 - T_DELTA_T/2.0;
-constexpr dfloat T_HOT = 1.0 + T_DELTA_T/2.0;
-constexpr dfloat T_REFERENCE  = (T_HOT+T_COLD)/2.0; //better closer to 1
-constexpr dfloat C_0 = T_REFERENCE; //initial temperature field 
-
-
-constexpr dfloat T_DIFFUSIVITY = VISC/T_PR_NUMBER; // alpha
-
-constexpr dfloat T_gravity_t_beta = T_RA_NUMBER * T_DIFFUSIVITY /(T_DELTA_T*L*L*L);
-
-constexpr dfloat G_TAU = T_DIFFUSIVITY*3+0.5;
-constexpr dfloat G_OMEGA  = 1.0/G_TAU;
-constexpr dfloat G_T_OMEGA  = 1.0-G_OMEGA;
-constexpr dfloat G_TT_OMEGA = 1.0-0.5*G_OMEGA;
-
-#endif //THERMAL_MODEL
-
 // value for the velocity initial condition in the domain
 constexpr dfloat U_0_X = 0.0;
 constexpr dfloat U_0_Y = 0.0;
@@ -165,6 +137,34 @@ __device__ const dfloat UX_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat UY_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat UZ_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
+
+#ifdef THERMAL_MODEL
+    #define SECOND_DIST
+
+    #define D3G19
+
+    constexpr bool T_BOUYANCY = 0;
+    constexpr dfloat T_PR_NUMBER = 1; //Prandtl Number
+    constexpr dfloat T_RA_NUMBER = 10000.0; // Rayleigh Number
+    constexpr dfloat T_GR_NUMBER = T_RA_NUMBER/T_PR_NUMBER; //Grashof number
+
+    constexpr dfloat T_DELTA_T = 0.01; //temperature difference
+    constexpr dfloat T_REFERENCE  = 1; //better closer to 1
+    constexpr dfloat T_COLD = T_REFERENCE - T_DELTA_T/2.0;
+    constexpr dfloat T_HOT = T_REFERENCE + T_DELTA_T/2.0;
+    constexpr dfloat C_0 = T_REFERENCE; //initial temperature field 
+
+    constexpr dfloat T_DIFFUSIVITY = 0.1;//VISC/T_PR_NUMBER; // alpha
+
+    constexpr dfloat T_gravity_t_beta = T_RA_NUMBER * T_DIFFUSIVITY*VISC/(T_DELTA_T*L*L*L);
+    constexpr dfloat Ra_conf = T_gravity_t_beta * T_DELTA_T*L*L*L*T_PR_NUMBER/(VISC*VISC);
+
+    constexpr dfloat G_TAU = T_DIFFUSIVITY*3+0.5;
+    constexpr dfloat G_OMEGA  = 1.0/G_TAU;
+    constexpr dfloat G_T_OMEGA  = 1.0-G_OMEGA;
+constexpr dfloat G_TT_OMEGA = 1.0-0.5*G_OMEGA;
+
+#endif //THERMAL_MODEL
 
 
 
