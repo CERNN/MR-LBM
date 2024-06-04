@@ -2,23 +2,16 @@ switch (nodeType){
     case BULK:
         break;
     case SOUTH:
-        gNode[ 3] = 2.0*gW1*(T_HOT + (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 4-1)];
-        #ifdef D3G19
-        gNode[ 7] = 2.0*gW2*(T_HOT + (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 8-1)];
-        gNode[11] = 2.0*gW2*(T_HOT + (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12-1)];
-        gNode[14] = 2.0*gW2*(T_HOT + (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13-1)];
-        gNode[17] = 2.0*gW2*(T_HOT + (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 18-1)];
-        #endif
-        break;
+        cVar = T_HOT;
+        qx_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y+1, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qy_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y+1, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qz_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y+1, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
     case NORTH:
-        gNode[ 4] = 2.0*gW1*(T_COLD - (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 3-1)];
-        #ifdef D3G19
-        gNode[ 8] = 2.0*gW2*(T_COLD - (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 7-1)];
-        gNode[12] = 2.0*gW2*(T_COLD - (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11-1)];
-        gNode[13] = 2.0*gW2*(T_COLD - (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14-1)];
-        gNode[18] = 2.0*gW2*(T_COLD - (T_DELTA_T/(NY-1.0))/2) - s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17-1)];
-        #endif
+        cVar = T_COLD;
+        qx_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y-1, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qy_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y-1, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qz_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y-1, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
     default:
         break;

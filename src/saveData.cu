@@ -19,10 +19,40 @@ void treatData(
     checkCudaErrors(cudaDeviceSynchronize());
 
 
-
+    #ifdef THERMAL_MODEL
     std::ostringstream strDataInfo("");
     strDataInfo << std::scientific;
     strDataInfo << std::setprecision(6);
+    
+    int x0 = 0;
+    int x1 = 1;
+    int x2 = NX-1;
+    int x3 = NX-2;
+    dfloat C_x0;
+    dfloat C_x1;
+    dfloat C_x2;
+    dfloat C_x3;
+    dfloat Nu_sum = 0.0;
+
+
+    for (int z = 0; z <NZ_TOTAL; z++){
+        for(int y = 0; y< NY-0;y++){
+            C_x0 = h_fMom[idxMom(x0%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x0/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x1 = h_fMom[idxMom(x1%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x1/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x2 = h_fMom[idxMom(x2%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x2/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x3 = h_fMom[idxMom(x3%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x3/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+
+            Nu_sum +=-(C_x1 - C_x0);
+            Nu_sum +=(C_x3 - C_x2);
+        }
+    }
+
+    Nu_sum /= (2*(NY-2)*NZ_TOTAL);
+    Nu_sum = Nu_sum/(T_DELTA_T/L);
+
+    strDataInfo <<"step,"<< step<< "," << Nu_sum;// << "," << mean_counter;
+    saveTreatData("_Nu_mean",strDataInfo.str(),step);
+    #endif
 
     /*
     dfloat t_ux0, t_ux1;
@@ -53,7 +83,7 @@ void treatData(
     */
 
     //LEFT SIDE
-
+/*
     dfloat t_ux0, t_uy0,t_uz0;
     dfloat t_mxx0,t_mxy0,t_mxz0,t_myy0,t_myz0,t_mzz0;
     dfloat Sxx = 0;
@@ -207,6 +237,7 @@ void treatData(
 
 
     saveTreatData("_treatData",strDataInfo.str(),step);
+    */
 }
 
 __host__

@@ -1,5 +1,7 @@
 //dfloat cc;
 //dfloat sgw = (gW1 + 4.0*gW2);
+dfloat c_I;
+dfloat inv_c;
 
 switch (nodeType){
     case BULK:
@@ -11,7 +13,7 @@ switch (nodeType){
         qz_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         break;
     case WEST: //HOT
-        cVar =  T_COLD;
+        cVar =  T_HOT;
         qx_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qy_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qz_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -21,6 +23,7 @@ switch (nodeType){
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
+
         break;
 
     case NORTH: //ADIABATIC
@@ -28,19 +31,36 @@ switch (nodeType){
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
+
         break;
-    case FRONT: //ADIABATIC
-        cVar =  fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    case SOUTH_WEST:
+        cVar =  fMom[idxMom(threadIdx.x, threadIdx.y+1, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
         break;
-    case BACK: //ADIABATIC
-        cVar =  fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z+1, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    case NORTH_WEST:  
+        cVar =  fMom[idxMom(threadIdx.x, threadIdx.y-1, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
+
+        break;
+    case SOUTH_EAST:
+        cVar =  fMom[idxMom(threadIdx.x, threadIdx.y+1, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qx_t30 = 0;
+        qy_t30 = 0;
+        qz_t30 = 0;
+        break;
+    case NORTH_EAST:
+        cVar =  fMom[idxMom(threadIdx.x, threadIdx.y-1, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qx_t30 = 0;
+        qy_t30 = 0;
+        qz_t30 = 0;
+
         break;
     default:
         break;
 }
+
+

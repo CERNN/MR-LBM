@@ -145,9 +145,20 @@ __global__ void gpuInitialization_mom(
     #ifdef SECOND_DIST 
 
     dfloat cVar = T_REFERENCE;
+    dfloat invC= 1.0/cVar;
+
+    dfloat qx_t30  = 0; 
+    dfloat qy_t30  = 0; 
+    dfloat qz_t30  = 0; 
+
+    dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC - ux*F_M_I_SCALE);
+    dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy*F_M_I_SCALE);
+    dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz*F_M_I_SCALE);
 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = cVar;
-
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30/F_M_I_SCALE;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30/F_M_I_SCALE;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30/F_M_I_SCALE;
 
     #endif 
 }
@@ -279,9 +290,18 @@ __global__ void gpuInitialization_pop(
     }
 
     #ifdef SECOND_DIST 
-        dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat gNode[GQ];
         
+        dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat invC = 1/cVar;
+        dfloat qx_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat qy_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat qz_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+        dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC - ux_t30);
+        dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy_t30);
+        dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz_t30);
+
         #include "includeFiles/g_popReconstruction"
 
         if (threadIdx.x == 0) { //w

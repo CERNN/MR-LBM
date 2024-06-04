@@ -159,11 +159,14 @@ __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
     constexpr dfloat T_gravity_t_beta = T_RA_NUMBER * T_DIFFUSIVITY*VISC/(T_DELTA_T*L*L*L);
     constexpr dfloat Ra_conf = T_gravity_t_beta * T_DELTA_T*L*L*L*T_PR_NUMBER/(VISC*VISC);
 
-    constexpr dfloat G_TAU = T_DIFFUSIVITY*3+0.5;
+    constexpr dfloat T_DIFF_REF = (1.0/6);
+    constexpr dfloat G_TAU = T_DIFF_REF*3+0.5;
     constexpr dfloat G_OMEGA  = 1.0/G_TAU;
-    constexpr dfloat G_T_OMEGA  = 1.0-G_OMEGA;
-constexpr dfloat G_TT_OMEGA = 1.0-0.5*G_OMEGA;
+    constexpr dfloat G_TT_OMEGA = 1.0-0.5*G_OMEGA;
 
+    constexpr dfloat T_DIFF_FLUC = T_DIFFUSIVITY - T_DIFF_REF;
+    constexpr dfloat G_AAA = (3*T_DIFF_FLUC*G_OMEGA);
+    constexpr dfloat G_DIFF_FLUC_COEF = G_AAA/(1.0+G_AAA);
 #endif //THERMAL_MODEL
 
 

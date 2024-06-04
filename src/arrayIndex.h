@@ -41,10 +41,13 @@ constexpr int M_MZZ_INDEX = 9;
 
 #ifdef SECOND_DIST
     constexpr int M_C_INDEX   = (1+M_OFFSET);
+    constexpr int M_CX_INDEX  = (2+M_OFFSET);
+    constexpr int M_CY_INDEX  = (3+M_OFFSET);
+    constexpr int M_CZ_INDEX  = (4+M_OFFSET);
     #ifdef M_OFFSET
         #undef M_OFFSET
     #endif
-    #define M_OFFSET M_C_INDEX
+    #define M_OFFSET M_CZ_INDEX
 #endif
 
 
