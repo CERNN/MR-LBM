@@ -206,7 +206,7 @@ __global__ void gpuMomCollisionStream(
 
     dfloat invRho;
     if(nodeType != BULK){
-        #include BC_PATH
+        #include CASE_BC_DEF
 
         invRho = 1.0 / rhoVar;               
     }else{

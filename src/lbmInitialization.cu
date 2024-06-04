@@ -319,7 +319,7 @@ __global__ void gpuInitialization_nodeType(
     
     unsigned int nodeType;
 
-    #include BC_INIT_PATH
+    #include CASE_BC_INIT
 
     dNodeType[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = nodeType;
 }

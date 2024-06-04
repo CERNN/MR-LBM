@@ -90,7 +90,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 
 #define CASE_DIRECTORY cases
 #define CASE_CONSTANTS STR(CASE_DIRECTORY/BC_PROBLEM/constants)
-#define CASE_BC_INIT STR(CASE_DIRECTORY/BC_PROBLEM/constants)
+#define CASE_BC_INIT STR(CASE_DIRECTORY/BC_PROBLEM/bc_initialization)
 #define CASE_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/bc_definition)
 #define CASE_FLOW_INITIALIZATION STR(CASE_DIRECTORY/BC_PROBLEM/flow_initialization)
 

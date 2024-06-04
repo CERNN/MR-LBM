@@ -229,15 +229,6 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 #endif
 
 
-#define STR_IMPL(A) #A
-#define STR(A) STR_IMPL(A)
-
-#ifdef BC_MOMENT_BASED
-    #define BC_DIRECTORY BoundaryConditions/IncludeMlbmBc_MOM
-
-    #define BC_PATH STR(BC_DIRECTORY/BC_PROBLEM)
-#endif
-
 #ifdef SECOND_DIST
     #define BC_SECONDARY_DIRECTORY BoundaryConditions/IncludeSecondaryBc
 
