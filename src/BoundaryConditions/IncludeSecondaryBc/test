@@ -1,0 +1,33 @@
+//dfloat cc;
+//dfloat sgw = (gW1 + 4.0*gW2);
+dfloat c_I;
+dfloat inv_c;
+dfloat cx_I;
+dfloat cy_I;
+dfloat cz_I;
+
+
+switch (nodeType){
+    case BULK:
+    case  (FRONT + BC_VELOCITY_WALL + BC_VELOCITY_INDEX_0):
+            cVar = T_HOT;
+            invC= 1.0/cVar;
+
+            qx_t30 = 0;
+            qy_t30 = 0;
+            qz_t30 = 0;
+        break;
+    case  (BACK  + BC_VELOCITY_WALL + BC_VELOCITY_INDEX_0):
+            cVar = T_COLD;
+            invC= 1.0/cVar;
+
+
+            qx_t30 = 0;
+            qy_t30 = 0;
+            qz_t30 = 0;
+
+
+    break;
+
+}
+ 

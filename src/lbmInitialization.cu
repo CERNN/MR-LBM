@@ -35,7 +35,6 @@ __global__ void gpuInitialization_mom(
         return;
 
     size_t index = idxScalarGlobal(x, y, z);
-    //printf("threadIdx.x % d threadIdx.y % d threadIdx.z % d  bix %d biy %d biz %d --  x: %d y: %d z: %d idx %d\n", threadIdx.x, threadIdx.y, threadIdx.z, blockIdx.x, blockIdx.y, blockIdx.z, x, y, z, index);
 
     //first moments
     dfloat rho, ux, uy, uz;
@@ -43,64 +42,17 @@ __global__ void gpuInitialization_mom(
     dfloat omega;
     #endif
 
-    //Taylor Green
 	rho = RHO_0;
 	ux = U_0_X;
 	uy = U_0_Y;
     uz = U_0_Z;
 
-    //if(y == NY-1 && (( x%(NX-1) != 0 ||z%(NZ-1) != 0)))
-    //    ux = U_MAX;
-
-    /*dfloat pert = 0.05;
-    int l = idxScalarGlobal(x, y, z);
-    int Nt = NUMBER_LBM_NODES;
-    
-    ux += (U_MAX)*pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
-    uy += (U_MAX)*pert*randomNumbers[l + y - Nt*((l + y) / Nt)];
-    uz += (U_MAX)*pert*randomNumbers[l + z - Nt*((l + z) / Nt)];*/
 
     #ifdef NON_NEWTONIAN_FLUID
     omega = OMEGA;
     #endif
 
-/*    
-	rho = RHO_0 + (1.0/(16.0*cs2))*RHO_0*U_MAX*U_MAX*(cos((dfloat)2.0*(x) / L) + cos((dfloat)2.0*(y) / L))*(cos((dfloat)2.0*(z) / L) + 2.0);
-	ux =   U_MAX * sin((dfloat)(x) / L) * cos((dfloat)(y) / L) * cos((dfloat)(z) / L);
-	uy = - U_MAX * cos((dfloat)(x) / L) * sin((dfloat)(y) / L) * cos((dfloat)(z) / L);
-    uz = 0.0;
-*/    
-
-    /*
-    // Example of usage of random numbers for turbulence in parallel plates flow in z  
-        dfloat y_visc = 6.59, ub_f = 15.6, uc_f = 18.2;
-        // logaritimic velocity profile
-        dfloat uz_log; 
-        dfloat pos = (y < NY/2 ? y + 0.5 : NY - (y + 0.5));
-        uz_log = -(uc_f*U_TAU)*(((pos-NY/2)/del)*((pos-NY/2)/del)) + (uc_f*U_TAU);
-        
-        uz = uz_log;
-        ux = 0.0;
-        uy = 0.0;
-        rho = RHO_0;
-
-
-        // perturbation
-        dfloat pert = 0.1;
-        int l = idxScalarGlobal(x, y, z);
-        int Nt = NUMBER_LBM_NODES;
-        uz += (ub_f*U_TAU)*pert*randomNumbers[l + z - Nt*((l + z) / Nt)];
-        ux += (ub_f*U_TAU)*pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
-        uy += (ub_f*U_TAU)*pert*randomNumbers[l + y - Nt*((l + y) / Nt)];
-    */ 
-        //dfloat pert = 0.0001;
-        //int l = idxScalarGlobal(x, y, z);
-        //int Nt = NUMBER_LBM_NODES;
-        //uz += (0.0+pert*randomNumbers[l + z - Nt*((l + z) / Nt)]);
-        //ux += (0.0+pert*randomNumbers[l + x - Nt*((l + x) / Nt)]);
-        //uy += (0.0+pert*randomNumbers[l + y - Nt*((l + y) / Nt)]);
-
-    
+   
     // zeroth moment
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_RHO_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = rho-RHO_0;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = ux;
@@ -125,19 +77,12 @@ __global__ void gpuInitialization_mom(
     dfloat piyz = ((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho;
     dfloat pizz =  (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]) * invRho - cs2;
 
-    //pixx = pixx + OMEGA * (RHO_0 * ux * ux -  pixx)  + TT_OMEGA * (FX * ux + FX * ux);
-    //pixy = pixy + OMEGA * (RHO_0 * ux * uy -  pixy)  + TT_OMEGA * (FX * uy + FY * ux);
-    //pixz = pixz + OMEGA * (RHO_0 * ux * uz -  pixz)  + TT_OMEGA * (FX * uz + FZ * ux);
-    //piyy = piyy + OMEGA * (RHO_0 * uy * uy -  piyy)  + TT_OMEGA * (FY * uy + FY * uy);
-    //piyz = piyz + OMEGA * (RHO_0 * uy * uz -  piyz)  + TT_OMEGA * (FY * uz + FZ * uy);
-    //pizz = pizz + OMEGA * (RHO_0 * uz * uz -  pizz)  + TT_OMEGA * (FZ * uz + FZ * uz);
-
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pixx; //= RHO_0*ux*ux+RHO_0*cs2;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pixy; //= RHO_0*ux*uy;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pixz; //= RHO_0*ux*uz;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = piyy; //= RHO_0*uy*uy+RHO_0*cs2;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = piyz; //= RHO_0*uy*uz;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz; //= RHO_0*uz*uz+RHO_0*cs2;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pixx;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pixy;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pixz;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = piyy;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = piyz;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = pizz;
 
     #ifdef NON_NEWTONIAN_FLUID
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omega;

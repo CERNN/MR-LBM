@@ -12,7 +12,7 @@ constexpr dfloat L = N;
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
-constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
+constexpr dfloat FZ = 1e-6;        // force in z (flow direction in most cases)
 
 // value for the velocity initial condition in the domain
 constexpr dfloat U_0_X = 0.0;
@@ -27,9 +27,9 @@ __device__ const dfloat UZ_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 
 
-#define BC_X_WALL
-#define BC_Y_WALL
-#define BC_Z_WALL
+    #define BC_X_PERIODIC
+    #define BC_Y_PERIODIC
+    #define BC_Z_PERIODIC
 
 constexpr dfloat VISC = U_MAX * NX / RE;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
