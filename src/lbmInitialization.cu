@@ -41,12 +41,11 @@ __global__ void gpuInitialization_mom(
     #ifdef NON_NEWTONIAN_FLUID
     dfloat omega;
     #endif
-
-	rho = RHO_0;
-	ux = U_0_X;
-	uy = U_0_Y;
-    uz = U_0_Z;
-
+    #ifdef SECOND_DIST 
+    dfloat cVar, qx_t30, qy_t30, qz_t30;
+    #endif
+    
+    #include CASE_FLOW_INITIALIZATION
 
     #ifdef NON_NEWTONIAN_FLUID
     omega = OMEGA;
@@ -89,12 +88,8 @@ __global__ void gpuInitialization_mom(
     #endif   
     #ifdef SECOND_DIST 
 
-    dfloat cVar = T_REFERENCE;
-    dfloat invC= 1.0/cVar;
 
-    dfloat qx_t30  = 0; 
-    dfloat qy_t30  = 0; 
-    dfloat qz_t30  = 0; 
+    dfloat invC= 1.0/cVar;
 
     dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC - ux*F_M_I_SCALE);
     dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy*F_M_I_SCALE);

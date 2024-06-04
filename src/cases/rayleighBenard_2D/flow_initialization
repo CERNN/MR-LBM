@@ -6,3 +6,11 @@ uz = U_0_Z;
 #ifdef NON_NEWTONIAN_FLUID
 omega = OMEGA;
 #endif
+
+
+#ifdef SECOND_DIST 
+    cVar = T_REFERENCE;
+    qx_t30  = 0; 
+    qy_t30  = 0; 
+    qz_t30  = 0; 
+#endif
