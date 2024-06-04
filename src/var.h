@@ -19,7 +19,7 @@
 //velocity set
 #define D3Q19
 
-/* ----------------------------- BC DEFINES ---------------------------- */
+/* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
 //#define parallelPlates_
 //#define BC_PROBLEM parallelPlates
@@ -35,10 +35,8 @@
 //#define benchmark_
 //#define BC_PROBLEM benchmark
 
-#define BC_MOMENT_BASED
-
-//#define DENSITY_CORRECTION
-
+/* --------------------------- COLLISION METHOD  ------------------------- */
+#define MR_LBM
 //#define HO_RR //http://dx.doi.org/10.1063/1.4981227
 //#define HOME_LBM //https://inria.hal.science/hal-04223237/
 
@@ -50,6 +48,10 @@
 // Uncomment the one to use. Comment all to simulate newtonian fluid
 //#define LES_MODEL
 //#define MODEL_CONST_SMAGORINSKY //https://doi.org/10.1016/j.jcp.2005.03.022
+
+/* --------------------------- OTHER DEFINITIONS ------------------------- */
+//#define DENSITY_CORRECTION
+
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
     #define ID_SIM "000"            // prefix for simulation's files

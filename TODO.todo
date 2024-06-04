@@ -47,8 +47,7 @@ Projects:
     ✔ First Implementation @done(24-04-13 23:55)
     ✔ Correct mirror error that occur on the interface between blocks C~1e-4 @done(24-05-19 13:03)
     ✔ Transform equations to moment-based @done(24-05-19 13:03)
-    ✔ Increase Performance @done(24-05-19 13:03)
-    ☐ Correct boundary conditions parallel plates
+    ☐ Increase Performance
   ✔ Incorporate LES 
   ☐ Change macro condition from (non_newtonian || les model to local viscosity)
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)

@@ -130,38 +130,7 @@ __global__ void gpuMomCollisionStream(
     #endif
 
 
-    #ifndef HIGH_ORDER_COLLISION
-
-        #include "includeFiles/popReconstruction"
-    #endif //!HIGH_ORDER_COLLISION
-    #ifdef HIGH_ORDER_COLLISION
-            #ifdef HOME_LBM
-            multiplyTerm = rhoVar * W0;
-            pics2 = 1.0 - cs2 * (m_xx_t45 + m_yy_t45 + m_zz_t45);
-
-            pop[ 0] = multiplyTerm * (pics2);
-            multiplyTerm = rhoVar * W1;
-            pop[ 1] = multiplyTerm * (pics2 + ux_t30 + m_xx_t45 + (ux_t30*uy_t30*uy_t30)/3 - (m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yy_t45*ux_t30)/3 + (ux_t30*uz_t30*uz_t30)/3);
-            pop[ 2] = multiplyTerm * (pics2 - ux_t30 + m_xx_t45 + (m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3);
-            pop[ 3] = multiplyTerm * (pics2 + uy_t30 + m_yy_t45 + (ux_t30*ux_t30*uy_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_yz_t90*uz_t30)/3 - (m_xy_t90*ux_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
-            pop[ 4] = multiplyTerm * (pics2 - uy_t30 + m_yy_t45 + (m_xy_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
-            pop[ 5] = multiplyTerm * (pics2 + uz_t30 + m_zz_t45 + (ux_t30*ux_t30*uz_t30)/3 - (m_yz_t90*uy_t30)/3 - (m_xx_t45*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (m_xz_t90*ux_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
-            pop[ 6] = multiplyTerm * (pics2 - uz_t30 + m_zz_t45 + (m_xz_t90*ux_t30)/3 + (m_yz_t90*uy_t30)/3 + (m_xx_t45*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
-            multiplyTerm = rhoVar * W2;
-            pop[ 7] = multiplyTerm * (pics2 +ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 + m_xy_t90 + (2*m_xy_t90*ux_t30)/3 + (2*m_yy_t45*ux_t30)/3 - (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
-            pop[ 8] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uy_t30 + m_yy_t45 + m_xy_t90 + (m_zz_t45*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
-            pop[ 9] = multiplyTerm * (pics2 +ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 + m_xz_t90 + (2*m_xz_t90*ux_t30)/3 - (m_yy_t45*ux_t30)/3 + (2*m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
-            pop[10] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uz_t30 + m_zz_t45 + m_xz_t90 + (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
-            pop[11] = multiplyTerm * (pics2 +uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 + m_yz_t90 + (2*m_yz_t90*uy_t30)/3 - (m_xz_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_xy_t90*ux_t30)/3 + (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
-            pop[12] = multiplyTerm * (pics2 -uy_t30 + m_yy_t45 - uz_t30 + m_zz_t45 + m_yz_t90 + (m_xy_t90*ux_t30)/3 + (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
-            pop[13] = multiplyTerm * (pics2 +ux_t30 - uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (m_zz_t45*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
-            pop[14] = multiplyTerm * (pics2 -ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_xy_t90*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
-            pop[15] = multiplyTerm * (pics2 +ux_t30 - uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_zz_t45*ux_t30)/3 - (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
-            pop[16] = multiplyTerm * (pics2 -ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_xz_t90*ux_t30)/3 + (m_yy_t45*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
-            pop[17] = multiplyTerm * (pics2 +uy_t30 - uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xz_t90*ux_t30)/3 - (m_xy_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 + (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
-            pop[18] = multiplyTerm * (pics2 -uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xy_t90*ux_t30)/3 - (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
-           #endif
-    #endif //HIGH_ORDER_COLLISION
+    #include "includeFiles/popReconstruction"
 
 
     //save populations in shared memory
@@ -235,62 +204,59 @@ __global__ void gpuMomCollisionStream(
    
     #include "includeFiles/popLoad"
 
+    dfloat invRho;
+    if(nodeType != BULK){
+        #include BC_PATH
 
-    #ifdef BC_MOMENT_BASED
-        dfloat invRho;
-        if(nodeType != BULK){
-            #include BC_PATH
+        invRho = 1.0 / rhoVar;               
+    }else{
 
-            invRho = 1.0 / rhoVar;               
-        }else{
+        //calculate streaming moments
+        #ifdef D3Q19
+            //equation3
+            rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
+            invRho = 1 / rhoVar;
+            //equation4 + force correction
+            ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[ 8] + pop[ 9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + L_Fx/2) * invRho;
+            uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[ 8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + L_Fy/2) * invRho;
+            uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + L_Fz/2) * invRho;
 
-            //calculate streaming moments
-            #ifdef D3Q19
-                //equation3
-                rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18];
-                invRho = 1 / rhoVar;
-                //equation4 + force correction
-                ux_t30 = ((pop[1] - pop[2] + pop[7] - pop[ 8] + pop[ 9] - pop[10] + pop[13] - pop[14] + pop[15] - pop[16]) + L_Fx/2) * invRho;
-                uy_t30 = ((pop[3] - pop[4] + pop[7] - pop[ 8] + pop[11] - pop[12] + pop[14] - pop[13] + pop[17] - pop[18]) + L_Fy/2) * invRho;
-                uz_t30 = ((pop[5] - pop[6] + pop[9] - pop[10] + pop[11] - pop[12] + pop[16] - pop[15] + pop[18] - pop[17]) + L_Fz/2) * invRho;
-
-                //equation5
-                m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16])* invRho - cs2;
-                m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14])* invRho;
-                m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16])* invRho;
-                m_yy_t45 = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18])* invRho - cs2;
-                m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18])* invRho;
-                m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18])* invRho - cs2;
+            //equation5
+            m_xx_t45 = (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16])* invRho - cs2;
+            m_xy_t90 = (pop[7] - pop[13] + pop[8] - pop[14])* invRho;
+            m_xz_t90 = (pop[9] - pop[15] + pop[10] - pop[16])* invRho;
+            m_yy_t45 = (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18])* invRho - cs2;
+            m_yz_t90 = (pop[11] - pop[17] + pop[12] - pop[18])* invRho;
+            m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18])* invRho - cs2;
 
 
-            #endif
-            #ifdef D3Q27
-                rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
-                invRho = 1 / rhoVar;
-                ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * L_Fx) * invRho;
-                uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * L_Fy) * invRho;
-                uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * L_Fz) * invRho;
+        #endif
+        #ifdef D3Q27
+            rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
+            invRho = 1 / rhoVar;
+            ux_t30 = ((pop[1] + pop[7] + pop[9] + pop[13] + pop[15] + pop[19] + pop[21] + pop[23] + pop[26])  - (pop[ 2] + pop[ 8] + pop[10] + pop[14] + pop[16] + pop[20] + pop[22] + pop[24] + pop[25]) + 0.5 * L_Fx) * invRho;
+            uy_t30 = ((pop[3] + pop[7] + pop[11] + pop[14] + pop[17] + pop[19] + pop[21] + pop[24] + pop[25]) - (pop[ 4] + pop[ 8] + pop[12] + pop[13] + pop[18] + pop[20] + pop[22] + pop[23] + pop[26]) + 0.5 * L_Fy) * invRho;
+            uz_t30 = ((pop[5] + pop[9] + pop[11] + pop[16] + pop[18] + pop[19] + pop[22] + pop[23] + pop[25]) - (pop[ 6] + pop[10] + pop[12] + pop[15] + pop[17] + pop[20] + pop[21] + pop[24] + pop[26]) + 0.5 * L_Fz) * invRho;
 
-                m_xx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
-                m_xy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) )* invRho;
-                m_xz_t90 = (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) )* invRho;
-                m_yy_t45 = ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
-                m_yz_t90 = (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24])))* invRho;
-                m_zz_t45 = ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
-            #endif
-        }
+            m_xx_t45 = ( (pop[ 1] + pop[ 2] + pop[ 7] + pop[ 8] + pop[ 9] + pop[10]  +  pop[13] + pop[14] + pop[15] + pop[16] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
+            m_xy_t90 = (((pop[ 7] + pop[ 8] + pop[19] + pop[20] + pop[21] + pop[22]) - (pop[13] + pop[14] + pop[23] + pop[24] + pop[25] + pop[26])) )* invRho;
+            m_xz_t90 = (((pop[ 9] + pop[10] + pop[19] + pop[20] + pop[23] + pop[24]) - (pop[15] + pop[16] + pop[21] + pop[22] + pop[25] + pop[26])) )* invRho;
+            m_yy_t45 = ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
+            m_yz_t90 = (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24])))* invRho;
+            m_zz_t45 = ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
+        #endif
+    }
 
-        ux_t30 = F_M_I_SCALE * ux_t30;
-        uy_t30 = F_M_I_SCALE * uy_t30;
-        uz_t30 = F_M_I_SCALE * uz_t30;
+    ux_t30 = F_M_I_SCALE * ux_t30;
+    uy_t30 = F_M_I_SCALE * uy_t30;
+    uz_t30 = F_M_I_SCALE * uz_t30;
 
-        m_xx_t45 = F_M_II_SCALE * (m_xx_t45);
-        m_xy_t90 = F_M_IJ_SCALE * (m_xy_t90);
-        m_xz_t90 = F_M_IJ_SCALE * (m_xz_t90);
-        m_yy_t45 = F_M_II_SCALE * (m_yy_t45);
-        m_yz_t90 = F_M_IJ_SCALE * (m_yz_t90);
-        m_zz_t45 = F_M_II_SCALE * (m_zz_t45);
-    #endif // BC_MOMENT_BASED
+    m_xx_t45 = F_M_II_SCALE * (m_xx_t45);
+    m_xy_t90 = F_M_IJ_SCALE * (m_xy_t90);
+    m_xz_t90 = F_M_IJ_SCALE * (m_xz_t90);
+    m_yy_t45 = F_M_II_SCALE * (m_yy_t45);
+    m_yz_t90 = F_M_IJ_SCALE * (m_yz_t90);
+    m_zz_t45 = F_M_II_SCALE * (m_zz_t45);
 
 #ifdef SECOND_DIST 
         dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -471,99 +437,9 @@ __global__ void gpuMomCollisionStream(
         #endif //!_NON_NEWTONIAN_FLUID
     #endif //!_HIGH_ORDER_COLLISION
 
-    //USING HIGH
-    #ifdef HIGH_ORDER_COLLISION
-
-    #ifdef HO_RR
-
-        dfloat ux = ux_t30 + L_Fx*invRho/2;
-        dfloat uy = uy_t30 + L_Fy*invRho/2;
-        dfloat uz = uz_t30 + L_Fz*invRho/2;
-
-        //matlab original
-        dfloat m_xx = (ux_t30*ux_t30 - (9*uy_t30*uy_t30*uz_t30*uz_t30)/2 + (3*m_zz_t45*uy_t30*uy_t30)/4 + 3*m_yz_t90*uy_t30*uz_t30 + (3*m_yy_t45*uz_t30*uz_t30)/4 - m_xx_t45)*omegaVar + ((15*uy_t30*uy_t30*uz_t30*uz_t30)/4 - (3*m_zz_t45*uy_t30*uy_t30)/4 - 3*m_yz_t90*uy_t30*uz_t30 - (3*m_yy_t45*uz_t30*uz_t30)/4 + m_xx_t45);
-        dfloat m_yy = ((3*m_zz_t45*ux_t30*ux_t30)/4 - (9*ux_t30*ux_t30*uz_t30*uz_t30)/2 + 3*m_xz_t90*ux_t30*uz_t30 + uy_t30*uy_t30 + (3*m_xx_t45*uz_t30*uz_t30)/4 - m_yy_t45)*omegaVar + ((15*ux_t30*ux_t30*uz_t30*uz_t30)/4 - (3*m_zz_t45*ux_t30*ux_t30)/4 - 3*m_xz_t90*ux_t30*uz_t30 - (3*m_xx_t45*uz_t30*uz_t30)/4 + m_yy_t45);
-        dfloat m_zz = ((3*m_yy_t45*ux_t30*ux_t30)/4 - (9*ux_t30*ux_t30*uy_t30*uy_t30)/2 + 3*m_xy_t90*ux_t30*uy_t30 + (3*m_xx_t45*uy_t30*uy_t30)/4 + uz_t30*uz_t30 - m_zz_t45)*omegaVar + ((15*ux_t30*ux_t30*uy_t30*uy_t30)/4 - (3*m_yy_t45*ux_t30*ux_t30)/4 - 3*m_xy_t90*ux_t30*uy_t30 - (3*m_xx_t45*uy_t30*uy_t30)/4 + m_zz_t45);
-        dfloat m_xy = (ux_t30*uy_t30 - m_xy_t90)*omegaVar + m_xy_t90;
-        dfloat m_xz = (ux_t30*uz_t30 - m_xz_t90)*omegaVar + m_xz_t90;
-        dfloat m_yz = (uy_t30*uz_t30 - m_yz_t90)*omegaVar + m_yz_t90;
-
-
-        //dfloat m_xx = ((((m_zz_t45*uy_t30*uy_t30 + m_yy_t45*uz_t30*uz_t30) - 6*uy_t30*uy_t30*uz_t30*uz_t30)/4 + m_yz_t90*uy_t30*uz_t30)*3 + ux_t30*ux_t30 - m_xx_t45)*omegaVar + (((5*uy_t30*uy_t30*uz_t30*uz_t30 - m_zz_t45*uy_t30*uy_t30 - m_yy_t45*uz_t30*uz_t30)/4 - m_yz_t90*uy_t30*uz_t30)*3 + m_xx_t45);
-        //dfloat m_yy = ((((m_zz_t45*ux_t30*ux_t30 + m_xx_t45*uz_t30*uz_t30) - 6*ux_t30*ux_t30*uz_t30*uz_t30)/4 + m_xz_t90*ux_t30*uz_t30)*3 + uy_t30*uy_t30 - m_yy_t45)*omegaVar + (((5*ux_t30*ux_t30*uz_t30*uz_t30 - m_zz_t45*ux_t30*ux_t30 - m_xx_t45*uz_t30*uz_t30)/4 - m_xz_t90*ux_t30*uz_t30)*3 + m_yy_t45);
-        //dfloat m_zz = ((((m_yy_t45*ux_t30*ux_t30 + m_xx_t45*uy_t30*uy_t30) - 6*ux_t30*ux_t30*uy_t30*uy_t30)/4 + m_xy_t90*ux_t30*uy_t30)*3 + uz_t30*uz_t30 - m_zz_t45)*omegaVar + (((5*ux_t30*ux_t30*uy_t30*uy_t30 - m_yy_t45*ux_t30*ux_t30 - m_xx_t45*uy_t30*uy_t30)/4 - m_xy_t90*ux_t30*uy_t30)*3 + m_zz_t45);
-        //dfloat m_xy = (ux_t30*uy_t30 - m_xy_t90)*omegaVar + m_xy_t90;
-        //dfloat m_xz = (ux_t30*uz_t30 - m_xz_t90)*omegaVar + m_xz_t90;
-        //dfloat m_yz = (uy_t30*uz_t30 - m_yz_t90)*omegaVar + m_yz_t90;
-    #endif //HO_RR
-    #ifdef HOME_LBM
-        dfloat ux = ux_t30 + L_Fx*invRho/2;
-        dfloat uy = uy_t30 + L_Fy*invRho/2;
-        dfloat uz = uz_t30 + L_Fz*invRho/2;
-
-
-        dfloat m_xy = T_OMEGA * m_xy_t90 + OMEGA*ux_t30*uy_t30 + TT_OMEGA * invRho * (L_Fx * uy_t30 + L_Fy * ux_t30);
-        dfloat m_xz = T_OMEGA * m_xz_t90 + OMEGA*ux_t30*uz_t30 + TT_OMEGA * invRho * (L_Fx * uz_t30 + L_Fz * ux_t30);
-        dfloat m_yz = T_OMEGA * m_yz_t90 + OMEGA*uy_t30*uz_t30 + TT_OMEGA * invRho * (L_Fy * uz_t30 + L_Fz * uy_t30);
-
-        dfloat m_xx = ONETHIRD* (T_OMEGA * (2*m_xx_t45 - m_yy_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*ux_t30*ux_t30 - uy_t30*uy_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(L_Fx*ux_t30*2 - L_Fy*uy_t30 - L_Fz*uz_t30)) + invRho*L_Fx*ux_t30;
-        dfloat m_yy = ONETHIRD* (T_OMEGA * (2*m_yy_t45 - m_xx_t45 - m_zz_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uy_t30*uy_t30 - ux_t30*ux_t30 - uz_t30*uz_t30) + invRho*T_OMEGA*(L_Fy*uy_t30*2 - L_Fx*ux_t30 - L_Fz*uz_t30)) + invRho*L_Fy*uy_t30;
-        dfloat m_zz = ONETHIRD* (T_OMEGA * (2*m_zz_t45 - m_xx_t45 - m_yy_t45) +  (ux_t30*ux_t30 + uy_t30*uy_t30 + uz_t30*uz_t30) + OMEGA*(2*uz_t30*uz_t30 - ux_t30*ux_t30 - uy_t30*uy_t30) + invRho*T_OMEGA*(L_Fz*uz_t30*2 - L_Fx*ux_t30 - L_Fy*uy_t30)) + invRho*L_Fz*uz_t30;
-    #endif
-    ux_t30 = 3 * ux;
-    uy_t30 = 3 * uy;
-    uz_t30 = 3 * uz;
-
-    m_xx_t45 = 9*(m_xx)/2;
-    m_xy_t90 = 9*(m_xy);
-    m_xz_t90 = 9*(m_xz);
-    m_yy_t45 = 9*(m_yy)/2;
-    m_yz_t90 = 9*(m_yz);
-    m_zz_t45 = 9*(m_zz)/2;
-
-
-
-    #endif //HIGH_ORDER_COLLISION
-
-
-
-
-
     //calculate post collision populations
-    #ifndef HIGH_ORDER_COLLISION
-        #include "includeFiles/popReconstruction"
-    #endif //!HIGH_ORDER_COLLISION
-    #ifdef HIGH_ORDER_COLLISION
-    
-        #ifdef HOME_LBM
-    multiplyTerm = rhoVar * W0;
-    pics2 = 1.0 - cs2 * (m_xx_t45 + m_yy_t45 + m_zz_t45);
 
-    pop[ 0] = multiplyTerm * (pics2);
-    multiplyTerm = rhoVar * W1;
-    pop[ 1] = multiplyTerm * (pics2 + ux_t30 + m_xx_t45 + (ux_t30*uy_t30*uy_t30)/3 - (m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yy_t45*ux_t30)/3 + (ux_t30*uz_t30*uz_t30)/3);
-    pop[ 2] = multiplyTerm * (pics2 - ux_t30 + m_xx_t45 + (m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3);
-    pop[ 3] = multiplyTerm * (pics2 + uy_t30 + m_yy_t45 + (ux_t30*ux_t30*uy_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_yz_t90*uz_t30)/3 - (m_xy_t90*ux_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
-    pop[ 4] = multiplyTerm * (pics2 - uy_t30 + m_yy_t45 + (m_xy_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
-    pop[ 5] = multiplyTerm * (pics2 + uz_t30 + m_zz_t45 + (ux_t30*ux_t30*uz_t30)/3 - (m_yz_t90*uy_t30)/3 - (m_xx_t45*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (m_xz_t90*ux_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
-    pop[ 6] = multiplyTerm * (pics2 - uz_t30 + m_zz_t45 + (m_xz_t90*ux_t30)/3 + (m_yz_t90*uy_t30)/3 + (m_xx_t45*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
-    
-    multiplyTerm = rhoVar * W2;
-    pop[ 7] = multiplyTerm * (pics2 +ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 + m_xy_t90 + (2*m_xy_t90*ux_t30)/3 + (2*m_yy_t45*ux_t30)/3 - (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
-    pop[ 8] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uy_t30 + m_yy_t45 + m_xy_t90 + (m_zz_t45*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
-    pop[ 9] = multiplyTerm * (pics2 +ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 + m_xz_t90 + (2*m_xz_t90*ux_t30)/3 - (m_yy_t45*ux_t30)/3 + (2*m_zz_t45*ux_t30)/3 - (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
-    pop[10] = multiplyTerm * (pics2 -ux_t30 + m_xx_t45 - uz_t30 + m_zz_t45 + m_xz_t90 + (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
-    pop[11] = multiplyTerm * (pics2 +uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 + m_yz_t90 + (2*m_yz_t90*uy_t30)/3 - (m_xz_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (m_xy_t90*ux_t30)/3 + (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
-    pop[12] = multiplyTerm * (pics2 -uy_t30 + m_yy_t45 - uz_t30 + m_zz_t45 + m_yz_t90 + (m_xy_t90*ux_t30)/3 + (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
-    pop[13] = multiplyTerm * (pics2 +ux_t30 - uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_yy_t45*ux_t30)/3 - (2*m_xy_t90*ux_t30)/3 - (m_zz_t45*ux_t30)/3 - (2*m_xx_t45*uy_t30)/3 + (2*m_xy_t90*uy_t30)/3 + (m_zz_t45*uy_t30)/3 - (m_xz_t90*uz_t30)/3 + (m_yz_t90*uz_t30)/3 - (2*ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*ux_t30*uy_t30)/3 + (ux_t30*uz_t30*uz_t30)/3 - (uy_t30*uz_t30*uz_t30)/3);
-    pop[14] = multiplyTerm * (pics2 -ux_t30 + uy_t30 + m_xx_t45 + m_yy_t45 - m_xy_t90 + (2*m_xy_t90*ux_t30)/3 - (2*m_yy_t45*ux_t30)/3 + (m_zz_t45*ux_t30)/3 + (2*m_xx_t45*uy_t30)/3 - (2*m_xy_t90*uy_t30)/3 - (m_zz_t45*uy_t30)/3 + (m_xz_t90*uz_t30)/3 - (m_yz_t90*uz_t30)/3 + (2*ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*ux_t30*uy_t30)/3 - (ux_t30*uz_t30*uz_t30)/3 + (uy_t30*uz_t30*uz_t30)/3);
-    pop[15] = multiplyTerm * (pics2 +ux_t30 - uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_zz_t45*ux_t30)/3 - (m_yy_t45*ux_t30)/3 - (2*m_xz_t90*ux_t30)/3 - (m_xy_t90*uy_t30)/3 + (m_yz_t90*uy_t30)/3 - (2*m_xx_t45*uz_t30)/3 + (2*m_xz_t90*uz_t30)/3 + (m_yy_t45*uz_t30)/3 + (ux_t30*uy_t30*uy_t30)/3 - (2*ux_t30*uz_t30*uz_t30)/3 + (2*ux_t30*ux_t30*uz_t30)/3 - (uy_t30*uy_t30*uz_t30)/3);
-    pop[16] = multiplyTerm * (pics2 -ux_t30 + uz_t30 + m_xx_t45 + m_zz_t45 - m_xz_t90 + (2*m_xz_t90*ux_t30)/3 + (m_yy_t45*ux_t30)/3 - (2*m_zz_t45*ux_t30)/3 + (m_xy_t90*uy_t30)/3 - (m_yz_t90*uy_t30)/3 + (2*m_xx_t45*uz_t30)/3 - (2*m_xz_t90*uz_t30)/3 - (m_yy_t45*uz_t30)/3 - (ux_t30*uy_t30*uy_t30)/3 + (2*ux_t30*uz_t30*uz_t30)/3 - (2*ux_t30*ux_t30*uz_t30)/3 + (uy_t30*uy_t30*uz_t30)/3);
-    pop[17] = multiplyTerm * (pics2 +uy_t30 - uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xz_t90*ux_t30)/3 - (m_xy_t90*ux_t30)/3 - (m_xx_t45*uy_t30)/3 - (2*m_yz_t90*uy_t30)/3 + (2*m_zz_t45*uy_t30)/3 + (m_xx_t45*uz_t30)/3 - (2*m_yy_t45*uz_t30)/3 + (2*m_yz_t90*uz_t30)/3 + (ux_t30*ux_t30*uy_t30)/3 - (ux_t30*ux_t30*uz_t30)/3 - (2*uy_t30*uz_t30*uz_t30)/3 + (2*uy_t30*uy_t30*uz_t30)/3);
-    pop[18] = multiplyTerm * (pics2 -uy_t30 + uz_t30 + m_yy_t45 + m_zz_t45 - m_yz_t90 + (m_xy_t90*ux_t30)/3 - (m_xz_t90*ux_t30)/3 + (m_xx_t45*uy_t30)/3 + (2*m_yz_t90*uy_t30)/3 - (2*m_zz_t45*uy_t30)/3 - (m_xx_t45*uz_t30)/3 + (2*m_yy_t45*uz_t30)/3 - (2*m_yz_t90*uz_t30)/3 - (ux_t30*ux_t30*uy_t30)/3 + (ux_t30*ux_t30*uz_t30)/3 + (2*uy_t30*uz_t30*uz_t30)/3 - (2*uy_t30*uy_t30*uz_t30)/3);
-
-        #endif
-    #endif //HIGH_ORDER_COLLISION
+    #include "includeFiles/popReconstruction"
     
     
     /* write to global mom */
@@ -585,7 +461,6 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
     #endif
 
-
     if(save){
         #ifdef BC_FORCES
         //update local forces
@@ -596,8 +471,5 @@ __global__ void gpuMomCollisionStream(
     }
 
 
-
     #include "includeFiles/popSave"
-   
-
 }

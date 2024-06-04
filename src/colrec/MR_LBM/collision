@@ -1,0 +1,12 @@
+ux_t30 = ux_t30 + invRho_mt15 * L_Fx;
+uy_t30 = uy_t30 + invRho_mt15 * L_Fy;
+uz_t30 = uz_t30 + invRho_mt15 * L_Fz;
+
+//equation 90
+m_xx_t45 = (T_OMEGA * m_xx_t45  +   OMEGAd2 * ux_t30 * ux_t30    + invRho_mt15 * TT_OMEGA * (L_Fx * ux_t30 + L_Fx * ux_t30));
+m_yy_t45 = (T_OMEGA * m_yy_t45  +   OMEGAd2 * uy_t30 * uy_t30    + invRho_mt15 * TT_OMEGA * (L_Fy * uy_t30 + L_Fy * uy_t30));
+m_zz_t45 = (T_OMEGA * m_zz_t45  +   OMEGAd2 * uz_t30 * uz_t30    + invRho_mt15 * TT_OMEGA * (L_Fz * uz_t30 + L_Fz * uz_t30));
+
+m_xy_t90 = (T_OMEGA * m_xy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (L_Fx * uy_t30 + L_Fy * ux_t30));
+m_xz_t90 = (T_OMEGA * m_xz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (L_Fx * uz_t30 + L_Fz * ux_t30));
+m_yz_t90 = (T_OMEGA * m_yz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (L_Fy * uz_t30 + L_Fz * uy_t30));
