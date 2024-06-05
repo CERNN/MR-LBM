@@ -138,7 +138,7 @@ __global__ void gpuInitialization_pop(
     dfloat pop[Q];
     dfloat multiplyTerm;
     dfloat pics2;
-    #include "includeFiles/popReconstruction"
+    #include COLREC_RECONSTRUCTIONS
     
     //thread xyz
     int tx = threadIdx.x;
@@ -242,7 +242,7 @@ __global__ void gpuInitialization_pop(
         dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy_t30);
         dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz_t30);
 
-        #include "includeFiles/g_popReconstruction"
+        #include COLREC_G_RECONSTRUCTIONS
 
         if (threadIdx.x == 0) { //w
             g_fGhostX_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 2]; 

@@ -108,18 +108,12 @@ __global__ void gpuMomCollisionStream(
         const dfloat tt_omega_t3 = tt_omegaVar * 3;
     #endif
     
-    
-    
-    
-
     /*
     if(z > (NZ_TOTAL-50)){
         dfloat dist = (z - (NZ_TOTAL-50))/((NZ_TOTAL)- (NZ_TOTAL-50));
         dfloat ttau = 0.5+ 3*VISC*(1000.0*dist*dist*dist+1.0);
         omegaVar = 1/ttau;
     }*/
-
-
 
     //Local forces
     dfloat L_Fx = FX;
@@ -133,7 +127,7 @@ __global__ void gpuMomCollisionStream(
     #endif
 
 
-    #include "includeFiles/popReconstruction"
+    #include COLREC_RECONSTRUCTIONS
 
 
     //save populations in shared memory
@@ -272,7 +266,7 @@ __global__ void gpuMomCollisionStream(
         dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy_t30);
         dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz_t30);
 
-        #include "includeFiles/g_popReconstruction"
+        #include  COLREC_G_RECONSTRUCTIONS
 
         __syncthreads();
 
@@ -339,7 +333,7 @@ __global__ void gpuMomCollisionStream(
         udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz_t30);
             
 
-        #include "includeFiles/g_popReconstruction"
+        #include COLREC_G_RECONSTRUCTIONS
 
         #include "includeFiles/g_popSave"
         
@@ -432,7 +426,7 @@ __global__ void gpuMomCollisionStream(
 
     //calculate post collision populations
 
-    #include "includeFiles/popReconstruction"
+    #include COLREC_RECONSTRUCTIONS
     
     
     /* write to global mom */

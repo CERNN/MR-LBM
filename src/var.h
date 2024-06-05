@@ -24,9 +24,9 @@
 #define BC_PROBLEM rayleighBenard_2D
 
 /* --------------------------- COLLISION METHOD  ------------------------- */
-#define MR_LBM
-//#define HO_RR //http://dx.doi.org/10.1063/1.4981227
-//#define HOME_LBM //https://inria.hal.science/hal-04223237/
+#define COLLISION_TYPE MR_LBM
+//#define COLLISION_TYPE HO_RR //http://dx.doi.org/10.1063/1.4981227
+//#define COLLISION_TYPE HOME_LBM //https://inria.hal.science/hal-04223237/
 
 
 /* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
@@ -45,7 +45,9 @@
     #define ID_SIM "000"            // prefix for simulation's files
 #define PATH_FILES "TEST"  // path to save simulation's files
 
-#define TREATFIELD (false) //treat data over the entire field
+constexpr int N_STEPS = 600000;
+
+#define TREATFIELD (true) //treat data over the entire field
 #define TREATPOINT (false) //treat data in a single or several points
 #define TREATLINE (false) //save the macro in a line
 #define SAVEDATA (true) //save treat data
@@ -93,6 +95,12 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define CASE_BC_INIT STR(CASE_DIRECTORY/BC_PROBLEM/bc_initialization)
 #define CASE_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/bc_definition)
 #define CASE_FLOW_INITIALIZATION STR(CASE_DIRECTORY/BC_PROBLEM/flow_initialization)
+
+#define COLREC_DIRECTORY colrec
+#define COLREC_COLLISION STR(COLREC_DIRECTORY/COLLISION_TYPE/collision)
+#define COLREC_RECONSTRUCTIONS STR(COLREC_DIRECTORY/COLLISION_TYPE/reconstruction)
+#define COLREC_G_RECONSTRUCTIONS STR(COLREC_DIRECTORY/G_SCALAR/reconstruction)
+#define COLREC_G_COLLISION STR(COLREC_DIRECTORY/G_SCALAR/collision)
 
 
 #include CASE_CONSTANTS
