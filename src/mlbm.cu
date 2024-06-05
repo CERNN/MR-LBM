@@ -43,40 +43,6 @@ __global__ void gpuMomCollisionStream(
     __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q - 1)];
     #endif
 
-    const unsigned short int xp1 = (threadIdx.x + 1 + BLOCK_NX) % BLOCK_NX;
-    const unsigned short int xm1 = (threadIdx.x - 1 + BLOCK_NX) % BLOCK_NX;
-
-    const unsigned short int yp1 = (threadIdx.y + 1 + BLOCK_NY) % BLOCK_NY;
-    const unsigned short int ym1 = (threadIdx.y - 1 + BLOCK_NY) % BLOCK_NY;
-
-    const unsigned short int zp1 = (threadIdx.z + 1 + BLOCK_NZ) % BLOCK_NZ;
-    const unsigned short int zm1 = (threadIdx.z - 1 + BLOCK_NZ) % BLOCK_NZ;
-
-    const int tx = threadIdx.x;
-    const int ty = threadIdx.y;
-    const int tz = threadIdx.z;
-    
-    const int bx = blockIdx.x;
-    const int by = blockIdx.y;
-    const int bz = blockIdx.z;
-
-    const int txm1 = (tx-1+BLOCK_NX)%BLOCK_NX;
-    const int txp1 = (tx+1+BLOCK_NX)%BLOCK_NX;
-
-    const int tym1 = (ty-1+BLOCK_NY)%BLOCK_NY;
-    const int typ1 = (ty+1+BLOCK_NY)%BLOCK_NY;
-
-    const int tzm1 = (tz-1+BLOCK_NZ)%BLOCK_NZ;
-    const int tzp1 = (tz+1+BLOCK_NZ)%BLOCK_NZ;
-
-    const int bxm1 = (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X;
-    const int bxp1 = (bx+1+NUM_BLOCK_X)%NUM_BLOCK_X;
-
-    const int bym1 = (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
-    const int byp1 = (by+1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
-
-    const int bzm1 = (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
-    const int bzp1 = (bz+1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
 
     // Load moments from global memory
 
@@ -129,7 +95,15 @@ __global__ void gpuMomCollisionStream(
 
     #include COLREC_RECONSTRUCTIONS
 
+    const unsigned short int xp1 = (threadIdx.x + 1 + BLOCK_NX) % BLOCK_NX;
+    const unsigned short int xm1 = (threadIdx.x - 1 + BLOCK_NX) % BLOCK_NX;
 
+    const unsigned short int yp1 = (threadIdx.y + 1 + BLOCK_NY) % BLOCK_NY;
+    const unsigned short int ym1 = (threadIdx.y - 1 + BLOCK_NY) % BLOCK_NY;
+
+    const unsigned short int zp1 = (threadIdx.z + 1 + BLOCK_NZ) % BLOCK_NZ;
+    const unsigned short int zm1 = (threadIdx.z - 1 + BLOCK_NZ) % BLOCK_NZ;
+    
     //save populations in shared memory
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = pop[ 1];
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1)] = pop[ 2];
@@ -195,6 +169,32 @@ __global__ void gpuMomCollisionStream(
     pop[25] = s_pop[idxPopBlock(xp1, ym1, zm1, 24)];
     pop[26] = s_pop[idxPopBlock(xm1, yp1, zp1, 25)];
     #endif
+
+    const int tx = threadIdx.x;
+    const int ty = threadIdx.y;
+    const int tz = threadIdx.z;
+    
+    const int bx = blockIdx.x;
+    const int by = blockIdx.y;
+    const int bz = blockIdx.z;
+
+    const int txm1 = (tx-1+BLOCK_NX)%BLOCK_NX;
+    const int txp1 = (tx+1+BLOCK_NX)%BLOCK_NX;
+
+    const int tym1 = (ty-1+BLOCK_NY)%BLOCK_NY;
+    const int typ1 = (ty+1+BLOCK_NY)%BLOCK_NY;
+
+    const int tzm1 = (tz-1+BLOCK_NZ)%BLOCK_NZ;
+    const int tzp1 = (tz+1+BLOCK_NZ)%BLOCK_NZ;
+
+    const int bxm1 = (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X;
+    const int bxp1 = (bx+1+NUM_BLOCK_X)%NUM_BLOCK_X;
+
+    const int bym1 = (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
+    const int byp1 = (by+1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
+
+    const int bzm1 = (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
+    const int bzp1 = (bz+1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
 
     /* load pop from global in cover nodes */
 
