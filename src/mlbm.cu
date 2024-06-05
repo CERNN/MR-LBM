@@ -318,7 +318,7 @@ __global__ void gpuMomCollisionStream(
 
 
         if(nodeType != BULK){
-            #include BC_SECONDARY_PATH
+            #include CASE_G_BC_DEF
         }else{
             cVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
             invC= 1.0/cVar;

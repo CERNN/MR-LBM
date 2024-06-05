@@ -229,33 +229,14 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 #endif
 
 
-#ifdef SECOND_DIST
-    #define BC_SECONDARY_DIRECTORY BoundaryConditions/IncludeSecondaryBc
-
-    #define BC_SECONDARY_PATH STR(BC_SECONDARY_DIRECTORY/BC_PROBLEM)
-#endif
-
-
-
-
 #if defined(HO_RR) || defined(HOME_LBM)
     #define HIGH_ORDER_COLLISION
 #endif
-
-#define BC_DIRECTORY_INIT BoundaryConditions/Boundary_initialization_files
-#define BC_INIT_PATH STR(BC_DIRECTORY_INIT/BC_PROBLEM)
-
 
 //#define DYNAMIC_SHARED_MEMORY
 #ifdef DYNAMIC_SHARED_MEMORY
 #define SHARED_MEMORY_SIZE 101376 //
 #endif
-
-
-
-
-
-
 
 
 #endif

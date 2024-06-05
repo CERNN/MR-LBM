@@ -26,7 +26,12 @@ Projects:
   ☐ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ...
     ☐ Use constant array in defintions.h instead of magic numbers
 
-  ☐ move problem variables to another folder/file system similar to boundary conditions
+  ✔ move problem variables to another folder/file system similar to boundary conditions @done(24-06-04 21:17)
+    ✔ create a folder system for each case, where it has initializatation / variables / boundary conditions / ... @done(24-06-04 20:41)
+  ✔ move collision/reconstruction operators to another folder/file system @done(24-06-04 21:17)
+    ✔ clean up mlbm.cu @done(24-06-04 21:11)
+    ✔ create include structure @done(24-06-04 21:11)
+  ☐ validade/verify the other collision methods.
 
 
 
