@@ -363,7 +363,7 @@ __host__ void hostInitialization_nodeType(
     for (x = 0; x<NX;x++){
         for (y = 0; y<NY;y++){
             for (z = 0; z<NZ_TOTAL;z++){
-                #include BC_INIT_PATH
+                #include CASE_BC_INIT
                 if (nodeType != BULK)
                     hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = (unsigned int)nodeType;
             }

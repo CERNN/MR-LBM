@@ -94,21 +94,24 @@ __global__ void gpuMomCollisionStream(
     dfloat m_yz_t90   = F_M_IJ_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat m_zz_t45   = F_M_II_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-    #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
-        #ifdef NON_NEWTONIAN_FLUID
-            dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        #else
-            dfloat omegaVar = OMEGA;
-        #endif
-    dfloat t_omegaVar = 1 - omegaVar;
-    dfloat tt_omegaVar = 1 - omegaVar/2;
-    dfloat omegaVar_d2 = omegaVar / 2;
-    dfloat tt_omega_t3 = tt_omegaVar * 3;
+    #ifdef NON_NEWTONIAN_FLUID
+        dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat t_omegaVar = 1 - omegaVar;
+        dfloat tt_omegaVar = 1 - omegaVar/2;
+        dfloat omegaVar_d2 = omegaVar / 2;
+        dfloat tt_omega_t3 = tt_omegaVar * 3;
     #else
-    dfloat omegaVar = OMEGA;
+        const dfloat omegaVar = OMEGA;
+        const dfloat t_omegaVar = 1 - omegaVar;
+        const dfloat tt_omegaVar = 1 - omegaVar/2;
+        const dfloat omegaVar_d2 = omegaVar / 2;
+        const dfloat tt_omega_t3 = tt_omegaVar * 3;
     #endif
-
     
+    
+    
+    
+
     /*
     if(z > (NZ_TOTAL-50)){
         dfloat dist = (z - (NZ_TOTAL-50))/((NZ_TOTAL)- (NZ_TOTAL-50));
@@ -422,18 +425,8 @@ __global__ void gpuMomCollisionStream(
                     L_Fy += T_gravity_t_beta * RHO_0*((cVar-T_REFERENCE));
             #endif
 
-            ux_t30 = ux_t30 + invRho_mt15 * L_Fx;
-            uy_t30 = uy_t30 + invRho_mt15 * L_Fy;
-            uz_t30 = uz_t30 + invRho_mt15 * L_Fz;
-            
-            //equation 90
-            m_xx_t45 = (T_OMEGA * m_xx_t45  +   OMEGAd2 * ux_t30 * ux_t30    + invRho_mt15 * TT_OMEGA * (L_Fx * ux_t30 + L_Fx * ux_t30));
-            m_yy_t45 = (T_OMEGA * m_yy_t45  +   OMEGAd2 * uy_t30 * uy_t30    + invRho_mt15 * TT_OMEGA * (L_Fy * uy_t30 + L_Fy * uy_t30));
-            m_zz_t45 = (T_OMEGA * m_zz_t45  +   OMEGAd2 * uz_t30 * uz_t30    + invRho_mt15 * TT_OMEGA * (L_Fz * uz_t30 + L_Fz * uz_t30));
+            #include COLREC_COLLISION
 
-            m_xy_t90 = (T_OMEGA * m_xy_t90  +     OMEGA * ux_t30 * uy_t30    +    TT_OMEGA_T3 *invRho* (L_Fx * uy_t30 + L_Fy * ux_t30));
-            m_xz_t90 = (T_OMEGA * m_xz_t90  +     OMEGA * ux_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (L_Fx * uz_t30 + L_Fz * ux_t30));
-            m_yz_t90 = (T_OMEGA * m_yz_t90  +     OMEGA * uy_t30 * uz_t30    +    TT_OMEGA_T3 *invRho* (L_Fy * uz_t30 + L_Fz * uy_t30));
         #endif //!_NON_NEWTONIAN_FLUID
     #endif //!_HIGH_ORDER_COLLISION
 
