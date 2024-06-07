@@ -14,8 +14,7 @@ dfloat inv_rho;
 // Check if solid body walls
 //if ((nodeType & ((1 << 8) | (1 << 9) | (1 << 10))) == 0) {
  
-#include "voxel"
-
+#include "../../cases/voxel/bc_definition"
 
 switch (nodeType){
     case  (FRONT + BC_OUTFLOW):

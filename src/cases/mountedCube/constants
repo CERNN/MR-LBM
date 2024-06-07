@@ -1,3 +1,5 @@
+#define VOXEL_FILENAME "mounted_cube_L64N256.csv"
+
 constexpr dfloat RE = 500;
 
 constexpr int SCALE = 1;

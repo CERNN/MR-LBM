@@ -1,3 +1,5 @@
+#define VOXEL_FILENAME "sphere.csv"
+
 constexpr dfloat RE = 500;
 
 constexpr int SCALE = 1;

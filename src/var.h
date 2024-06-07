@@ -95,6 +95,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define CASE_BC_INIT STR(CASE_DIRECTORY/BC_PROBLEM/bc_initialization)
 #define CASE_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/bc_definition)
 #define CASE_FLOW_INITIALIZATION STR(CASE_DIRECTORY/BC_PROBLEM/flow_initialization)
+#define VOXEL_BC_DEFINE STR(../../CASE_DIRECTORY/voxel/bc_definition)
 
 #define COLREC_DIRECTORY colrec
 #define COLREC_COLLISION STR(COLREC_DIRECTORY/COLLISION_TYPE/collision)

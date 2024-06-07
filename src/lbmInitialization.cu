@@ -397,13 +397,13 @@ void read_xyz_file(
         std::string field;
 
         std::getline(ss, field, ',');
-        x = std::stol(field);
+        x = std::stoi(field);
 
         std::getline(ss, field, ',');
-        y = std::stol(field);
+        y = std::stoi(field);
 
         std::getline(ss, field, ',');
-        z = std::stol(field);
+        z = std::stoi(field);
 
         if((x>=NX)||(y>=NY)||(z>=NZ_TOTAL))
             continue;
