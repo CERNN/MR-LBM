@@ -1,0 +1,23 @@
+rho = RHO_0;
+ux = U_0_X;
+uy = U_0_Y;
+uz = U_0_Z;
+
+dfloat pert = 0.02;
+int l = idxScalarGlobal(x, y, z);
+int Nt = NUMBER_LBM_NODES;
+ux += pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
+uy += pert*randomNumbers[l + y - Nt*((l + y) / Nt)];
+uz += pert*randomNumbers[l + z - Nt*((l + z) / Nt)];
+
+#ifdef NON_NEWTONIAN_FLUID
+omega = OMEGA;
+#endif
+
+
+#ifdef SECOND_DIST 
+    cVar = T_REFERENCE;
+    qx_t30  = 0; 
+    qy_t30  = 0; 
+    qz_t30  = 0; 
+#endif
