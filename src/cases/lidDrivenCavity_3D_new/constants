@@ -1,0 +1,36 @@
+constexpr dfloat RE = 500;
+
+constexpr int SCALE = 1;
+constexpr int N = 256 * SCALE;
+constexpr int NX = N;        // size x of the grid 
+constexpr int NY = N;        // size y of the grid
+constexpr int NZ = N;        // size z of the grid in one GPU
+constexpr int NZ_TOTAL = NZ;       // size z of the grid
+
+constexpr dfloat U_MAX = 0.05;  
+constexpr dfloat L = N;
+
+constexpr dfloat FX = 0.0;        // force in x
+constexpr dfloat FY = 0.0;        // force in y
+constexpr dfloat FZ = 0.0;        // force in z (flow direction in most cases)
+
+// value for the velocity initial condition in the domain
+constexpr dfloat U_0_X = 0.0;
+constexpr dfloat U_0_Y = 0.0;
+constexpr dfloat U_0_Z = 0.0;
+constexpr dfloat RHO_0 = 1.0;
+
+// values options for boundary conditions //not used yet
+__device__ const dfloat UX_BC[4] =  {0, 0, 0, 0};
+__device__ const dfloat UY_BC[4] =  {0, 0, 0, 0};
+__device__ const dfloat UZ_BC[4] =  {0, 0, 0, 0};
+__device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
+
+
+    #define BC_X_WALL
+    #define BC_Y_WALL
+    #define BC_Z_WALL
+
+constexpr dfloat VISC = U_MAX * NX / RE;
+constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
+constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
