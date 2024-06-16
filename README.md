@@ -71,18 +71,18 @@ Current setup is for the flow around a sphere
 
 
 ## Creating a boundary case
-In order to create a NEW_CASE is necessary to create modify three files:
+Cases are managed in the cases folder, where each case has to have to following files:
 
-1. Boundary_initialization_files/NEW_CASE : should contain the binary value of which type of boundary condition is applied to each cell. This file will be loaded during the initilazation process. As default fluid nodes without BC should be 0b0000000 and solid nodes 0b11111111. Currently support up to 254 different boundary conditions for each case
+1. bc_definition: Defines the mathematical equations to compute the moments of 0th to 2nd order.
+2. bc_initialization: Defines the boundary condition flag
+3. constants: define the simulation parameters, ie, mesh size, velocity and so on.
+4. flow initialization: define how the flow will be initialized.
 
-2. IncludeMlbmBc_###/NEW_CASE : Either moment or population based. This file should contain how the boundary condition is calculated for each case.
-
-3. includeFiles/interface : The definition if the frontier in each of the three directions (x,y, and z) will be periodic, otherwise has be defined as a WALL. Necessary to avoid population leakeage between frontiers.
 
 ## using voxels immersed bodies
-1.  create a csv with the coordinates values for solid nodes
-2.  edit VOXEL_FILENAME defintion in var.h
-3.  externalFlow create bc creates a fixed inlet velocity and outflow in the z-direction
+1. create a csv with the coordinates values for solid nodes
+2. add an include with VOXEL_FILENAME defintion in constants
+3. add an incluence for VOXEL_BC_DEFINE in the bc_definition
 
 
 ## Gallery

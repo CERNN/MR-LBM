@@ -38,7 +38,7 @@ void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step, int 
 *   @param step: current time step
 */
 __host__ 
-void mean_rho(dfloat *fMom, size_t step);
+void mean_rho(dfloat *fMom, size_t step, dfloat *d_mean_rho);
 
 /*
 *   @brief Calculate the total kinetic energy of the flow

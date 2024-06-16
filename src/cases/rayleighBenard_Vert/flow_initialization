@@ -3,7 +3,7 @@ ux = U_0_X;
 uy = U_0_Y;
 uz = U_0_Z;
 
-dfloat pert = 0.02;
+dfloat pert = 0.01;
 int l = idxScalarGlobal(x, y, z);
 int Nt = NUMBER_LBM_NODES;
 ux += pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
@@ -14,9 +14,10 @@ uz += pert*randomNumbers[l + z - Nt*((l + z) / Nt)];
 omega = OMEGA;
 #endif
 
+dfloat ttemp = T_HOT - T_DELTA_T*((dfloat)x/(dfloat)NX);
 
 #ifdef SECOND_DIST 
-    cVar = T_REFERENCE;
+    cVar = ttemp;
     qx_t30  = 0; 
     qy_t30  = 0; 
     qz_t30  = 0; 

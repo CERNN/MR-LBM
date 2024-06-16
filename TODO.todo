@@ -32,7 +32,7 @@ Projects:
     ✔ clean up mlbm.cu @done(24-06-04 21:11)
     ✔ create include structure @done(24-06-04 21:11)
   ☐ validade/verify the other collision methods.
-
+  ☐ auxFunctions that are actually treat data shouldnt be there
 
 
   ✔ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char) @done(24-03-24 10:58)

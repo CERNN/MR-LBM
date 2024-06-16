@@ -28,11 +28,27 @@ constexpr dfloat S_Y = Bn * VISC * U_MAX / L;                // Yield stress 0.0
 constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
 #endif
 /* ------------------------------KEE_TURCOTEE-------------------------------- */
+#ifdef BI_VISCOSITY
+
+constexpr dfloat Bn = 0.4;
+constexpr dfloat S_Y = Bn*VISC*invSqrtt(2*L/(T_gravity_t_beta*T_DELTA_T));
+
+constexpr dfloat VISC_RATIO = 1.0/1000.0; // MU/MU_Y
+constexpr dfloat ETA_Y = VISC / VISC_RATIO ;
+constexpr dfloat TAU_Y = 3*ETA_Y + 0.5;
+constexpr dfloat OMEGA_Y = 1.0/TAU_Y;
+constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);
+constexpr dfloat GAMMA_C = S_Y / ETA_Y;
+
+#endif
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------------KEE_TURCOTEE-------------------------------- */
 #ifdef KEE_TURCOTEE
 
-constexpr S_Y = 0;
-constexpr t1 = 1e-3;
-constexpr eta_0 =  1e-3;
+constexpr dfloat S_Y = 0;
+constexpr dfloat t1 = 1e-3;
+constexpr dfloat eta_0 =  1e-3;
 
 #endif
 /* -------------------------------------------------------------------------- */
@@ -76,6 +92,13 @@ constexpr eta_0 =  1e-3;
     __device__ 
     dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag){
         return OMEGA_P * myMax(0.0, (1 - S_Y / auxStressMag));
+    }
+    #endif  
+
+    #ifdef BI_VISCOSITY
+    __device__ 
+    dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag){
+        return  myMax(OMEGA_Y, OMEGA_P *(1 - S_Y *(1-VISC_RATIO) / auxStressMag));
     }
     #endif  
 

@@ -4,7 +4,7 @@
 #include "var.h"
 
 
-#if defined(POWERLAW) || defined(BINGHAM)
+#if defined(POWERLAW) || defined(BINGHAM) || defined(BI_VISCOSITY)
     #define NON_NEWTONIAN_FLUID
 #endif
 

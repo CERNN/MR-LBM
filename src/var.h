@@ -7,6 +7,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <limits>
 
 #define SINGLE_PRECISION 
 #ifdef SINGLE_PRECISION
@@ -27,10 +28,6 @@
 #define COLLISION_TYPE MR_LBM
 //#define COLLISION_TYPE HO_RR //http://dx.doi.org/10.1063/1.4981227
 //#define COLLISION_TYPE HOME_LBM //https://inria.hal.science/hal-04223237/
-
-
-/* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
-//#define BINGHAM
 
 /* --------------------------- LES DEFINITIONS TYPE ------------------------- */
 // Uncomment the one to use. Comment all to simulate newtonian fluid
@@ -106,6 +103,29 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define CASE_G_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/g_bc_definition)
 #define COLREC_G_RECONSTRUCTIONS STR(COLREC_DIRECTORY/G_SCALAR/reconstruction)
 #define COLREC_G_COLLISION STR(COLREC_DIRECTORY/G_SCALAR/collision)
+
+
+
+
+constexpr dfloat constexprSqrt(dfloat x, dfloat curr, dfloat prev) {
+    return (curr == prev) ? curr : constexprSqrt(x, 0.5 * (curr + x / curr), curr);
+}
+
+constexpr dfloat invSqrtNewton(dfloat x, dfloat curr, dfloat prev) {
+    return (curr == prev) ? curr : invSqrtNewton(x, curr * (1.5 - 0.5 * x * curr * curr), curr);
+}
+
+constexpr dfloat sqrtt(dfloat x) {
+    return (x >= 0 && x < std::numeric_limits<dfloat>::infinity())
+        ? constexprSqrt(x, x, 0)
+        : std::numeric_limits<dfloat>::quiet_NaN();
+}
+
+constexpr dfloat invSqrtt(dfloat x) {
+    return (x > 0 && x < std::numeric_limits<dfloat>::infinity())
+        ? invSqrtNewton(x, 1.0 / x, 0)
+        : std::numeric_limits<dfloat>::quiet_NaN();
+}
 
 
 #include CASE_CONSTANTS

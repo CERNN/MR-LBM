@@ -393,35 +393,20 @@ __global__ void gpuMomCollisionStream(
     #ifndef HIGH_ORDER_COLLISION
         #ifdef DENSITY_CORRECTION
             //printf("%f ",d_mean_rho[0]-1.0) ;
-            rhoVar -= (d_mean_rho[0]-1e-7) ;
+            rhoVar -= (d_mean_rho[0]) ;
             invRho = 1/rhoVar;
         #endif // DENSITY_CORRECTION
-        #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
-            dfloat invRho_mt15 = -3*invRho/2;
-            ux_t30 = (t_omegaVar * (ux_t30 + invRho_mt15 * L_Fx ) + omegaVar * ux_t30 + tt_omega_t3 * L_Fx);
-            uy_t30 = (t_omegaVar * (uy_t30 + invRho_mt15 * L_Fy ) + omegaVar * uy_t30 + tt_omega_t3 * L_Fy);
-            uz_t30 = (t_omegaVar * (uz_t30 + invRho_mt15 * L_Fz ) + omegaVar * uz_t30 + tt_omega_t3 * L_Fz);
-            
-            //equation 90
-            m_xx_t45 = (t_omegaVar * m_xx_t45  +   omegaVar_d2 * ux_t30 * ux_t30  - invRho_mt15 * tt_omegaVar * (L_Fx * ux_t30 + L_Fx * ux_t30));
-            m_yy_t45 = (t_omegaVar * m_yy_t45  +   omegaVar_d2 * uy_t30 * uy_t30  - invRho_mt15 * tt_omegaVar * (L_Fy * uy_t30 + L_Fy * uy_t30));
-            m_zz_t45 = (t_omegaVar * m_zz_t45  +   omegaVar_d2 * uz_t30 * uz_t30  - invRho_mt15 * tt_omegaVar * (L_Fz * uz_t30 + L_Fz * uz_t30));
-
-            m_xy_t90 = (t_omegaVar * m_xy_t90  +   omegaVar * ux_t30 * uy_t30    +    tt_omega_t3 *invRho* (L_Fx * uy_t30 + L_Fy * ux_t30));
-            m_xz_t90 = (t_omegaVar * m_xz_t90  +   omegaVar * ux_t30 * uz_t30    +    tt_omega_t3 *invRho* (L_Fx * uz_t30 + L_Fz * ux_t30));
-            m_yz_t90 = (t_omegaVar * m_yz_t90  +   omegaVar * uy_t30 * uz_t30    +    tt_omega_t3 *invRho* (L_Fy * uz_t30 + L_Fz * uy_t30));
-        #endif // NON_NEWTONIAN_FLUID
-        #if !(defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL))
-            dfloat invRho_mt15 = as2*invRho/2;
-
-            #ifdef THERMAL_MODEL //Boussinesq Approximation
-                if(nodeType == BULK && T_BOUYANCY)
-                    L_Fy += T_gravity_t_beta * RHO_0*((cVar-T_REFERENCE));
-            #endif
-
-            #include COLREC_COLLISION
-
-        #endif //!_NON_NEWTONIAN_FLUID
+        #ifdef THERMAL_MODEL //Boussinesq Approximation
+            if(nodeType == BULK && T_BOUYANCY){
+                    L_Fx = gravity_vector[0] * T_gravity_t_beta * RHO_0*((cVar-T_REFERENCE));
+                    L_Fy = gravity_vector[1] * T_gravity_t_beta * RHO_0*((cVar-T_REFERENCE));
+                    L_Fz = gravity_vector[2] * T_gravity_t_beta * RHO_0*((cVar-T_REFERENCE));
+            }
+                
+        #endif
+        
+        #include COLREC_COLLISION
+        
     #endif //!_HIGH_ORDER_COLLISION
 
     //calculate post collision populations

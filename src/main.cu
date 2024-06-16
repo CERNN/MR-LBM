@@ -212,8 +212,8 @@ int main() {
      
 
     #ifdef DENSITY_CORRECTION
-    checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
-    cudaMalloc((void**)&d_mean_rho, sizeof(dfloat));  
+        checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
+        cudaMalloc((void**)&d_mean_rho, sizeof(dfloat));  
     #endif
     #ifdef PARTICLE_TRACER
     checkCudaErrors(cudaMalloc((void**)&(d_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
@@ -355,8 +355,8 @@ int main() {
     checkCudaErrors(cudaMemcpy(g_gGhostZ_1, g_fGhostZ_1, sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, cudaMemcpyDeviceToDevice));
     #endif 
     #ifdef DENSITY_CORRECTION
-    h_mean_rho[0] = RHO_0;
-    checkCudaErrors(cudaMemcpy(d_mean_rho, h_mean_rho, sizeof(dfloat), cudaMemcpyHostToDevice)); 
+        h_mean_rho[0] = RHO_0;
+        checkCudaErrors(cudaMemcpy(d_mean_rho, h_mean_rho, sizeof(dfloat), cudaMemcpyHostToDevice)); 
     #endif
     checkCudaErrors(cudaDeviceSynchronize());
 
@@ -415,7 +415,7 @@ int main() {
         int aux = step-INI_STEP;
         bool checkpoint = false;
         #ifdef DENSITY_CORRECTION
-        bool densityCorrection = false;
+        mean_rho(fMom,step,d_mean_rho);
         #endif 
         bool save =false;
         if(aux != 0){
@@ -423,9 +423,6 @@ int main() {
                 save = !(step % MACR_SAVE);
             if(CHECKPOINT_SAVE)
                 checkpoint = !(aux % CHECKPOINT_SAVE);
-            #ifdef DENSITY_CORRECTION
-                densityCorrection = true;
-            #endif
         }
        
 
@@ -451,9 +448,6 @@ int main() {
         step,
         save); 
 
-        #ifdef DENSITY_CORRECTION
-            mean_moment(fMom,d_mean_rho,M_RHO_INDEX,step,0);
-        #endif
         #ifdef PARTICLE_TRACER
             checkCudaErrors(cudaDeviceSynchronize());
             updateParticlePos(d_particlePos, h_particlePos, fMom, streamsPart[0],step);
@@ -512,7 +506,7 @@ int main() {
             step);
             //totalKineticEnergy(fMom,step);
             #endif //TREATFIELD
-
+         
             #if TREATPOINT
                 probeExport(fMom,
                 #ifdef NON_NEWTONIAN_FLUID
@@ -776,8 +770,8 @@ int main() {
     }
 
     #ifdef DENSITY_CORRECTION
-    cudaFree(d_mean_rho);
-    free(h_mean_rho);
+        cudaFree(d_mean_rho);
+        free(h_mean_rho);
     #endif
     #ifdef PARTICLE_TRACER
     cudaFree(h_particlePos);
