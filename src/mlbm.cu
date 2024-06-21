@@ -244,6 +244,49 @@ __global__ void gpuMomCollisionStream(
         #endif
     }
 
+    // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
+    #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
+
+        const dfloat S_XX = rhoVar * (m_xx_t45 - ux_t30*ux_t30);
+        const dfloat S_YY = rhoVar * (m_yy_t45 - uy_t30*uy_t30);
+        const dfloat S_ZZ = rhoVar * (m_zz_t45 - uz_t30*uz_t30);
+        const dfloat S_XY = rhoVar * (m_xy_t90 - ux_t30*uy_t30);
+        const dfloat S_XZ = rhoVar * (m_xz_t90 - ux_t30*uz_t30);
+        const dfloat S_YZ = rhoVar * (m_yz_t90 - uy_t30*uz_t30);
+
+        const dfloat uFxxd2 = ux_t30*L_Fx; // d2 = uFxx Divided by two
+        const dfloat uFyyd2 = uy_t30*L_Fy;
+        const dfloat uFzzd2 = uz_t30*L_Fz;
+        const dfloat uFxyd2 = (ux_t30*L_Fy + uy_t30*L_Fx) / 2;
+        const dfloat uFxzd2 = (ux_t30*L_Fz + uz_t30*L_Fx) / 2;
+        const dfloat uFyzd2 = (uy_t30*L_Fz + uz_t30*L_Fy) / 2;
+
+        const dfloat auxStressMag = sqrt(0.5 * (
+            (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
+            2 * ((S_XY + uFxyd2) * (S_XY + uFxyd2) + (S_XZ + uFxzd2) * (S_XZ + uFxzd2) + (S_YZ + uFyzd2) * (S_YZ + uFyzd2))));
+            #ifdef NON_NEWTONIAN_FLUID
+                /*
+                dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
+                dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
+                eta = VISC + S_Y/gamma_dot;
+                omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
+                */
+
+                omegaVar = calcOmega(omegaVar, auxStressMag);
+            #endif//  NON_NEWTONIAN_FLUID
+
+            #ifdef LES_MODEL
+                dfloat tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
+                dfloat visc_turb_var = tau_t/3.0;
+
+                omegaVar = 1.0/(TAU + tau_t);
+            #endif
+            t_omegaVar = 1 - omegaVar;
+            tt_omegaVar = 1 - 0.5*omegaVar;
+            omegaVar_d2 = omegaVar / 2.0;
+            tt_omega_t3 = tt_omegaVar * 3.0;
+    #endif 
+
     ux_t30 = F_M_I_SCALE * ux_t30;
     uy_t30 = F_M_I_SCALE * uy_t30;
     uz_t30 = F_M_I_SCALE * uz_t30;
@@ -255,7 +298,7 @@ __global__ void gpuMomCollisionStream(
     m_yz_t90 = F_M_IJ_SCALE * (m_yz_t90);
     m_zz_t45 = F_M_II_SCALE * (m_zz_t45);
 
-#ifdef SECOND_DIST 
+    #ifdef SECOND_DIST 
         dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat invC = 1/cVar;
         dfloat qx_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -342,49 +385,6 @@ __global__ void gpuMomCollisionStream(
         fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30/F_M_I_SCALE;
         fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30/F_M_I_SCALE;
     #endif
-
-
-    // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
-    #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
-
-    const dfloat S_XX = rhoVar * (m_xx_t45 - ux_t30*ux_t30);
-    const dfloat S_YY = rhoVar * (m_yy_t45 - uy_t30*uy_t30);
-    const dfloat S_ZZ = rhoVar * (m_zz_t45 - uz_t30*uz_t30);
-    const dfloat S_XY = rhoVar * (m_xy_t90 - ux_t30*uy_t30);
-    const dfloat S_XZ = rhoVar * (m_xz_t90 - ux_t30*uz_t30);
-    const dfloat S_YZ = rhoVar * (m_yz_t90 - uy_t30*uz_t30);
-
-    const dfloat uFxxd2 = ux_t30*L_Fx; // d2 = uFxx Divided by two
-    const dfloat uFyyd2 = uy_t30*L_Fy;
-    const dfloat uFzzd2 = uz_t30*L_Fz;
-    const dfloat uFxyd2 = (ux_t30*L_Fy + uy_t30*L_Fx) / 2;
-    const dfloat uFxzd2 = (ux_t30*L_Fz + uz_t30*L_Fx) / 2;
-    const dfloat uFyzd2 = (uy_t30*L_Fz + uz_t30*L_Fy) / 2;
-
-    const dfloat auxStressMag = sqrt(0.5 * (
-        (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
-        2 * ((S_XY + uFxyd2) * (S_XY + uFxyd2) + (S_XZ + uFxzd2) * (S_XZ + uFxzd2) + (S_YZ + uFyzd2) * (S_YZ + uFyzd2))));
-        #ifdef NON_NEWTONIAN_FLUID
-            /*
-            dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
-            dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
-            eta = VISC + S_Y/gamma_dot;
-            omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
-            */
-
-            omegaVar = calcOmega(omegaVar, auxStressMag);
-            #endif//  NON_NEWTONIAN_FLUID
-        #ifdef LES_MODEL
-            dfloat tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
-            dfloat visc_turb_var = tau_t/3.0;
-
-            omegaVar = 1.0/(TAU + tau_t);
-        #endif
-            t_omegaVar = 1 - omegaVar;
-            tt_omegaVar = 1 - 0.5*omegaVar;
-            omegaVar_d2 = omegaVar / 2.0;
-            tt_omega_t3 = tt_omegaVar * 3.0;
-    #endif 
 
     // COLLIDE
 
