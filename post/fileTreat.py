@@ -9,7 +9,7 @@ __macr_names__ = ['ux', 'uy', 'uz', 'rho']
 # Uncomment below for forces
 # __macr_names__ += ['fx', 'fy', 'fz']
 # Uncomment below for NNF
-# __macr_names__ += ['omega']
+__macr_names__ += ['omega']
 # Uncomment below for BC
 # __macr_names__ += ['bc']
 # Uncomment below for C

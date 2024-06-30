@@ -21,9 +21,14 @@ constexpr dfloat GAMMA_0 = 0;       // Truncated Power-Law.
 /* --------------------------------BINGHAM---------------------------------- */
 #ifdef BINGHAM
 // Inputs
-constexpr dfloat Bn = 1.0;
+constexpr dfloat S_YY = 1.0 *VISC*invSqrtt(L/(T_gravity_t_beta*T_DELTA_T));
+constexpr dfloat S_Y= S_YY;
+constexpr dfloat Bn_turan = S_Y*sqrtt(L/(T_gravity_t_beta*T_DELTA_T))/VISC;
+constexpr dfloat Bn_Zhang = Bn_turan * sqrtt(T_PR_NUMBER/T_RA_NUMBER);
+constexpr dfloat Y_number = S_Y /(RHO_0*T_gravity_t_beta*L*T_DELTA_T);
 
-constexpr dfloat S_Y = Bn * VISC * U_MAX / L;                // Yield stress 0.00579
+//constexpr dfloat Bn = 10;
+//constexpr dfloat S_Y = Bn * VISC * U_MAX / L;                // Yield stress 0.00579
 // Calculated variables
 constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
 #endif

@@ -1,7 +1,10 @@
 #define THERMAL_MODEL 
+//#define BINGHAM
+//constexpr int NNF_TRIGGER_STEP = 500000;
+
 
 constexpr int SCALE = 1;
-constexpr int N = 144 * SCALE;
+constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = 4;        // size z of the grid in one GPU
@@ -34,8 +37,6 @@ constexpr dfloat TAU = 0.53;//0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat VISC = (TAU-0.5)/3;
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
-
-//#define BI_VISCOSITY
 
 #ifdef THERMAL_MODEL
     #define SECOND_DIST

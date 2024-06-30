@@ -211,8 +211,8 @@ void treatData(
     dfloat t_ux1;
     
     dfloat mean_prod = 0.0;
-    for (int z = 0 ; z <NZ_TOTAL-1 ; z++){
-        for (int x = 0; x< NX-1;x++){
+    for (int z = 0 ; z <NZ_TOTAL ; z++){
+        for (int x = 0; x< NX;x++){
             t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y0%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y0/BLOCK_NY, z/BLOCK_NZ)];
             t_ux1 = h_fMom[idxMom(x%BLOCK_NX, y1%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y1/BLOCK_NY, z/BLOCK_NZ)];
             mean_prod +=(t_ux0*t_ux0-t_ux1*t_ux1)/4;

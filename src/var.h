@@ -22,7 +22,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM rayleighBenard_2D
+#define BC_PROBLEM rayleighBenard_Closed
 
 /* --------------------------- COLLISION METHOD  ------------------------- */
 #define COLLISION_TYPE MR_LBM
@@ -40,9 +40,9 @@
 
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
     #define ID_SIM "000"            // prefix for simulation's files
-#define PATH_FILES "TEST"  // path to save simulation's files
+#define PATH_FILES "RB"  // path to save simulation's files
 
-constexpr int N_STEPS = 600000;
+constexpr int N_STEPS = 500000;
 
 #define TREATFIELD (true) //treat data over the entire field
 #define TREATPOINT (false) //treat data in a single or several points
@@ -52,8 +52,8 @@ constexpr int N_STEPS = 600000;
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
 #define ONLY_FINAL_MACRO (true) //save only the last time step macroscopic
-#define MACR_SAVE (1000)
-#define RANDOM_NUMBERS false    // to generate random numbers 
+#define MACR_SAVE (2000)
+#define RANDOM_NUMBERS true    // to generate random numbers 
                                 // (useful for turbulence)
 
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;

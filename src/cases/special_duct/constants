@@ -1,11 +1,16 @@
-#define VOXEL_FILENAME "special_duct_H25_Nx128_Ny128_Nz4.csv"
+/* --------------------- VOXEL BC DEFINES ------------------- */
+#define VOXEL_FILENAME "special_duct.csv"
+/* --------------------- NON-NEWTONIAN FLUID DEFINES ------------------- */
+//#define BINGHAM
+
+
 
 constexpr dfloat RE = 100;
 
 constexpr int SCALE = 1;
-constexpr int N = 128 * SCALE;
-constexpr int NX = 128;        // size x of the grid 
-constexpr int NY = 128;        // size y of the grid
+constexpr int N = 256 * SCALE;
+constexpr int NX = N;        // size x of the grid 
+constexpr int NY = N;        // size y of the grid
 constexpr int NZ = 4;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
