@@ -754,6 +754,33 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "\t Smagorisky Constant:" << CONST_SMAGORINSKY <<"\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
     #endif //LES
+    #ifdef THERMAL_MODEL 
+    strSimInfo << "\n------------------------------ THERMAL -----------------------------\n";
+        strSimInfo << std::scientific << std::setprecision(2);
+    strSimInfo << "     Prandtl Number: " << T_PR_NUMBER << "\n";
+        strSimInfo << std::scientific << std::setprecision(4);
+    strSimInfo << "    Rayleigh Number: " << T_RA_NUMBER << "\n";
+    strSimInfo << "     Grashof Number: " << T_GR_NUMBER << "\n";
+       strSimInfo << std::scientific << std::setprecision(3);
+    strSimInfo << "            Delta T: " << T_DELTA_T << "\n";
+    strSimInfo << "        Reference T: " << T_REFERENCE << "\n";
+    strSimInfo << "             Cold T: " << T_COLD << "\n";
+    strSimInfo << "              Hot T: " << T_HOT << "\n";
+    strSimInfo << std::scientific << std::setprecision(6);
+    strSimInfo << "       Thermal Diff: " << T_DIFFUSIVITY << "\n";
+    strSimInfo << "   Grav_t_Exp.Coeff: " << T_gravity_t_beta << "\n";
+       strSimInfo << std::scientific << std::setprecision(2);
+    strSimInfo << "          Gravity_x: " << gravity_vector[0] << "\n";
+    strSimInfo << "          Gravity_y: " << gravity_vector[1] << "\n";
+    strSimInfo << "          Gravity_z: " << gravity_vector[2] << "\n";
+       strSimInfo << std::scientific << std::setprecision(6);
+    strSimInfo << "              G_TAU: " << G_TAU << "\n";
+    strSimInfo << "            G_OMEGA: " << G_OMEGA << "\n";
+
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif// THERMAL_MODEL
+
+
 
     return strSimInfo.str();
 }
