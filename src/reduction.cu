@@ -39,6 +39,18 @@ void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index)
 {
     #if (BLOCK_LBM_SIZE == 512)
         __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 256)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 128)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 64)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 32)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 16)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 8)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
     #else
         extern __shared__ dfloat sdata[];
     #endif
@@ -69,6 +81,18 @@ __global__
 void sumReductionThread_TKE(dfloat* g_idata, dfloat* g_odata, dfloat *meanMom)
 {
     #if (BLOCK_LBM_SIZE == 512)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 256)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 128)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 64)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 32)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 16)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 8)
         __shared__ dfloat sdata[BLOCK_LBM_SIZE];
     #else
         extern __shared__ dfloat sdata[];
@@ -108,6 +132,18 @@ void sumReductionThread_rho(dfloat* g_idata, dfloat* g_odata)
 {
     #if (BLOCK_LBM_SIZE == 512)
         __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 256)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 128)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 64)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 32)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 16)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 8)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
     #else
         extern __shared__ dfloat sdata[];
     #endif
@@ -139,10 +175,21 @@ void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata)
 {
     #if (BLOCK_LBM_SIZE == 512)
         __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 256)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 128)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 64)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 32)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 16)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 8)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
     #else
         extern __shared__ dfloat sdata[];
     #endif
-
 
     //global index in the array
     unsigned int ix =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
@@ -173,10 +220,21 @@ void sumReductionScalar(dfloat* g_idata, dfloat* g_odata)
 {
     #if (BLOCK_LBM_SIZE == 512)
         __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 256)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 128)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 64)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 32)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 16)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 8)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
     #else
         extern __shared__ dfloat sdata[];
     #endif
-
 
     //global index in the array
     unsigned int i =  idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z, blockIdx.x, blockIdx.y, blockIdx.z);
@@ -206,10 +264,21 @@ void sumReductionBlock(dfloat* g_idata, dfloat* g_odata)
 {
     #if (BLOCK_LBM_SIZE == 512)
         __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 256)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 128)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 64)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 32)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 16)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
+    #elif (BLOCK_LBM_SIZE == 8)
+        __shared__ dfloat sdata[BLOCK_LBM_SIZE];
     #else
         extern __shared__ dfloat sdata[];
     #endif
-
 
     //global index in the array
     unsigned int i = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z + blockDim.z * ((blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z))))));
