@@ -7,14 +7,14 @@ switch (nodeType){
     case EAST: //COLD
         cVar =  T_COLD;
         qx_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        qy_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        qz_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qy_t30   = 0;//F_M_I_SCALE*fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qz_t30   = 0;//F_M_I_SCALE*fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         break;
     case WEST: //HOT
         cVar =  T_HOT;
         qx_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        qy_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        qz_t30   = F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qy_t30   = 0;//F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qz_t30   = 0;//F_M_I_SCALE*fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         break;
     case NORTH:
             //free-slip bc for thermal IS NOT bounce back
