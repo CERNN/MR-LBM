@@ -3,10 +3,11 @@ Projects:
   ☐ Organize source files into folders
   ☐ Remove the duplicate arrays used for interface between blocks
   ☐ test perfomance Z-curve array pattern for indexing within the same block structure
-  ☐ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ...
+  ✔ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ... @done(24-07-04 21:52)
     ☐ Use constant array in defintions.h instead of magic numbers
   ☐ auxFunctions that are actually treat data shouldnt be there
   ☐ Rename include files to be .inc
+  ☐ Make the compile sm based directly on the avaiable machine
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
     ☐ Edit local force field to moment array
     ☐ change the name moment array to something more descreptive

@@ -211,8 +211,10 @@ def getMacrsFromStep(step,path):
     for filename in listFilenameStep:
         for macrName in __macr_names__:
             if macrName in filename:
-                macr[macrName] = readFileMacr3D(filename,path)
-
+                if macrName in ['ux', 'uy', 'uz']:
+                    macr[macrName] = readFileMacr3D(filename,path)/3
+                else:
+                    macr[macrName] = readFileMacr3D(filename,path)
     return macr
 
 

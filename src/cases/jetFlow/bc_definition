@@ -22,15 +22,15 @@ switch (nodeType){ //z = NZ-1
       
 
         rhoVar = RHO_0 + fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_RHO_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        ux_t30     =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_UX_INDEX , blockIdx.x, blockIdx.y, blockIdx.z)];
-        uy_t30     =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_UY_INDEX , blockIdx.x, blockIdx.y, blockIdx.z)];
-        uz_t30     =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_UZ_INDEX , blockIdx.x, blockIdx.y, blockIdx.z)];
-        m_xx_t45   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        m_xy_t90   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        m_xz_t90   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        m_yy_t45   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        m_yz_t90   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-        m_zz_t45   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        ux_t30     =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_UX_INDEX , blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_I_SCALE;
+        uy_t30     =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_UY_INDEX , blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_I_SCALE;
+        uz_t30     =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_UZ_INDEX , blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_I_SCALE;
+        m_xx_t45   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_II_SCALE;
+        m_xy_t90   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_IJ_SCALE;
+        m_xz_t90   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_IJ_SCALE;
+        m_yy_t45   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_II_SCALE;
+        m_yz_t90   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_IJ_SCALE;
+        m_zz_t45   =     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]/F_M_II_SCALE;
 
 
         
