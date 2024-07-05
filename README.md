@@ -50,24 +50,26 @@ Current setup is for the flow around a sphere
 |----|------------|-------|
 | 5  | definitions.h | constants used within LBM
 | 6  | arrayIndex.h | index calculation for moments
-| 7  | auxFunctions.h | auxialiary functions that may be used during computation
-| 8  | boundary conditions | definition of boundary condition for lattices
-| 9  | BoundaryConditions/Boundary_initialization_files | definition of boundary condition for lattices for each case 
-| 10 | BoundaryConditions/IncludeMlbmBc_MOM | moment based boundary conditions for each case
-| 11 | BoundaryConditions/IncludeMlbmBc_POP | population based boundary conditions for each case
-| 12 | includeFiles/popSave | load population from global memory
-| 13 | includeFiles/popLoad | save population into global memory
-| 14 | includeFiles/interface | definition of the frontier if is wall or periodic for each case
-| 15 | checkpoint | functions to generation simulation checkpoint
-| 16 | errorDef | error definition functions
-| 17 | globalFunctions | index functions
-| 18 | globalStructs | structs for device and host
-| 19 | lbmInitialization | field initialization functions
-| 20  | nnf | non-Newtonian fluid definitions
-| 21  | nodeTypeMap | boundary conditions node type map defintions
-| 22  | particleTracer | particle tracer functions
-| 23  | reduction | parallel reduction functions used for sums over the domain
-| 24  | saveData | functions to save simulation data
+| 7  | auxFunctions.h | auxiliary functions that may be used during computation
+| 8  | cases | folder containing the each type of problem
+| 9  | cases/bc_definition | definition of boundary condition for lattices for each case 
+| 10 | cases/bc_initilization | flags for the boundary condition
+| 11 | cases/constants | constants of the case
+| 12 | cases/flow_initialization | how the flow is initialized
+| 13 | colrec | collision and reconstruction files for the moments (only MR-LBM, others not fully implemented yet)
+| 14 | includeFiles/popSave | load population from global memory
+| 15 | includeFiles/popLoad | save population into global memory
+| 16 | includeFiles/interface | definition of the frontier if is wall or periodic for each case
+| 17 | checkpoint | functions to generation simulation checkpoint
+| 18 | errorDef | error definition functions
+| 19 | globalFunctions | index functions
+| 20 | globalStructs | structs for device and host
+| 21 | lbmInitialization | field initialization functions
+| 22 | nnf | non-Newtonian fluid definitions
+| 23 | nodeTypeMap | boundary conditions node type map defintions
+| 24 | particleTracer | particle tracer functions
+| 25 | reduction | parallel reduction functions used for sums over the domain
+| 26 | saveData | functions to save simulation data
 
 
 ## Creating a boundary case
@@ -88,6 +90,9 @@ Cases are managed in the cases folder, where each case has to have to following 
 ## Gallery
 
 ## Publications
+
+https://doi.org/10.1063/5.0209802
+
 https://doi.org/10.1016/j.jnnfm.2024.105198
 
 https://www.researchgate.net/publication/378070516_Evaluating_the_Impact_of_Boundary_Conditions_on_the_MR-LBM

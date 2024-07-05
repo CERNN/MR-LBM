@@ -19,6 +19,7 @@ Projects:
     ☐ Edit the saveVarBin fuction to allow differnt data types
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
   ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
+  ☐ Fiix parallel reduction for 2D cases bigger than 256x256
 
   ✔ Particle Tracer @done(14-03-04 12:53)
   ✔ Create a checkpoint save file @done(23-03-16 18:47)
@@ -51,7 +52,7 @@ Projects:
     ✔ First Implementation @done(24-04-13 23:55)
     ✔ Correct mirror error that occur on the interface between blocks C~1e-4 @done(24-05-19 13:03)
     ✔ Transform equations to moment-based @done(24-05-19 13:03)
-    ☐ Increase Performance
+    ✔ Increase Performance @done(24-07-05 17:11)
   ✔ Incorporate LES 
 
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
