@@ -53,7 +53,7 @@ constexpr int N_STEPS = 20000;
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
 #define ONLY_FINAL_MACRO (true) //save only the last time step macroscopic
 #define MACR_SAVE (false)
-#define RANDOM_NUMBERS false    // to generate random numbers 
+#define RANDOM_NUMBERS true    // to generate random numbers 
                                 // (useful for turbulence)
 
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;
