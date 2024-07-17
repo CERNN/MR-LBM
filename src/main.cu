@@ -81,7 +81,7 @@ int main() {
         dfloat* m_ux;
         dfloat* m_uy;
         dfloat* m_uz;
-    #endif
+    #endif //MEAN_FLOW
 
     #ifdef BC_FORCES
         #ifdef SAVE_BC_FORCES
@@ -161,7 +161,7 @@ int main() {
         checkCudaErrors(cudaMallocHost((void**)&(m_ux), MEM_SIZE_SCALAR));
         checkCudaErrors(cudaMallocHost((void**)&(m_uy), MEM_SIZE_SCALAR));
         checkCudaErrors(cudaMallocHost((void**)&(m_uz), MEM_SIZE_SCALAR));
-    #endif
+    #endif //MEAN_FLOW
     #ifdef BC_FORCES
         #ifdef SAVE_BC_FORCES
         checkCudaErrors(cudaMallocHost((void**)&(h_BC_Fx), MEM_SIZE_SCALAR));
@@ -309,7 +309,7 @@ int main() {
     #if MEAN_FLOW
         //initialize mean moments
         checkCudaErrors(cudaMemcpy(fMom, m_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyHostToDevice));
-    #endif
+    #endif //MEAN_FLOW
     checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned int) * NUMBER_LBM_NODES));
     #if SAVE_BC
     checkCudaErrors(cudaMallocHost((void**)&(nodeTypeSave), sizeof(dfloat) * NUMBER_LBM_NODES));
@@ -658,6 +658,9 @@ int main() {
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
+            #ifdef SECOND_DIST 
+            C,
+            #endif 
             #if SAVE_BC
             nodeTypeSave,
             hNodeType,
@@ -673,6 +676,9 @@ int main() {
             #ifdef NON_NEWTONIAN_FLUID
             omega,
             #endif
+            #ifdef SECOND_DIST 
+            C,
+            #endif 
             #if SAVE_BC
             nodeTypeSave,
             #endif
@@ -682,7 +688,7 @@ int main() {
             h_BC_Fz,
             #endif
             INT_MAX);
-    #endif
+    #endif //MEAN_FLOW
 
     /* ------------------------------ POST ------------------------------ */
     //Calculate MLUPS

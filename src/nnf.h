@@ -64,7 +64,7 @@ constexpr dfloat eta_0 =  1e-3;
 #ifdef NON_NEWTONIAN_FLUID
     #ifdef POWER_LAW
     __device__ 
-    dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag){
+    dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
         omega = omegaOld; //initial guess
 
         dfloat fx, fx_dx;
@@ -95,7 +95,7 @@ constexpr dfloat eta_0 =  1e-3;
 
     #ifdef BINGHAM
     __device__ 
-    dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag){
+    dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
         return OMEGA_P * myMax(0.0, (1 - S_Y / auxStressMag));
     }
     #endif  
@@ -111,7 +111,7 @@ constexpr dfloat eta_0 =  1e-3;
     // NOT TESTE/VALIDATED https://arxiv.org/abs/2401.02942 has analythical solution
     #ifdef KEE_TURCOTEE
     __device__ 
-    dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag){
+    dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
         const dfloat A = auxStressMag/2;
         const dfloat B = auxStressMag/(RHO_0*cs2);
         const dfloat C = B*eta_0;

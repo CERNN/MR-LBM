@@ -55,6 +55,9 @@ Projects:
     ✔ Increase Performance @done(24-07-05 17:11)
   ✔ Incorporate LES 
 
+  ☐ Verify D3Q27 again
+  ☐ detach mean-flow stats from treatData
+
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
   ☐ Incorporate IBM
   ☐ Curved boundary conditions

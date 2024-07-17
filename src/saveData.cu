@@ -721,6 +721,8 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
     strSimInfo << "             Nsteps: " << step << "\n";
     strSimInfo << "              MLUPS: " << MLUPS << "\n";
+    strSimInfo << std::scientific << std::setprecision(0);
+    strSimInfo << "       Bx x By x Bz: " << BLOCK_NX << "x" << BLOCK_NY << "x"<< BLOCK_NZ << "\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
     strSimInfo << "\n------------------------------ BOUNDARY CONDITIONS -----------------------------\n";

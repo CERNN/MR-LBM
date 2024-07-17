@@ -152,7 +152,7 @@ constexpr dfloat Implicit_const = 2.0*SQRT_2*3*3/(RHO_0)*CONST_SMAGORINSKY*CONST
 #define BLOCK_NX 8
 #define BLOCK_NY 8
 #ifdef SINGLE_PRECISION //some easy fix so doesnt forget to change size when changing float size
-    #define BLOCK_NZ 4
+    #define BLOCK_NZ 8
 #endif
 #ifdef DOUBLE_PRECISION
     #define BLOCK_NZ 4
@@ -235,7 +235,8 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 
 //#define DYNAMIC_SHARED_MEMORY
 #ifdef DYNAMIC_SHARED_MEMORY
-#define SHARED_MEMORY_SIZE 101376 //
+//#define SHARED_MEMORY_SIZE 101376 //sm86
+//#define SHARED_MEMORY_SIZE 166912 //sm80
 #endif
 
 
