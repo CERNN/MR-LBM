@@ -87,34 +87,31 @@ Cases are managed in the cases folder, where each case has to have to following 
 3. add an incluence for VOXEL_BC_DEFINE in the bc_definition
 
 ## Benchmark
+| GPu           | sm | GPU Clock (GHz) | Memory Clock (GHz) | Block Size      | MLUPs     | Observations                          |
+|---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
+|  RTX 4090 OC  | 89 |  3.0 GHz        |  1.5 GHz           |  8x8x8          |  9075     |                                       |
+|  RTX 4090     | 89 |  2.8 GHz        |  1.3 GHz           |  8x8x8          |  7899     |                                       |
+|  RTX 4060     | 89 |  2.8 GHz        |  2.1 GHz           |  8x8x8          |  2167     |                                       |
+|  RTX 4060     | 89 |  2.8 GHz        |  2.1 GHz           |  8x8x4          |  1932     |                                       |
+|---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
+|  RTX 3060 OC  | 86 |  2.0 GHz        |  2.0   GHz         |  8x8x8          |  3083     |                                       |
+|  RTX 3060     | 86 |  1.8 GHz        |  1.8 GHz           |  8x8x8          |  2755     |                                       |
+|---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
+| A100          | 80 | ### GHz         | ### GHz            | 16x16x8 (D)     | #####     | waiting to test                       |
+| A100          | 80 | ### GHz         | ### GHz            | 16x8x8 (D)      | #####     | waiting to test                       |
+| A100          | 80 | ### GHz         | ### GHz            | 8x8x8           | #####     | waiting to test                       |
+|---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
+|  RTX 2060     | 75 |  1.9   GHz      |  1.7   GHz         |  8x8x8          |  2357     |                                       |
+|  GTX 1660     | 75 |  1.9 GHz        |  2.0 GHz           |  8x8x8          |  1252     |                                       |
+|  GTX 1660     | 75 |  1.9 GHz        |  2.0 GHz           |  8x8x4          |  1251     |                                       |
+|  GTX 1660     | 75 |  1.9 GHz        |  2.0 GHz           |  16x4x4         |  1212     |                                       |
+|---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
+|  K20x         | 35 |  0.7   GHz      |  1.3   GHz         |  8x8x4          |  730      |  Limited by GPU, Memory controler 47% |
+|  K20x         | 35 |  0.7 GHz        |  1.3 GHz           |  8x8x8          |  670      |  Limited by GPU, Memory controler 40% |
+|  K80          | 35 |  ### GHz        | ### GHz            | 8x8x8           | #####     | waiting to test                       |
+|---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
 
 Current tested speed Benchmark values using FP32
-
-| GPU | sm |GPU Clock (GHz) | Memory Clock (GHz) |  Block Size | MLUPS | Observations 
-|-------------|----|---------|----------|-------------|-------|
-| RTX 4090    | 89 | ### GHz | ### GHz  | 16x8x8 (D)  | ##### | waiting availability to test
-| RTX 4090 OC | 89 | 3.0 GHz | 1.5 GHz  | 8x8x8       | 9075  |
-| RTX 4090    | 89 | 2.8 GHz | 1.3 GHz  | 8x8x8       | 7899  | 
-| RTX 4060    | 89 | 2.8 GHz | 2.1 GHz  | 8x8x8       | 2167  |
-| RTX 4060    | 89 | 2.8 GHz | 2.1 GHz  | 8x8x4       | 1932  |
-|-------------|----|---------|----------|-------------|-------|
-| RTX 3060 OC | 86 | 2.0 GHz | 2.0 GHz  | 8x8x8       | 3083  |
-| RTX 3060    | 86 | 1.8 GHz | 1.8 GHz  | 8x8x8       | 2755  |
-|-------------|----|---------|----------|-------------|-------|
-| A100        | 80 | ### GHz | ### GHz  | 16x16x8 (D) | ##### | waiting to test
-| A100        | 80 | ### GHz | ### GHz  | 16x8x8 (D)  | ##### | waiting to test
-| A100        | 80 | ### GHz | ### GHz  | 8x8x8       | ##### | waiting to test
-|-------------|----|---------|----------|-------------|-------|
-| RTX 2060    | 75 | 1.9 GHz | 1.7 GHz  | 8x8x8       | 2357  |
-| GTX 1660    | 75 | 1.9 GHz | 2.0 GHz  | 8x8x8       | 1252  |
-| GTX 1660    | 75 | 1.9 GHz | 2.0 GHz  | 8x8x4       | 1251  |
-| GTX 1660    | 75 | 1.9 GHz | 2.0 GHz  | 16x4x4      | 1212  |
-|-------------|----|---------|----------|-------------|-------|
-| K20x        | 35 | 0.7 GHz | 1.3 GHz  | 8x8x4       | 730   | Limited by GPU, Memory controler 47%
-| K20x        | 35 | 0.7 GHz | 1.3 GHz  | 8x8x8       | 670   | Limited by GPU, Memory controler 40%
-| K80         | 35 | ### GHz | ### GHz  | 8x8x8       | ##### | waiting to test
-|-------------|----|---------|----------|-------------|-------|
-
 D correspond to dynamic allocation of shared memory, which is required to increase the maximum shared memory per block of 48 KB
 
 ## Gallery
