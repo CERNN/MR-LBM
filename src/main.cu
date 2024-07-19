@@ -81,6 +81,9 @@ int main() {
         dfloat* m_ux;
         dfloat* m_uy;
         dfloat* m_uz;
+        #ifdef SECOND_DIST
+        dfloat* m_c;
+        #endif
     #endif //MEAN_FLOW
 
     #ifdef BC_FORCES
@@ -161,6 +164,9 @@ int main() {
         checkCudaErrors(cudaMallocHost((void**)&(m_ux), MEM_SIZE_SCALAR));
         checkCudaErrors(cudaMallocHost((void**)&(m_uy), MEM_SIZE_SCALAR));
         checkCudaErrors(cudaMallocHost((void**)&(m_uz), MEM_SIZE_SCALAR));
+        #ifdef SECOND_DIST
+        checkCudaErrors(cudaMallocHost((void**)&(m_c), MEM_SIZE_SCALAR));
+        #endif
     #endif //MEAN_FLOW
     #ifdef BC_FORCES
         #ifdef SAVE_BC_FORCES
@@ -308,7 +314,7 @@ int main() {
 
     #if MEAN_FLOW
         //initialize mean moments
-        checkCudaErrors(cudaMemcpy(fMom, m_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMemcpy(m_fMom,fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToDevice));
     #endif //MEAN_FLOW
     checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned int) * NUMBER_LBM_NODES));
     #if SAVE_BC
@@ -659,7 +665,7 @@ int main() {
             omega,
             #endif
             #ifdef SECOND_DIST 
-            C,
+            m_c,
             #endif 
             #if SAVE_BC
             nodeTypeSave,
@@ -677,7 +683,7 @@ int main() {
             omega,
             #endif
             #ifdef SECOND_DIST 
-            C,
+            m_c,
             #endif 
             #if SAVE_BC
             nodeTypeSave,
@@ -756,7 +762,10 @@ int main() {
         cudaFree(m_ux);
         cudaFree(m_uy);
         cudaFree(m_uz);
-    #endif
+        #ifdef SECOND_DIST
+        cudaFree(m_c);
+        #endif
+    #endif //MEAN_FLOW
 
     if(LOAD_CHECKPOINT){
         cudaFree(h_fGhostX_0);
