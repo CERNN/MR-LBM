@@ -35,7 +35,7 @@ void treatData(
     dfloat* fMom,
     #if MEAN_FLOW
     dfloat* fMom_mean,
-    #endif
+    #endif//MEAN_FLOW
     unsigned int step
 );
 
