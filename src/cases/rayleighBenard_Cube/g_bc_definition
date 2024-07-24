@@ -95,13 +95,13 @@ switch (nodeType){
         qz_t30 = 0;
         break;
     case SOUTH_WEST_BACK:
-        cVar =  T_COLD;
+        cVar =  T_HOT;
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
         break;
     case SOUTH_WEST_FRONT:
-        cVar =  T_COLD;
+        cVar =  T_HOT;
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
@@ -131,13 +131,13 @@ switch (nodeType){
         qz_t30 = 0;
         break;
     case NORTH_EAST_BACK:
-        cVar = T_HOT;
+        cVar = T_COLD;
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
         break;
     case NORTH_EAST_FRONT:
-        cVar = T_HOT;
+        cVar = T_COLD;
         qx_t30 = 0;
         qy_t30 = 0;
         qz_t30 = 0;
