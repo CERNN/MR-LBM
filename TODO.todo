@@ -63,5 +63,8 @@ Projects:
   ☐ Curved boundary conditions
   ☐ Moving boudnary conditions (e.g. moving particles using voxels)
   ☐ Implementation of DDF-Shift (density is done)
+  ☐ Implement viscoelastic model
+    ☐ Method to compute the velocity gradient
+    ☐ Source term for the advection-diffusion equation
 
 Archive:\

@@ -91,9 +91,10 @@ __global__ void gpuInitialization_mom(
 
     dfloat invC= 1.0/cVar;
 
-    dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC - ux*F_M_I_SCALE);
-    dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy*F_M_I_SCALE);
-    dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz*F_M_I_SCALE);
+    //TODO: fix initialization when a flux exist, since i initialize with zero, there is no problem currently
+    dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC*0.0 - ux*F_M_I_SCALE);
+    dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC*0.0 - uy*F_M_I_SCALE);
+    dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC*0.0 - uz*F_M_I_SCALE);
 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = cVar;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;

@@ -51,8 +51,9 @@ constexpr int N_STEPS = 20000;
 #define CONSOLEPRINT (false) // print the console the data is being saved
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define SAVE_BC (false) //save the bc conditions, usefull for drawing the surface
-#define ONLY_FINAL_MACRO (true) //save only the last time step macroscopic
-#define MACR_SAVE (false)
+#define ONLY_FINAL_MACRO (false) //save only the last time step macroscopic
+#define MACR_SAVE (3000000)
+#define REPORT_SAVE (200)
 #define RANDOM_NUMBERS true    // to generate random numbers 
                                 // (useful for turbulence)
 
@@ -75,7 +76,9 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define SIMULATION_FOLDER_LOAD_CHECKPOINT "TEST"
 // Interval to make checkpoint to save all simulation data and restart from it.
 // It must not be very frequent (10000 or more), because it takes a long time
-#define CHECKPOINT_SAVE false // the frequency on which the simulation checkpoint is saved
+#define CHECKPOINT_SAVE 5000000 // the frequency on which the simulation checkpoint is saved
+#define LOAD_FIELD false
+#define LOAD_FIELD_STEP 0
 /* ------------------------------------------------------------------------- */
 
 

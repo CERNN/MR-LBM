@@ -28,7 +28,116 @@ typedef struct dfloat3 {
         this->y = y;
         this->z = z;
     }
+
+    // Element-wise addition
+    __host__ __device__
+    friend dfloat3 operator+(const dfloat3& a, const dfloat3& b) {
+        return dfloat3(a.x + b.x, a.y + b.y, a.z + b.z);
+    }
+
+    // Element-wise subtraction
+    __host__ __device__
+    friend dfloat3 operator-(const dfloat3& a, const dfloat3& b) {
+        return dfloat3(a.x - b.x, a.y - b.y, a.z - b.z);
+    }
+
+    // Element-wise multiplication
+    __host__ __device__
+    friend dfloat3 operator*(const dfloat3& a, const dfloat3& b) {
+        return dfloat3(a.x * b.x, a.y * b.y, a.z * b.z);
+    }
+
+    // Element-wise division
+    __host__ __device__
+    friend dfloat3 operator/(const dfloat3& a, const dfloat3& b) {
+        return dfloat3(a.x / b.x, a.y / b.y, a.z / b.z);
+    }
+    
+    //between 1 dfloat and dfloat3
+    // Element-wise addition with scalar
+    __host__ __device__
+    friend dfloat3 operator+(const dfloat3& vec, const dfloat scalar) {
+        return dfloat3(vec.x + scalar, vec.y + scalar, vec.z + scalar);
+    }
+    // Element-wise addition with scalar
+    __host__ __device__
+    friend dfloat3 operator+(const dfloat scalar, const dfloat3& vec) {
+        return dfloat3(scalar + vec.x, scalar + vec.y, scalar + vec.z);
+    }
+
+    // Element-wise subtraction with scalar
+    __host__ __device__
+    friend dfloat3 operator-(const dfloat3& vec, const dfloat scalar) {
+        return dfloat3(vec.x - scalar, vec.y - scalar, vec.z - scalar);
+    }
+    // Element-wise subtraction with scalar
+    __host__ __device__
+    friend dfloat3 operator-(const dfloat scalar, const dfloat3& vec) {
+        return dfloat3(scalar - vec.x, scalar - vec.y, scalar - vec.z);
+    }
+
+    // Element-wise multiplication with scalar
+    __host__ __device__
+    friend dfloat3 operator*(const dfloat3& vec, const dfloat scalar) {
+        return dfloat3(vec.x * scalar, vec.y * scalar, vec.z * scalar);
+    }
+    // Element-wise multiplication with scalar
+    __host__ __device__
+    friend dfloat3 operator*(const dfloat scalar, const dfloat3& vec) {
+        return dfloat3(scalar * vec.x, scalar * vec.y, scalar * vec.z);
+    }
+
+    // Element-wise division with scalar
+    __host__ __device__
+    friend dfloat3 operator/(const dfloat3& vec, const dfloat scalar) {
+        return dfloat3(vec.x / scalar, vec.y / scalar, vec.z / scalar);
+    }
+    // Element-wise division with scalar
+    __host__ __device__
+    friend dfloat3 operator/(const dfloat scalar, const dfloat3& vec) {
+        return dfloat3(scalar / vec.x, scalar / vec.y, scalar / vec.z);
+    }
+
+
 } dfloat3;
 
+/*
+*   Struct for dfloat in x, y, z, w (quartenion)
+*/
+typedef struct dfloat4{
+    dfloat x;
+    dfloat y;
+    dfloat z;
+    dfloat w;
+
+    __host__ __device__
+    dfloat4(dfloat x = 0, dfloat y = 0, dfloat z = 0, dfloat w = 0)
+    {
+        this->x = x;
+        this->y = y;
+        this->z = z;
+        this->w = w;
+    }
+} dfloat4;
+
+typedef struct dfloat6{
+    dfloat xx;
+    dfloat yy;
+    dfloat zz;
+    dfloat xy;
+    dfloat xz;
+    dfloat yz;
+
+    __host__ __device__
+    dfloat6(dfloat xx = 0, dfloat yy = 0, dfloat zz = 0, dfloat xy = 0, dfloat xz = 0, dfloat yz = 0)
+    {
+        this->xx = xx;
+        this->yy = yy;
+        this->zz = zz;
+        this->xy = xy;
+        this->xz = xz;
+        this->yz = yz;
+    }
+} dfloat6;
 
 #endif //__GLOBAL_STRUCTS_H

@@ -103,6 +103,44 @@ void linearMacr(
 );
 
 /*
+__host__
+void loadMoments(
+    dfloat* h_fMom,
+    dfloat* rho,
+    dfloat* ux,
+    dfloat* uy,
+    dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    #ifdef SECOND_DIST
+    dfloat* C
+    #endif 
+);
+
+__host__
+void loadSimField(
+    dfloat* h_fMom,
+    dfloat* rho,
+    dfloat* ux,
+    dfloat* uy,
+    dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    #ifdef SECOND_DIST
+    dfloat* C
+    #endif 
+);
+
+void loadVarBin(
+    std::string strFile, 
+    dfloat* var, 
+    size_t memSize,
+    bool append);
+*/
+
+/*
 *   @brief Save all macroscopics in binary format
 *   @param rho: rho field
 *   @param ux: ux field

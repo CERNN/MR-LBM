@@ -585,7 +585,233 @@ void linearMacr(
     #endif
 
 }
+/*
+__host__
+void loadMoments(
+    dfloat* h_fMom,
+    dfloat* rho,
+    dfloat* ux,
+    dfloat* uy,
+    dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    #ifdef SECOND_DIST
+    dfloat* C
+    #endif 
+){
+    size_t indexMacr;
 
+
+    //first moments
+    dfloat rhoVar, uxVar, uyVar, uzVar;
+    dfloat pixx, pixy, pixz, piyy, piyz, pizz;
+    dfloat invRho;
+    dfloat pop[Q];
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat omegaVar;
+    #endif
+    #ifdef SECOND_DIST 
+    dfloat cVar, invC, qx_t30, qy_t30, qz_t30;
+    dfloat gNode[GQ];
+    #endif
+
+    
+
+
+    for(int z = 0; z< NZ;z++){
+        for(int y = 0; y< NY;y++){
+            for(int x = 0; x< NX;x++){
+                indexMacr = idxScalarGlobal(x,y,z);
+
+                rhoVar = rho[indexMacr];
+                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_RHO_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = rhoVar-RHO_0;
+                uxVar = ux[indexMacr];
+                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = F_M_I_SCALE*uxVar;
+                uyVar = uy[indexMacr];
+                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = F_M_I_SCALE*uyVar;
+                uzVar = uz[indexMacr];
+                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = F_M_I_SCALE*uzVar;
+
+
+                //second moments
+                //define equilibrium populations
+                for (int i = 0; i < Q; i++)
+                {
+                    pop[i] = gpu_f_eq(w[i] * RHO_0,
+                                    3 * (uxVar * cx[i] + uyVar * cy[i] + uzVar * cz[i]),
+                                    1 - 1.5 * (uxVar * uxVar + uyVar * uyVar + uzVar * uzVar));
+                }
+
+
+                invRho = 1.0/rhoVar;
+                pixx =  (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) * invRho - cs2;
+                pixy = ((pop[7] + pop[ 8]) - (pop[13] + pop[14])) * invRho;
+                pixz = ((pop[9] + pop[10]) - (pop[15] + pop[16])) * invRho;
+                piyy =  (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]) * invRho - cs2;
+                piyz = ((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho;
+                pizz =  (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]) * invRho - cs2;
+
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*pixx;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_IJ_SCALE*pixy;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_IJ_SCALE*pixz;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*piyy;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_IJ_SCALE*piyz;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*pizz;
+
+
+                #ifdef NON_NEWTONIAN_FLUID
+                omegaVar = omega[indexMacr];
+                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = omegaVar; 
+                #endif
+
+                #ifdef SECOND_DIST 
+                cVar = C[indexMacr];
+                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = cVar;
+
+                dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC - uxVar*F_M_I_SCALE);
+                dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uyVar*F_M_I_SCALE);
+                dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uzVar*F_M_I_SCALE);
+
+                dfloat multiplyTerm = cVar * gW0;
+                dfloat pics2 = 1.0;
+
+                gNode[ 0] = multiplyTerm * (pics2);
+                multiplyTerm = cVar * gW1;
+                gNode[ 1] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE  + udx_t30 );
+                gNode[ 2] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE  - udx_t30 );
+                gNode[ 3] = multiplyTerm * (pics2 + uyVar * F_M_I_SCALE  + udy_t30 );
+                gNode[ 4] = multiplyTerm * (pics2 - uyVar * F_M_I_SCALE  - udy_t30 );
+                gNode[ 5] = multiplyTerm * (pics2 + uzVar * F_M_I_SCALE  + udz_t30 );
+                gNode[ 6] = multiplyTerm * (pics2 - uzVar * F_M_I_SCALE  - udz_t30 );
+                multiplyTerm = cVar * gW2;
+                gNode[ 7] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE + uyVar * F_M_I_SCALE + udx_t30 + udy_t30 );
+                gNode[ 8] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE - uyVar * F_M_I_SCALE - udx_t30 - udy_t30 );
+                gNode[ 9] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE + uzVar * F_M_I_SCALE + udx_t30 + udz_t30 );
+                gNode[10] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE - uzVar * F_M_I_SCALE - udx_t30 - udz_t30 );
+                gNode[11] = multiplyTerm * (pics2 + uyVar * F_M_I_SCALE + uzVar * F_M_I_SCALE + udy_t30 + udz_t30 );
+                gNode[12] = multiplyTerm * (pics2 - uyVar * F_M_I_SCALE - uzVar * F_M_I_SCALE - udy_t30 - udz_t30 );
+                gNode[13] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE - uyVar * F_M_I_SCALE + udx_t30 - udy_t30 );
+                gNode[14] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE + uyVar * F_M_I_SCALE - udx_t30 + udy_t30 );
+                gNode[15] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE - uzVar * F_M_I_SCALE + udx_t30 - udz_t30 );
+                gNode[16] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE + uzVar * F_M_I_SCALE - udx_t30 + udz_t30 );
+                gNode[17] = multiplyTerm * (pics2 + uyVar * F_M_I_SCALE - uzVar * F_M_I_SCALE + udy_t30 - udz_t30 );
+                gNode[18] = multiplyTerm * (pics2 - uyVar * F_M_I_SCALE + uzVar * F_M_I_SCALE - udy_t30 + udz_t30 );
+
+                qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
+                qy_t30 = F_M_I_SCALE*((gNode[3] - gNode[4] + gNode[7] - gNode[ 8] + gNode[11] - gNode[12] + gNode[14] - gNode[13] + gNode[17] - gNode[18]));
+                qz_t30 = F_M_I_SCALE*((gNode[5] - gNode[6] + gNode[9] - gNode[10] + gNode[11] - gNode[12] + gNode[16] - gNode[15] + gNode[18] - gNode[17]));
+
+
+
+
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30;
+                #endif
+
+
+
+            }
+        }
+    }
+}
+
+
+__host__
+void loadSimField(
+    dfloat* h_fMom,
+    dfloat* rho,
+    dfloat* ux,
+    dfloat* uy,
+    dfloat* uz,
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega,
+    #endif
+    #ifdef SECOND_DIST
+    dfloat* C
+    #endif 
+){
+    std::string strFileRho, strFileUx, strFileUy, strFileUz;
+    std::string strFileOmega;
+    std::string strFileC;
+    std::string strFileBc; 
+    std::string strFileFx, strFileFy, strFileFz;
+
+    strFileRho = getVarFilename("rho", LOAD_FIELD_STEP, ".bin");
+    strFileUx = getVarFilename("ux", LOAD_FIELD_STEP, ".bin");
+    strFileUy = getVarFilename("uy", LOAD_FIELD_STEP, ".bin");
+    strFileUz = getVarFilename("uz", LOAD_FIELD_STEP, ".bin");
+    #ifdef NON_NEWTONIAN_FLUID
+    strFileOmega = getVarFilename("omega", LOAD_FIELD_STEP, ".bin");
+    #endif
+    #ifdef SECOND_DIST 
+    strFileC = getVarFilename("C", LOAD_FIELD_STEP, ".bin");
+    #endif
+    #if SAVE_BC
+    strFileBc = getVarFilename("bc", LOAD_FIELD_STEP, ".bin");
+    #endif
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    strFileFx = getVarFilename("fx", LOAD_FIELD_STEP, ".bin");
+    strFileFy = getVarFilename("fy", LOAD_FIELD_STEP, ".bin");
+    strFileFz = getVarFilename("fz", LOAD_FIELD_STEP, ".bin");
+    #endif
+
+    // load files
+    loadVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
+    loadVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
+    loadVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
+    loadVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+    #ifdef NON_NEWTONIAN_FLUID
+    loadVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef SECOND_DIST
+    loadVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
+    #endif
+    #if SAVE_BC
+    loadVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
+    #endif
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    loadVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
+    loadVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
+    loadVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
+    #endif
+
+
+    loadMoments(h_fMom,rho,ux,uy,uz,
+            #ifdef NON_NEWTONIAN_FLUID
+            omega,
+            #endif
+            #ifdef SECOND_DIST
+            C
+            #endif 
+            );
+
+}
+
+
+void loadVarBin(
+    std::string strFile, 
+    dfloat* var, 
+    size_t memSize,
+    bool append)
+{
+    FILE* outFile = nullptr;
+    if(append)
+        outFile = fopen(strFile.c_str(), "ab");
+    else
+        outFile = fopen(strFile.c_str(), "wb");
+    if(outFile != nullptr)
+    {
+        fread(var, memSize, 1, outFile);
+        fclose(outFile);
+    }
+    else
+    {
+        printf("Error loading \"%s\" \nProbably wrong path!\n", strFile.c_str());
+    }
+}
+*/
 
 __host__
 void saveMacr(
@@ -877,7 +1103,7 @@ void saveTreatData(std::string fileName, std::string dataString, int step)
     std::ifstream file(strInf.c_str());
     std::ofstream outfile;
 
-    if(step == MACR_SAVE){ //check if first time step to save data
+    if(step == REPORT_SAVE){ //check if first time step to save data
         outfile.open(strInf.c_str());
     }else{
         if (file.good()) {

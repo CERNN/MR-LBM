@@ -156,10 +156,12 @@ void operateSimCheckpoint(
 
     // Load/save current step
     f_arr(step, f_filename("curr_step"), sizeof(int), tmp);
+    printf("Loaded checkpoint: step %d \n",step[0]);
 
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     // Load/save pop
     f_arr(fMom, f_filename("fMom"), MEM_SIZE_MOM, tmp);
+    printf("Loaded checkpoint: moments \n");
     // Load/save auxilary populations
     f_arr(fGhostX_0, f_filename("fGhostX_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
     f_arr(fGhostX_1, f_filename("fGhostX_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
@@ -167,6 +169,7 @@ void operateSimCheckpoint(
     f_arr(fGhostY_1, f_filename("fGhostY_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
     f_arr(fGhostZ_0, f_filename("fGhostZ_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
     f_arr(fGhostZ_1, f_filename("fGhostZ_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
+    printf("Loaded checkpoint: f_pops \n");
 
     #ifdef SECOND_DIST 
     f_arr(g_fGhostX_0, f_filename("g_fGhostX_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
@@ -175,6 +178,7 @@ void operateSimCheckpoint(
     f_arr(g_fGhostY_1, f_filename("g_fGhostY_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(g_fGhostZ_0, f_filename("g_fGhostZ_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(g_fGhostZ_1, f_filename("g_fGhostZ_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
+    printf("Loaded checkpoint: g_pop \n");
     #endif
 
     free(tmp);
