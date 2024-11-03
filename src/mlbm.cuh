@@ -19,18 +19,7 @@
 /*
 *   @brief Updates macroscopics and then performs collision and streaming
 *   @param fMom: macroscopics moments
-*   @param fGhost.X_0: populations to be pulled when threadIdx.x == NX-1
-*   @param fGhost.X_1: populations to be pulled when threadIdx.x == 0
-*   @param fGhost.Y_0: populations to be pulled when threadIdx.y == NY-1
-*   @param fGhost.Y_1: populations to be pulled when threadIdx.y == 0
-*   @param fGhost.Z_0: populations to be pulled when threadIdx.z == NZ-1
-*   @param fGhost.Z_1: populations to be pulled when threadIdx.z == 0
-*   @param gGhost.X_0: populations to be saved when threadIdx.x == 0
-*   @param gGhost.X_1: populations to be saved when threadIdx.x == NX-1
-*   @param gGhost.Y_0: populations to be saved when threadIdx.y == 0
-*   @param gGhost.Y_1: populations to be saved when threadIdx.y == NY-1
-*   @param gGhost.Z_0: populations to be saved when threadIdx.z == 0
-*   @param gGhost.Z_1: populations to be saved when threadIdx.z == NZ-1
+*   @param ghostInterface interface block transfer information
 *   @param d_mean_rho: mean density, used for density correction
 *   @param d_BC_Fx: boundary condition force x
 *   @param d_BC_Fy: boundary condition force x
@@ -40,11 +29,7 @@
 */
 __global__
 void gpuMomCollisionStream(
-    dfloat *fMom, unsigned int *dNodeType,
-    ghostData fGhost, ghostData gGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost, ghostData g_gGhost,
-    #endif 
+    dfloat *fMom, unsigned int *dNodeType, ghostInterfaceData ghostInterface,
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif

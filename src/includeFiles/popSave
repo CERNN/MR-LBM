@@ -1,78 +1,78 @@
     /* write to global pop */
     if (INTERFACE_BC_WEST){//w
-        gGhost.X_0[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 2]; 
-        gGhost.X_0[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 8];
-        gGhost.X_0[idxPopX(ty, tz, 2, bx, by, bz)] = pop[10];
-        gGhost.X_0[idxPopX(ty, tz, 3, bx, by, bz)] = pop[14];
-        gGhost.X_0[idxPopX(ty, tz, 4, bx, by, bz)] = pop[16];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 2]; 
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 8];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 2, bx, by, bz)] = pop[10];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 3, bx, by, bz)] = pop[14];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 4, bx, by, bz)] = pop[16];
         #ifdef D3Q27
-        gGhost.X_0[idxPopX(ty, tz, 5, bx, by, bz)] = pop[20];
-        gGhost.X_0[idxPopX(ty, tz, 6, bx, by, bz)] = pop[22];
-        gGhost.X_0[idxPopX(ty, tz, 7, bx, by, bz)] = pop[24];
-        gGhost.X_0[idxPopX(ty, tz, 8, bx, by, bz)] = pop[25];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 5, bx, by, bz)] = pop[20];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 6, bx, by, bz)] = pop[22];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 7, bx, by, bz)] = pop[24];
+        ghostInterface.gGhost.X_0[idxPopX(ty, tz, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27
     }if (INTERFACE_BC_EAST){//e
-        gGhost.X_1[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 1];
-        gGhost.X_1[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 7];
-        gGhost.X_1[idxPopX(ty, tz, 2, bx, by, bz)] = pop[ 9];
-        gGhost.X_1[idxPopX(ty, tz, 3, bx, by, bz)] = pop[13];
-        gGhost.X_1[idxPopX(ty, tz, 4, bx, by, bz)] = pop[15];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 1];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 7];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 2, bx, by, bz)] = pop[ 9];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 3, bx, by, bz)] = pop[13];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 4, bx, by, bz)] = pop[15];
         #ifdef D3Q27
-        gGhost.X_1[idxPopX(ty, tz, 5, bx, by, bz)] = pop[19];
-        gGhost.X_1[idxPopX(ty, tz, 6, bx, by, bz)] = pop[21];
-        gGhost.X_1[idxPopX(ty, tz, 7, bx, by, bz)] = pop[23];
-        gGhost.X_1[idxPopX(ty, tz, 8, bx, by, bz)] = pop[26];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 5, bx, by, bz)] = pop[19];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 6, bx, by, bz)] = pop[21];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 7, bx, by, bz)] = pop[23];
+        ghostInterface.gGhost.X_1[idxPopX(ty, tz, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27       
     }
 
     if (INTERFACE_BC_SOUTH){//s          
-        gGhost.Y_0[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 4];
-        gGhost.Y_0[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 8];
-        gGhost.Y_0[idxPopY(tx, tz, 2, bx, by, bz)] = pop[12];
-        gGhost.Y_0[idxPopY(tx, tz, 3, bx, by, bz)] = pop[13];
-        gGhost.Y_0[idxPopY(tx, tz, 4, bx, by, bz)] = pop[18];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 4];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 8];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 2, bx, by, bz)] = pop[12];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 3, bx, by, bz)] = pop[13];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 4, bx, by, bz)] = pop[18];
         #ifdef D3Q27
-        gGhost.Y_0[idxPopY(tx, tz, 5, bx, by, bz)] = pop[20];
-        gGhost.Y_0[idxPopY(tx, tz, 6, bx, by, bz)] = pop[22];
-        gGhost.Y_0[idxPopY(tx, tz, 7, bx, by, bz)] = pop[23];
-        gGhost.Y_0[idxPopY(tx, tz, 8, bx, by, bz)] = pop[26];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 5, bx, by, bz)] = pop[20];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 6, bx, by, bz)] = pop[22];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 7, bx, by, bz)] = pop[23];
+        ghostInterface.gGhost.Y_0[idxPopY(tx, tz, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27
     }if (INTERFACE_BC_NORTH){//n
-        gGhost.Y_1[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 3];
-        gGhost.Y_1[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 7];
-        gGhost.Y_1[idxPopY(tx, tz, 2, bx, by, bz)] = pop[11];
-        gGhost.Y_1[idxPopY(tx, tz, 3, bx, by, bz)] = pop[14];
-        gGhost.Y_1[idxPopY(tx, tz, 4, bx, by, bz)] = pop[17];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 3];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 7];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 2, bx, by, bz)] = pop[11];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 3, bx, by, bz)] = pop[14];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 4, bx, by, bz)] = pop[17];
         #ifdef D3Q27
-        gGhost.Y_1[idxPopY(tx, tz, 5, bx, by, bz)] = pop[19];
-        gGhost.Y_1[idxPopY(tx, tz, 6, bx, by, bz)] = pop[21];
-        gGhost.Y_1[idxPopY(tx, tz, 7, bx, by, bz)] = pop[24];
-        gGhost.Y_1[idxPopY(tx, tz, 8, bx, by, bz)] = pop[25];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 5, bx, by, bz)] = pop[19];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 6, bx, by, bz)] = pop[21];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 7, bx, by, bz)] = pop[24];
+        ghostInterface.gGhost.Y_1[idxPopY(tx, tz, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27
     }
     
     if (INTERFACE_BC_BACK){ //b
-        gGhost.Z_0[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 6];
-        gGhost.Z_0[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[10];
-        gGhost.Z_0[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[12];
-        gGhost.Z_0[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[15];
-        gGhost.Z_0[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[17];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 6];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[10];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[12];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[15];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[17];
         #ifdef D3Q27
-        gGhost.Z_0[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[20];
-        gGhost.Z_0[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[21];
-        gGhost.Z_0[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[24];
-        gGhost.Z_0[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[26];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[20];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[21];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[24];
+        ghostInterface.gGhost.Z_0[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27
     }if (INTERFACE_BC_FRONT){
-        gGhost.Z_1[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 5];
-        gGhost.Z_1[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[ 9];
-        gGhost.Z_1[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[11];
-        gGhost.Z_1[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[16];
-        gGhost.Z_1[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[18];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 5];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[ 9];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[11];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[16];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[18];
         #ifdef D3Q27
-        gGhost.Z_1[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[19];
-        gGhost.Z_1[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[22];
-        gGhost.Z_1[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[23];
-        gGhost.Z_1[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[25];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[19];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[22];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[23];
+        ghostInterface.gGhost.Z_1[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27
     }

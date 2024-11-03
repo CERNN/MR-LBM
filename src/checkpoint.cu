@@ -125,10 +125,7 @@ __host__
 void operateSimCheckpoint( 
     int oper,
     dfloat* fMom,
-    ghostData fGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost,
-    #endif
+    ghostInterfaceData ghostInterface,
     int* step
     )
 {
@@ -159,21 +156,21 @@ void operateSimCheckpoint(
     f_arr(fMom, f_filename("fMom"), MEM_SIZE_MOM, tmp);
     printf("Loaded checkpoint: moments \n");
     // Load/save auxilary populations
-    f_arr(fGhost.X_0, f_filename("fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
-    f_arr(fGhost.X_1, f_filename("fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
-    f_arr(fGhost.Y_0, f_filename("fGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
-    f_arr(fGhost.Y_1, f_filename("fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
-    f_arr(fGhost.Z_0, f_filename("fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
-    f_arr(fGhost.Z_1, f_filename("fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
+    f_arr(ghostInterface.fGhost.X_0, f_filename("fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
+    f_arr(ghostInterface.fGhost.X_1, f_filename("fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
+    f_arr(ghostInterface.fGhost.Y_0, f_filename("fGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
+    f_arr(ghostInterface.fGhost.Y_1, f_filename("fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
+    f_arr(ghostInterface.fGhost.Z_0, f_filename("fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
+    f_arr(ghostInterface.fGhost.Z_1, f_filename("fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
     printf("Loaded checkpoint: f_pops \n");
 
     #ifdef SECOND_DIST 
-    f_arr(g_fGhost.X_0, f_filename("g_fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
-    f_arr(g_fGhost.X_1, f_filename("g_fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
-    f_arr(g_fGhost.Y_0, f_filename("g_fGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
-    f_arr(g_fGhost.Y_1, f_filename("g_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
-    f_arr(g_fGhost.Z_0, f_filename("g_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    f_arr(g_fGhost.Z_1, f_filename("g_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
+    f_arr(ghostInterface.g_fGhost.X_0, f_filename("g_fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
+    f_arr(ghostInterface.g_fGhost.X_1, f_filename("g_fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
+    f_arr(ghostInterface.g_fGhost.Y_0, f_filename("g_fGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
+    f_arr(ghostInterface.g_fGhost.Y_1, f_filename("g_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
+    f_arr(ghostInterface.g_fGhost.Z_0, f_filename("g_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
+    f_arr(ghostInterface.g_fGhost.Z_1, f_filename("g_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     printf("Loaded checkpoint: g_pop \n");
     #endif
 
@@ -184,27 +181,16 @@ void operateSimCheckpoint(
 __host__
 void loadSimCheckpoint( 
     dfloat* fMom,
-    ghostData fGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost,
-    #endif 
+    ghostInterfaceData ghostInterface,
     int *step
     ){
-    operateSimCheckpoint(__LOAD_CHECKPOINT, fMom,
-    fGhost,
-    #ifdef SECOND_DIST 
-    g_fGhost,
-    #endif 
-    step);
+    operateSimCheckpoint(__LOAD_CHECKPOINT, fMom, ghostInterface,step);
 }
 
 __host__
 void saveSimCheckpoint( 
     dfloat* fMom,
-    ghostData fGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost,
-    #endif
+    ghostInterfaceData ghostInterface,
     int *step
     ){
     std::string foldername = PATH_FILES; 
@@ -212,10 +198,5 @@ void saveSimCheckpoint(
     foldername += ID_SIM;
     foldername += "\\\\checkpoint";
     createFolder(foldername);
-    operateSimCheckpoint(__SAVE_CHECKPOINT, fMom,
-    fGhost,
-    #ifdef SECOND_DIST 
-    g_fGhost,
-    #endif 
-    step);
+    operateSimCheckpoint(__SAVE_CHECKPOINT, fMom,ghostInterface, step);
 }

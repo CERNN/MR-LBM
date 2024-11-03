@@ -1,11 +1,7 @@
 #include "mlbm.cuh"
 
 __global__ void gpuMomCollisionStream(
-    dfloat *fMom, unsigned int *dNodeType,
-    ghostData fGhost, ghostData gGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost, ghostData g_gGhost,
-    #endif 
+    dfloat *fMom, unsigned int *dNodeType,ghostInterfaceData ghostInterface,
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
     #endif

@@ -151,4 +151,17 @@ typedef struct ghostData {
 } GhostData;
 
 
+typedef struct ghostInterfaceData  {
+    ghostData fGhost;
+    ghostData gGhost;
+    ghostData h_fGhost;
+
+    #ifdef SECOND_DIST
+        ghostData g_fGhost;
+        ghostData g_gGhost;
+        ghostData g_h_fGhost;
+    #endif
+
+} GhostInterfaceData;
+
 #endif //__GLOBAL_STRUCTS_H

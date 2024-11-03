@@ -110,22 +110,14 @@ std::string getCheckpointFilenameWrite(
 *   
 *   @param oper operation to do, either __LOAD_CHECKPOINT or __SAVE_CHECKPOINT 
 *   @param fMom Populations array
-*   @param fGhost.X_0: populations to be pulled when threadIdx.x == NX-1
-*   @param fGhost.X_1: populations to be pulled when threadIdx.x == 0
-*   @param fGhost.Y_0: populations to be pulled when threadIdx.y == NY-1
-*   @param fGhost.Y_1: populations to be pulled when threadIdx.y == 0
-*   @param fGhost.Z_0: populations to be pulled when threadIdx.z == NZ-1
-*   @param fGhost.Z_1: populations to be pulled when threadIdx.z == 0
+*   @param ghostInterface interface block transfer information
 *   @param step Pointer to current step value in main
 */
 __host__
 void operateSimCheckpoint( 
     int oper,
     dfloat* fMom,
-    ghostData fGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost,
-    #endif
+    ghostInterfaceData ghostInterface,
     int* step
 );
 
@@ -134,21 +126,13 @@ void operateSimCheckpoint(
 *   @brief Load simulation checkpoint
 *
 *   @param fMom Populations array
-*   @param fGhost.X_0: populations to be pulled when threadIdx.x == NX-1
-*   @param fGhost.X_1: populations to be pulled when threadIdx.x == 0
-*   @param fGhost.Y_0: populations to be pulled when threadIdx.y == NY-1
-*   @param fGhost.Y_1: populations to be pulled when threadIdx.y == 0
-*   @param fGhost.Z_0: populations to be pulled when threadIdx.z == NZ-1
-*   @param fGhost.Z_1: populations to be pulled when threadIdx.z == 0
+*   @param ghostInterface interface block transfer information
 *   @param step Pointer to current step value in main
 */
 __host__
 void loadSimCheckpoint( 
     dfloat* fMom,
-    ghostData fGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost,
-    #endif
+    ghostInterfaceData ghostInterface,
     int *step
 );
 
@@ -157,21 +141,13 @@ void loadSimCheckpoint(
 *   @brief Save simulation checkpoint
 *
 *   @param fMom Populations array
-*   @param fGhost.X_0: populations to be pulled when threadIdx.x == NX-1
-*   @param fGhost.X_1: populations to be pulled when threadIdx.x == 0
-*   @param fGhost.Y_0: populations to be pulled when threadIdx.y == NY-1
-*   @param fGhost.Y_1: populations to be pulled when threadIdx.y == 0
-*   @param fGhost.Z_0: populations to be pulled when threadIdx.z == NZ-1
-*   @param fGhost.Z_1: populations to be pulled when threadIdx.z == 0
+*   @param ghostInterface interface block transfer information
 *   @param step Pointer to current step value in main
 */
 __host__
 void saveSimCheckpoint( 
     dfloat* fMom,
-    ghostData fGhost,
-    #ifdef SECOND_DIST 
-    ghostData g_fGhost,
-    #endif
+    ghostInterfaceData ghostInterface,
     int *step
 );
 

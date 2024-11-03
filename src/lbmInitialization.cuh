@@ -41,20 +41,10 @@ __global__ void gpuInitialization_mom(
 *   @brief Initializes populations in the intefaces based on the moments 
 *          defined in the gpuInitialization_mom
 *   @param fMom: moments used to initialize the interface populations
-*   @param fGhostX_0: populations for threadIdx.x == 0
-*   @param fGhostX_1: populations for threadIdx.x == NX-1
-*   @param fGhostY_0: populations for threadIdx.y == 0
-*   @param fGhostY_1: populations for threadIdx.y == NY-1
-*   @param fGhostZ_0: populations for threadIdx.z == 0
-*   @param fGhostZ_1: populations for threadIdx.z == NZ-1
+*   @param ghostInterface interface block transfer information
 */
 __global__ void gpuInitialization_pop(
-    dfloat *fMom,
-    ghostData fGhost
-    #ifdef SECOND_DIST 
-    ,ghostData g_fGhost
-    #endif 
-    );
+    dfloat *fMom,  ghostInterfaceData ghostInterface);
 
 /*
 *   @brief Initialize the boundary condition node type
