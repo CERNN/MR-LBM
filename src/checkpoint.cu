@@ -125,13 +125,9 @@ __host__
 void operateSimCheckpoint( 
     int oper,
     dfloat* fMom,
-    dfloat *fGhostX_0, dfloat *fGhostX_1,
-    dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    ghostData fGhost,
     #ifdef SECOND_DIST 
-    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
-    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
-    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    ghostData g_fGhost,
     #endif
     int* step
     )
@@ -163,21 +159,21 @@ void operateSimCheckpoint(
     f_arr(fMom, f_filename("fMom"), MEM_SIZE_MOM, tmp);
     printf("Loaded checkpoint: moments \n");
     // Load/save auxilary populations
-    f_arr(fGhostX_0, f_filename("fGhostX_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
-    f_arr(fGhostX_1, f_filename("fGhostX_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
-    f_arr(fGhostY_0, f_filename("fGhostY_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
-    f_arr(fGhostY_1, f_filename("fGhostY_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
-    f_arr(fGhostZ_0, f_filename("fGhostZ_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
-    f_arr(fGhostZ_1, f_filename("fGhostZ_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
+    f_arr(fGhost.X_0, f_filename("fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
+    f_arr(fGhost.X_1, f_filename("fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
+    f_arr(fGhost.Y_0, f_filename("fGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
+    f_arr(fGhost.Y_1, f_filename("fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
+    f_arr(fGhost.Z_0, f_filename("fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
+    f_arr(fGhost.Z_1, f_filename("fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
     printf("Loaded checkpoint: f_pops \n");
 
     #ifdef SECOND_DIST 
-    f_arr(g_fGhostX_0, f_filename("g_fGhostX_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
-    f_arr(g_fGhostX_1, f_filename("g_fGhostX_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
-    f_arr(g_fGhostY_0, f_filename("g_fGhostY_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
-    f_arr(g_fGhostY_1, f_filename("g_fGhostY_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
-    f_arr(g_fGhostZ_0, f_filename("g_fGhostZ_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    f_arr(g_fGhostZ_1, f_filename("g_fGhostZ_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
+    f_arr(g_fGhost.X_0, f_filename("g_fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
+    f_arr(g_fGhost.X_1, f_filename("g_fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
+    f_arr(g_fGhost.Y_0, f_filename("g_fGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
+    f_arr(g_fGhost.Y_1, f_filename("g_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
+    f_arr(g_fGhost.Z_0, f_filename("g_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
+    f_arr(g_fGhost.Z_1, f_filename("g_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     printf("Loaded checkpoint: g_pop \n");
     #endif
 
@@ -188,24 +184,16 @@ void operateSimCheckpoint(
 __host__
 void loadSimCheckpoint( 
     dfloat* fMom,
-    dfloat *fGhostX_0, dfloat *fGhostX_1,
-    dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    ghostData fGhost,
     #ifdef SECOND_DIST 
-    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
-    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
-    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    ghostData g_fGhost,
     #endif 
     int *step
     ){
     operateSimCheckpoint(__LOAD_CHECKPOINT, fMom,
-    fGhostX_0, fGhostX_1,
-    fGhostY_0, fGhostY_1,
-    fGhostZ_0, fGhostZ_1,
+    fGhost,
     #ifdef SECOND_DIST 
-    g_fGhostX_0, g_fGhostX_1,
-    g_fGhostY_0, g_fGhostY_1,
-    g_fGhostZ_0, g_fGhostZ_1,
+    g_fGhost,
     #endif 
     step);
 }
@@ -213,13 +201,9 @@ void loadSimCheckpoint(
 __host__
 void saveSimCheckpoint( 
     dfloat* fMom,
-    dfloat *fGhostX_0, dfloat *fGhostX_1,
-    dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1,
+    ghostData fGhost,
     #ifdef SECOND_DIST 
-    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
-    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
-    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
+    ghostData g_fGhost,
     #endif
     int *step
     ){
@@ -229,13 +213,9 @@ void saveSimCheckpoint(
     foldername += "\\\\checkpoint";
     createFolder(foldername);
     operateSimCheckpoint(__SAVE_CHECKPOINT, fMom,
-    fGhostX_0, fGhostX_1,
-    fGhostY_0, fGhostY_1,
-    fGhostZ_0, fGhostZ_1,
+    fGhost,
     #ifdef SECOND_DIST 
-    g_fGhostX_0, g_fGhostX_1,
-    g_fGhostY_0, g_fGhostY_1,
-    g_fGhostZ_0, g_fGhostZ_1,
+    g_fGhost,
     #endif 
     step);
 }

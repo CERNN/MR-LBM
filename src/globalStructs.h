@@ -140,4 +140,15 @@ typedef struct dfloat6{
     }
 } dfloat6;
 
+
+typedef struct ghostData {
+    dfloat* X_0;
+    dfloat* X_1;
+    dfloat* Y_0;
+    dfloat* Y_1;
+    dfloat* Z_0;
+    dfloat* Z_1;
+} GhostData;
+
+
 #endif //__GLOBAL_STRUCTS_H

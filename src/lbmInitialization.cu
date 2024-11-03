@@ -106,13 +106,9 @@ __global__ void gpuInitialization_mom(
 
 __global__ void gpuInitialization_pop(
     dfloat *fMom,
-    dfloat *fGhostX_0, dfloat *fGhostX_1,
-    dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1
+    ghostData fGhost
     #ifdef SECOND_DIST 
-    ,dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
-    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
-    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1
+    ,ghostData g_fGhost
     #endif 
     )
 {
@@ -153,80 +149,80 @@ __global__ void gpuInitialization_pop(
     int bz = blockIdx.z;
 
     if (threadIdx.x == 0) { //w
-        fGhostX_0[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 2]; 
-        fGhostX_0[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 8];
-        fGhostX_0[idxPopX(ty, tz, 2, bx, by, bz)] = pop[10];
-        fGhostX_0[idxPopX(ty, tz, 3, bx, by, bz)] = pop[14];
-        fGhostX_0[idxPopX(ty, tz, 4, bx, by, bz)] = pop[16];
+        fGhost.X_0[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 2]; 
+        fGhost.X_0[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 8];
+        fGhost.X_0[idxPopX(ty, tz, 2, bx, by, bz)] = pop[10];
+        fGhost.X_0[idxPopX(ty, tz, 3, bx, by, bz)] = pop[14];
+        fGhost.X_0[idxPopX(ty, tz, 4, bx, by, bz)] = pop[16];
         #ifdef D3Q27                                                                                                           
-        fGhostX_0[idxPopX(ty, tz, 5, bx, by, bz)] = pop[20];
-        fGhostX_0[idxPopX(ty, tz, 6, bx, by, bz)] = pop[22];
-        fGhostX_0[idxPopX(ty, tz, 7, bx, by, bz)] = pop[24];
-        fGhostX_0[idxPopX(ty, tz, 8, bx, by, bz)] = pop[25];
+        fGhost.X_0[idxPopX(ty, tz, 5, bx, by, bz)] = pop[20];
+        fGhost.X_0[idxPopX(ty, tz, 6, bx, by, bz)] = pop[22];
+        fGhost.X_0[idxPopX(ty, tz, 7, bx, by, bz)] = pop[24];
+        fGhost.X_0[idxPopX(ty, tz, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27                                                                                                           
     }else if (threadIdx.x == (BLOCK_NX - 1)){                                                                                                                                                                               
-        fGhostX_1[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 1];
-        fGhostX_1[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 7];
-        fGhostX_1[idxPopX(ty, tz, 2, bx, by, bz)] = pop[ 9];
-        fGhostX_1[idxPopX(ty, tz, 3, bx, by, bz)] = pop[13];
-        fGhostX_1[idxPopX(ty, tz, 4, bx, by, bz)] = pop[15];
+        fGhost.X_1[idxPopX(ty, tz, 0, bx, by, bz)] = pop[ 1];
+        fGhost.X_1[idxPopX(ty, tz, 1, bx, by, bz)] = pop[ 7];
+        fGhost.X_1[idxPopX(ty, tz, 2, bx, by, bz)] = pop[ 9];
+        fGhost.X_1[idxPopX(ty, tz, 3, bx, by, bz)] = pop[13];
+        fGhost.X_1[idxPopX(ty, tz, 4, bx, by, bz)] = pop[15];
         #ifdef D3Q27                                                                                                           
-        fGhostX_1[idxPopX(ty, tz, 5, bx, by, bz)] = pop[19];
-        fGhostX_1[idxPopX(ty, tz, 6, bx, by, bz)] = pop[21];
-        fGhostX_1[idxPopX(ty, tz, 7, bx, by, bz)] = pop[23];
-        fGhostX_1[idxPopX(ty, tz, 8, bx, by, bz)] = pop[26];
+        fGhost.X_1[idxPopX(ty, tz, 5, bx, by, bz)] = pop[19];
+        fGhost.X_1[idxPopX(ty, tz, 6, bx, by, bz)] = pop[21];
+        fGhost.X_1[idxPopX(ty, tz, 7, bx, by, bz)] = pop[23];
+        fGhost.X_1[idxPopX(ty, tz, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27       
     }
 
     if (threadIdx.y == 0)  { //s                                                                                                                                                                                        
-        fGhostY_0[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 4];
-        fGhostY_0[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 8];
-        fGhostY_0[idxPopY(tx, tz, 2, bx, by, bz)] = pop[12];
-        fGhostY_0[idxPopY(tx, tz, 3, bx, by, bz)] = pop[13];
-        fGhostY_0[idxPopY(tx, tz, 4, bx, by, bz)] = pop[18];
+        fGhost.Y_0[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 4];
+        fGhost.Y_0[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 8];
+        fGhost.Y_0[idxPopY(tx, tz, 2, bx, by, bz)] = pop[12];
+        fGhost.Y_0[idxPopY(tx, tz, 3, bx, by, bz)] = pop[13];
+        fGhost.Y_0[idxPopY(tx, tz, 4, bx, by, bz)] = pop[18];
         #ifdef D3Q27                                                                                                           
-        fGhostY_0[idxPopY(tx, tz, 5, bx, by, bz)] = pop[20];
-        fGhostY_0[idxPopY(tx, tz, 6, bx, by, bz)] = pop[22];
-        fGhostY_0[idxPopY(tx, tz, 7, bx, by, bz)] = pop[23];
-        fGhostY_0[idxPopY(tx, tz, 8, bx, by, bz)] = pop[26];
+        fGhost.Y_0[idxPopY(tx, tz, 5, bx, by, bz)] = pop[20];
+        fGhost.Y_0[idxPopY(tx, tz, 6, bx, by, bz)] = pop[22];
+        fGhost.Y_0[idxPopY(tx, tz, 7, bx, by, bz)] = pop[23];
+        fGhost.Y_0[idxPopY(tx, tz, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27                                                                                                           
     }else if (threadIdx.y == (BLOCK_NY - 1)){                                                                                                                                                                        
-        fGhostY_1[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 3];
-        fGhostY_1[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 7];
-        fGhostY_1[idxPopY(tx, tz, 2, bx, by, bz)] = pop[11];
-        fGhostY_1[idxPopY(tx, tz, 3, bx, by, bz)] = pop[14];
-        fGhostY_1[idxPopY(tx, tz, 4, bx, by, bz)] = pop[17];
+        fGhost.Y_1[idxPopY(tx, tz, 0, bx, by, bz)] = pop[ 3];
+        fGhost.Y_1[idxPopY(tx, tz, 1, bx, by, bz)] = pop[ 7];
+        fGhost.Y_1[idxPopY(tx, tz, 2, bx, by, bz)] = pop[11];
+        fGhost.Y_1[idxPopY(tx, tz, 3, bx, by, bz)] = pop[14];
+        fGhost.Y_1[idxPopY(tx, tz, 4, bx, by, bz)] = pop[17];
         #ifdef D3Q27                                                                                                           
-        fGhostY_1[idxPopY(tx, tz, 5, bx, by, bz)] = pop[19];
-        fGhostY_1[idxPopY(tx, tz, 6, bx, by, bz)] = pop[21];
-        fGhostY_1[idxPopY(tx, tz, 7, bx, by, bz)] = pop[24];
-        fGhostY_1[idxPopY(tx, tz, 8, bx, by, bz)] = pop[25];
+        fGhost.Y_1[idxPopY(tx, tz, 5, bx, by, bz)] = pop[19];
+        fGhost.Y_1[idxPopY(tx, tz, 6, bx, by, bz)] = pop[21];
+        fGhost.Y_1[idxPopY(tx, tz, 7, bx, by, bz)] = pop[24];
+        fGhost.Y_1[idxPopY(tx, tz, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27                                                                                                           
     }
     
     if (threadIdx.z == 0){ //b                                                                                                                                                                                     
-        fGhostZ_0[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 6];
-        fGhostZ_0[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[10];
-        fGhostZ_0[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[12];
-        fGhostZ_0[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[15];
-        fGhostZ_0[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[17];
+        fGhost.Z_0[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 6];
+        fGhost.Z_0[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[10];
+        fGhost.Z_0[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[12];
+        fGhost.Z_0[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[15];
+        fGhost.Z_0[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[17];
         #ifdef D3Q27                                                                                                           
-        fGhostZ_0[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[20];
-        fGhostZ_0[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[21];
-        fGhostZ_0[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[24];
-        fGhostZ_0[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[26];
+        fGhost.Z_0[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[20];
+        fGhost.Z_0[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[21];
+        fGhost.Z_0[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[24];
+        fGhost.Z_0[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[26];
         #endif //D3Q27                                                                                                           
     }else if (threadIdx.z == (BLOCK_NZ - 1)){                                                                                                               
-        fGhostZ_1[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 5];
-        fGhostZ_1[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[ 9];
-        fGhostZ_1[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[11];
-        fGhostZ_1[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[16];
-        fGhostZ_1[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[18];
+        fGhost.Z_1[idxPopZ(tx, ty, 0, bx, by, bz)] = pop[ 5];
+        fGhost.Z_1[idxPopZ(tx, ty, 1, bx, by, bz)] = pop[ 9];
+        fGhost.Z_1[idxPopZ(tx, ty, 2, bx, by, bz)] = pop[11];
+        fGhost.Z_1[idxPopZ(tx, ty, 3, bx, by, bz)] = pop[16];
+        fGhost.Z_1[idxPopZ(tx, ty, 4, bx, by, bz)] = pop[18];
         #ifdef D3Q27                                                                                                           
-        fGhostZ_1[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[19];
-        fGhostZ_1[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[22];
-        fGhostZ_1[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[23];
-        fGhostZ_1[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[25];
+        fGhost.Z_1[idxPopZ(tx, ty, 5, bx, by, bz)] = pop[19];
+        fGhost.Z_1[idxPopZ(tx, ty, 6, bx, by, bz)] = pop[22];
+        fGhost.Z_1[idxPopZ(tx, ty, 7, bx, by, bz)] = pop[23];
+        fGhost.Z_1[idxPopZ(tx, ty, 8, bx, by, bz)] = pop[25];
         #endif //D3Q27                                                                                                                                                                                                                    
     }
 
@@ -246,56 +242,56 @@ __global__ void gpuInitialization_pop(
         #include COLREC_G_RECONSTRUCTIONS
 
         if (threadIdx.x == 0) { //w
-            g_fGhostX_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 2]; 
+            g_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 2]; 
             #ifdef D3G19
-            g_fGhostX_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 8];
-            g_fGhostX_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[10];
-            g_fGhostX_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[14];
-            g_fGhostX_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[16];
+            g_fGhost.X_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 8];
+            g_fGhost.X_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[10];
+            g_fGhost.X_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[14];
+            g_fGhost.X_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[16];
             #endif            
         }else if (threadIdx.x == (BLOCK_NX - 1)){                    
-            g_fGhostX_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 1];
+            g_fGhost.X_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 1];
             #ifdef D3G19
-            g_fGhostX_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 7];
-            g_fGhostX_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[ 9];
-            g_fGhostX_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[13];
-            g_fGhostX_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[15];     
+            g_fGhost.X_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = gNode[ 7];
+            g_fGhost.X_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = gNode[ 9];
+            g_fGhost.X_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = gNode[13];
+            g_fGhost.X_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = gNode[15];     
             #endif    
         }
 
         if (threadIdx.y == 0)  { //s                             
-            g_fGhostY_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 4];
+            g_fGhost.Y_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 4];
             #ifdef D3G19
-            g_fGhostY_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 8];
-            g_fGhostY_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[12];
-            g_fGhostY_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[13];
-            g_fGhostY_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[18];           
+            g_fGhost.Y_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 8];
+            g_fGhost.Y_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[12];
+            g_fGhost.Y_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[13];
+            g_fGhost.Y_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[18];           
             #endif           
         }else if (threadIdx.y == (BLOCK_NY - 1)){             
-            g_fGhostY_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 3];
+            g_fGhost.Y_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = gNode[ 3];
             #ifdef D3G19
-            g_fGhostY_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 7];
-            g_fGhostY_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[11];
-            g_fGhostY_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[14];
-            g_fGhostY_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[17];         
+            g_fGhost.Y_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = gNode[ 7];
+            g_fGhost.Y_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = gNode[11];
+            g_fGhost.Y_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = gNode[14];
+            g_fGhost.Y_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = gNode[17];         
             #endif        
         }
         
         if (threadIdx.z == 0){ //b                          
-            g_fGhostZ_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 6];
+            g_fGhost.Z_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 6];
             #ifdef D3G19
-            g_fGhostZ_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[10];
-            g_fGhostZ_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[12];
-            g_fGhostZ_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[15];
-            g_fGhostZ_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[17]; 
+            g_fGhost.Z_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[10];
+            g_fGhost.Z_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[12];
+            g_fGhost.Z_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[15];
+            g_fGhost.Z_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[17]; 
             #endif    
         }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
-            g_fGhostZ_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 5];
+            g_fGhost.Z_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = gNode[ 5];
             #ifdef D3G19
-            g_fGhostZ_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[ 9];
-            g_fGhostZ_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[11];
-            g_fGhostZ_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[16];
-            g_fGhostZ_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[18];    
+            g_fGhost.Z_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = gNode[ 9];
+            g_fGhost.Z_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = gNode[11];
+            g_fGhost.Z_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = gNode[16];
+            g_fGhost.Z_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = gNode[18];    
             #endif                    
         }
     #endif //SECOND_DIST

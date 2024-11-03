@@ -19,18 +19,18 @@
 /*
 *   @brief Updates macroscopics and then performs collision and streaming
 *   @param fMom: macroscopics moments
-*   @param fGhostX_0: populations to be pulled when threadIdx.x == NX-1
-*   @param fGhostX_1: populations to be pulled when threadIdx.x == 0
-*   @param fGhostY_0: populations to be pulled when threadIdx.y == NY-1
-*   @param fGhostY_1: populations to be pulled when threadIdx.y == 0
-*   @param fGhostZ_0: populations to be pulled when threadIdx.z == NZ-1
-*   @param fGhostZ_1: populations to be pulled when threadIdx.z == 0
-*   @param gGhostX_0: populations to be saved when threadIdx.x == 0
-*   @param gGhostX_1: populations to be saved when threadIdx.x == NX-1
-*   @param gGhostY_0: populations to be saved when threadIdx.y == 0
-*   @param gGhostY_1: populations to be saved when threadIdx.y == NY-1
-*   @param gGhostZ_0: populations to be saved when threadIdx.z == 0
-*   @param gGhostZ_1: populations to be saved when threadIdx.z == NZ-1
+*   @param fGhost.X_0: populations to be pulled when threadIdx.x == NX-1
+*   @param fGhost.X_1: populations to be pulled when threadIdx.x == 0
+*   @param fGhost.Y_0: populations to be pulled when threadIdx.y == NY-1
+*   @param fGhost.Y_1: populations to be pulled when threadIdx.y == 0
+*   @param fGhost.Z_0: populations to be pulled when threadIdx.z == NZ-1
+*   @param fGhost.Z_1: populations to be pulled when threadIdx.z == 0
+*   @param gGhost.X_0: populations to be saved when threadIdx.x == 0
+*   @param gGhost.X_1: populations to be saved when threadIdx.x == NX-1
+*   @param gGhost.Y_0: populations to be saved when threadIdx.y == 0
+*   @param gGhost.Y_1: populations to be saved when threadIdx.y == NY-1
+*   @param gGhost.Z_0: populations to be saved when threadIdx.z == 0
+*   @param gGhost.Z_1: populations to be saved when threadIdx.z == NZ-1
 *   @param d_mean_rho: mean density, used for density correction
 *   @param d_BC_Fx: boundary condition force x
 *   @param d_BC_Fy: boundary condition force x
@@ -41,19 +41,9 @@
 __global__
 void gpuMomCollisionStream(
     dfloat *fMom, unsigned int *dNodeType,
-    dfloat *fGhostX_0, dfloat *fGhostX_1,
-    dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1,
-    dfloat *gGhostX_0, dfloat *gGhostX_1,
-    dfloat *gGhostY_0, dfloat *gGhostY_1,
-    dfloat *gGhostZ_0, dfloat *gGhostZ_1,
+    ghostData fGhost, ghostData gGhost,
     #ifdef SECOND_DIST 
-    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
-    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
-    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
-    dfloat *g_gGhostX_0, dfloat *g_gGhostX_1,
-    dfloat *g_gGhostY_0, dfloat *g_gGhostY_1,
-    dfloat *g_gGhostZ_0, dfloat *g_gGhostZ_1,
+    ghostData g_fGhost, ghostData g_gGhost,
     #endif 
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,

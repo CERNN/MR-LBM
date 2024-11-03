@@ -2,19 +2,9 @@
 
 __global__ void gpuMomCollisionStream(
     dfloat *fMom, unsigned int *dNodeType,
-    dfloat *fGhostX_0, dfloat *fGhostX_1,
-    dfloat *fGhostY_0, dfloat *fGhostY_1,
-    dfloat *fGhostZ_0, dfloat *fGhostZ_1,
-    dfloat *gGhostX_0, dfloat *gGhostX_1,
-    dfloat *gGhostY_0, dfloat *gGhostY_1,
-    dfloat *gGhostZ_0, dfloat *gGhostZ_1,
+    ghostData fGhost, ghostData gGhost,
     #ifdef SECOND_DIST 
-    dfloat *g_fGhostX_0, dfloat *g_fGhostX_1,
-    dfloat *g_fGhostY_0, dfloat *g_fGhostY_1,
-    dfloat *g_fGhostZ_0, dfloat *g_fGhostZ_1,
-    dfloat *g_gGhostX_0, dfloat *g_gGhostX_1,
-    dfloat *g_gGhostY_0, dfloat *g_gGhostY_1,
-    dfloat *g_gGhostZ_0, dfloat *g_gGhostZ_1,
+    ghostData g_fGhost, ghostData g_gGhost,
     #endif 
     #ifdef DENSITY_CORRECTION
     dfloat *d_mean_rho,
