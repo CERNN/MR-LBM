@@ -1,14 +1,14 @@
 #define THERMAL_MODEL 
 #define BINGHAM
-constexpr dfloat NNF_TRIGGER_STEP =      2500000;
-constexpr dfloat NNF_TRIGGER_STEP_SIZE = 4000000;
+constexpr dfloat NNF_TRIGGER_STEP =      2000000;
+constexpr dfloat NNF_TRIGGER_STEP_SIZE = 2000000;
 constexpr dfloat NNF_TRIGGER_STEP_END = NNF_TRIGGER_STEP+NNF_TRIGGER_STEP_SIZE;
 
 
 
 
 constexpr int SCALE = 1;
-constexpr int N = 128 * SCALE;
+constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = N;        // size z of the grid in one GPU
@@ -48,9 +48,9 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
     #define D3G19
 
     constexpr bool T_BOUYANCY = true;
-    constexpr dfloat T_PR_NUMBER = 1; //Prandtl Number
-    constexpr dfloat T_RA_NUMBER = 1e4; // Rayleigh Number
-    constexpr dfloat BN_NUMBER = 0.025;
+    constexpr dfloat T_PR_NUMBER = 100; //Prandtl Number
+    constexpr dfloat T_RA_NUMBER = 1e7; // Rayleigh Number
+    constexpr dfloat BN_NUMBER = 0.08;
     constexpr dfloat T_GR_NUMBER = T_RA_NUMBER/T_PR_NUMBER; //Grashof number
 
     constexpr dfloat T_DELTA_T = 10.0; //temperature difference
