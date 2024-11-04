@@ -56,20 +56,22 @@ Current setup is for the flow around a sphere
 | 10 | cases/bc_initilization | flags for the boundary condition
 | 11 | cases/constants | constants of the case
 | 12 | cases/flow_initialization | how the flow is initialized
-| 13 | colrec | collision and reconstruction files for the moments (only MR-LBM, others not fully implemented yet)
-| 14 | includeFiles/popSave | load population from global memory
-| 15 | includeFiles/popLoad | save population into global memory
-| 16 | includeFiles/interface | definition of the frontier if is wall or periodic for each case
-| 17 | checkpoint | functions to generation simulation checkpoint
-| 18 | errorDef | error definition functions
-| 19 | globalFunctions | index functions
-| 20 | globalStructs | structs for device and host
-| 21 | lbmInitialization | field initialization functions
-| 22 | nnf | non-Newtonian fluid definitions
-| 23 | nodeTypeMap | boundary conditions node type map defintions
-| 24 | particleTracer | particle tracer functions
-| 25 | reduction | parallel reduction functions used for sums over the domain
-| 26 | saveData | functions to save simulation data
+| 13 | cases/model | parameters related to model
+| 14 | cases/output | parameters related to data export
+| 15 | colrec | collision and reconstruction files for the moments (only MR-LBM, others not fully implemented yet)
+| 16 | includeFiles/popSave | load population from global memory
+| 17 | includeFiles/popLoad | save population into global memory
+| 18 | includeFiles/interface | definition of the frontier if is wall or periodic for each case
+| 19 | checkpoint | functions to generation simulation checkpoint
+| 20 | errorDef | error definition functions
+| 21 | globalFunctions | index functions
+| 22 | globalStructs | structs for device and host
+| 23 | lbmInitialization | field initialization functions
+| 24 | nnf | non-Newtonian fluid definitions
+| 25 | nodeTypeMap | boundary conditions node type map defintions
+| 26 | particleTracer | particle tracer functions
+| 27 | reduction | parallel reduction functions used for sums over the domain
+| 28 | saveData | functions to save simulation data
 
 
 ## Creating a boundary case
@@ -79,6 +81,8 @@ Cases are managed in the cases folder, where each case has to have to following 
 2. bc_initialization: Defines the boundary condition flag
 3. constants: define the simulation parameters, ie, mesh size, velocity and so on.
 4. flow initialization: define how the flow will be initialized.
+5. model: define the model parameters, such velocity set, collision model
+6. output: define the output for data export
 
 
 ## using voxels immersed bodies

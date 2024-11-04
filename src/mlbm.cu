@@ -185,7 +185,7 @@ __global__ void gpuMomCollisionStream(
     /* load pop from global in cover nodes */
 
    
-    #include "includeFiles/popLoad"
+    #include "includeFiles/popLoad.inc"
 
     dfloat invRho;
     if(nodeType != BULK){
@@ -301,7 +301,7 @@ __global__ void gpuMomCollisionStream(
         gNode[17] = s_pop[idxPopBlock(threadIdx.x, ym1, zp1, 16)];
         gNode[18] = s_pop[idxPopBlock(threadIdx.x, yp1, zm1, 17)];
                 
-        #include "includeFiles/g_popLoad"
+        #include "includeFiles/g_popLoad.inc"
 
 
         if(nodeType != BULK){
@@ -322,7 +322,7 @@ __global__ void gpuMomCollisionStream(
 
         #include COLREC_G_RECONSTRUCTIONS
 
-        #include "includeFiles/g_popSave"
+        #include "includeFiles/g_popSave.inc"
         
         fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = cVar;
         fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;
@@ -431,5 +431,5 @@ __global__ void gpuMomCollisionStream(
     }
 
 
-    #include "includeFiles/popSave"
+    #include "includeFiles/popSave.inc"
 }

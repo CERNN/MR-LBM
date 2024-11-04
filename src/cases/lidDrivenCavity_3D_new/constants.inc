@@ -1,6 +1,7 @@
 constexpr dfloat RE = 500;
 
 constexpr int SCALE = 1;
+constexpr int N_STEPS = 10000;
 constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
@@ -34,3 +35,18 @@ __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 constexpr dfloat VISC = U_MAX * NX / RE;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
+
+/* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
+constexpr int INI_STEP = 0; // initial simulation step (0 default)
+#define LOAD_CHECKPOINT false   // loads simulation checkpoint from folder 
+                                // (folder name defined below)
+
+
+// Folder with simulation to load data from last checkpoint. 
+// WITHOUT ID_SIM (change it in ID_SIM) AND "/" AT THE END
+#define SIMULATION_FOLDER_LOAD_CHECKPOINT "TEST"
+// Interval to make checkpoint to save all simulation data and restart from it.
+// It must not be very frequent (10000 or more), because it takes a long time
+#define CHECKPOINT_SAVE false // the frequency on which the simulation checkpoint is saved
+#define LOAD_FIELD false
+#define LOAD_FIELD_STEP 0

@@ -4,10 +4,8 @@ constexpr dfloat NNF_TRIGGER_STEP =      2000000;
 constexpr dfloat NNF_TRIGGER_STEP_SIZE = 2000000;
 constexpr dfloat NNF_TRIGGER_STEP_END = NNF_TRIGGER_STEP+NNF_TRIGGER_STEP_SIZE;
 
-
-
-
 constexpr int SCALE = 1;
+constexpr int N_STEPS = 60000;
 constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
@@ -75,3 +73,19 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
     constexpr dfloat G_AAA = (3*T_DIFF_FLUC*G_OMEGA);
     constexpr dfloat G_DIFF_FLUC_COEF = G_AAA/(1.0+G_AAA);
 #endif //THERMAL_MODEL
+
+
+/* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
+constexpr int INI_STEP = 0; // initial simulation step (0 default)
+#define LOAD_CHECKPOINT false   // loads simulation checkpoint from folder 
+                                // (folder name defined below)
+
+
+// Folder with simulation to load data from last checkpoint. 
+// WITHOUT ID_SIM (change it in ID_SIM) AND "/" AT THE END
+#define SIMULATION_FOLDER_LOAD_CHECKPOINT "TEST"
+// Interval to make checkpoint to save all simulation data and restart from it.
+// It must not be very frequent (10000 or more), because it takes a long time
+#define CHECKPOINT_SAVE false // the frequency on which the simulation checkpoint is saved
+#define LOAD_FIELD false
+#define LOAD_FIELD_STEP 0
