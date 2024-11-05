@@ -22,51 +22,6 @@
 #include "errorDef.h"
 #include "globalStructs.h"
 
-/*
-*   @brief Change field vector order to be used saved in binary
-*   @param h_fMom: host macroscopic field based on block and thread index
-*   @param fMom: device macroscopic field based on block and thread index
-*   @param fMom_mean: mean flow moments
-*   @param nSteps: number of steps of the simulation
-*/
-__host__
-void treatData(
-    dfloat* h_fMom,
-    dfloat* fMom,
-    #if MEAN_FLOW
-    dfloat* fMom_mean,
-    #endif//MEAN_FLOW
-    unsigned int step
-);
-
-/*
-*   @brief save the velocity profile in the middle of the domian
-*   @param fMom: device macroscopic field based on block and thread index
-*   @param moment_index: which velocity and direction will be saved
-*   @param nSteps: number of steps of the simulation
-*/
-__host__
-void velocityProfile(
-    dfloat* fMom,
-    int moment_index,
-    unsigned int step
-);
-
-
-/*
-*   @brief Change field vector order to be used saved in binary
-*   @param h_fMom: host macroscopic field based on block and thread index
-*   @param omega: omega field if non-Newtonian
-*   @param nSteps: number of steps of the simulation
-*/
-__host__
-void probeExport(
-    dfloat* fMom,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
-    unsigned int step
-);
 
 /*
 *   @brief Change field vector order to be used saved in binary
