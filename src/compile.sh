@@ -1,4 +1,4 @@
-CC=86
+# CC=86
 
 # Set CC if it's not already defined
 if [ -z "$CC" ]; then

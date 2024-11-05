@@ -308,6 +308,7 @@ __global__ void gpuMomCollisionStream(
             #include CASE_G_BC_DEF
         }else{
             cVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
+            cVar = cVar + T_Q_INTERNAL_D_Cp;
             invC= 1.0/cVar;
 
             qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));

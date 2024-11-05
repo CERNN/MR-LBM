@@ -56,6 +56,8 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
     constexpr dfloat T_gravity_t_beta = 2*T_RA_NUMBER * T_DIFFUSIVITY*VISC/(T_DELTA_T*L*L*L);
     constexpr dfloat Ra_conf = T_gravity_t_beta * T_DELTA_T*L*L*L*T_PR_NUMBER/(VISC*VISC);
+    constexpr dfloat T_Q_INTERNAL_D_Cp = 0.0;
+
 
     constexpr dfloat T_DIFF_REF = (1.0/6);
     constexpr dfloat G_TAU = T_DIFF_REF*3+0.5;

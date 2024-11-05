@@ -6,12 +6,12 @@ Projects:
   ✔ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ... @done(24-07-04 21:52)
     ☐ Use constant array in defintions.h instead of magic numbers
   ☐ auxFunctions that are actually treat data shouldnt be there
-  ☐ Rename include files to be .inc
-  ☐ Make the compile sm based directly on the avaiable machine
+  ✔ Rename include files to be .inc @done(24-11-03 21:02)
+  ✔ Make the compile sm based directly on the avaiable machine @done(24-11-03 18:59)
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
     ☐ Edit local force field to moment array
     ☐ change the name moment array to something more descreptive
-  ☐ find a way to compute the best block size on compilation time
+  ☐ find a way to compute the best block size on compilation time (most likely make the sh script create a file which later is included to edit the block size)
   ☐ allocatate the correct ammount of shared memory based on the blockSize
   ☐ Change macro condition from (non_newtonian || les model to local viscosity)
   ☐ Eliminate the necessity of two arrays to save the boundary conditions
@@ -19,7 +19,7 @@ Projects:
     ☐ Edit the saveVarBin fuction to allow differnt data types
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
   ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
-  ☐ Fiix parallel reduction for 2D cases bigger than 256x256
+  ☐ Fix parallel reduction for 2D cases bigger than 256x256
 
   ✔ Particle Tracer @done(14-03-04 12:53)
   ✔ Create a checkpoint save file @done(23-03-16 18:47)
@@ -65,6 +65,9 @@ Projects:
   ☐ Implementation of DDF-Shift (density is done)
   ☐ Implement viscoelastic model
     ☐ Method to compute the velocity gradient
-    ☐ Source term for the advection-diffusion equation
+      ☐ Need method to store velocity in the halo similar to populations
+        ✔ rewrite ghost values to be a struct @done(24-11-03 18:59)
+    ✔ Source term for the advection-diffusion equation @done(24-11-05 01:03)
+      ☐Maybe not sure about the q term if is correct by adding the source term (doesnt appear to impact the solution)
 
 Archive:\
