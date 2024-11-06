@@ -14,6 +14,7 @@
 #include "var.h"
 #include "globalStructs.h"
 #include "auxFunctions.cuh"
+#include "treatData.cuh"
 #ifdef NON_NEWTONIAN_FLUID
     #include "nnf.h"
 #endif

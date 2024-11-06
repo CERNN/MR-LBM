@@ -66,3 +66,75 @@ void mean_rho(
     cudaFree(sumRho);
 }
 
+
+__host__
+void meanFlowComputation(
+    dfloat* h_fMom,
+    dfloat* fMom,
+    dfloat* fMom_mean,
+    unsigned int step
+){
+
+    //current values
+    dfloat t_ux0 = 0.0;
+    dfloat t_uy0 = 0.0;
+    dfloat t_uz0 = 0.0;
+
+    #ifdef THERMAL_MODEL
+    dfloat t_cc0 = 0.0;
+    #endif
+
+    //old mean values
+    dfloat m_ux = 0.0;
+    dfloat m_uy = 0.0;
+    dfloat m_uz = 0.0;
+
+    #ifdef THERMAL_MODEL
+    dfloat m_cc = 0.0;
+    #endif
+
+
+    dfloat mean_counter = 1.0/((dfloat)(step/MACR_SAVE)+1.0);
+    int count = 0;
+
+    for (int z = 0 ; z <NZ_TOTAL; z++){
+        for(int y = 0; y< NY;y++){
+            for(int x = 0; x< NX;x++){
+
+
+                t_ux0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_uy0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                t_uz0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+
+                #ifdef THERMAL_MODEL
+                t_cc0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+
+                //STORE AND UPDATE MEANS
+
+                //retrive mean values
+                m_ux = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_uy = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                m_uz = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+
+                #ifdef THERMAL_MODEL
+                m_cc = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                
+                //update and store mean values
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_ux + (t_ux0 - m_ux)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_uy + (t_uy0 - m_uy)*(mean_counter);
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_uz + (t_uz0 - m_uz)*(mean_counter);
+
+                #ifdef THERMAL_MODEL
+                fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_cc + (t_cc0 - m_cc)*(mean_counter);
+                #endif
+
+                count++;
+
+            }
+        }
+    }
+}
+
+

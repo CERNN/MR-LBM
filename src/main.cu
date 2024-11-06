@@ -320,96 +320,72 @@ int main() {
         
         //save macroscopics
 
-        //if(save){
-            //if (N_STEPS - step < 4*((int)turn_over_time)){
-            if(reportSave){
-                printf("\n--------------------------- Saving report %06d ---------------------------\n", step);
-                #if TREATFIELD
-                treatData(h_fMom,fMom,
-                #if MEAN_FLOW
-                m_fMom,
-                #endif //MEAN_FLOW
-                step);
-                //totalKineticEnergy(fMom,step);
-                #endif //TREATFIELD
-            
-                #if TREATPOINT
-                    probeExport(fMom,
+        //if (N_STEPS - step < 4*((int)turn_over_time)){
+        if(reportSave){
+            printf("\n--------------------------- Saving report %06d ---------------------------\n", step);
+            treatData(h_fMom,fMom,
+            #if MEAN_FLOW
+            m_fMom,
+            #endif //MEAN_FLOW
+            step); 
+        }
+        if(macrSave){
+            #if defined BC_FORCES && defined SAVE_BC_FORCES
+            checkCudaErrors(cudaDeviceSynchronize()); 
+            checkCudaErrors(cudaMemcpy(h_BC_Fx, d_BC_Fx, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+            checkCudaErrors(cudaMemcpy(h_BC_Fy, d_BC_Fy, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+            checkCudaErrors(cudaMemcpy(h_BC_Fz, d_BC_Fz, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
+            #endif
+            //if (!(step%((int)turn_over_time/10))){
+            //if((step>N_STEPS-80*(int)(MACR_SAVE))){ 
+            //if((step%((int)(turn_over_time/2))) == 0){
+                checkCudaErrors(cudaDeviceSynchronize()); 
+                checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+                linearMacr(h_fMom,rho,ux,uy,uz,
+                #ifdef NON_NEWTONIAN_FLUID
+                omega,
+                #endif
+                #ifdef SECOND_DIST 
+                C,
+                #endif 
+                #if SAVE_BC
+                nodeTypeSave,
+                hNodeType,
+                #endif
+                #if defined BC_FORCES && defined SAVE_BC_FORCES
+                h_BC_Fx,
+                h_BC_Fy,
+                h_BC_Fz,
+                #endif
+                step); 
+
+                printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
+                if(console_flush){fflush(stdout);}
+                //if(step > N_STEPS - 14000){
+                if(!ONLY_FINAL_MACRO){
+                    saveMacr(rho,ux,uy,uz,
                     #ifdef NON_NEWTONIAN_FLUID
                     omega,
                     #endif
+                    #ifdef SECOND_DIST 
+                    C,
+                    #endif 
+                    #if SAVE_BC
+                    nodeTypeSave,
+                    #endif
+                    #if defined BC_FORCES && defined SAVE_BC_FORCES
+                    h_BC_Fx,
+                    h_BC_Fy,
+                    h_BC_Fz,
+                    #endif
                     step);
-                #endif
-                #if TREATLINE
-                velocityProfile(fMom,1,step);
-                velocityProfile(fMom,2,step);
-                velocityProfile(fMom,3,step);
-                velocityProfile(fMom,4,step);
-                velocityProfile(fMom,5,step);
-                velocityProfile(fMom,6,step);
-                #endif
-            }
-            if(macrSave){
-                #if defined BC_FORCES && defined SAVE_BC_FORCES
-                checkCudaErrors(cudaDeviceSynchronize()); 
-                checkCudaErrors(cudaMemcpy(h_BC_Fx, d_BC_Fx, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
-                checkCudaErrors(cudaMemcpy(h_BC_Fy, d_BC_Fy, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
-                checkCudaErrors(cudaMemcpy(h_BC_Fz, d_BC_Fz, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
-                #endif
-                //if (!(step%((int)turn_over_time/10))){
-                //if((step>N_STEPS-80*(int)(MACR_SAVE))){ 
-                //    if((step%((int)(turn_over_time/2))) == 0){
-                        checkCudaErrors(cudaDeviceSynchronize()); 
-                        checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-                        linearMacr(h_fMom,rho,ux,uy,uz,
-                        #ifdef NON_NEWTONIAN_FLUID
-                        omega,
-                        #endif
-                        #ifdef SECOND_DIST 
-                        C,
-                        #endif 
-                        #if SAVE_BC
-                        nodeTypeSave,
-                        hNodeType,
-                        #endif
-                        #if defined BC_FORCES && defined SAVE_BC_FORCES
-                        h_BC_Fx,
-                        h_BC_Fy,
-                        h_BC_Fz,
-                        #endif
-                        step); 
-
-                        printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
-                        if(console_flush){fflush(stdout);}
-                        //if(step > N_STEPS - 14000){
-                        if(!ONLY_FINAL_MACRO){
-                        saveMacr(rho,ux,uy,uz,
-                        #ifdef NON_NEWTONIAN_FLUID
-                        omega,
-                        #endif
-                        #ifdef SECOND_DIST 
-                        C,
-                        #endif 
-                        #if SAVE_BC
-                        nodeTypeSave,
-                        #endif
-                        #if defined BC_FORCES && defined SAVE_BC_FORCES
-                        h_BC_Fx,
-                        h_BC_Fy,
-                        h_BC_Fz,
-                        #endif
-                        step);
-                    // }
-                      //  }
-                    //}
                 }
+            //}
 
-                #ifdef BC_FORCES
-                    totalBcDrag(d_BC_Fx, d_BC_Fy, d_BC_Fz, step);
-                #endif
-            }
-
-        //}
+            #ifdef BC_FORCES
+                totalBcDrag(d_BC_Fx, d_BC_Fy, d_BC_Fz, step);
+            #endif
+        }
 
     } // end of the loop
     checkCudaErrors(cudaDeviceSynchronize());

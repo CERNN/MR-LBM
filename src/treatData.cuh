@@ -95,6 +95,19 @@ void probeExport(
     #endif
     unsigned int step
 );
+__host__
+void computeNusseltNumber(
+    dfloat* h_fMom,
+    dfloat* fMom,
+    unsigned int step
+);
 
+__host__
+void computeTurbulentEnergies(
+    dfloat* h_fMom,
+    dfloat* fMom,
+    dfloat* fMom_mean,
+    unsigned int step
+);
 
 #endif // !__TREAT_DATA_CUH

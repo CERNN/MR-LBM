@@ -28,6 +28,13 @@
 __host__ 
 void mean_rho(dfloat *fMom, size_t step, dfloat *d_mean_rho);
 
+__host__
+void meanFlowComputation(
+    dfloat* h_fMom,
+    dfloat* fMom,
+    dfloat* fMom_mean,
+    unsigned int step
+);
 
 
 #endif // !__AUX_FUNCTION_CUH
