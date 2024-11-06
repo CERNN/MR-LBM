@@ -21,7 +21,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM rayleighBenard_Cube
+#define BC_PROBLEM benchmark
                                 
 constexpr bool console_flush = false;
 

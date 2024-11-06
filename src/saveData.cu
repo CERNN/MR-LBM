@@ -4,30 +4,24 @@
 #endif
 
 __host__
-void linearMacr(
+void saveMacr(
     dfloat* h_fMom,
     dfloat* rho,
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
+    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif
-    #if SAVE_BC
-    dfloat* nodeTypeSave,
-    unsigned int* hNodeType,
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    dfloat* h_BC_Fx,
-    dfloat* h_BC_Fy,
-    dfloat* h_BC_Fz,
-    #endif
-    unsigned int step
+    NODE_TYPE_SAVE_PARAMS_DECLARATION
+    BC_FORCES_PARAMS_DECLARATION(h_) 
+    unsigned int nSteps
 ){
-    size_t indexMacr;
+
+
+//linearize
+size_t indexMacr;
     for(int z = 0; z< NZ;z++){
         ///printf("z %d \n", z);
         for(int y = 0; y< NY;y++){
@@ -47,7 +41,7 @@ void linearMacr(
                 C[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 #endif
                 
-                #if SAVE_BC
+                #if NODE_TYPE_SAVE
                 nodeTypeSave[indexMacr] = (dfloat)hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
                 //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
@@ -87,7 +81,296 @@ void linearMacr(
         cudaFreeHost(temp_z);
     #endif
 
+
+    // Names of files
+    std::string strFileRho, strFileUx, strFileUy, strFileUz;
+    std::string strFileOmega;
+    std::string strFileC;
+    std::string strFileBc; 
+    std::string strFileFx, strFileFy, strFileFz;
+
+    strFileRho = getVarFilename("rho", nSteps, ".bin");
+    strFileUx = getVarFilename("ux", nSteps, ".bin");
+    strFileUy = getVarFilename("uy", nSteps, ".bin");
+    strFileUz = getVarFilename("uz", nSteps, ".bin");
+    #ifdef NON_NEWTONIAN_FLUID
+    strFileOmega = getVarFilename("omega", nSteps, ".bin");
+    #endif
+    #ifdef SECOND_DIST 
+    strFileC = getVarFilename("C", nSteps, ".bin");
+    #endif
+    #if NODE_TYPE_SAVE
+    strFileBc = getVarFilename("bc", nSteps, ".bin");
+    #endif
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    strFileFx = getVarFilename("fx", nSteps, ".bin");
+    strFileFy = getVarFilename("fy", nSteps, ".bin");
+    strFileFz = getVarFilename("fz", nSteps, ".bin");
+    #endif
+    // saving files
+    saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+    #ifdef NON_NEWTONIAN_FLUID
+    saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef SECOND_DIST
+    saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
+    #endif
+    #if NODE_TYPE_SAVE
+    saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
+    #endif
+    #if defined BC_FORCES && defined SAVE_BC_FORCES
+    saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
+    #endif
 }
+
+void saveVarBin(
+    std::string strFile, 
+    dfloat* var, 
+    size_t memSize,
+    bool append)
+{
+    FILE* outFile = nullptr;
+    if(append)
+        outFile = fopen(strFile.c_str(), "ab");
+    else
+        outFile = fopen(strFile.c_str(), "wb");
+    if(outFile != nullptr)
+    {
+        fwrite(var, memSize, 1, outFile);
+        fclose(outFile);
+    }
+    else
+    {
+        printf("Error saving \"%s\" \nProbably wrong path!\n", strFile.c_str());
+    }
+}
+
+
+
+void folderSetup()
+{
+// Windows
+#if defined(_WIN32)
+    std::string strPath;
+    strPath = PATH_FILES;
+    strPath += "\\\\"; // adds "\\"
+    strPath += ID_SIM;
+    std::string cmd = "md ";
+    cmd += strPath;
+    system(cmd.c_str());
+    return;
+#endif // !_WIN32
+
+// Unix
+#if defined(__APPLE__) || defined(__MACH__) || defined(__linux__)
+    std::string strPath;
+    strPath = PATH_FILES;
+    strPath += "/";
+    strPath += ID_SIM;
+    std::string cmd = "mkdir -p ";
+    cmd += strPath;
+    system(cmd.c_str());
+    return;
+#endif // !Unix
+    printf("I don't know how to setup folders for your operational system :(\n");
+    return;
+}
+
+
+std::string getVarFilename(
+    const std::string varName, 
+    unsigned int step,
+    const std::string ext)
+{
+    unsigned int n_zeros = 0, pot_10 = 10;
+    unsigned int aux1 = 1000000;  // 6 numbers on step
+    // calculate number of zeros
+    if (step != 0)
+        for (n_zeros = 0; step * pot_10 < aux1; pot_10 *= 10)
+            n_zeros++;
+    else
+        n_zeros = 6;
+
+    // generates the file name as "PATH_FILES/id/id_varName000000.bin"
+    std::string strFile = PATH_FILES;
+    strFile += "/";
+    strFile += ID_SIM;
+    strFile += "/";
+    strFile += ID_SIM;
+    strFile += "_";
+    strFile += varName;
+    for (unsigned int i = 0; i < n_zeros; i++)
+        strFile += "0";
+    strFile += std::to_string(step);
+    strFile += ext;
+
+    return strFile;
+}
+
+std::string getSimInfoString(int step,dfloat MLUPS)
+{
+    std::ostringstream strSimInfo("");
+    
+    strSimInfo << std::scientific;
+    strSimInfo << std::setprecision(6);
+    
+    strSimInfo << "---------------------------- SIMULATION INFORMATION ----------------------------\n";
+    strSimInfo << "      Simulation ID: " << ID_SIM << "\n";
+    #ifdef D3Q19
+    strSimInfo << "       Velocity set: D3Q19\n";
+    #endif // !D3Q19
+    #ifdef D3Q27
+    strSimInfo << "       Velocity set: D3Q27\n";
+    #endif // !D3Q27
+    #ifdef SINGLE_PRECISION
+        strSimInfo << "          Precision: float\n";
+    #else
+        strSimInfo << "          Precision: double\n";
+    #endif
+    strSimInfo << "                 NX: " << NX << "\n";
+    strSimInfo << "                 NY: " << NY << "\n";
+    strSimInfo << "                 NZ: " << NZ << "\n";
+    strSimInfo << "           NZ_TOTAL: " << NZ_TOTAL << "\n";
+    strSimInfo << std::scientific << std::setprecision(6);
+    strSimInfo << "                Tau: " << TAU << "\n";
+    strSimInfo << "               Umax: " << U_MAX << "\n";
+    strSimInfo << "                 FX: " << FX << "\n";
+    strSimInfo << "                 FY: " << FY << "\n";
+    strSimInfo << "                 FZ: " << FZ << "\n";
+    strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
+    strSimInfo << "             Nsteps: " << step << "\n";
+    strSimInfo << "              MLUPS: " << MLUPS << "\n";
+    strSimInfo << std::scientific << std::setprecision(0);
+        strSimInfo << "             BX: " << BLOCK_NX << "\n";
+    strSimInfo << "                 BY: " << BLOCK_NY << "\n";
+    strSimInfo << "                 BZ: " << BLOCK_NZ << "\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+
+    strSimInfo << "\n------------------------------ BOUNDARY CONDITIONS -----------------------------\n";
+    #ifdef BC_MOMENT_BASED
+    strSimInfo << "            BC mode: Moment Based \n";
+    #endif
+    strSimInfo << "            BC type: " << STR(BC_PROBLEM) << "\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+
+
+    #ifdef NON_NEWTONIAN_FLUID
+    strSimInfo << "\n------------------------------ NON NEWTONIAN FLUID -----------------------------\n";
+    strSimInfo << std::scientific << std::setprecision(6);
+    
+    #ifdef POWERLAW
+    strSimInfo << "              Model: Power-Law\n";
+    strSimInfo << "        Power index: " << N_INDEX << "\n";
+    strSimInfo << " Consistency factor: " << K_CONSISTENCY << "\n";
+    strSimInfo << "            Gamma 0: " << GAMMA_0 << "\n";
+    #endif // POWERLAW
+
+    #ifdef BINGHAM
+    strSimInfo << "              Model: Bingham\n";
+    strSimInfo << "  Plastic viscosity: " << VISC << "\n";
+    strSimInfo << "       Yield stress: " << S_Y << "\n";
+    strSimInfo << "      Plastic omega: " << OMEGA_P << "\n";
+    #endif // BINGHAM
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif // NON_NEWTONIAN_FLUID
+    #ifdef LES_MODEL
+    strSimInfo << "\t Smagorisky Constant:" << CONST_SMAGORINSKY <<"\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif //LES
+    #ifdef THERMAL_MODEL 
+    strSimInfo << "\n------------------------------ THERMAL -----------------------------\n";
+        strSimInfo << std::scientific << std::setprecision(2);
+    strSimInfo << "     Prandtl Number: " << T_PR_NUMBER << "\n";
+        strSimInfo << std::scientific << std::setprecision(4);
+    strSimInfo << "    Rayleigh Number: " << T_RA_NUMBER << "\n";
+    strSimInfo << "     Grashof Number: " << T_GR_NUMBER << "\n";
+       strSimInfo << std::scientific << std::setprecision(3);
+    strSimInfo << "            Delta T: " << T_DELTA_T << "\n";
+    strSimInfo << "        Reference T: " << T_REFERENCE << "\n";
+    strSimInfo << "             Cold T: " << T_COLD << "\n";
+    strSimInfo << "              Hot T: " << T_HOT << "\n";
+    strSimInfo << std::scientific << std::setprecision(6);
+    strSimInfo << "       Thermal Diff: " << T_DIFFUSIVITY << "\n";
+    strSimInfo << "   Grav_t_Exp.Coeff: " << T_gravity_t_beta << "\n";
+       strSimInfo << std::scientific << std::setprecision(2);
+    strSimInfo << "          Gravity_x: " << gravity_vector[0] << "\n";
+    strSimInfo << "          Gravity_y: " << gravity_vector[1] << "\n";
+    strSimInfo << "          Gravity_z: " << gravity_vector[2] << "\n";
+       strSimInfo << std::scientific << std::setprecision(6);
+    strSimInfo << "              G_TAU: " << G_TAU << "\n";
+    strSimInfo << "            G_OMEGA: " << G_OMEGA << "\n";
+
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif// THERMAL_MODEL
+
+
+
+    return strSimInfo.str();
+}
+
+void saveSimInfo(int step,dfloat MLUPS)
+{
+    std::string strInf = PATH_FILES;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += "_info.txt"; // generate file name (with path)
+    FILE* outFile = nullptr;
+
+    outFile = fopen(strInf.c_str(), "w");
+    if(outFile != nullptr)
+    {
+        std::string strSimInfo = getSimInfoString(step,MLUPS);
+        fprintf(outFile, strSimInfo.c_str());
+        fclose(outFile);
+    }
+    else
+    {
+        printf("Error saving \"%s\" \nProbably wrong path!\n", strInf.c_str());
+    }
+    
+}
+/**/
+
+
+void saveTreatData(std::string fileName, std::string dataString, int step)
+{
+    #if SAVEDATA
+    std::string strInf = PATH_FILES;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += "/";
+    strInf += ID_SIM;
+    strInf += fileName;
+    strInf += ".txt"; // generate file name (with path)
+    std::ifstream file(strInf.c_str());
+    std::ofstream outfile;
+
+    if(step == REPORT_SAVE){ //check if first time step to save data
+        outfile.open(strInf.c_str());
+    }else{
+        if (file.good()) {
+            outfile.open(strInf.c_str(), std::ios::app);
+        }else{ 
+            outfile.open(strInf.c_str());
+        }
+    }
+
+
+    outfile << dataString.c_str() << std::endl; 
+    outfile.close(); 
+    #endif
+    #if CONSOLEPRINT
+    printf("%s \n",dataString.c_str());
+    #endif
+}
+
 /*
 __host__
 void loadMoments(
@@ -96,9 +379,7 @@ void loadMoments(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
+    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -228,9 +509,7 @@ void loadSimField(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
+    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -251,7 +530,7 @@ void loadSimField(
     #ifdef SECOND_DIST 
     strFileC = getVarFilename("C", LOAD_FIELD_STEP, ".bin");
     #endif
-    #if SAVE_BC
+    #if NODE_TYPE_SAVE
     strFileBc = getVarFilename("bc", LOAD_FIELD_STEP, ".bin");
     #endif
     #if defined BC_FORCES && defined SAVE_BC_FORCES
@@ -271,7 +550,7 @@ void loadSimField(
     #ifdef SECOND_DIST
     loadVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
     #endif
-    #if SAVE_BC
+    #if NODE_TYPE_SAVE
     loadVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
     #endif
     #if defined BC_FORCES && defined SAVE_BC_FORCES
@@ -281,10 +560,7 @@ void loadSimField(
     #endif
 
 
-    loadMoments(h_fMom,rho,ux,uy,uz,
-            #ifdef NON_NEWTONIAN_FLUID
-            omega,
-            #endif
+    loadMoments(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
             #ifdef SECOND_DIST
             C
             #endif 
@@ -315,312 +591,3 @@ void loadVarBin(
     }
 }
 */
-
-__host__
-void saveMacr(
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
-    #ifdef SECOND_DIST 
-    dfloat* C,
-    #endif
-    #if SAVE_BC
-    dfloat* nodeTypeSave,
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    dfloat* h_BC_Fx,
-    dfloat* h_BC_Fy,
-    dfloat* h_BC_Fz,
-    #endif
-    unsigned int nSteps
-){
-// Names of files
-    std::string strFileRho, strFileUx, strFileUy, strFileUz;
-    std::string strFileOmega;
-    std::string strFileC;
-    std::string strFileBc; 
-    std::string strFileFx, strFileFy, strFileFz;
-
-    strFileRho = getVarFilename("rho", nSteps, ".bin");
-    strFileUx = getVarFilename("ux", nSteps, ".bin");
-    strFileUy = getVarFilename("uy", nSteps, ".bin");
-    strFileUz = getVarFilename("uz", nSteps, ".bin");
-    #ifdef NON_NEWTONIAN_FLUID
-    strFileOmega = getVarFilename("omega", nSteps, ".bin");
-    #endif
-    #ifdef SECOND_DIST 
-    strFileC = getVarFilename("C", nSteps, ".bin");
-    #endif
-    #if SAVE_BC
-    strFileBc = getVarFilename("bc", nSteps, ".bin");
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    strFileFx = getVarFilename("fx", nSteps, ".bin");
-    strFileFy = getVarFilename("fy", nSteps, ".bin");
-    strFileFz = getVarFilename("fz", nSteps, ".bin");
-    #endif
-    // saving files
-    saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
-    #ifdef NON_NEWTONIAN_FLUID
-    saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef SECOND_DIST
-    saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
-    #endif
-    #if SAVE_BC
-    saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
-    #endif
-}
-
-void saveVarBin(
-    std::string strFile, 
-    dfloat* var, 
-    size_t memSize,
-    bool append)
-{
-    FILE* outFile = nullptr;
-    if(append)
-        outFile = fopen(strFile.c_str(), "ab");
-    else
-        outFile = fopen(strFile.c_str(), "wb");
-    if(outFile != nullptr)
-    {
-        fwrite(var, memSize, 1, outFile);
-        fclose(outFile);
-    }
-    else
-    {
-        printf("Error saving \"%s\" \nProbably wrong path!\n", strFile.c_str());
-    }
-}
-
-
-
-void folderSetup()
-{
-// Windows
-#if defined(_WIN32)
-    std::string strPath;
-    strPath = PATH_FILES;
-    strPath += "\\\\"; // adds "\\"
-    strPath += ID_SIM;
-    std::string cmd = "md ";
-    cmd += strPath;
-    system(cmd.c_str());
-    return;
-#endif // !_WIN32
-
-// Unix
-#if defined(__APPLE__) || defined(__MACH__) || defined(__linux__)
-    std::string strPath;
-    strPath = PATH_FILES;
-    strPath += "/";
-    strPath += ID_SIM;
-    std::string cmd = "mkdir -p ";
-    cmd += strPath;
-    system(cmd.c_str());
-    return;
-#endif // !Unix
-    printf("I don't know how to setup folders for your operational system :(\n");
-    return;
-}
-
-
-std::string getVarFilename(
-    const std::string varName, 
-    unsigned int step,
-    const std::string ext)
-{
-    unsigned int n_zeros = 0, pot_10 = 10;
-    unsigned int aux1 = 1000000;  // 6 numbers on step
-    // calculate number of zeros
-    if (step != 0)
-        for (n_zeros = 0; step * pot_10 < aux1; pot_10 *= 10)
-            n_zeros++;
-    else
-        n_zeros = 6;
-
-    // generates the file name as "PATH_FILES/id/id_varName000000.bin"
-    std::string strFile = PATH_FILES;
-    strFile += "/";
-    strFile += ID_SIM;
-    strFile += "/";
-    strFile += ID_SIM;
-    strFile += "_";
-    strFile += varName;
-    for (unsigned int i = 0; i < n_zeros; i++)
-        strFile += "0";
-    strFile += std::to_string(step);
-    strFile += ext;
-
-    return strFile;
-}
-
-std::string getSimInfoString(int step,dfloat MLUPS)
-{
-    std::ostringstream strSimInfo("");
-    
-    strSimInfo << std::scientific;
-    strSimInfo << std::setprecision(6);
-    
-    strSimInfo << "---------------------------- SIMULATION INFORMATION ----------------------------\n";
-    strSimInfo << "      Simulation ID: " << ID_SIM << "\n";
-    #ifdef D3Q19
-    strSimInfo << "       Velocity set: D3Q19\n";
-    #endif // !D3Q19
-    #ifdef D3Q27
-    strSimInfo << "       Velocity set: D3Q27\n";
-    #endif // !D3Q27
-    #ifdef SINGLE_PRECISION
-        strSimInfo << "          Precision: float\n";
-    #else
-        strSimInfo << "          Precision: double\n";
-    #endif
-    strSimInfo << "                 NX: " << NX << "\n";
-    strSimInfo << "                 NY: " << NY << "\n";
-    strSimInfo << "                 NZ: " << NZ << "\n";
-    strSimInfo << "           NZ_TOTAL: " << NZ_TOTAL << "\n";
-    strSimInfo << std::scientific << std::setprecision(6);
-    strSimInfo << "                Tau: " << TAU << "\n";
-    strSimInfo << "               Umax: " << U_MAX << "\n";
-    strSimInfo << "                 FX: " << FX << "\n";
-    strSimInfo << "                 FY: " << FY << "\n";
-    strSimInfo << "                 FZ: " << FZ << "\n";
-    strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
-    strSimInfo << "             Nsteps: " << step << "\n";
-    strSimInfo << "              MLUPS: " << MLUPS << "\n";
-    strSimInfo << std::scientific << std::setprecision(0);
-    strSimInfo << "       Bx x By x Bz: " << BLOCK_NX << "x" << BLOCK_NY << "x"<< BLOCK_NZ << "\n";
-    strSimInfo << "--------------------------------------------------------------------------------\n";
-
-    strSimInfo << "\n------------------------------ BOUNDARY CONDITIONS -----------------------------\n";
-    #ifdef BC_MOMENT_BASED
-    strSimInfo << "            BC mode: Moment Based \n";
-    #endif
-    strSimInfo << "            BC type: " << STR(BC_PROBLEM) << "\n";
-    strSimInfo << "--------------------------------------------------------------------------------\n";
-
-
-    #ifdef NON_NEWTONIAN_FLUID
-    strSimInfo << "\n------------------------------ NON NEWTONIAN FLUID -----------------------------\n";
-    strSimInfo << std::scientific << std::setprecision(6);
-    
-    #ifdef POWERLAW
-    strSimInfo << "              Model: Power-Law\n";
-    strSimInfo << "        Power index: " << N_INDEX << "\n";
-    strSimInfo << " Consistency factor: " << K_CONSISTENCY << "\n";
-    strSimInfo << "            Gamma 0: " << GAMMA_0 << "\n";
-    #endif // POWERLAW
-
-    #ifdef BINGHAM
-    strSimInfo << "              Model: Bingham\n";
-    strSimInfo << "  Plastic viscosity: " << VISC << "\n";
-    strSimInfo << "       Yield stress: " << S_Y << "\n";
-    strSimInfo << "      Plastic omega: " << OMEGA_P << "\n";
-    #endif // BINGHAM
-    strSimInfo << "--------------------------------------------------------------------------------\n";
-    #endif // NON_NEWTONIAN_FLUID
-    #ifdef LES_MODEL
-    strSimInfo << "\t Smagorisky Constant:" << CONST_SMAGORINSKY <<"\n";
-    strSimInfo << "--------------------------------------------------------------------------------\n";
-    #endif //LES
-    #ifdef THERMAL_MODEL 
-    strSimInfo << "\n------------------------------ THERMAL -----------------------------\n";
-        strSimInfo << std::scientific << std::setprecision(2);
-    strSimInfo << "     Prandtl Number: " << T_PR_NUMBER << "\n";
-        strSimInfo << std::scientific << std::setprecision(4);
-    strSimInfo << "    Rayleigh Number: " << T_RA_NUMBER << "\n";
-    strSimInfo << "     Grashof Number: " << T_GR_NUMBER << "\n";
-       strSimInfo << std::scientific << std::setprecision(3);
-    strSimInfo << "            Delta T: " << T_DELTA_T << "\n";
-    strSimInfo << "        Reference T: " << T_REFERENCE << "\n";
-    strSimInfo << "             Cold T: " << T_COLD << "\n";
-    strSimInfo << "              Hot T: " << T_HOT << "\n";
-    strSimInfo << std::scientific << std::setprecision(6);
-    strSimInfo << "       Thermal Diff: " << T_DIFFUSIVITY << "\n";
-    strSimInfo << "   Grav_t_Exp.Coeff: " << T_gravity_t_beta << "\n";
-       strSimInfo << std::scientific << std::setprecision(2);
-    strSimInfo << "          Gravity_x: " << gravity_vector[0] << "\n";
-    strSimInfo << "          Gravity_y: " << gravity_vector[1] << "\n";
-    strSimInfo << "          Gravity_z: " << gravity_vector[2] << "\n";
-       strSimInfo << std::scientific << std::setprecision(6);
-    strSimInfo << "              G_TAU: " << G_TAU << "\n";
-    strSimInfo << "            G_OMEGA: " << G_OMEGA << "\n";
-
-    strSimInfo << "--------------------------------------------------------------------------------\n";
-    #endif// THERMAL_MODEL
-
-
-
-    return strSimInfo.str();
-}
-
-void saveSimInfo(int step,dfloat MLUPS)
-{
-    std::string strInf = PATH_FILES;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += "_info.txt"; // generate file name (with path)
-    FILE* outFile = nullptr;
-
-    outFile = fopen(strInf.c_str(), "w");
-    if(outFile != nullptr)
-    {
-        std::string strSimInfo = getSimInfoString(step,MLUPS);
-        fprintf(outFile, strSimInfo.c_str());
-        fclose(outFile);
-    }
-    else
-    {
-        printf("Error saving \"%s\" \nProbably wrong path!\n", strInf.c_str());
-    }
-    
-}
-/**/
-
-
-void saveTreatData(std::string fileName, std::string dataString, int step)
-{
-    #if SAVEDATA
-    std::string strInf = PATH_FILES;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += fileName;
-    strInf += ".txt"; // generate file name (with path)
-    std::ifstream file(strInf.c_str());
-    std::ofstream outfile;
-
-    if(step == REPORT_SAVE){ //check if first time step to save data
-        outfile.open(strInf.c_str());
-    }else{
-        if (file.good()) {
-            outfile.open(strInf.c_str(), std::ios::app);
-        }else{ 
-            outfile.open(strInf.c_str());
-        }
-    }
-
-
-    outfile << dataString.c_str() << std::endl; 
-    outfile.close(); 
-    #endif
-    #if CONSOLEPRINT
-    printf("%s \n",dataString.c_str());
-    #endif
-}

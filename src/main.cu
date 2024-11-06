@@ -3,14 +3,35 @@
 using namespace std;
 
 int main() {
+    // Setup saving folder
+    folderSetup();
+
+    //set cuda device
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
 
+    //variable declaration
     dfloat* fMom;
     ghostInterfaceData ghostInterface;
 
     unsigned int* dNodeType;
     unsigned int* hNodeType;
-    #if SAVE_BC
+
+    dfloat* h_fMom;
+    dfloat* rho;
+    dfloat* ux;
+    dfloat* uy;
+    dfloat* uz;
+    
+    
+    #ifdef NON_NEWTONIAN_FLUID
+    dfloat* omega;
+    #endif
+
+    #ifdef SECOND_DIST
+    dfloat* C;
+    #endif 
+
+    #if NODE_TYPE_SAVE
     dfloat* nodeTypeSave;
     #endif
 
@@ -49,22 +70,7 @@ int main() {
 
 
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
-    dfloat* h_fMom;
-    dfloat* rho;
-    dfloat* ux;
-    dfloat* uy;
-    dfloat* uz;
-
     int step = 0;
-
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega;
-    #endif
-
-    #ifdef SECOND_DIST
-    dfloat* C;
-    #endif 
-
 
     float** randomNumbers = nullptr; // useful for turbulence
 
@@ -102,10 +108,7 @@ int main() {
     randomNumbers = (float**)malloc(sizeof(float*));
 
 
-    // Setup saving folder
-    folderSetup();
-
-    /* -------------- ALLOCATION AND CONFIGURATION FOR EACH GPU ------------- */
+    /* -------------- ALLOCATION FOR GPU ------------- */
 
     cudaMalloc((void**)&fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS);  
     cudaMalloc((void**)&dNodeType, sizeof(int) * NUMBER_LBM_NODES);
@@ -125,8 +128,9 @@ int main() {
         cudaMalloc((void**)&d_BC_Fz, MEM_SIZE_SCALAR);            
     #endif //_BC_FORCES
     //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
-    
 
+
+    // Setup Streams
     cudaStream_t streamsLBM[1];
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
@@ -178,7 +182,7 @@ int main() {
         checkCudaErrors(cudaMemcpy(m_fMom,fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToDevice));
     #endif //MEAN_FLOW
     checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned int) * NUMBER_LBM_NODES));
-    #if SAVE_BC
+    #if NODE_TYPE_SAVE
     checkCudaErrors(cudaMallocHost((void**)&(nodeTypeSave), sizeof(dfloat) * NUMBER_LBM_NODES));
     #endif 
 
@@ -222,23 +226,6 @@ int main() {
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
     checkCudaErrors(cudaDeviceSynchronize());
-    linearMacr(h_fMom,rho,ux,uy,uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    omega,
-    #endif
-    #ifdef SECOND_DIST 
-    C,
-    #endif 
-    #if SAVE_BC
-    nodeTypeSave,
-    hNodeType,
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    h_BC_Fx,
-    h_BC_Fy,
-    h_BC_Fz,
-    #endif
-    step); 
 
     // Free random numbers
     if (RANDOM_NUMBERS) {
@@ -285,19 +272,7 @@ int main() {
                 checkpoint = !(aux % CHECKPOINT_SAVE);
         }
        
-        gpuMomCollisionStream << <gridBlock, threadBlock 
-        #ifdef DYNAMIC_SHARED_MEMORY
-        , SHARED_MEMORY_SIZE
-        #endif
-        >> > (fMom,dNodeType,ghostInterface,
-        #ifdef DENSITY_CORRECTION
-        d_mean_rho,
-        #endif
-        #ifdef BC_FORCES
-        d_BC_Fx,d_BC_Fy,d_BC_Fz,
-        #endif 
-        step,
-        save); 
+        gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
 
         #ifdef PARTICLE_TRACER
             checkCudaErrors(cudaDeviceSynchronize());
@@ -341,44 +316,16 @@ int main() {
             //if((step%((int)(turn_over_time/2))) == 0){
                 checkCudaErrors(cudaDeviceSynchronize()); 
                 checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-                linearMacr(h_fMom,rho,ux,uy,uz,
-                #ifdef NON_NEWTONIAN_FLUID
-                omega,
-                #endif
-                #ifdef SECOND_DIST 
-                C,
-                #endif 
-                #if SAVE_BC
-                nodeTypeSave,
-                hNodeType,
-                #endif
-                #if defined BC_FORCES && defined SAVE_BC_FORCES
-                h_BC_Fx,
-                h_BC_Fy,
-                h_BC_Fz,
-                #endif
-                step); 
 
                 printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
                 if(console_flush){fflush(stdout);}
                 //if(step > N_STEPS - 14000){
                 if(!ONLY_FINAL_MACRO){
-                    saveMacr(rho,ux,uy,uz,
-                    #ifdef NON_NEWTONIAN_FLUID
-                    omega,
-                    #endif
+                    saveMacr(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS
                     #ifdef SECOND_DIST 
                     C,
                     #endif 
-                    #if SAVE_BC
-                    nodeTypeSave,
-                    #endif
-                    #if defined BC_FORCES && defined SAVE_BC_FORCES
-                    h_BC_Fx,
-                    h_BC_Fy,
-                    h_BC_Fz,
-                    #endif
-                    step);
+                    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
                 }
             //}
 
@@ -398,42 +345,15 @@ int main() {
     checkCudaErrors(cudaMemcpy(h_BC_Fz, d_BC_Fz, MEM_SIZE_SCALAR, cudaMemcpyDeviceToHost));
     #endif
 
-    linearMacr(h_fMom,rho,ux,uy,uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    omega,
-    #endif
-    #ifdef SECOND_DIST 
-    C,
-    #endif 
-    #if SAVE_BC
-    nodeTypeSave,
-    hNodeType,
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    h_BC_Fx,
-    h_BC_Fy,
-    h_BC_Fz,
-    #endif
-    step); 
+
 
     if(console_flush){fflush(stdout);}
     
-    saveMacr(rho,ux,uy,uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    omega,
-    #endif
+    saveMacr(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS 
     #ifdef SECOND_DIST 
     C,
     #endif 
-    #if SAVE_BC
-    nodeTypeSave,
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    h_BC_Fx,
-    h_BC_Fy,
-    h_BC_Fz,
-    #endif
-    step);
+    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(PREFIX) step);
 
     #ifdef PARTICLE_TRACER
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
@@ -451,40 +371,11 @@ int main() {
     }
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
-            linearMacr(m_fMom,m_rho,m_ux,m_uy,m_uz,
-            #ifdef NON_NEWTONIAN_FLUID
-            omega,
-            #endif
+            saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, NON_NEWTONIAN_FLUID_PARAMS
             #ifdef SECOND_DIST 
             m_c,
             #endif 
-            #if SAVE_BC
-            nodeTypeSave,
-            hNodeType,
-            #endif
-            #if defined BC_FORCES && defined SAVE_BC_FORCES
-            h_BC_Fx,
-            h_BC_Fy,
-            h_BC_Fz,
-            #endif
-            INT_MAX); 
-
-            saveMacr(m_rho,m_ux,m_uy,m_uz,
-            #ifdef NON_NEWTONIAN_FLUID
-            omega,
-            #endif
-            #ifdef SECOND_DIST 
-            m_c,
-            #endif 
-            #if SAVE_BC
-            nodeTypeSave,
-            #endif
-            #if defined BC_FORCES && defined SAVE_BC_FORCES
-            h_BC_Fx,
-            h_BC_Fy,
-            h_BC_Fz,
-            #endif
-            INT_MAX);
+            NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) INT_MAX);
     #endif //MEAN_FLOW
 
     /* ------------------------------ POST ------------------------------ */
@@ -543,7 +434,7 @@ int main() {
     cudaFree(d_particlePos);
     #endif
 
-    #if SAVE_BC
+    #if NODE_TYPE_SAVE
     cudaFree(nodeTypeSave);
     #endif
     return 0;

@@ -30,12 +30,8 @@
 __global__
 void gpuMomCollisionStream(
     dfloat *fMom, unsigned int *dNodeType, ghostInterfaceData ghostInterface,
-    #ifdef DENSITY_CORRECTION
-    dfloat *d_mean_rho,
-    #endif
-    #ifdef BC_FORCES
-    dfloat *d_BC_Fx,dfloat *d_BC_Fy,dfloat *d_BC_Fz,
-    #endif 
+    DENSITY_CORRECTION_PARAMS_DECLARATION(d_)
+    BC_FORCES_PARAMS_DECLARATION(d_)
     unsigned int step,
     bool save);
 

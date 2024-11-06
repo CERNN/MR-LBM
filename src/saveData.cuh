@@ -33,19 +33,11 @@
 *   @param nSteps: number of steps of the simulation
 */
 __host__
-void linearMacr(
-    dfloat* h_fMom,
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
+void linearMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif 
-    #if SAVE_BC
+    #if NODE_TYPE_SAVE
     dfloat* nodeTypeSave,
     unsigned int* hNodeType,
     #endif
@@ -64,10 +56,7 @@ void loadMoments(
     dfloat* rho,
     dfloat* ux,
     dfloat* uy,
-    dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
+    dfloat* uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -80,9 +69,7 @@ void loadSimField(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
+    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -107,25 +94,12 @@ void loadVarBin(
 *        so the variables starts on SWF and ends in NEB
 */
 __host__
-void saveMacr(
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
-    #ifdef NON_NEWTONIAN_FLUID
-    dfloat* omega,
-    #endif
+void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz,  NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif 
-    #if SAVE_BC
-    dfloat* nodeTypeSave,
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    dfloat* h_BC_Fx,
-    dfloat* h_BC_Fy,
-    dfloat* h_BC_Fz,
-    #endif
+    NODE_TYPE_SAVE_PARAMS_DECLARATION
+    BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps
 );
 

@@ -5,7 +5,7 @@ Projects:
   ☐ test perfomance Z-curve array pattern for indexing within the same block structure
   ✔ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ... @done(24-07-04 21:52)
     ☐ Use constant array in defintions.h instead of magic numbers
-  ☐ auxFunctions that are actually treat data shouldnt be there
+  ✔ auxFunctions that are actually treat data shouldnt be there @done(24-11-05 21:24)
   ✔ Rename include files to be .inc @done(24-11-03 21:02)
   ✔ Make the compile sm based directly on the avaiable machine @done(24-11-03 18:59)
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
@@ -54,9 +54,10 @@ Projects:
     ✔ Transform equations to moment-based @done(24-05-19 13:03)
     ✔ Increase Performance @done(24-07-05 17:11)
   ✔ Incorporate LES 
+  ✔ Eliminate linearMacr function @done(24-11-06 23:18)
 
   ☐ Verify D3Q27 again
-  ☐ detach mean-flow stats from treatData
+  ✔ detach mean-flow stats from treatData @done(24-11-05 21:25)
 
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
   ☐ Incorporate IBM
