@@ -191,6 +191,14 @@ __host__ __device__
     return x + NX * (y + NY*(z));
 }
 
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+__host__ __device__ __forceinline__ 
+size_t idxVelBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int uIndex)
+{
+    return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * uIndex));
+}
+#endif
+
 
 /**
 *   @brief Compute the dot product of two vectors.

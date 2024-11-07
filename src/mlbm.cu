@@ -86,6 +86,68 @@ __global__ void gpuMomCollisionStream(
     const unsigned short int zp1 = (threadIdx.z + 1 + BLOCK_NZ) % BLOCK_NZ;
     const unsigned short int zm1 = (threadIdx.z - 1 + BLOCK_NZ) % BLOCK_NZ;
     
+    //need to compute the gradient before they are streamed
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+
+    //define shared memory
+    __shared__ dfloat sharedVel[VEL_GRAD_BLOCK_SIZE];
+
+    sharedVel[idxVelBlock(tx, ty, tz, 0)] = ux_t30;
+    sharedVel[idxVelBlock(tx, ty, tz, 1)] = uy_t30;
+    sharedVel[idxVelBlock(tx, ty, tz, 2)] = uz_t30;
+
+    // Load neighboring halo cells in shared memory
+    // TODO: will have to create storage for the moments similar to the populations, since the velocities will change for each thread.
+    if (tx == 0) {
+        sharedVel[idxVelBlock(tx - 1, ty, tz, 0)] = fMom[idxMom(txm1, ty, tz, M_UX_INDEX, bxm1, by, bz)];
+        sharedVel[idxVelBlock(tx - 1, ty, tz, 1)] = fMom[idxMom(txm1, ty, tz, M_UY_INDEX, bxm1, by, bz)];
+        sharedVel[idxVelBlock(tx - 1, ty, tz, 2)] = fMom[idxMom(txm1, ty, tz, M_UZ_INDEX, bxm1, by, bz)];
+    }
+    if (tx == BLOCK_NX - 1) {
+        sharedVel[idxVelBlock(tx + 1, ty, tz, 0)] = fMom[idxMom(txp1, ty, tz, M_UX_INDEX, bxp1, by, bz)];
+        sharedVel[idxVelBlock(tx + 1, ty, tz, 1)] = fMom[idxMom(txp1, ty, tz, M_UY_INDEX, bxp1, by, bz)];
+        sharedVel[idxVelBlock(tx + 1, ty, tz, 2)] = fMom[idxMom(txp1, ty, tz, M_UZ_INDEX, bxp1, by, bz)];
+    }
+    if (ty == 0) {
+        sharedVel[idxVelBlock(tx, ty - 1, tz, 0)] = fMom[idxMom(tx, tym1, tz, M_UX_INDEX, bx, bym1, bz)];
+        sharedVel[idxVelBlock(tx, ty - 1, tz, 1)] = fMom[idxMom(tx, tym1, tz, M_UY_INDEX, bx, bym1, bz)];
+        sharedVel[idxVelBlock(tx, ty - 1, tz, 2)] = fMom[idxMom(tx, tym1, tz, M_UZ_INDEX, bx, bym1, bz)];
+    }
+    if (ty == BLOCK_NY - 1) {
+        sharedVel[idxVelBlock(tx, ty + 1, tz, 0)] = fMom[idxMom(tx, typ1, tz, M_UX_INDEX, bx, byp1, bz)];
+        sharedVel[idxVelBlock(tx, ty + 1, tz, 1)] = fMom[idxMom(tx, typ1, tz, M_UY_INDEX, bx, byp1, bz)];
+        sharedVel[idxVelBlock(tx, ty + 1, tz, 2)] = fMom[idxMom(tx, typ1, tz, M_UZ_INDEX, bx, byp1, bz)];
+    }
+    if (tz == 0) {
+        sharedVel[idxVelBlock(tx, ty, tz - 1, 0)] = fMom[idxMom(tx, ty, tzm1, M_UX_INDEX, bx, by, bzm1)];
+        sharedVel[idxVelBlock(tx, ty, tz - 1, 1)] = fMom[idxMom(tx, ty, tzm1, M_UY_INDEX, bx, by, bzm1)];
+        sharedVel[idxVelBlock(tx, ty, tz - 1, 2)] = fMom[idxMom(tx, ty, tzm1, M_UZ_INDEX, bx, by, bzm1)];
+    }
+    if (tz == BLOCK_NZ - 1) {
+        sharedVel[idxVelBlock(tx, ty, tz + 1, 0)] = fMom[idxMom(tx, ty, tzp1, M_UX_INDEX, bx, by, bzp1)];
+        sharedVel[idxVelBlock(tx, ty, tz + 1, 1)] = fMom[idxMom(tx, ty, tzp1, M_UY_INDEX, bx, by, bzp1)];
+        sharedVel[idxVelBlock(tx, ty, tz + 1, 2)] = fMom[idxMom(tx, ty, tzp1, M_UZ_INDEX, bx, by, bzp1)];
+    }
+    
+    __syncthreads();
+
+
+    // Compute unrolled gradient calculations
+    dfloat duxdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 0)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 0)]) / 2;
+    dfloat duxdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 0)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 0)]) / 2;
+    dfloat duxdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 0)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 0)]) / 2;
+
+    dfloat duydx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 1)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 1)]) / 2;
+    dfloat duydy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 1)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 1)]) / 2;
+    dfloat duydz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 1)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 1)]) / 2;
+
+    dfloat duzdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 2)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 2)]) / 2;
+    dfloat duzdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 2)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 2)]) / 2;
+    dfloat duzdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 2)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 2)]) / 2;
+
+    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+
+    
     //save populations in shared memory
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = pop[ 1];
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1)] = pop[ 2];
