@@ -10,7 +10,7 @@ int main() {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
 
     //variable declaration
-    dfloat* fMom;
+    dfloat* d_fMom;
     ghostInterfaceData ghostInterface;
 
     unsigned int* dNodeType;
@@ -69,66 +69,34 @@ int main() {
     #endif //_BC_FORCES
 
 
+    /* ----------------- GRID AND THREADS DEFINITION FOR LBM ---------------- */
+    dim3 threadBlock(BLOCK_NX, BLOCK_NY, BLOCK_NZ);
+    dim3 gridBlock(NUM_BLOCK_X, NUM_BLOCK_Y, NUM_BLOCK_Z);
+
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     int step = 0;
 
     float** randomNumbers = nullptr; // useful for turbulence
-
-    checkCudaErrors(cudaMallocHost((void**)&(h_fMom), MEM_SIZE_MOM));
-    checkCudaErrors(cudaMallocHost((void**)&(rho), MEM_SIZE_SCALAR));
-    checkCudaErrors(cudaMallocHost((void**)&(ux), MEM_SIZE_SCALAR));
-    checkCudaErrors(cudaMallocHost((void**)&(uy), MEM_SIZE_SCALAR));
-    checkCudaErrors(cudaMallocHost((void**)&(uz), MEM_SIZE_SCALAR));
-    #ifdef NON_NEWTONIAN_FLUID
-    checkCudaErrors(cudaMallocHost((void**)&(omega), MEM_SIZE_SCALAR));
-    #endif
-    #ifdef SECOND_DIST
-    checkCudaErrors(cudaMallocHost((void**)&(C), MEM_SIZE_SCALAR));
-    #endif 
-    #ifdef PARTICLE_TRACER
-    checkCudaErrors(cudaMallocHost((void**)&(h_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
-    #endif
-    #if MEAN_FLOW
-        checkCudaErrors(cudaMallocHost((void**)&(m_fMom), MEM_SIZE_MOM));
-        checkCudaErrors(cudaMallocHost((void**)&(m_rho), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(m_ux), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(m_uy), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(m_uz), MEM_SIZE_SCALAR));
-        #ifdef SECOND_DIST
-        checkCudaErrors(cudaMallocHost((void**)&(m_c), MEM_SIZE_SCALAR));
-        #endif
-    #endif //MEAN_FLOW
-    #ifdef BC_FORCES
-        #ifdef SAVE_BC_FORCES
-        checkCudaErrors(cudaMallocHost((void**)&(h_BC_Fx), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(h_BC_Fy), MEM_SIZE_SCALAR));
-        checkCudaErrors(cudaMallocHost((void**)&(h_BC_Fz), MEM_SIZE_SCALAR));
-        #endif
-    #endif //_BC_FORCES
     randomNumbers = (float**)malloc(sizeof(float*));
 
-
+    allocateHostMemory(
+        &h_fMom, &rho, &ux, &uy, &uz
+        NON_NEWTONIAN_FLUID_PARAMS_PTR
+        SECOND_DIST_PARAMS_PTR
+        PARTICLE_TRACER_PARAMS_PTR(h_)
+        MEAN_FLOW_PARAMS_PTR
+        MEAN_FLOW_SECOND_DIST_PARAMS_PTR
+        BC_FORCES_PARAMS_PTR(h_)
+    );
     /* -------------- ALLOCATION FOR GPU ------------- */
+    allocateDeviceMemory(
+        &d_fMom, &dNodeType, &ghostInterface
+        DENSITY_CORRECTION_PARAMS_PTR
+        PARTICLE_TRACER_PARAMS_PTR(d_)
+        BC_FORCES_PARAMS_PTR(d_)
+    );
 
-    cudaMalloc((void**)&fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS);  
-    cudaMalloc((void**)&dNodeType, sizeof(int) * NUMBER_LBM_NODES);
-    interfaceMalloc(ghostInterface);
-
-    #ifdef DENSITY_CORRECTION
-        checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
-        cudaMalloc((void**)&d_mean_rho, sizeof(dfloat));  
-    #endif
-    #ifdef PARTICLE_TRACER
-    checkCudaErrors(cudaMalloc((void**)&(d_particlePos), sizeof(dfloat3)*NUM_PARTICLES));
-    #endif
-
-    #ifdef BC_FORCES
-        cudaMalloc((void**)&d_BC_Fx, MEM_SIZE_SCALAR);    
-        cudaMalloc((void**)&d_BC_Fy, MEM_SIZE_SCALAR);    
-        cudaMalloc((void**)&d_BC_Fz, MEM_SIZE_SCALAR);            
-    #endif //_BC_FORCES
     //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
-
 
     // Setup Streams
     cudaStream_t streamsLBM[1];
@@ -140,154 +108,69 @@ int main() {
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
     #endif
 
-    if(RANDOM_NUMBERS)
-    {   
-        //printf("Initializing random numbers\n");if(console_flush){fflush(stdout);}
-        checkCudaErrors(cudaMallocManaged((void**)&randomNumbers[0], 
-            sizeof(float)*NUMBER_LBM_NODES));
-        initializationRandomNumbers(randomNumbers[0], CURAND_SEED);
-        checkCudaErrors(cudaDeviceSynchronize());
-        getLastCudaError("random numbers transfer error");
-        //printf("random numbers initialized \n");if(console_flush){fflush(stdout);}
-    }
+    initializeDomain(ghostInterface,     
+                     d_fMom, h_fMom, 
+                     #if MEAN_FLOW
+                     m_fMom,
+                     #endif
+                     hNodeType, dNodeType, randomNumbers, 
+                     BC_FORCES_PARAMS(d_)
+                     DENSITY_CORRECTION_PARAMS(h_)
+                     DENSITY_CORRECTION_PARAMS(d_)
+                     PARTICLE_TRACER_PARAMS_PTR(h_)
+                     PARTICLE_TRACER_PARAMS_PTR(d_)
+                     &step, gridBlock, threadBlock);
 
-    /* ----------------- GRID AND THREADS DEFINITION FOR LBM ---------------- */
-    dim3 threadBlock(BLOCK_NX, BLOCK_NY, BLOCK_NZ);
-    dim3 gridBlock(NUM_BLOCK_X, NUM_BLOCK_Y, NUM_BLOCK_Z);
-
-    /* ------------------------- LBM INITIALIZATION ------------------------- */
-    if(LOAD_CHECKPOINT){
-        printf("Loading checkpoint");
-        step = INI_STEP;
-        loadSimCheckpoint(h_fMom, ghostInterface, &step);
-
-        checkCudaErrors(cudaMemcpy(fMom, h_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyHostToDevice));
-        interfaceCudaMemcpy(ghostInterface,ghostInterface.fGhost,ghostInterface.h_fGhost,cudaMemcpyHostToDevice,QF);
-        #ifdef SECOND_DIST 
-        interfaceCudaMemcpy(ghostInterface,ghostInterface.g_fGhost,ghostInterface.g_h_fGhost,cudaMemcpyHostToDevice,GF);
-        #endif 
-       
-
-    }else{
-        if(LOAD_FIELD){
-        }else{
-            gpuInitialization_mom << <gridBlock, threadBlock >> >(fMom, randomNumbers[0]);
-        }
-        //printf("Moments initialized \n");if(console_flush){fflush(stdout);}
-        gpuInitialization_pop << <gridBlock, threadBlock >> >(fMom,ghostInterface);
-    }
-
-    #if MEAN_FLOW
-        //initialize mean moments
-        checkCudaErrors(cudaMemcpy(m_fMom,fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToDevice));
-    #endif //MEAN_FLOW
-    checkCudaErrors(cudaMallocHost((void**)&(hNodeType), sizeof(unsigned int) * NUMBER_LBM_NODES));
-    #if NODE_TYPE_SAVE
-    checkCudaErrors(cudaMallocHost((void**)&(nodeTypeSave), sizeof(dfloat) * NUMBER_LBM_NODES));
-    #endif 
-
-    #ifndef VOXEL_FILENAME
-    //gpuInitialization_nodeType << <gridBlock, threadBlock >> >(dNodeType);
-    //checkCudaErrors(cudaDeviceSynchronize());
-        hostInitialization_nodeType(hNodeType);
-        checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  
-        checkCudaErrors(cudaDeviceSynchronize());
-    #endif
-    #ifdef VOXEL_FILENAME
-        hostInitialization_nodeType_bulk(hNodeType); //initialize the domain with  BULK
-        read_xyz_file(VOXEL_FILENAME,hNodeType); //overwrite the domain with the voxels information + add missing defintion 
-        hostInitialization_nodeType(hNodeType); //initialize the domain with BC
-        checkCudaErrors(cudaMemcpy(dNodeType, hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyHostToDevice));  // copy inform\ation to device
-        checkCudaErrors(cudaDeviceSynchronize());
-        define_voxel_bc << <gridBlock, threadBlock >> >(dNodeType); //update information of BC condition nearby the voxels
-        checkCudaErrors(cudaMemcpy(hNodeType, dNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES, cudaMemcpyDeviceToHost)); 
-    #endif
-
-    #ifdef BC_FORCES
-    gpuInitialization_force << <gridBlock, threadBlock >> >(d_BC_Fx,d_BC_Fy,d_BC_Fz);
-    #endif //_BC_FORCES
-
-    //printf("Interface Populations initialized \n");if(console_flush){fflush(stdout);}
-    interfaceCudaMemcpy(ghostInterface,ghostInterface.gGhost,ghostInterface.fGhost,cudaMemcpyDeviceToDevice,QF);
-    #ifdef SECOND_DIST 
-    interfaceCudaMemcpy(ghostInterface,ghostInterface.g_gGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToDevice,GF);
-    #endif 
-
-    #ifdef DENSITY_CORRECTION
-        h_mean_rho[0] = RHO_0;
-        checkCudaErrors(cudaMemcpy(d_mean_rho, h_mean_rho, sizeof(dfloat), cudaMemcpyHostToDevice)); 
-    #endif
-    checkCudaErrors(cudaDeviceSynchronize());
-
-    #ifdef PARTICLE_TRACER
-        initializeParticles(h_particlePos,d_particlePos);
-    #endif
-
-    checkCudaErrors(cudaDeviceSynchronize());
-    checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-    checkCudaErrors(cudaDeviceSynchronize());
-
-    // Free random numbers
-    if (RANDOM_NUMBERS) {
-        checkCudaErrors(cudaSetDevice(GPU_INDEX));
-        cudaFree(randomNumbers[0]);
-        free(randomNumbers);
-    }
-
+   
+    /* ------------------------------ TIMER EVENTS  ------------------------------ */
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     cudaEvent_t start, stop, start_step, stop_step;
-    checkCudaErrors(cudaEventCreate(&start));
-    checkCudaErrors(cudaEventCreate(&stop));
-    checkCudaErrors(cudaEventCreate(&start_step));
-    checkCudaErrors(cudaEventCreate(&stop_step));
-
-    checkCudaErrors(cudaEventRecord(start, 0));
-    checkCudaErrors(cudaEventRecord(start_step, 0));
+    initializeCudaEvents(start, stop, start_step, stop_step);
     /* ------------------------------ LBM LOOP ------------------------------ */
+
     #ifdef DYNAMIC_SHARED_MEMORY
     cudaFuncSetAttribute(gpuMomCollisionStream, cudaFuncAttributeMaxDynamicSharedMemorySize, SHARED_MEMORY_SIZE); // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
     #endif
+
+    /* --------------------------------------------------------------------- */
+    /* ---------------------------- BEGIN LOOP ----------------------------- */
+    /* --------------------------------------------------------------------- */
     for (step=INI_STEP; step<N_STEPS;step++){
 
         int aux = step-INI_STEP;
         bool checkpoint = false;
+
         #ifdef DENSITY_CORRECTION
-        mean_rho(fMom,step,d_mean_rho);
+        mean_rho(d_fMom,step,d_mean_rho);
         #endif 
+
         bool save =false;
         bool reportSave = false;
         bool macrSave = false;
+
         if(aux != 0){
-            if(REPORT_SAVE){
-                reportSave = !(step % REPORT_SAVE);
-                //reportSave = true;
-            }                
-            if(MACR_SAVE){
-                macrSave = !(step % MACR_SAVE);
-                //macrSave = true;
-            }
-            if(MACR_SAVE || REPORT_SAVE)
-                save = (reportSave || macrSave);
-            if(CHECKPOINT_SAVE)
-                checkpoint = !(aux % CHECKPOINT_SAVE);
+            if(REPORT_SAVE){ reportSave = !(step % REPORT_SAVE);}                
+            if(MACR_SAVE){ macrSave   = !(step % MACR_SAVE);}
+            if(MACR_SAVE || REPORT_SAVE){ save = (reportSave || macrSave);}
+            if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
         }
        
-        gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
+        gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
 
         #ifdef PARTICLE_TRACER
             checkCudaErrors(cudaDeviceSynchronize());
-            updateParticlePos(d_particlePos, h_particlePos, fMom, streamsPart[0],step);
+            updateParticlePos(d_particlePos, h_particlePos, d_fMom, streamsPart[0],step);
         #endif
 
         if(checkpoint){
             printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             // throwing a warning for being used without being initialized. But does not matter since we are overwriting it;
-            checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+            checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
             interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.gGhost,cudaMemcpyDeviceToHost,QF);       
             #ifdef SECOND_DIST 
             interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
             #endif             
-            saveSimCheckpoint(fMom, ghostInterface, &step);
+            saveSimCheckpoint(d_fMom, ghostInterface, &step);
         }
        
         //swap interface pointers
@@ -298,7 +181,7 @@ int main() {
         //if (N_STEPS - step < 4*((int)turn_over_time)){
         if(reportSave){
             printf("\n--------------------------- Saving report %06d ---------------------------\n", step);
-            treatData(h_fMom,fMom,
+            treatData(h_fMom,d_fMom,
             #if MEAN_FLOW
             m_fMom,
             #endif //MEAN_FLOW
@@ -315,7 +198,7 @@ int main() {
             //if((step>N_STEPS-80*(int)(MACR_SAVE))){ 
             //if((step%((int)(turn_over_time/2))) == 0){
                 checkCudaErrors(cudaDeviceSynchronize()); 
-                checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+                checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
 
                 printf("\n--------------------------- Saving macro %06d ---------------------------\n", step);
                 if(console_flush){fflush(stdout);}
@@ -334,9 +217,20 @@ int main() {
             #endif
         }
 
-    } // end of the loop
+    } 
+    /* --------------------------------------------------------------------- */
+    /* ------------------------------ END LOO ------------------------------ */
+    /* --------------------------------------------------------------------- */
+
     checkCudaErrors(cudaDeviceSynchronize());
-    checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+
+    //Calculate MLUPS
+
+    dfloat MLUPS = recordElapsedTime(start_step, stop_step, step);
+    printf("MLUPS: %f\n",MLUPS);
+    
+    /* ------------------------------ POST ------------------------------ */
+    checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
 
     #if defined BC_FORCES && defined SAVE_BC_FORCES
     checkCudaErrors(cudaDeviceSynchronize()); 
@@ -362,12 +256,12 @@ int main() {
     if(CHECKPOINT_SAVE){
         printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             
-        checkCudaErrors(cudaMemcpy(h_fMom, fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
         interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.gGhost,cudaMemcpyDeviceToHost,QF);    
         #ifdef SECOND_DIST 
         interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
         #endif      
-        saveSimCheckpoint(fMom,ghostInterface,&step);
+        saveSimCheckpoint(d_fMom,ghostInterface,&step);
     }
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
@@ -378,25 +272,14 @@ int main() {
             NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) INT_MAX);
     #endif //MEAN_FLOW
 
-    /* ------------------------------ POST ------------------------------ */
-    //Calculate MLUPS
-    checkCudaErrors(cudaSetDevice(GPU_INDEX));
-    checkCudaErrors(cudaEventRecord(stop_step, 0));
-    checkCudaErrors(cudaEventSynchronize(stop_step));
-    float elapsedTime;
-    checkCudaErrors(cudaEventElapsedTime(&(elapsedTime), start_step, stop_step));
-    elapsedTime *= 0.001;
-    size_t nodesUpdatedSync = (step) * NUMBER_LBM_NODES;
-    dfloat MLUPS = (nodesUpdatedSync / 1e6) / elapsedTime;
 
-    printf("MLUPS: %f\n",MLUPS);
 
     //save info file
     saveSimInfo(step,MLUPS);
 
 
     /* ------------------------------ FREE ------------------------------ */
-    cudaFree(fMom);
+    cudaFree(d_fMom);
     cudaFree(dNodeType);
     cudaFree(hNodeType);
 
