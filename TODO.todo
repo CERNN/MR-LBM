@@ -4,7 +4,7 @@ Projects:
   ☐ Remove the duplicate arrays used for interface between blocks
   ☐ test perfomance Z-curve array pattern for indexing within the same block structure
   ✔ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ... @done(24-07-04 21:52)
-    ☐ Use constant array in defintions.h instead of magic numbers
+    ✔ Use constant array in defintions.h instead of magic numbers @done(24-11-15 18:18)
   ✔ auxFunctions that are actually treat data shouldnt be there @done(24-11-05 21:24)
   ✔ Rename include files to be .inc @done(24-11-03 21:02)
   ✔ Make the compile sm based directly on the avaiable machine @done(24-11-03 18:59)
@@ -12,11 +12,12 @@ Projects:
     ☐ Edit local force field to moment array
     ☐ change the name moment array to something more descreptive
   ☐ find a way to compute the best block size on compilation time (most likely make the sh script create a file which later is included to edit the block size)
-  ☐ allocatate the correct ammount of shared memory based on the blockSize
+  ✔ allocatate the correct ammount of shared memory based on the blockSize @done(24-11-07 16:23)
+    ✔ need to find a way to compile depending on the architure @done(24-11-15 18:14)
   ☐ Change macro condition from (non_newtonian || les model to local viscosity)
-  ☐ Eliminate the necessity of two arrays to save the boundary conditions
-    ☐ Also it need edit the post processing files to allow different data types (unsigned char for example)
-    ☐ Edit the saveVarBin fuction to allow differnt data types
+  ✘ Eliminate the necessity of two arrays to save the boundary conditions @cancelled(24-11-15 18:16)
+    ✘ Also it need edit the post processing files to allow different data types (unsigned char for example) @cancelled(24-11-15 18:16)
+    ✘ Edit the saveVarBin fuction to allow differnt data types @cancelled(24-11-15 18:16)
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
   ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
   ☐ Fix parallel reduction for 2D cases bigger than 256x256
@@ -42,7 +43,7 @@ Projects:
   ✔ move collision/reconstruction operators to another folder/file system @done(24-06-04 21:17)
     ✔ clean up mlbm.cu @done(24-06-04 21:11)
     ✔ create include structure @done(24-06-04 21:11)
-  ☐ validade/verify the other collision methods.
+  ☐ validate/verify the other collision methods.
   ✔ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char) @done(24-03-24 10:58)
     ✔ change nodeType from char to int @done(24-02-24 10:41)
     ✔ add new types of boundary conditions @done(24-03-24 10:58)
@@ -56,7 +57,8 @@ Projects:
   ✔ Incorporate LES 
   ✔ Eliminate linearMacr function @done(24-11-06 23:18)
 
-  ☐ Verify D3Q27 again
+  ✔ Verify D3Q27 again @done(24-11-15 18:17)
+    ☐ Find a way to define the link between bc and the velocity set between the cases.
   ✔ detach mean-flow stats from treatData @done(24-11-05 21:25)
 
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
