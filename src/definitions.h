@@ -84,10 +84,10 @@ constexpr int SHARED_MEMORY_ELEMENT_SIZE = sizeof(dfloat) * (Q - 1);
 
 constexpr BlockDim optimalBlockDimArray = findOptimalBlockDimensions(MAX_ELEMENTS_IN_BLOCK);
 
-
-const int BLOCK_NX = optimalBlockDimArray.x;
-const int BLOCK_NY = optimalBlockDimArray.y;
-const int BLOCK_NZ = optimalBlockDimArray.z;
+//TODO: fix, is giving incopatibility issues with parallel reduction
+#define BLOCK_NX 8
+#define BLOCK_NY 8
+#define BLOCK_NZ 8
 
 
 #define BLOCK_LBM_SIZE (BLOCK_NX * BLOCK_NY * BLOCK_NZ)
@@ -289,8 +289,8 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 
 
 #ifdef DENSITY_CORRECTION
-    #define DENSITY_CORRECTION_PARAMS_DECLARATION_PTR ,dfloat** d_mean_rho
-    #define DENSITY_CORRECTION_PARAMS_PTR , &d_mean_rho
+    #define DENSITY_CORRECTION_PARAMS_DECLARATION_PTR(PREFIX) ,dfloat** PREFIX##mean_rho
+    #define DENSITY_CORRECTION_PARAMS_PTR(PREFIX) , &PREFIX##mean_rho
 #else
     #define DENSITY_CORRECTION_PARAMS_DECLARATION_PTR
     #define DENSITY_CORRECTION_PARAMS_PTR

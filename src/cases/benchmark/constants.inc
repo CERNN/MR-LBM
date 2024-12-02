@@ -33,7 +33,7 @@ __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
     #define BC_Z_PERIODIC
 
 constexpr dfloat VISC = U_MAX * NX / RE;
-constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
+constexpr dfloat TAU = 0.8;     // relaxation time
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 #ifdef THERMAL_MODEL

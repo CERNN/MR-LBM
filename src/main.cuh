@@ -292,17 +292,12 @@ void allocateHostMemory(
 __host__
 void allocateDeviceMemory(
     dfloat** d_fMom, unsigned int** dNodeType, GhostInterfaceData* ghostInterface
-    DENSITY_CORRECTION_PARAMS_DECLARATION_PTR
     PARTICLE_TRACER_PARAMS_DECLARATION_PTR(d_)
     BC_FORCES_PARAMS_DECLARATION_PTR(d_)
 ) {
     cudaMalloc((void**)d_fMom, MEM_SIZE_MOM);
     cudaMalloc((void**)dNodeType, sizeof(int) * NUMBER_LBM_NODES);
     interfaceMalloc(*ghostInterface);
-
-    #ifdef DENSITY_CORRECTION
-    checkCudaErrors(cudaMalloc((void**)d_mean_rho, sizeof(dfloat)));
-    #endif
 
     #ifdef PARTICLE_TRACER
     checkCudaErrors(cudaMalloc((void**)d_particlePos, sizeof(dfloat3) * NUM_PARTICLES));
@@ -394,16 +389,12 @@ void initializeDomain(
     #endif
 
     // Interface population initialization
-    interfaceCudaMemcpy(ghostInterface, ghostInterface.gGhost, ghostInterface.fGhost, cudaMemcpyDeviceToDevice, QF);
     #ifdef SECOND_DIST
+        interfaceCudaMemcpy(ghostInterface, ghostInterface.gGhost, ghostInterface.fGhost, cudaMemcpyDeviceToDevice, QF);
         interfaceCudaMemcpy(ghostInterface, ghostInterface.g_gGhost, ghostInterface.g_fGhost, cudaMemcpyDeviceToDevice, GF);
+        printf("Interface pop copied \n"); if(console_flush) fflush(stdout);
     #endif
 
-    // Density correction initialization
-    #ifdef DENSITY_CORRECTION
-        h_mean_rho[0] = RHO_0;
-        checkCudaErrors(cudaMemcpy(d_mean_rho, h_mean_rho, sizeof(dfloat), cudaMemcpyHostToDevice)); 
-    #endif
 
     // Synchronize after all initializations
     checkCudaErrors(cudaDeviceSynchronize());
@@ -417,12 +408,14 @@ void initializeDomain(
     checkCudaErrors(cudaDeviceSynchronize());
     checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
     checkCudaErrors(cudaDeviceSynchronize());
+    printf("Mom copy to host \n"); if(console_flush) fflush(stdout);
 
     // Free random numbers if initialized
     #ifdef RANDOM_NUMBERS
         checkCudaErrors(cudaSetDevice(GPU_INDEX));
         cudaFree(randomNumbers[0]);
         free(randomNumbers);
+        printf("Random numbers free \n"); if(console_flush) fflush(stdout);
     #endif
 }
 
