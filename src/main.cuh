@@ -389,8 +389,8 @@ void initializeDomain(
     #endif
 
     // Interface population initialization
+    interfaceCudaMemcpy(ghostInterface, ghostInterface.gGhost, ghostInterface.fGhost, cudaMemcpyDeviceToDevice, QF);
     #ifdef SECOND_DIST
-        interfaceCudaMemcpy(ghostInterface, ghostInterface.gGhost, ghostInterface.fGhost, cudaMemcpyDeviceToDevice, QF);
         interfaceCudaMemcpy(ghostInterface, ghostInterface.g_gGhost, ghostInterface.g_fGhost, cudaMemcpyDeviceToDevice, GF);
         printf("Interface pop copied \n"); if(console_flush) fflush(stdout);
     #endif
