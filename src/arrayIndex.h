@@ -21,7 +21,7 @@ constexpr int M_MZZ_INDEX = 9;
 #endif
 #define M_OFFSET M_MZZ_INDEX
 
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
     constexpr int M_OMEGA_INDEX = (1+M_OFFSET);
     #ifdef M_OFFSET
         #undef M_OFFSET

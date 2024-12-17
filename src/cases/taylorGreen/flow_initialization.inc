@@ -3,6 +3,6 @@ ux =   U_MAX * sin((dfloat)(x) / L) * cos((dfloat)(y) / L) * cos((dfloat)(z) / L
 uy = - U_MAX * cos((dfloat)(x) / L) * sin((dfloat)(y) / L) * cos((dfloat)(z) / L);
 uz = 0.0;
 
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
 omega = OMEGA;
 #endif

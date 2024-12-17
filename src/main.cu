@@ -23,7 +23,7 @@ int main() {
     dfloat* uz;
     
     
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     dfloat* omega;
     #endif
 
@@ -81,7 +81,7 @@ int main() {
 
     allocateHostMemory(
         &h_fMom, &rho, &ux, &uy, &uz
-        NON_NEWTONIAN_FLUID_PARAMS_PTR
+        OMEGA_FIELD_PARAMS_PTR
         SECOND_DIST_PARAMS_PTR
         PARTICLE_TRACER_PARAMS_PTR(h_)
         MEAN_FLOW_PARAMS_PTR
@@ -210,7 +210,7 @@ int main() {
                 if(console_flush){fflush(stdout);}
                 //if(step > N_STEPS - 14000){
                 if(!ONLY_FINAL_MACRO){
-                    saveMacr(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS
+                    saveMacr(h_fMom,rho,ux,uy,uz, OMEGA_FIELD_PARAMS
                     #ifdef SECOND_DIST 
                     C,
                     #endif 
@@ -249,7 +249,7 @@ int main() {
 
     if(console_flush){fflush(stdout);}
     
-    saveMacr(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS 
+    saveMacr(h_fMom,rho,ux,uy,uz, OMEGA_FIELD_PARAMS 
     #ifdef SECOND_DIST 
     C,
     #endif 
@@ -271,7 +271,7 @@ int main() {
     }
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
-            saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, NON_NEWTONIAN_FLUID_PARAMS
+            saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, OMEGA_FIELD_PARAMS
             #ifdef SECOND_DIST 
             m_c,
             #endif 

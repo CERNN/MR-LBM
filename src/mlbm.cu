@@ -42,7 +42,7 @@ __global__ void gpuMomCollisionStream(
     dfloat m_yz_t90   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat m_zz_t45   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
         dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat t_omegaVar = 1 - omegaVar;
         dfloat tt_omegaVar = 1 - omegaVar/2;
@@ -406,7 +406,7 @@ __global__ void gpuMomCollisionStream(
         
 
         // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
-        #if defined(NON_NEWTONIAN_FLUID) || defined(LES_MODEL)
+        #if defined(OMEGA_FIELD) || defined(LES_MODEL)
             //TODO change to fix perfomance
             const dfloat S_XX = rhoVar * (m_xx_t45/F_M_II_SCALE - ux_t30*ux_t30/(F_M_I_SCALE*F_M_I_SCALE));
             const dfloat S_YY = rhoVar * (m_yy_t45/F_M_II_SCALE - uy_t30*uy_t30/(F_M_I_SCALE*F_M_I_SCALE));
@@ -425,7 +425,7 @@ __global__ void gpuMomCollisionStream(
             const dfloat auxStressMag = sqrt(0.5 * (
                 (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
                 2 * ((S_XY + uFxyd2) * (S_XY + uFxyd2) + (S_XZ + uFxzd2) * (S_XZ + uFxzd2) + (S_YZ + uFyzd2) * (S_YZ + uFyzd2))));
-                #ifdef NON_NEWTONIAN_FLUID
+                #ifdef OMEGA_FIELD
                     /*
                     dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
                     dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
@@ -439,7 +439,7 @@ __global__ void gpuMomCollisionStream(
                 }
 
 
-                #endif//  NON_NEWTONIAN_FLUID
+                #endif//  OMEGA_FIELD
 
                 #ifdef LES_MODEL
                     dfloat tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
@@ -476,7 +476,7 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_yz_t90;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_zz_t45;
     
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
     #endif
 

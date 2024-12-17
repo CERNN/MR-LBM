@@ -61,7 +61,7 @@ constexpr dfloat eta_0 =  1e-3;
 
 
 
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
     #ifdef POWER_LAW
     __device__ 
     dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
@@ -138,7 +138,7 @@ constexpr dfloat eta_0 =  1e-3;
     #endif
 
 
-#endif // NON_NEWTONIAN_FLUID
+#endif // OMEGA_FIELD
 
 
 #endif // __NNF_H

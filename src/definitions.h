@@ -47,7 +47,7 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 
 
 #if defined(POWERLAW) || defined(BINGHAM) || defined(BI_VISCOSITY)
-    #define NON_NEWTONIAN_FLUID
+    #define OMEGA_FIELD
 #endif
 
 
@@ -111,10 +111,10 @@ const size_t NUMBER_GHOST_FACE_XZ = BLOCK_NX*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NU
 const size_t NUMBER_GHOST_FACE_YZ = BLOCK_NY*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 
 //#define MOMENT_ORDER (1+2)
-//#ifdef NON_NEWTONIAN_FLUID
+//#ifdef OMEGA_FIELD
 //const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6 + 1;
 //#endif
-//#ifndef NON_NEWTONIAN_FLUID
+//#ifndef OMEGA_FIELD
 //const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6;
 //#endif
 
@@ -219,23 +219,23 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 
 
 
-#ifdef NON_NEWTONIAN_FLUID
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION dfloat *omega,
-    #define NON_NEWTONIAN_FLUID_PARAMS omega,
+#ifdef OMEGA_FIELD
+    #define OMEGA_FIELD_PARAMS_DECLARATION dfloat *omega,
+    #define OMEGA_FIELD_PARAMS omega,
 #else
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
-    #define NON_NEWTONIAN_FLUID_PARAMS
+    #define OMEGA_FIELD_PARAMS_DECLARATION
+    #define OMEGA_FIELD_PARAMS
 #endif
 
 
 
 // Double-pointer macros 
-#ifdef NON_NEWTONIAN_FLUID
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION_PTR ,dfloat** omega
-    #define NON_NEWTONIAN_FLUID_PARAMS_PTR ,&omega
+#ifdef OMEGA_FIELD
+    #define OMEGA_FIELD_PARAMS_DECLARATION_PTR ,dfloat** omega
+    #define OMEGA_FIELD_PARAMS_PTR ,&omega
 #else
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION_PTR
-    #define NON_NEWTONIAN_FLUID_PARAMS_PTR
+    #define OMEGA_FIELD_PARAMS_DECLARATION_PTR
+    #define OMEGA_FIELD_PARAMS_PTR
 #endif
 
 

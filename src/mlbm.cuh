@@ -11,7 +11,7 @@
 #include "var.h"
 #include "includeFiles/interface.h"
 #include "boundaryCondition.cuh"
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
     #include "nnf.h"
 #endif
 

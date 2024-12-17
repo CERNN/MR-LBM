@@ -33,7 +33,7 @@
 *   @param nSteps: number of steps of the simulation
 */
 __host__
-void linearMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+void linearMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif 
@@ -56,7 +56,7 @@ void loadMoments(
     dfloat* rho,
     dfloat* ux,
     dfloat* uy,
-    dfloat* uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    dfloat* uz, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -69,7 +69,7 @@ void loadSimField(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -94,7 +94,7 @@ void loadVarBin(
 *        so the variables starts on SWF and ends in NEB
 */
 __host__
-void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz,  NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz,  OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif 

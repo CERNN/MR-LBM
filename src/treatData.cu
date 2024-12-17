@@ -14,7 +14,7 @@ void treatData(
     #endif
 
     #if TREATPOINT
-    probeExport(fMom, NON_NEWTONIAN_FLUID_PARAMS step);
+    probeExport(fMom, OMEGA_FIELD_PARAMS step);
     #endif
     #if TREATLINE
     velocityProfile(fMom,1,step);
@@ -426,7 +426,7 @@ void velocityProfile(
 
 
 __host__
-void probeExport(dfloat* fMom, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION unsigned int step){
+void probeExport(dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step){
     std::ostringstream strDataInfo("");
     strDataInfo << std::scientific;
     strDataInfo << std::setprecision(6);

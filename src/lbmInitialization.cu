@@ -38,7 +38,7 @@ __global__ void gpuInitialization_mom(
 
     //first moments
     dfloat rho, ux, uy, uz;
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     dfloat omega;
     #endif
     #ifdef SECOND_DIST 
@@ -47,7 +47,7 @@ __global__ void gpuInitialization_mom(
     
     #include CASE_FLOW_INITIALIZATION
 
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     omega = OMEGA;
     #endif
 
@@ -83,7 +83,7 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_IJ_SCALE*piyz;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*pizz;
 
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omega;
     #endif   
     #ifdef SECOND_DIST 

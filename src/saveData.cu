@@ -1,5 +1,5 @@
 #include "saveData.cuh"
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
 #include "nnf.h"
 #endif
 
@@ -10,7 +10,7 @@ void saveMacr(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif
@@ -33,7 +33,7 @@ size_t indexMacr;
                 uy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
-                #ifdef NON_NEWTONIAN_FLUID
+                #ifdef OMEGA_FIELD
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
 
@@ -93,7 +93,7 @@ size_t indexMacr;
     strFileUx = getVarFilename("ux", nSteps, ".bin");
     strFileUy = getVarFilename("uy", nSteps, ".bin");
     strFileUz = getVarFilename("uz", nSteps, ".bin");
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     strFileOmega = getVarFilename("omega", nSteps, ".bin");
     #endif
     #ifdef SECOND_DIST 
@@ -112,7 +112,7 @@ size_t indexMacr;
     saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef SECOND_DIST
@@ -259,7 +259,7 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
 
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     strSimInfo << "\n------------------------------ NON NEWTONIAN FLUID -----------------------------\n";
     strSimInfo << std::scientific << std::setprecision(6);
     
@@ -277,7 +277,7 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "      Plastic omega: " << OMEGA_P << "\n";
     #endif // BINGHAM
     strSimInfo << "--------------------------------------------------------------------------------\n";
-    #endif // NON_NEWTONIAN_FLUID
+    #endif // OMEGA_FIELD
     #ifdef LES_MODEL
     strSimInfo << "\t Smagorisky Constant:" << CONST_SMAGORINSKY <<"\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
@@ -379,7 +379,7 @@ void loadMoments(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -392,7 +392,7 @@ void loadMoments(
     dfloat pixx, pixy, pixz, piyy, piyz, pizz;
     dfloat invRho;
     dfloat pop[Q];
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     dfloat omegaVar;
     #endif
     #ifdef SECOND_DIST 
@@ -444,7 +444,7 @@ void loadMoments(
                 h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*pizz;
 
 
-                #ifdef NON_NEWTONIAN_FLUID
+                #ifdef OMEGA_FIELD
                 omegaVar = omega[indexMacr];
                 h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = omegaVar; 
                 #endif
@@ -509,7 +509,7 @@ void loadSimField(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -524,7 +524,7 @@ void loadSimField(
     strFileUx = getVarFilename("ux", LOAD_FIELD_STEP, ".bin");
     strFileUy = getVarFilename("uy", LOAD_FIELD_STEP, ".bin");
     strFileUz = getVarFilename("uz", LOAD_FIELD_STEP, ".bin");
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     strFileOmega = getVarFilename("omega", LOAD_FIELD_STEP, ".bin");
     #endif
     #ifdef SECOND_DIST 
@@ -544,7 +544,7 @@ void loadSimField(
     loadVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
     loadVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
     loadVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     loadVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef SECOND_DIST
@@ -560,7 +560,7 @@ void loadSimField(
     #endif
 
 
-    loadMoments(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    loadMoments(h_fMom,rho,ux,uy,uz, OMEGA_FIELD_PARAMS_DECLARATION
             #ifdef SECOND_DIST
             C
             #endif 

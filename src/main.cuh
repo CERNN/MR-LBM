@@ -15,7 +15,7 @@
 #include "globalStructs.h"
 #include "auxFunctions.cuh"
 #include "treatData.cuh"
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
     #include "nnf.h"
 #endif
 #ifdef PARTICLE_TRACER
@@ -244,7 +244,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
 __host__
 void allocateHostMemory(
     dfloat** h_fMom, dfloat** rho, dfloat** ux, dfloat** uy, dfloat** uz
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION_PTR
+    OMEGA_FIELD_PARAMS_DECLARATION_PTR
     SECOND_DIST_PARAMS_DECLARATION_PTR
     PARTICLE_TRACER_PARAMS_DECLARATION_PTR(h_)
     MEAN_FLOW_PARAMS_DECLARATION_PTR
@@ -257,7 +257,7 @@ void allocateHostMemory(
     checkCudaErrors(cudaMallocHost((void**)uy, MEM_SIZE_SCALAR));
     checkCudaErrors(cudaMallocHost((void**)uz, MEM_SIZE_SCALAR));
 
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     checkCudaErrors(cudaMallocHost((void**)omega, MEM_SIZE_SCALAR));
     #endif
 

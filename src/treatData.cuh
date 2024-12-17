@@ -89,7 +89,7 @@ void velocityProfile(
 */
 __host__
 void probeExport(
-    dfloat* fMom, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION unsigned int step
+    dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step
 );
 __host__
 void computeNusseltNumber(
