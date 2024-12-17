@@ -5,13 +5,13 @@ switch (nodeType){
         break;
     case EAST: //COLD
         cVar =  T_COLD;
-        qx_t30   = fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qx_t30   = fMom[idxMom(threadIdx.x-1, threadIdx.y, threadIdx.z, M2_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qy_t30   = 0;
         qz_t30   = 0;
         break;
     case WEST: //HOT
         cVar =  T_HOT;
-        qx_t30   = fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qx_t30   = fMom[idxMom(threadIdx.x+1, threadIdx.y, threadIdx.z, M2_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qy_t30   = 0;
         qz_t30   = 0;
         break;
@@ -20,7 +20,7 @@ switch (nodeType){
 
         cVar =  T_HOT - T_DELTA_T*((dfloat)x/(dfloat)NX);
         qx_t30   = 0;
-        qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y-1, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y-1, threadIdx.z, M2_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qz_t30   = 0;
         break;
     case SOUTH:
@@ -28,7 +28,7 @@ switch (nodeType){
 
         cVar =  T_HOT - T_DELTA_T*((dfloat)x/(dfloat)NX);
         qx_t30   = 0;
-        qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y+1, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y+1, threadIdx.z, M2_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         qz_t30   = 0;
         break;
     case FRONT:
@@ -36,14 +36,14 @@ switch (nodeType){
         cVar =  T_HOT - T_DELTA_T*((dfloat)x/(dfloat)NX);
         qx_t30   = 0;
         qy_t30   = 0;
-        qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z-1, M2_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         break;
     case BACK:
 
         cVar =  T_HOT - T_DELTA_T*((dfloat)x/(dfloat)NX);
         qx_t30   = 0;
         qy_t30   = 0;
-        qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z+1, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z+1, M2_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         break;
     case SOUTH_WEST:
         cVar =  T_HOT;

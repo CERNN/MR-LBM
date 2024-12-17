@@ -542,10 +542,10 @@ void computeNusseltNumber(
 
     for (int z = 0; z <NZ_TOTAL; z++){
         for(int y = 0; y< NY-0;y++){
-            C_x0 = h_fMom[idxMom(x0%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x0/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-            C_x1 = h_fMom[idxMom(x1%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x1/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-            C_x2 = h_fMom[idxMom(x2%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x2/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-            C_x3 = h_fMom[idxMom(x3%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x3/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x0 = h_fMom[idxMom(x0%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x0/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x1 = h_fMom[idxMom(x1%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x1/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x2 = h_fMom[idxMom(x2%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x2/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x3 = h_fMom[idxMom(x3%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x3/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
             Nu_sum +=-(C_x1 - C_x0);
             Nu_sum +=(C_x3 - C_x2);
