@@ -14,6 +14,24 @@ void saveMacr(
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif
+    #ifdef A_XX_DIST 
+    dfloat* Axx,
+    #endif
+    #ifdef A_XY_DIST 
+    dfloat* Axy,
+    #endif
+    #ifdef A_XZ_DIST 
+    dfloat* Axz,
+    #endif
+    #ifdef A_YY_DIST 
+    dfloat* Ayy,
+    #endif
+    #ifdef A_YZ_DIST 
+    dfloat* Ayz,
+    #endif
+    #ifdef A_ZZ_DIST 
+    dfloat* Azz,
+    #endif
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps
@@ -39,6 +57,24 @@ size_t indexMacr;
 
                 #ifdef SECOND_DIST 
                 C[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                #ifdef A_XX_DIST 
+                Axx[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XX_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                #ifdef A_XY_DIST 
+                Axy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XY_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                #ifdef A_XZ_DIST 
+                Axz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                #ifdef A_YY_DIST 
+                Ayy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_YY_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                #ifdef A_YZ_DIST 
+                Ayz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_YZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                #ifdef A_ZZ_DIST 
+                Azz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_ZZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 #endif
                 
                 #if NODE_TYPE_SAVE
@@ -118,6 +154,25 @@ size_t indexMacr;
     #ifdef SECOND_DIST
     saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
     #endif
+    #ifdef A_XX_DIST 
+    saveVarBin(strFileC, Axx, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_XY_DIST 
+    saveVarBin(strFileC, Axy, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_XZ_DIST 
+    saveVarBin(strFileC, Axz, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_YY_DIST 
+    saveVarBin(strFileC, Ayy, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_YZ_DIST 
+    saveVarBin(strFileC, Ayz, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_ZZ_DIST 
+    saveVarBin(strFileC, Azz, MEM_SIZE_SCALAR, false);
+    #endif
+    
     #if NODE_TYPE_SAVE
     saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
     #endif

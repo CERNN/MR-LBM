@@ -249,6 +249,57 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 #endif
 
 
+#ifdef A_XX_DIST
+    #define A_XX_DIST_PARAMS_DECLARATION_PTR ,dfloat** Axx
+    #define A_XX_DIST_PARAMS_PTR ,&Axx
+#else
+    #define A_XX_DIST_PARAMS_DECLARATION_PTR
+    #define A_XX_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_XY_DIST
+    #define A_XY_DIST_PARAMS_DECLARATION_PTR ,dfloat** Axy
+    #define A_XY_DIST_PARAMS_PTR ,&Axy
+#else
+    #define A_XY_DIST_PARAMS_DECLARATION_PTR
+    #define A_XY_DIST_PARAMS_PTR
+#endif
+
+
+#ifdef A_XZ_DIST
+    #define A_XZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Axz
+    #define A_XZ_DIST_PARAMS_PTR ,&Axz
+#else
+    #define A_XZ_DIST_PARAMS_DECLARATION_PTR
+    #define A_XZ_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_YY_DIST
+    #define A_YY_DIST_PARAMS_DECLARATION_PTR ,dfloat** Ayy
+    #define A_YY_DIST_PARAMS_PTR ,&Ayy
+#else
+    #define A_YY_DIST_PARAMS_DECLARATION_PTR
+    #define A_YY_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_YZ_DIST
+    #define A_YZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Ayz
+    #define A_YZ_DIST_PARAMS_PTR ,&Ayz
+#else
+    #define A_YZ_DIST_PARAMS_DECLARATION_PTR
+    #define A_YZ_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_ZZ_DIST
+    #define A_ZZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Azz
+    #define A_ZZ_DIST_PARAMS_PTR ,&Azz
+#else
+    #define A_ZZ_DIST_PARAMS_DECLARATION_PTR
+    #define A_ZZ_DIST_PARAMS_PTR
+#endif
+
+
+
 
 #ifdef PARTICLE_TRACER
     #define PARTICLE_TRACER_PARAMS_DECLARATION_PTR(PREFIX) , dfloat** PREFIX##particlePos

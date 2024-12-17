@@ -50,6 +50,71 @@ constexpr int M_MZZ_INDEX = 9;
     #define M_OFFSET M2_CZ_INDEX
 #endif
 
+#ifdef A_XX_DIST
+    constexpr int A_XX_C_INDEX   = (1+M_OFFSET);
+    constexpr int A_XX_CX_INDEX  = (2+M_OFFSET);
+    constexpr int A_XX_CY_INDEX  = (3+M_OFFSET);
+    constexpr int A_XX_CZ_INDEX  = (4+M_OFFSET);
+    #ifdef M_OFFSET
+        #undef M_OFFSET
+    #endif
+    #define M_OFFSET A_XX_CZ_INDEX
+#endif
+
+#ifdef A_XY_DIST
+    constexpr int A_XY_C_INDEX   = (1+M_OFFSET);
+    constexpr int A_XY_CX_INDEX  = (2+M_OFFSET);
+    constexpr int A_XY_CY_INDEX  = (3+M_OFFSET);
+    constexpr int A_XY_CZ_INDEX  = (4+M_OFFSET);
+    #ifdef M_OFFSET
+        #undef M_OFFSET
+    #endif
+    #define M_OFFSET A_XY_CZ_INDEX
+#endif
+
+#ifdef A_XZ_DIST
+    constexpr int A_XZ_C_INDEX   = (1+M_OFFSET);
+    constexpr int A_XZ_CX_INDEX  = (2+M_OFFSET);
+    constexpr int A_XZ_CY_INDEX  = (3+M_OFFSET);
+    constexpr int A_XZ_CZ_INDEX  = (4+M_OFFSET);
+    #ifdef M_OFFSET
+        #undef M_OFFSET
+    #endif
+    #define M_OFFSET A_XZ_CZ_INDEX
+#endif
+
+#ifdef A_YY_DIST
+    constexpr int A_YY_C_INDEX   = (1+M_OFFSET);
+    constexpr int A_YY_CX_INDEX  = (2+M_OFFSET);
+    constexpr int A_YY_CY_INDEX  = (3+M_OFFSET);
+    constexpr int A_YY_CZ_INDEX  = (4+M_OFFSET);
+    #ifdef M_OFFSET
+        #undef M_OFFSET
+    #endif
+    #define M_OFFSET A_YY_CZ_INDEX
+#endif
+
+#ifdef MYZ_DIST
+    constexpr int A_YZ_C_INDEX   = (1+M_OFFSET);
+    constexpr int A_YZ_CX_INDEX  = (2+M_OFFSET);
+    constexpr int A_YZ_CY_INDEX  = (3+M_OFFSET);
+    constexpr int A_YZ_CZ_INDEX  = (4+M_OFFSET);
+    #ifdef M_OFFSET
+        #undef M_OFFSET
+    #endif
+    #define M_OFFSET A_YZ_CZ_INDEX
+#endif
+
+#ifdef MZZ_DIST
+    constexpr int A_ZZ_C_INDEX   = (1+M_OFFSET);
+    constexpr int A_ZZ_CX_INDEX  = (2+M_OFFSET);
+    constexpr int A_ZZ_CY_INDEX  = (3+M_OFFSET);
+    constexpr int A_ZZ_CZ_INDEX  = (4+M_OFFSET);
+    #ifdef M_OFFSET
+        #undef M_OFFSET
+    #endif
+    #define M_OFFSET A_ZZ_CZ_INDEX
+#endif
 
 const size_t NUMBER_MOMENTS = M_OFFSET+1;
 

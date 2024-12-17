@@ -31,6 +31,25 @@ int main() {
     dfloat* C;
     #endif 
 
+    #ifdef A_XX_DIST
+    dfloat* Axx;
+    #endif
+    #ifdef A_XY_DIST
+    dfloat* Axy;
+    #endif
+    #ifdef A_XZ_DIST
+    dfloat* Axz;
+    #endif
+    #ifdef A_YY_DIST
+    dfloat* Ayy;
+    #endif
+    #ifdef A_YZ_DIST
+    dfloat* Ayz;
+    #endif
+    #ifdef A_ZZ_DIST
+    dfloat* Azz;
+    #endif
+
     #if NODE_TYPE_SAVE
     dfloat* nodeTypeSave;
     #endif
@@ -83,6 +102,12 @@ int main() {
         &h_fMom, &rho, &ux, &uy, &uz
         OMEGA_FIELD_PARAMS_PTR
         SECOND_DIST_PARAMS_PTR
+        A_XX_DIST_PARAMS_PTR
+        A_XY_DIST_PARAMS_PTR
+        A_XZ_DIST_PARAMS_PTR
+        A_YY_DIST_PARAMS_PTR
+        A_YZ_DIST_PARAMS_PTR
+        A_ZZ_DIST_PARAMS_PTR
         PARTICLE_TRACER_PARAMS_PTR(h_)
         MEAN_FLOW_PARAMS_PTR
         MEAN_FLOW_SECOND_DIST_PARAMS_PTR
@@ -175,7 +200,25 @@ int main() {
             interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.gGhost,cudaMemcpyDeviceToHost,QF);       
             #ifdef SECOND_DIST 
             interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
-            #endif             
+            #endif    
+            #ifdef A_XX_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Axx_h_fGhost,ghostInterface.Axx_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif       
+            #ifdef A_XY_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Axy_h_fGhost,ghostInterface.Axy_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_XZ_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Axz_h_fGhost,ghostInterface.Axz_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_YY_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayy_h_fGhost,ghostInterface.Ayy_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_YZ_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayz_h_fGhost,ghostInterface.Ayz_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_ZZ_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif                 
             saveSimCheckpoint(d_fMom, ghostInterface, &step);
         }
        
@@ -214,6 +257,24 @@ int main() {
                     #ifdef SECOND_DIST 
                     C,
                     #endif 
+                    #ifdef A_XX_DIST 
+                    Axx,
+                    #endif 
+                    #ifdef A_XY_DIST 
+                    Axy,
+                    #endif
+                    #ifdef A_XZ_DIST 
+                    Axz,
+                    #endif
+                    #ifdef A_YY_DIST 
+                    Ayy,
+                    #endif
+                    #ifdef A_YZ_DIST 
+                    Ayz,
+                    #endif
+                    #ifdef A_ZZ_DIST 
+                    Azz,
+                    #endif
                     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
                 }
             //}
@@ -253,6 +314,24 @@ int main() {
     #ifdef SECOND_DIST 
     C,
     #endif 
+    #ifdef A_XX_DIST 
+    Axx,
+    #endif 
+    #ifdef A_XY_DIST 
+    Axy,
+    #endif
+    #ifdef A_XZ_DIST 
+    Axz,
+    #endif
+    #ifdef A_YY_DIST 
+    Ayy,
+    #endif
+    #ifdef A_YZ_DIST 
+    Ayz,
+    #endif
+    #ifdef A_ZZ_DIST 
+    Azz,
+    #endif
     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(PREFIX) step);
 
     #ifdef PARTICLE_TRACER
@@ -266,7 +345,25 @@ int main() {
         interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.gGhost,cudaMemcpyDeviceToHost,QF);    
         #ifdef SECOND_DIST 
         interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
-        #endif      
+        #endif  
+        #ifdef A_XX_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Axx_h_fGhost,ghostInterface.Axx_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif 
+        #ifdef A_XY_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Axy_h_fGhost,ghostInterface.Axy_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_XZ_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Axz_h_fGhost,ghostInterface.Axz_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_YY_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayy_h_fGhost,ghostInterface.Ayy_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_YZ_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayz_h_fGhost,ghostInterface.Ayz_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_ZZ_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif    
         saveSimCheckpoint(d_fMom,ghostInterface,&step);
     }
     checkCudaErrors(cudaDeviceSynchronize());
@@ -298,6 +395,24 @@ int main() {
     #ifdef SECOND_DIST 
     cudaFree(C);
     #endif 
+    #ifdef A_XX_DIST 
+    cudaFree(Axx);
+    #endif 
+    #ifdef A_XY_DIST 
+    cudaFree(Axy);
+    #endif
+    #ifdef A_XZ_DIST 
+    cudaFree(Axz);
+    #endif
+    #ifdef A_YY_DIST 
+    cudaFree(Ayy);
+    #endif
+    #ifdef A_YZ_DIST 
+    cudaFree(Ayz);
+    #endif
+    #ifdef A_ZZ_DIST 
+    cudaFree(Azz);
+    #endif
 
     interfaceFree(ghostInterface);
 

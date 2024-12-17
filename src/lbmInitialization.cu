@@ -44,6 +44,24 @@ __global__ void gpuInitialization_mom(
     #ifdef SECOND_DIST 
     dfloat cVar, qx_t30, qy_t30, qz_t30;
     #endif
+    #ifdef A_XX_DIST 
+    dfloat AxxVar, Axx_qx_t30, Axx_qy_t30, Axx_qz_t30;
+    #endif
+    #ifdef A_XY_DIST 
+    dfloat AxyVar, Axy_qx_t30, Axy_qy_t30, Axy_qz_t30;
+    #endif
+    #ifdef A_XZ_DIST 
+    dfloat AxzVar, Axz_qx_t30, Axz_qy_t30, Axz_qz_t30;
+    #endif
+    #ifdef A_YY_DIST 
+    dfloat AyyVar, Ayy_qx_t30, Ayy_qy_t30, Ayy_qz_t30;
+    #endif
+    #ifdef A_YZ_DIST 
+    dfloat AyzVar, Ayz_qx_t30, Ayz_qy_t30, Ayz_qz_t30;
+    #endif
+    #ifdef A_ZZ_DIST 
+    dfloat AzzVar, Azz_qx_t30, Azz_qy_t30, Azz_qz_t30;
+    #endif
     
     #include CASE_FLOW_INITIALIZATION
 
@@ -100,8 +118,45 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30;
-
     #endif 
+
+    #ifdef A_XX_DIST 
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    #endif 
+    #ifdef A_XY_DIST 
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    #endif 
+    #ifdef A_XZ_DIST 
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    #endif
+    #ifdef A_YY_DIST 
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    #endif
+    #ifdef A_YZ_DIST 
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    #endif
+    #ifdef A_ZZ_DIST 
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    #endif
+
 }
 
 __global__ void gpuInitialization_pop(
@@ -291,7 +346,420 @@ __global__ void gpuInitialization_pop(
         }
     #endif //SECOND_DIST
 
+    #ifdef A_XX_DIST 
+        dfloat AxxNode[GQ];
+        
+        dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat invAxx = 1/AxxVar;
+        dfloat Axx_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Axx_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Axx_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
+        dfloat udx_t30 = 0.0;
+        dfloat udy_t30 = 0.0;
+        dfloat udz_t30 = 0.0;
+
+        #include COLREC_AXX_RECONSTRUCTIONS
+
+        if (threadIdx.x == 0) { //w
+            ghostInterface.Axx_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxxNode[ 2]; 
+            #ifdef D3G19
+            ghostInterface.Axx_fGhost.X_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = AxxNode[ 8];
+            ghostInterface.Axx_fGhost.X_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = AxxNode[10];
+            ghostInterface.Axx_fGhost.X_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = AxxNode[14];
+            ghostInterface.Axx_fGhost.X_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = AxxNode[16];
+            #endif            
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            ghostInterface.Axx_fGhost.X_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxxNode[ 1];
+            #ifdef D3G19
+            ghostInterface.Axx_fGhost.X_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = AxxNode[ 7];
+            ghostInterface.Axx_fGhost.X_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = AxxNode[ 9];
+            ghostInterface.Axx_fGhost.X_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = AxxNode[13];
+            ghostInterface.Axx_fGhost.X_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = AxxNode[15];     
+            #endif    
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            ghostInterface.Axx_fGhost.Y_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = AxxNode[ 4];
+            #ifdef D3G19
+            ghostInterface.Axx_fGhost.Y_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = AxxNode[ 8];
+            ghostInterface.Axx_fGhost.Y_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = AxxNode[12];
+            ghostInterface.Axx_fGhost.Y_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = AxxNode[13];
+            ghostInterface.Axx_fGhost.Y_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = AxxNode[18];           
+            #endif           
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            ghostInterface.Axx_fGhost.Y_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = AxxNode[ 3];
+            #ifdef D3G19
+            ghostInterface.Axx_fGhost.Y_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = AxxNode[ 7];
+            ghostInterface.Axx_fGhost.Y_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = AxxNode[11];
+            ghostInterface.Axx_fGhost.Y_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = AxxNode[14];
+            ghostInterface.Axx_fGhost.Y_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = AxxNode[17];         
+            #endif        
+        }
+        
+        if (threadIdx.z == 0){ //b                          
+            ghostInterface.Axx_fGhost.Z_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AxxNode[ 6];
+            #ifdef D3G19
+            ghostInterface.Axx_fGhost.Z_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AxxNode[10];
+            ghostInterface.Axx_fGhost.Z_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AxxNode[12];
+            ghostInterface.Axx_fGhost.Z_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AxxNode[15];
+            ghostInterface.Axx_fGhost.Z_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AxxNode[17]; 
+            #endif    
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            ghostInterface.Axx_fGhost.Z_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AxxNode[ 5];
+            #ifdef D3G19
+            ghostInterface.Axx_fGhost.Z_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AxxNode[ 9];
+            ghostInterface.Axx_fGhost.Z_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AxxNode[11];
+            ghostInterface.Axx_fGhost.Z_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AxxNode[16];
+            ghostInterface.Axx_fGhost.Z_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AxxNode[18];    
+            #endif                    
+        }
+    #endif //A_XX_DIST
+        #ifdef A_XY_DIST 
+        dfloat AxyNode[GQ];
+        
+        dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat invAxy = 1/AxyVar;
+        dfloat Axy_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Axy_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Axy_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+        dfloat udx_t30 = 0.0;
+        dfloat udy_t30 = 0.0;
+        dfloat udz_t30 = 0.0;
+
+        #include COLREC_AXY_RECONSTRUCTIONS
+
+        if (threadIdx.x == 0) { //w
+            ghostInterface.Axy_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxyNode[ 2]; 
+            #ifdef D3G19
+            ghostInterface.Axy_fGhost.X_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = AxyNode[ 8];
+            ghostInterface.Axy_fGhost.X_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = AxyNode[10];
+            ghostInterface.Axy_fGhost.X_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = AxyNode[14];
+            ghostInterface.Axy_fGhost.X_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = AxyNode[16];
+            #endif            
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            ghostInterface.Axy_fGhost.X_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxyNode[ 1];
+            #ifdef D3G19
+            ghostInterface.Axy_fGhost.X_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = AxyNode[ 7];
+            ghostInterface.Axy_fGhost.X_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = AxyNode[ 9];
+            ghostInterface.Axy_fGhost.X_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = AxyNode[13];
+            ghostInterface.Axy_fGhost.X_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = AxyNode[15];     
+            #endif    
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            ghostInterface.Axy_fGhost.Y_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = AxyNode[ 4];
+            #ifdef D3G19
+            ghostInterface.Axy_fGhost.Y_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = AxyNode[ 8];
+            ghostInterface.Axy_fGhost.Y_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = AxyNode[12];
+            ghostInterface.Axy_fGhost.Y_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = AxyNode[13];
+            ghostInterface.Axy_fGhost.Y_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = AxyNode[18];           
+            #endif           
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            ghostInterface.Axy_fGhost.Y_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = AxyNode[ 3];
+            #ifdef D3G19
+            ghostInterface.Axy_fGhost.Y_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = AxyNode[ 7];
+            ghostInterface.Axy_fGhost.Y_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = AxyNode[11];
+            ghostInterface.Axy_fGhost.Y_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = AxyNode[14];
+            ghostInterface.Axy_fGhost.Y_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = AxyNode[17];         
+            #endif        
+        }
+        
+        if (threadIdx.z == 0){ //b                          
+            ghostInterface.Axy_fGhost.Z_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AxyNode[ 6];
+            #ifdef D3G19
+            ghostInterface.Axy_fGhost.Z_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AxyNode[10];
+            ghostInterface.Axy_fGhost.Z_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AxyNode[12];
+            ghostInterface.Axy_fGhost.Z_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AxyNode[15];
+            ghostInterface.Axy_fGhost.Z_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AxyNode[17]; 
+            #endif    
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            ghostInterface.Axy_fGhost.Z_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AxyNode[ 5];
+            #ifdef D3G19
+            ghostInterface.Axy_fGhost.Z_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AxyNode[ 9];
+            ghostInterface.Axy_fGhost.Z_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AxyNode[11];
+            ghostInterface.Axy_fGhost.Z_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AxyNode[16];
+            ghostInterface.Axy_fGhost.Z_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AxyNode[18];    
+            #endif                    
+        }
+    #endif //A_XY_DIST
+    #ifdef A_XZ_DIST 
+        dfloat AxzNode[GQ];
+        
+        dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat invAxz = 1/AxzVar;
+        dfloat Axz_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Axz_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Axz_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+        dfloat udx_t30 = 0.0;
+        dfloat udy_t30 = 0.0;
+        dfloat udz_t30 = 0.0;
+
+        #include COLREC_AXZ_RECONSTRUCTIONS
+
+        if (threadIdx.x == 0) { //w
+            ghostInterface.Axz_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxzNode[ 2]; 
+            #ifdef D3G19
+            ghostInterface.Axz_fGhost.X_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = AxzNode[ 8];
+            ghostInterface.Axz_fGhost.X_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = AxzNode[10];
+            ghostInterface.Axz_fGhost.X_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = AxzNode[14];
+            ghostInterface.Axz_fGhost.X_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = AxzNode[16];
+            #endif            
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            ghostInterface.Axz_fGhost.X_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxzNode[ 1];
+            #ifdef D3G19
+            ghostInterface.Axz_fGhost.X_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = AxzNode[ 7];
+            ghostInterface.Axz_fGhost.X_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = AxzNode[ 9];
+            ghostInterface.Axz_fGhost.X_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = AxzNode[13];
+            ghostInterface.Axz_fGhost.X_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = AxzNode[15];     
+            #endif    
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            ghostInterface.Axz_fGhost.Y_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = AxzNode[ 4];
+            #ifdef D3G19
+            ghostInterface.Axz_fGhost.Y_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = AxzNode[ 8];
+            ghostInterface.Axz_fGhost.Y_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = AxzNode[12];
+            ghostInterface.Axz_fGhost.Y_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = AxzNode[13];
+            ghostInterface.Axz_fGhost.Y_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = AxzNode[18];           
+            #endif           
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            ghostInterface.Axz_fGhost.Y_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = AxzNode[ 3];
+            #ifdef D3G19
+            ghostInterface.Axz_fGhost.Y_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = AxzNode[ 7];
+            ghostInterface.Axz_fGhost.Y_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = AxzNode[11];
+            ghostInterface.Axz_fGhost.Y_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = AxzNode[14];
+            ghostInterface.Axz_fGhost.Y_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = AxzNode[17];         
+            #endif        
+        }
+        
+        if (threadIdx.z == 0){ //b                          
+            ghostInterface.Axz_fGhost.Z_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AxzNode[ 6];
+            #ifdef D3G19
+            ghostInterface.Axz_fGhost.Z_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AxzNode[10];
+            ghostInterface.Axz_fGhost.Z_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AxzNode[12];
+            ghostInterface.Axz_fGhost.Z_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AxzNode[15];
+            ghostInterface.Axz_fGhost.Z_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AxzNode[17]; 
+            #endif    
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            ghostInterface.Axz_fGhost.Z_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AxzNode[ 5];
+            #ifdef D3G19
+            ghostInterface.Axz_fGhost.Z_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AxzNode[ 9];
+            ghostInterface.Axz_fGhost.Z_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AxzNode[11];
+            ghostInterface.Axz_fGhost.Z_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AxzNode[16];
+            ghostInterface.Axz_fGhost.Z_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AxzNode[18];    
+            #endif                    
+        }
+    #endif //A_XZ_DIST
+    #ifdef A_YY_DIST 
+        dfloat AyyNode[GQ];
+        
+        dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat invAyy = 1/AyyVar;
+        dfloat Ayy_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Ayy_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Ayy_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+        dfloat udx_t30 = 0.0;
+        dfloat udy_t30 = 0.0;
+        dfloat udz_t30 = 0.0;
+
+        #include COLREC_AYY_RECONSTRUCTIONS
+
+        if (threadIdx.x == 0) { //w
+            ghostInterface.Ayy_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AyyNode[ 2]; 
+            #ifdef D3G19
+            ghostInterface.Ayy_fGhost.X_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = AyyNode[ 8];
+            ghostInterface.Ayy_fGhost.X_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = AyyNode[10];
+            ghostInterface.Ayy_fGhost.X_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = AyyNode[14];
+            ghostInterface.Ayy_fGhost.X_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = AyyNode[16];
+            #endif            
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            ghostInterface.Ayy_fGhost.X_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = AyyNode[ 1];
+            #ifdef D3G19
+            ghostInterface.Ayy_fGhost.X_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = AyyNode[ 7];
+            ghostInterface.Ayy_fGhost.X_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = AyyNode[ 9];
+            ghostInterface.Ayy_fGhost.X_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = AyyNode[13];
+            ghostInterface.Ayy_fGhost.X_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = AyyNode[15];     
+            #endif    
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            ghostInterface.Ayy_fGhost.Y_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = AyyNode[ 4];
+            #ifdef D3G19
+            ghostInterface.Ayy_fGhost.Y_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = AyyNode[ 8];
+            ghostInterface.Ayy_fGhost.Y_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = AyyNode[12];
+            ghostInterface.Ayy_fGhost.Y_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = AyyNode[13];
+            ghostInterface.Ayy_fGhost.Y_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = AyyNode[18];           
+            #endif           
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            ghostInterface.Ayy_fGhost.Y_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = AyyNode[ 3];
+            #ifdef D3G19
+            ghostInterface.Ayy_fGhost.Y_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = AyyNode[ 7];
+            ghostInterface.Ayy_fGhost.Y_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = AyyNode[11];
+            ghostInterface.Ayy_fGhost.Y_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = AyyNode[14];
+            ghostInterface.Ayy_fGhost.Y_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = AyyNode[17];         
+            #endif        
+        }
+        
+        if (threadIdx.z == 0){ //b                          
+            ghostInterface.Ayy_fGhost.Z_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AyyNode[ 6];
+            #ifdef D3G19
+            ghostInterface.Ayy_fGhost.Z_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AyyNode[10];
+            ghostInterface.Ayy_fGhost.Z_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AyyNode[12];
+            ghostInterface.Ayy_fGhost.Z_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AyyNode[15];
+            ghostInterface.Ayy_fGhost.Z_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AyyNode[17]; 
+            #endif    
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            ghostInterface.Ayy_fGhost.Z_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AyyNode[ 5];
+            #ifdef D3G19
+            ghostInterface.Ayy_fGhost.Z_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AyyNode[ 9];
+            ghostInterface.Ayy_fGhost.Z_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AyyNode[11];
+            ghostInterface.Ayy_fGhost.Z_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AyyNode[16];
+            ghostInterface.Ayy_fGhost.Z_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AyyNode[18];    
+            #endif                    
+        }
+    #endif //A_YY_DIST
+        #ifdef A_YZ_DIST 
+        dfloat AyzNode[GQ];
+        
+        dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat invAyz = 1/AyzVar;
+        dfloat Ayz_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Ayz_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Ayz_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+        dfloat udx_t30 = 0.0;
+        dfloat udy_t30 = 0.0;
+        dfloat udz_t30 = 0.0;
+
+        #include COLREC_AYZ_RECONSTRUCTIONS
+
+        if (threadIdx.x == 0) { //w
+            ghostInterface.Ayz_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AyzNode[ 2]; 
+            #ifdef D3G19
+            ghostInterface.Ayz_fGhost.X_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = AyzNode[ 8];
+            ghostInterface.Ayz_fGhost.X_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = AyzNode[10];
+            ghostInterface.Ayz_fGhost.X_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = AyzNode[14];
+            ghostInterface.Ayz_fGhost.X_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = AyzNode[16];
+            #endif            
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            ghostInterface.Ayz_fGhost.X_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = AyzNode[ 1];
+            #ifdef D3G19
+            ghostInterface.Ayz_fGhost.X_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = AyzNode[ 7];
+            ghostInterface.Ayz_fGhost.X_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = AyzNode[ 9];
+            ghostInterface.Ayz_fGhost.X_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = AyzNode[13];
+            ghostInterface.Ayz_fGhost.X_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = AyzNode[15];     
+            #endif    
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            ghostInterface.Ayz_fGhost.Y_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = AyzNode[ 4];
+            #ifdef D3G19
+            ghostInterface.Ayz_fGhost.Y_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = AyzNode[ 8];
+            ghostInterface.Ayz_fGhost.Y_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = AyzNode[12];
+            ghostInterface.Ayz_fGhost.Y_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = AyzNode[13];
+            ghostInterface.Ayz_fGhost.Y_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = AyzNode[18];           
+            #endif           
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            ghostInterface.Ayz_fGhost.Y_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = AyzNode[ 3];
+            #ifdef D3G19
+            ghostInterface.Ayz_fGhost.Y_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = AyzNode[ 7];
+            ghostInterface.Ayz_fGhost.Y_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = AyzNode[11];
+            ghostInterface.Ayz_fGhost.Y_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = AyzNode[14];
+            ghostInterface.Ayz_fGhost.Y_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = AyzNode[17];         
+            #endif        
+        }
+        
+        if (threadIdx.z == 0){ //b                          
+            ghostInterface.Ayz_fGhost.Z_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AyzNode[ 6];
+            #ifdef D3G19
+            ghostInterface.Ayz_fGhost.Z_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AyzNode[10];
+            ghostInterface.Ayz_fGhost.Z_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AyzNode[12];
+            ghostInterface.Ayz_fGhost.Z_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AyzNode[15];
+            ghostInterface.Ayz_fGhost.Z_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AyzNode[17]; 
+            #endif    
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            ghostInterface.Ayz_fGhost.Z_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AyzNode[ 5];
+            #ifdef D3G19
+            ghostInterface.Ayz_fGhost.Z_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AyzNode[ 9];
+            ghostInterface.Ayz_fGhost.Z_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AyzNode[11];
+            ghostInterface.Ayz_fGhost.Z_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AyzNode[16];
+            ghostInterface.Ayz_fGhost.Z_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AyzNode[18];    
+            #endif                    
+        }
+    #endif //A_YZ_DIST
+        #ifdef A_ZZ_DIST 
+        dfloat AzzNode[GQ];
+        
+        dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat invAzz = 1/AzzVar;
+        dfloat Azz_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Azz_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        dfloat Azz_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+        dfloat udx_t30 = 0.0;
+        dfloat udy_t30 = 0.0;
+        dfloat udz_t30 = 0.0;
+
+        #include COLREC_AZZ_RECONSTRUCTIONS
+
+        if (threadIdx.x == 0) { //w
+            ghostInterface.Azz_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AzzNode[ 2]; 
+            #ifdef D3G19
+            ghostInterface.Azz_fGhost.X_0[g_idxPopX(ty, tz, 1, bx, by, bz)] = AzzNode[ 8];
+            ghostInterface.Azz_fGhost.X_0[g_idxPopX(ty, tz, 2, bx, by, bz)] = AzzNode[10];
+            ghostInterface.Azz_fGhost.X_0[g_idxPopX(ty, tz, 3, bx, by, bz)] = AzzNode[14];
+            ghostInterface.Azz_fGhost.X_0[g_idxPopX(ty, tz, 4, bx, by, bz)] = AzzNode[16];
+            #endif            
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            ghostInterface.Azz_fGhost.X_1[g_idxPopX(ty, tz, 0, bx, by, bz)] = AzzNode[ 1];
+            #ifdef D3G19
+            ghostInterface.Azz_fGhost.X_1[g_idxPopX(ty, tz, 1, bx, by, bz)] = AzzNode[ 7];
+            ghostInterface.Azz_fGhost.X_1[g_idxPopX(ty, tz, 2, bx, by, bz)] = AzzNode[ 9];
+            ghostInterface.Azz_fGhost.X_1[g_idxPopX(ty, tz, 3, bx, by, bz)] = AzzNode[13];
+            ghostInterface.Azz_fGhost.X_1[g_idxPopX(ty, tz, 4, bx, by, bz)] = AzzNode[15];     
+            #endif    
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            ghostInterface.Azz_fGhost.Y_0[g_idxPopY(tx, tz, 0, bx, by, bz)] = AzzNode[ 4];
+            #ifdef D3G19
+            ghostInterface.Azz_fGhost.Y_0[g_idxPopY(tx, tz, 1, bx, by, bz)] = AzzNode[ 8];
+            ghostInterface.Azz_fGhost.Y_0[g_idxPopY(tx, tz, 2, bx, by, bz)] = AzzNode[12];
+            ghostInterface.Azz_fGhost.Y_0[g_idxPopY(tx, tz, 3, bx, by, bz)] = AzzNode[13];
+            ghostInterface.Azz_fGhost.Y_0[g_idxPopY(tx, tz, 4, bx, by, bz)] = AzzNode[18];           
+            #endif           
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            ghostInterface.Azz_fGhost.Y_1[g_idxPopY(tx, tz, 0, bx, by, bz)] = AzzNode[ 3];
+            #ifdef D3G19
+            ghostInterface.Azz_fGhost.Y_1[g_idxPopY(tx, tz, 1, bx, by, bz)] = AzzNode[ 7];
+            ghostInterface.Azz_fGhost.Y_1[g_idxPopY(tx, tz, 2, bx, by, bz)] = AzzNode[11];
+            ghostInterface.Azz_fGhost.Y_1[g_idxPopY(tx, tz, 3, bx, by, bz)] = AzzNode[14];
+            ghostInterface.Azz_fGhost.Y_1[g_idxPopY(tx, tz, 4, bx, by, bz)] = AzzNode[17];         
+            #endif        
+        }
+        
+        if (threadIdx.z == 0){ //b                          
+            ghostInterface.Azz_fGhost.Z_0[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AzzNode[ 6];
+            #ifdef D3G19
+            ghostInterface.Azz_fGhost.Z_0[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AzzNode[10];
+            ghostInterface.Azz_fGhost.Z_0[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AzzNode[12];
+            ghostInterface.Azz_fGhost.Z_0[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AzzNode[15];
+            ghostInterface.Azz_fGhost.Z_0[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AzzNode[17]; 
+            #endif    
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            ghostInterface.Azz_fGhost.Z_1[g_idxPopZ(tx, ty, 0, bx, by, bz)] = AzzNode[ 5];
+            #ifdef D3G19
+            ghostInterface.Azz_fGhost.Z_1[g_idxPopZ(tx, ty, 1, bx, by, bz)] = AzzNode[ 9];
+            ghostInterface.Azz_fGhost.Z_1[g_idxPopZ(tx, ty, 2, bx, by, bz)] = AzzNode[11];
+            ghostInterface.Azz_fGhost.Z_1[g_idxPopZ(tx, ty, 3, bx, by, bz)] = AzzNode[16];
+            ghostInterface.Azz_fGhost.Z_1[g_idxPopZ(tx, ty, 4, bx, by, bz)] = AzzNode[18];    
+            #endif                    
+        }
+    #endif //A_ZZ_DIST
 }
 
 

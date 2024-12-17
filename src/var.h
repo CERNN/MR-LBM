@@ -50,6 +50,30 @@ constexpr bool console_flush = false;
 #define COLREC_G_RECONSTRUCTIONS STR(COLREC_DIRECTORY/G_SCALAR/reconstruction.inc)
 #define COLREC_G_COLLISION STR(COLREC_DIRECTORY/G_SCALAR/collision.inc)
 
+#define CASE_AXX_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/axx_bc_definition.inc)
+#define COLREC_AXX_RECONSTRUCTIONS STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_xx.inc)
+#define COLREC_AXX_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
+
+#define CASE_AXY_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/axy_bc_definition.inc)
+#define COLREC_AXY_RECONSTRUCTIONS STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_xy.inc)
+#define COLREC_AXY_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
+
+#define CASE_AXZ_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/axz_bc_definition.inc)
+#define COLREC_AXZ_RECONSTRUCTIONS STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_xz.inc)
+#define COLREC_AXZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
+
+#define CASE_AYY_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/ayy_bc_definition.inc)
+#define COLREC_AYY_RECONSTRUCTIONS STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_yy.inc)
+#define COLREC_AYY_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
+
+#define CASE_AYZ_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/ayz_bc_definition.inc)
+#define COLREC_AYZ_RECONSTRUCTIONS STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_yz.inc)
+#define COLREC_AYZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
+
+#define CASE_AZZ_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/azz_bc_definition.inc)
+#define COLREC_AZZ_RECONSTRUCTIONS STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_zz.inc)
+#define COLREC_AZZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
+
 
 // Some compiler timer functions
 constexpr dfloat constexprSqrt(dfloat x, dfloat curr, dfloat prev) {

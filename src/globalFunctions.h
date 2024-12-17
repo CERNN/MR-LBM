@@ -122,7 +122,8 @@ idxPopZ(
 
     return tx + BLOCK_NX * (ty + BLOCK_NY * (pop + QF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
-#ifdef SECOND_DIST
+#if defined(SECOND_DIST) || defined(A_XX_DIST) || defined(A_XY_DIST) || defined(A_XZ_DIST) || defined(A_YY_DIST) || defined(A_YZ_DIST) || defined(A_ZZ_DIST)
+
 __device__ int __forceinline__
 g_idxPopX(
     const int ty,
