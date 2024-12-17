@@ -21,6 +21,7 @@ Projects:
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
   ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
   ☐ Fix parallel reduction for 2D cases bigger than 256x256
+  ☐ Separate omega from non_newtonian
 
   ✔ Particle Tracer @done(14-03-04 12:53)
   ✔ Create a checkpoint save file @done(23-03-16 18:47)

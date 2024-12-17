@@ -14,7 +14,7 @@
 /* --------------------------- OTHER DEFINITIONS ------------------------- */
 //#define DENSITY_CORRECTION
 
-//#define RANDOM_NUMBERS true    // to generate random numbers 
+#define RANDOM_NUMBERS true    // to generate random numbers 
                                // (useful for turbulence)
 
 

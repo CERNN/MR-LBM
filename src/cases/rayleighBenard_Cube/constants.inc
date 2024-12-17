@@ -5,7 +5,7 @@ constexpr dfloat NNF_TRIGGER_STEP_SIZE = 2000000;
 constexpr dfloat NNF_TRIGGER_STEP_END = NNF_TRIGGER_STEP+NNF_TRIGGER_STEP_SIZE;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 60000;
+constexpr int N_STEPS = 100000000;
 constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
@@ -35,7 +35,7 @@ __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 #define BC_Y_WALL
 #define BC_Z_WALL
 
-constexpr dfloat TAU = 0.8;//0.5 + 3.0*VISC;     // relaxation time
+constexpr dfloat TAU = 0.53;//0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat VISC = (TAU-0.5)/3;
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 

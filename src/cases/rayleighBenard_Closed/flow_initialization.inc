@@ -3,7 +3,7 @@ ux = U_0_X;
 uy = U_0_Y;
 uz = U_0_Z;
 
-dfloat pert = 0.05;
+dfloat pert = 0.02;
 int l = idxScalarGlobal(x, y, z);
 int Nt = NUMBER_LBM_NODES;
 dfloat xc = (NX-1)/2.0;

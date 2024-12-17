@@ -21,7 +21,7 @@ constexpr dfloat GAMMA_0 = 0;       // Truncated Power-Law.
 /* --------------------------------BINGHAM---------------------------------- */
 #ifdef BINGHAM
 // Inputs
-constexpr dfloat S_YY = 1.0 *VISC*invSqrtt(L/(T_gravity_t_beta*T_DELTA_T));
+constexpr dfloat S_YY = BN_NUMBER *VISC*invSqrtt(L/(T_gravity_t_beta*T_DELTA_T));
 constexpr dfloat S_Y= S_YY;
 constexpr dfloat Bn_turan = S_Y*sqrtt(L/(T_gravity_t_beta*T_DELTA_T))/VISC;
 constexpr dfloat Bn_Zhang = Bn_turan * sqrtt(T_PR_NUMBER/T_RA_NUMBER);
@@ -97,6 +97,7 @@ constexpr dfloat eta_0 =  1e-3;
     __device__ 
     dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
         return OMEGA_P * myMax(0.0, (1 - S_Y / auxStressMag));
+        //return OMEGA_P * myMax(0.0, (1 - S_Y * ((dfloat)(step - NNF_TRIGGER_STEP)/(NNF_TRIGGER_STEP_SIZE)) / auxStressMag));
     }
     #endif  
 

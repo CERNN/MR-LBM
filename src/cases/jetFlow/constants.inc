@@ -1,5 +1,5 @@
 
-#define VOXEL_FILENAME "cube_L32N256.csv"
+//#define VOXEL_FILENAME "cube_L32N256.csv"
 
 constexpr dfloat RE = 500;
 

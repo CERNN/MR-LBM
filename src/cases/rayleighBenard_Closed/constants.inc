@@ -1,18 +1,15 @@
 #define THERMAL_MODEL 
 #define BINGHAM
-constexpr dfloat NNF_TRIGGER_STEP =      2500000;
-constexpr dfloat NNF_TRIGGER_STEP_SIZE = 4000000;
+constexpr dfloat NNF_TRIGGER_STEP =      2000000;
+constexpr dfloat NNF_TRIGGER_STEP_SIZE = 2000000;
 constexpr dfloat NNF_TRIGGER_STEP_END = NNF_TRIGGER_STEP+NNF_TRIGGER_STEP_SIZE;
 
-
-
-
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 10000;
+constexpr int N_STEPS = 80000000;
 constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = 4;        // size z of the grid in one GPU
+constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 0.0;  
@@ -36,7 +33,7 @@ __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 
 #define BC_X_WALL
 #define BC_Y_WALL
-#define BC_Z_PERIODIC
+#define BC_Z_WALL
 
 constexpr dfloat TAU = 0.8;//0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat VISC = (TAU-0.5)/3;
@@ -50,12 +47,12 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
     constexpr bool T_BOUYANCY = true;
     constexpr dfloat T_PR_NUMBER = 10; //Prandtl Number
-    constexpr dfloat T_RA_NUMBER = 1e4; // Rayleigh Number
-    constexpr dfloat BN_NUMBER = 0.025;
+    constexpr dfloat T_RA_NUMBER = 1e6; // Rayleigh Number
+    constexpr dfloat BN_NUMBER = 0.08;
     constexpr dfloat T_GR_NUMBER = T_RA_NUMBER/T_PR_NUMBER; //Grashof number
 
-    constexpr dfloat T_DELTA_T = 1; //temperature difference
-    constexpr dfloat T_REFERENCE  = 1; //better closer to 1
+    constexpr dfloat T_DELTA_T = 10.0; //temperature difference
+    constexpr dfloat T_REFERENCE  = 10.0; //better closer to 1
     constexpr dfloat T_COLD = T_REFERENCE - T_DELTA_T/2.0;
     constexpr dfloat T_HOT = T_REFERENCE + T_DELTA_T/2.0;
     constexpr dfloat C_0 = T_REFERENCE; //initial temperature field 
@@ -77,6 +74,7 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
     constexpr dfloat G_AAA = (3*T_DIFF_FLUC*G_OMEGA);
     constexpr dfloat G_DIFF_FLUC_COEF = G_AAA/(1.0+G_AAA);
 #endif //THERMAL_MODEL
+
 
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
 constexpr int INI_STEP = 0; // initial simulation step (0 default)
