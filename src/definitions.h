@@ -148,16 +148,6 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 
 /* --------------------------------- MACROS --------------------------------- */
 
-
-#ifndef myMax
-#define myMax(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef myMin
-#define myMin(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
-
 #if defined(HO_RR) || defined(HOME_LBM)
     #define HIGH_ORDER_COLLISION
 #endif

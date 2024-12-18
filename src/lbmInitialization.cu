@@ -801,7 +801,7 @@ __host__ void hostInitialization_nodeType_bulk(
     unsigned int *hNodeType)
 {
     int x,y,z;
-    unsigned int nodeType;
+    //unsigned int nodeType;
 
     for (x = 0; x<NX;x++){
         for (y = 0; y<NY;y++){
@@ -846,7 +846,6 @@ void read_xyz_file(
     }
 
     int x, y, z;
-    int value;
     size_t index, index_n;
 
     int xi, yi, zi;

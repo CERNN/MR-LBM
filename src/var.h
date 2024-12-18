@@ -75,7 +75,17 @@ constexpr bool console_flush = false;
 #define COLREC_AZZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
 
 
-// Some compiler timer functions
+// Some compiler timer functions and auxiliaty compute macros
+
+#ifndef myMax
+#define myMax(a,b)            (((a) > (b)) ? (a) : (b))
+#endif
+
+#ifndef myMin
+#define myMin(a,b)            (((a) < (b)) ? (a) : (b))
+#endif
+
+
 constexpr dfloat constexprSqrt(dfloat x, dfloat curr, dfloat prev) {
     return (curr == prev) ? curr : constexprSqrt(x, 0.5 * (curr + x / curr), curr);
 }
@@ -147,11 +157,11 @@ constexpr BlockDim findOptimalBlockDimensions(size_t maxElements) {
 }
 
 
-
 #include CASE_MODEL
 #include CASE_CONSTANTS
 #include CASE_OUTPUTS
 
+#include "nnf.h"
 #include "definitions.h"
 
 #endif //__VAR_H

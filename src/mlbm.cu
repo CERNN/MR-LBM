@@ -432,11 +432,7 @@ __global__ void gpuMomCollisionStream(
                     eta = VISC + S_Y/gamma_dot;
                     omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
                     */
-                if(step> NNF_TRIGGER_STEP){
-                    omegaVar = calcOmega(omegaVar, auxStressMag,step);
-                }else{
-                    omegaVar = OMEGA;
-                }
+                omegaVar = calcOmega(omegaVar, auxStressMag,step);
 
 
                 #endif//  OMEGA_FIELD
