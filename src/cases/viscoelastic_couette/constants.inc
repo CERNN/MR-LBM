@@ -1,4 +1,4 @@
-#define BINGHAM
+#define FENE_P
 
 constexpr dfloat RE = 1000;
 
@@ -11,7 +11,6 @@ constexpr int NZ = 8;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 0.1;  
-constexpr dfloat L = N;
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
@@ -38,6 +37,20 @@ constexpr dfloat VISC = U_MAX * NX / RE;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
+
+/* --------------------- VISCOELASTIC -------------------- */
+#define D3G19
+
+constexpr dfloat Weissenberg_number = 10;
+constexpr dfloat kinematic_viscosity_ratio = 0.1;
+constexpr dfloat L = N;
+constexpr dfloat fenep_lambda = Weissenberg_number/(U_MAX/L);
+constexpr dfloat inv_fenep_lambda = 1.0/fenep_lambda;
+constexpr dfloat nu_s = VISC/RHO_0;
+constexpr dfloat nu_p = (nu_s/kinematic_viscosity_ratio) - nu_s;
+constexpr dfloat rho_p = 1.0;
+constexpr dfloat fenep_mup = nu_p*rho_p;
+constexpr dfloat fenep_re = 1.0;
 
 
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */

@@ -75,7 +75,7 @@ __global__ void gpuMomCollisionStream(
     #endif
 
 
-    #include COLREC_RECONSTRUCTIONS
+    #include COLREC_RECONSTRUCTION
 
     const unsigned short int xp1 = (threadIdx.x + 1 + BLOCK_NX) % BLOCK_NX;
     const unsigned short int xm1 = (threadIdx.x - 1 + BLOCK_NX) % BLOCK_NX;
@@ -245,6 +245,12 @@ __global__ void gpuMomCollisionStream(
    
     #include "includeFiles/popLoad.inc"
 
+
+    #ifdef CONFORMATION_TENSOR
+    #include "includeFiles\conformationTransport.inc"
+    #endif
+
+
     dfloat invRho;
     if(nodeType != BULK){
         #include CASE_BC_DEF
@@ -311,7 +317,7 @@ __global__ void gpuMomCollisionStream(
         dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy_t30);
         dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz_t30);
 
-        #include  COLREC_G_RECONSTRUCTIONS
+        #include  COLREC_G_RECONSTRUCTION
 
         __syncthreads();
 
@@ -379,7 +385,7 @@ __global__ void gpuMomCollisionStream(
         udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz_t30);
             
 
-        #include COLREC_G_RECONSTRUCTIONS
+        #include COLREC_G_RECONSTRUCTION
 
         #include "includeFiles/g_popSave.inc"
         
@@ -454,7 +460,7 @@ __global__ void gpuMomCollisionStream(
         
 
     //calculate post collision populations
-    #include COLREC_RECONSTRUCTIONS
+    #include COLREC_RECONSTRUCTION
     
     
     /* write to global mom */

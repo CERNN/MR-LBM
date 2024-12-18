@@ -173,7 +173,7 @@ g_idxUX(
     const int bz)
 {
 
-    return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
 
 __device__ int __forceinline__
@@ -185,7 +185,7 @@ g_idxUY(
     const int by,
     const int bz)
 {
-    return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
 
 __device__ int __forceinline__
@@ -197,7 +197,7 @@ g_idxUZ(
     const int by,
     const int bz)
 {
-    return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
 #endif
 

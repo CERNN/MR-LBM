@@ -185,7 +185,7 @@ __global__ void gpuInitialization_pop(
     dfloat pop[Q];
     dfloat multiplyTerm;
     dfloat pics2;
-    #include COLREC_RECONSTRUCTIONS
+    #include COLREC_RECONSTRUCTION
     
     //thread xyz
     int tx = threadIdx.x;
@@ -289,7 +289,7 @@ __global__ void gpuInitialization_pop(
         dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uy_t30);
         dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uz_t30);
 
-        #include COLREC_G_RECONSTRUCTIONS
+        #include COLREC_G_RECONSTRUCTION
 
         if (threadIdx.x == 0) { //w
             ghostInterface.g_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = gNode[ 2]; 
@@ -359,7 +359,7 @@ __global__ void gpuInitialization_pop(
         //dfloat udy_t30 = 0.0;
         //dfloat udz_t30 = 0.0;
 
-        #include COLREC_AXX_RECONSTRUCTIONS
+        #include COLREC_AXX_RECONSTRUCTION
 
         if (threadIdx.x == 0) { //w
             ghostInterface.Axx_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxxNode[ 2]; 
@@ -428,7 +428,7 @@ __global__ void gpuInitialization_pop(
         //dfloat udy_t30 = 0.0;
         //dfloat udz_t30 = 0.0;
 
-        #include COLREC_AXY_RECONSTRUCTIONS
+        #include COLREC_AXY_RECONSTRUCTION
 
         if (threadIdx.x == 0) { //w
             ghostInterface.Axy_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxyNode[ 2]; 
@@ -497,7 +497,7 @@ __global__ void gpuInitialization_pop(
         //dfloat udy_t30 = 0.0;
         //dfloat udz_t30 = 0.0;
 
-        #include COLREC_AXZ_RECONSTRUCTIONS
+        #include COLREC_AXZ_RECONSTRUCTION
 
         if (threadIdx.x == 0) { //w
             ghostInterface.Axz_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AxzNode[ 2]; 
@@ -566,7 +566,7 @@ __global__ void gpuInitialization_pop(
         //dfloat udy_t30 = 0.0;
         //dfloat udz_t30 = 0.0;
 
-        #include COLREC_AYY_RECONSTRUCTIONS
+        #include COLREC_AYY_RECONSTRUCTION
 
         if (threadIdx.x == 0) { //w
             ghostInterface.Ayy_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AyyNode[ 2]; 
@@ -635,7 +635,7 @@ __global__ void gpuInitialization_pop(
         //dfloat udy_t30 = 0.0;
         //dfloat udz_t30 = 0.0;
 
-        #include COLREC_AYZ_RECONSTRUCTIONS
+        #include COLREC_AYZ_RECONSTRUCTION
 
         if (threadIdx.x == 0) { //w
             ghostInterface.Ayz_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AyzNode[ 2]; 
@@ -704,7 +704,7 @@ __global__ void gpuInitialization_pop(
         //dfloat udy_t30 = 0.0;
         //dfloat udz_t30 = 0.0;
 
-        #include COLREC_AZZ_RECONSTRUCTIONS
+        #include COLREC_AZZ_RECONSTRUCTION
 
         if (threadIdx.x == 0) { //w
             ghostInterface.Azz_fGhost.X_0[g_idxPopX(ty, tz, 0, bx, by, bz)] = AzzNode[ 2]; 

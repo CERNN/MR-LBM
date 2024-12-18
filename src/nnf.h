@@ -56,10 +56,20 @@ constexpr dfloat t1 = 1e-3;
 constexpr dfloat eta_0 =  1e-3;
 
 #endif
-/* -------------------------------------------------------------------------- */
+/* ----------------------------- FENE_P ------------------------------------- */
 
 #ifdef FENE_P
+#define CONFORMATION_TENSOR
+#define COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
+#define A_XX_DIST
+#define A_XY_DIST
+#define A_XZ_DIST
+#define A_YY_DIST
+#define A_YZ_DIST
+#define A_ZZ_DIST
+
+// Input
 
 #endif
 
