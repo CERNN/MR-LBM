@@ -86,65 +86,91 @@ __global__ void gpuMomCollisionStream(
     const unsigned short int zp1 = (threadIdx.z + 1 + BLOCK_NZ) % BLOCK_NZ;
     const unsigned short int zm1 = (threadIdx.z - 1 + BLOCK_NZ) % BLOCK_NZ;
     
+    const int tx = threadIdx.x;
+    const int ty = threadIdx.y;
+    const int tz = threadIdx.z;
+    
+    const int bx = blockIdx.x;
+    const int by = blockIdx.y;
+    const int bz = blockIdx.z;
+
+    const int txm1 = (tx-1+BLOCK_NX)%BLOCK_NX;
+    const int txp1 = (tx+1+BLOCK_NX)%BLOCK_NX;
+
+    const int tym1 = (ty-1+BLOCK_NY)%BLOCK_NY;
+    const int typ1 = (ty+1+BLOCK_NY)%BLOCK_NY;
+
+    const int tzm1 = (tz-1+BLOCK_NZ)%BLOCK_NZ;
+    const int tzp1 = (tz+1+BLOCK_NZ)%BLOCK_NZ;
+
+    const int bxm1 = (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X;
+    const int bxp1 = (bx+1+NUM_BLOCK_X)%NUM_BLOCK_X;
+
+    const int bym1 = (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
+    const int byp1 = (by+1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
+
+    const int bzm1 = (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
+    const int bzp1 = (bz+1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
+
     //need to compute the gradient before they are streamed
     #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
-    //define shared memory
-    __shared__ dfloat sharedVel[VEL_GRAD_BLOCK_SIZE];
+        //define shared memory
+        __shared__ dfloat sharedVel[VEL_GRAD_BLOCK_SIZE];
 
-    sharedVel[idxVelBlock(tx, ty, tz, 0)] = ux_t30;
-    sharedVel[idxVelBlock(tx, ty, tz, 1)] = uy_t30;
-    sharedVel[idxVelBlock(tx, ty, tz, 2)] = uz_t30;
+        sharedVel[idxVelBlock(tx, ty, tz, 0)] = ux_t30;
+        sharedVel[idxVelBlock(tx, ty, tz, 1)] = uy_t30;
+        sharedVel[idxVelBlock(tx, ty, tz, 2)] = uz_t30;
 
-    // Load neighboring halo cells in shared memory
-    // TODO: will have to create storage for the moments similar to the populations, since the velocities will change for each thread.
-    if (tx == 0) {
-        sharedVel[idxVelBlock(tx - 1, ty, tz, 0)] = fMom[idxMom(txm1, ty, tz, M_UX_INDEX, bxm1, by, bz)];
-        sharedVel[idxVelBlock(tx - 1, ty, tz, 1)] = fMom[idxMom(txm1, ty, tz, M_UY_INDEX, bxm1, by, bz)];
-        sharedVel[idxVelBlock(tx - 1, ty, tz, 2)] = fMom[idxMom(txm1, ty, tz, M_UZ_INDEX, bxm1, by, bz)];
-    }
-    if (tx == BLOCK_NX - 1) {
-        sharedVel[idxVelBlock(tx + 1, ty, tz, 0)] = fMom[idxMom(txp1, ty, tz, M_UX_INDEX, bxp1, by, bz)];
-        sharedVel[idxVelBlock(tx + 1, ty, tz, 1)] = fMom[idxMom(txp1, ty, tz, M_UY_INDEX, bxp1, by, bz)];
-        sharedVel[idxVelBlock(tx + 1, ty, tz, 2)] = fMom[idxMom(txp1, ty, tz, M_UZ_INDEX, bxp1, by, bz)];
-    }
-    if (ty == 0) {
-        sharedVel[idxVelBlock(tx, ty - 1, tz, 0)] = fMom[idxMom(tx, tym1, tz, M_UX_INDEX, bx, bym1, bz)];
-        sharedVel[idxVelBlock(tx, ty - 1, tz, 1)] = fMom[idxMom(tx, tym1, tz, M_UY_INDEX, bx, bym1, bz)];
-        sharedVel[idxVelBlock(tx, ty - 1, tz, 2)] = fMom[idxMom(tx, tym1, tz, M_UZ_INDEX, bx, bym1, bz)];
-    }
-    if (ty == BLOCK_NY - 1) {
-        sharedVel[idxVelBlock(tx, ty + 1, tz, 0)] = fMom[idxMom(tx, typ1, tz, M_UX_INDEX, bx, byp1, bz)];
-        sharedVel[idxVelBlock(tx, ty + 1, tz, 1)] = fMom[idxMom(tx, typ1, tz, M_UY_INDEX, bx, byp1, bz)];
-        sharedVel[idxVelBlock(tx, ty + 1, tz, 2)] = fMom[idxMom(tx, typ1, tz, M_UZ_INDEX, bx, byp1, bz)];
-    }
-    if (tz == 0) {
-        sharedVel[idxVelBlock(tx, ty, tz - 1, 0)] = fMom[idxMom(tx, ty, tzm1, M_UX_INDEX, bx, by, bzm1)];
-        sharedVel[idxVelBlock(tx, ty, tz - 1, 1)] = fMom[idxMom(tx, ty, tzm1, M_UY_INDEX, bx, by, bzm1)];
-        sharedVel[idxVelBlock(tx, ty, tz - 1, 2)] = fMom[idxMom(tx, ty, tzm1, M_UZ_INDEX, bx, by, bzm1)];
-    }
-    if (tz == BLOCK_NZ - 1) {
-        sharedVel[idxVelBlock(tx, ty, tz + 1, 0)] = fMom[idxMom(tx, ty, tzp1, M_UX_INDEX, bx, by, bzp1)];
-        sharedVel[idxVelBlock(tx, ty, tz + 1, 1)] = fMom[idxMom(tx, ty, tzp1, M_UY_INDEX, bx, by, bzp1)];
-        sharedVel[idxVelBlock(tx, ty, tz + 1, 2)] = fMom[idxMom(tx, ty, tzp1, M_UZ_INDEX, bx, by, bzp1)];
-    }
-    
-    __syncthreads();
+        // Load neighboring halo cells in shared memory
+        #include "includeFiles\velLoad.inc"
+        __syncthreads();
 
+        // Compute unrolled gradient calculations
+        //FINITE CENTRAL DIFFERENCE ORDER 1, otherwise i would have to store a halo with width of 2 in shared memory
+        dfloat duxdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 0)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 0)]) / 2;
+        dfloat duxdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 0)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 0)]) / 2;
+        dfloat duxdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 0)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 0)]) / 2;
 
-    // Compute unrolled gradient calculations
-    dfloat duxdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 0)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 0)]) / 2;
-    dfloat duxdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 0)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 0)]) / 2;
-    dfloat duxdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 0)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 0)]) / 2;
+        dfloat duydx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 1)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 1)]) / 2;
+        dfloat duydy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 1)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 1)]) / 2;
+        dfloat duydz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 1)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 1)]) / 2;
 
-    dfloat duydx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 1)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 1)]) / 2;
-    dfloat duydy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 1)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 1)]) / 2;
-    dfloat duydz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 1)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 1)]) / 2;
+        dfloat duzdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 2)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 2)]) / 2;
+        dfloat duzdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 2)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 2)]) / 2;
+        dfloat duzdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 2)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 2)]) / 2;
 
-    dfloat duzdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 2)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 2)]) / 2;
-    dfloat duzdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 2)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 2)]) / 2;
-    dfloat duzdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 2)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 2)]) / 2;
-
+        //OVERWRITE FOR NEAR WALL NODES
+        if ((nodeType & 0b01010101) == 0b01010101) { // wall west
+            duxdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 0)] - sharedVel[idxVelBlock(tx, ty, tz, 0)]);
+            duydx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 1)] - sharedVel[idxVelBlock(tx, ty, tz, 1)]);
+            duzdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 2)] - sharedVel[idxVelBlock(tx, ty, tz, 2)]);
+        }
+        if ((nodeType & 0b10101010) == 0b10101010) { // wall east
+            duxdx_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 0)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 0)]);
+            duydx_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 1)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 1)]);
+            duzdx_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 2)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 2)]);
+        }
+        if ((nodeType & 0b00110011) == 0b00110011) { // wall south
+            duxdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 0)] - sharedVel[idxVelBlock(tx, ty, tz, 0)]);
+            duydy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 1)] - sharedVel[idxVelBlock(tx, ty, tz, 1)]);
+            duzdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 2)] - sharedVel[idxVelBlock(tx, ty, tz, 2)]);
+        }
+        if ((nodeType & 0b11001100) == 0b11001100) { // wall north
+            duxdy_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 0)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 0)]);
+            duydy_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 1)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 1)]);
+            duzdy_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 2)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 2)]);
+        }
+        if ((nodeType & 0b11110000) == 0b11110000) { // wall front
+            duxdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 0)] - sharedVel[idxVelBlock(tx, ty, tz, 0)]);
+            duydz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 1)] - sharedVel[idxVelBlock(tx, ty, tz, 1)]);
+            duzdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz + 1, 2)] - sharedVel[idxVelBlock(tx, ty, tz, 2)]);
+        }
+        if ((nodeType & 0b00001111) == 0b00001111) { // wall back
+            duxdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 0)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 0)]);
+            duydz_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 1)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 1)]);
+            duzdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 2)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 2)]);
+        }
     #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
     
@@ -213,32 +239,6 @@ __global__ void gpuMomCollisionStream(
     pop[25] = s_pop[idxPopBlock(xp1, ym1, zm1, 24)];
     pop[26] = s_pop[idxPopBlock(xm1, yp1, zp1, 25)];
     #endif
-
-    const int tx = threadIdx.x;
-    const int ty = threadIdx.y;
-    const int tz = threadIdx.z;
-    
-    const int bx = blockIdx.x;
-    const int by = blockIdx.y;
-    const int bz = blockIdx.z;
-
-    const int txm1 = (tx-1+BLOCK_NX)%BLOCK_NX;
-    const int txp1 = (tx+1+BLOCK_NX)%BLOCK_NX;
-
-    const int tym1 = (ty-1+BLOCK_NY)%BLOCK_NY;
-    const int typ1 = (ty+1+BLOCK_NY)%BLOCK_NY;
-
-    const int tzm1 = (tz-1+BLOCK_NZ)%BLOCK_NZ;
-    const int tzp1 = (tz+1+BLOCK_NZ)%BLOCK_NZ;
-
-    const int bxm1 = (bx-1+NUM_BLOCK_X)%NUM_BLOCK_X;
-    const int bxp1 = (bx+1+NUM_BLOCK_X)%NUM_BLOCK_X;
-
-    const int bym1 = (by-1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
-    const int byp1 = (by+1+NUM_BLOCK_Y)%NUM_BLOCK_Y;
-
-    const int bzm1 = (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
-    const int bzp1 = (bz+1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
 
     /* load pop from global in cover nodes */
 
@@ -487,4 +487,8 @@ __global__ void gpuMomCollisionStream(
 
 
     #include "includeFiles/popSave.inc"
+
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+    #include "includeFiles/velSave.inc"
+    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 }

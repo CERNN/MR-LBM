@@ -162,6 +162,46 @@ g_idxPopZ(
 }
 #endif
 
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+__device__ int __forceinline__
+g_idxUX(
+    const int ty,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+
+    return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxUY(
+    const int tx,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxUZ(
+    const int tx,
+    const int ty,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+#endif
+
+
 __host__ __device__
     size_t __forceinline__
     idxPopBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int pop)

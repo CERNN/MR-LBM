@@ -192,6 +192,12 @@ typedef struct ghostInterfaceData  {
         ghostData Azz_h_fGhost;
     #endif
 
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+        ghostData f_uGhost;
+        ghostData g_uGhost;
+        ghostData h_f_uGhost;
+    #endif
+
 } GhostInterfaceData;
 
 #endif //__GLOBAL_STRUCTS_H

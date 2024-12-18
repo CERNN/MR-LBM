@@ -355,9 +355,9 @@ __global__ void gpuInitialization_pop(
         dfloat Axx_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat Axx_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-        dfloat udx_t30 = 0.0;
-        dfloat udy_t30 = 0.0;
-        dfloat udz_t30 = 0.0;
+        //dfloat udx_t30 = 0.0;
+        //dfloat udy_t30 = 0.0;
+        //dfloat udz_t30 = 0.0;
 
         #include COLREC_AXX_RECONSTRUCTIONS
 
@@ -424,9 +424,9 @@ __global__ void gpuInitialization_pop(
         dfloat Axy_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat Axy_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-        dfloat udx_t30 = 0.0;
-        dfloat udy_t30 = 0.0;
-        dfloat udz_t30 = 0.0;
+        //dfloat udx_t30 = 0.0;
+        //dfloat udy_t30 = 0.0;
+        //dfloat udz_t30 = 0.0;
 
         #include COLREC_AXY_RECONSTRUCTIONS
 
@@ -493,9 +493,9 @@ __global__ void gpuInitialization_pop(
         dfloat Axz_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat Axz_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-        dfloat udx_t30 = 0.0;
-        dfloat udy_t30 = 0.0;
-        dfloat udz_t30 = 0.0;
+        //dfloat udx_t30 = 0.0;
+        //dfloat udy_t30 = 0.0;
+        //dfloat udz_t30 = 0.0;
 
         #include COLREC_AXZ_RECONSTRUCTIONS
 
@@ -562,9 +562,9 @@ __global__ void gpuInitialization_pop(
         dfloat Ayy_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat Ayy_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-        dfloat udx_t30 = 0.0;
-        dfloat udy_t30 = 0.0;
-        dfloat udz_t30 = 0.0;
+        //dfloat udx_t30 = 0.0;
+        //dfloat udy_t30 = 0.0;
+        //dfloat udz_t30 = 0.0;
 
         #include COLREC_AYY_RECONSTRUCTIONS
 
@@ -631,9 +631,9 @@ __global__ void gpuInitialization_pop(
         dfloat Ayz_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat Ayz_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-        dfloat udx_t30 = 0.0;
-        dfloat udy_t30 = 0.0;
-        dfloat udz_t30 = 0.0;
+        //dfloat udx_t30 = 0.0;
+        //dfloat udy_t30 = 0.0;
+        //dfloat udz_t30 = 0.0;
 
         #include COLREC_AYZ_RECONSTRUCTIONS
 
@@ -700,9 +700,9 @@ __global__ void gpuInitialization_pop(
         dfloat Azz_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat Azz_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-        dfloat udx_t30 = 0.0;
-        dfloat udy_t30 = 0.0;
-        dfloat udz_t30 = 0.0;
+        //dfloat udx_t30 = 0.0;
+        //dfloat udy_t30 = 0.0;
+        //dfloat udz_t30 = 0.0;
 
         #include COLREC_AZZ_RECONSTRUCTIONS
 
@@ -760,6 +760,41 @@ __global__ void gpuInitialization_pop(
             #endif                    
         }
     #endif //A_ZZ_DIST
+
+
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+
+    if (threadIdx.x == 0) { //w
+            ghostInterface.f_uGhost.X_0[g_idxUX(ty, tz, 0, bx, by, bz)] = ux_t30;
+            ghostInterface.f_uGhost.X_0[g_idxUX(ty, tz, 1, bx, by, bz)] = uy_t30;
+            ghostInterface.f_uGhost.X_0[g_idxUX(ty, tz, 2, bx, by, bz)] = uz_t30;
+        }else if (threadIdx.x == (BLOCK_NX - 1)){                    
+            ghostInterface.f_uGhost.X_1[g_idxUX(ty, tz, 0, bx, by, bz)] = ux_t30;
+            ghostInterface.f_uGhost.X_1[g_idxUX(ty, tz, 1, bx, by, bz)] = uy_t30;
+            ghostInterface.f_uGhost.X_1[g_idxUX(ty, tz, 2, bx, by, bz)] = uz_t30;
+        }
+
+        if (threadIdx.y == 0)  { //s                             
+            ghostInterface.f_uGhost.Y_0[g_idxUY(tx, tz, 0, bx, by, bz)] = ux_t30;
+            ghostInterface.f_uGhost.Y_0[g_idxUY(tx, tz, 1, bx, by, bz)] = uy_t30;
+            ghostInterface.f_uGhost.Y_0[g_idxUY(tx, tz, 2, bx, by, bz)] = uz_t30;
+        }else if (threadIdx.y == (BLOCK_NY - 1)){             
+            ghostInterface.f_uGhost.Y_1[g_idxUY(tx, tz, 0, bx, by, bz)] = ux_t30;
+            ghostInterface.f_uGhost.Y_1[g_idxUY(tx, tz, 1, bx, by, bz)] = uy_t30;
+            ghostInterface.f_uGhost.Y_1[g_idxUY(tx, tz, 2, bx, by, bz)] = uz_t30;
+        }
+        
+        if (threadIdx.z == 0){ //b                          
+            ghostInterface.f_uGhost.Z_0[g_idxUZ(tx, ty, 0, bx, by, bz)] = ux_t30;
+            ghostInterface.f_uGhost.Z_0[g_idxUZ(tx, ty, 1, bx, by, bz)] = uy_t30;
+            ghostInterface.f_uGhost.Z_0[g_idxUZ(tx, ty, 2, bx, by, bz)] = uz_t30;
+        }else if (threadIdx.z == (BLOCK_NZ - 1)){                  
+            ghostInterface.f_uGhost.Z_1[g_idxUZ(tx, ty, 0, bx, by, bz)] = ux_t30;
+            ghostInterface.f_uGhost.Z_1[g_idxUZ(tx, ty, 1, bx, by, bz)] = uy_t30;
+            ghostInterface.f_uGhost.Z_1[g_idxUZ(tx, ty, 2, bx, by, bz)] = uz_t30;
+        }
+    #endif
+
 }
 
 

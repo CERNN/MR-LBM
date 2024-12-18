@@ -193,6 +193,22 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
         cudaFree(ghostInterface.Azz_gGhost.Z_1);
     #endif
 
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+        cudaFree(ghostInterface.f_uGhost.X_0);
+        cudaFree(ghostInterface.f_uGhost.X_1);
+        cudaFree(ghostInterface.f_uGhost.Y_0);
+        cudaFree(ghostInterface.f_uGhost.Y_1);
+        cudaFree(ghostInterface.f_uGhost.Z_0);
+        cudaFree(ghostInterface.f_uGhost.Z_1);
+
+        cudaFree(ghostInterface.g_uGhost.X_0);
+        cudaFree(ghostInterface.g_uGhost.X_1);
+        cudaFree(ghostInterface.g_uGhost.Y_0);
+        cudaFree(ghostInterface.g_uGhost.Y_1);
+        cudaFree(ghostInterface.g_uGhost.Z_0);
+        cudaFree(ghostInterface.g_uGhost.Z_1);
+    #endif
+
     if (LOAD_CHECKPOINT){
         cudaFree(ghostInterface.h_fGhost.X_0);
         cudaFree(ghostInterface.h_fGhost.X_1);
@@ -255,6 +271,15 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
             cudaFree(ghostInterface.Azz_h_fGhost.Y_1);
             cudaFree(ghostInterface.Azz_h_fGhost.Z_0);
             cudaFree(ghostInterface.Azz_h_fGhost.Z_1);
+        #endif
+
+        #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+            cudaFree(ghostInterface.h_f_uGhost.X_0);
+            cudaFree(ghostInterface.h_f_uGhost.X_1);
+            cudaFree(ghostInterface.h_f_uGhost.Y_0);
+            cudaFree(ghostInterface.h_f_uGhost.Y_1);
+            cudaFree(ghostInterface.h_f_uGhost.Z_0);
+            cudaFree(ghostInterface.h_f_uGhost.Z_1);
         #endif
     }
 }
@@ -371,6 +396,16 @@ void swapGhostInterfaces(GhostInterfaceData& ghostInterface) {
     interfaceSwap(ghostInterface.Azz_fGhost.Z_0, ghostInterface.Azz_gGhost.Z_0);
     interfaceSwap(ghostInterface.Azz_fGhost.Z_1, ghostInterface.Azz_gGhost.Z_1);
     #endif
+
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+        interfaceSwap(ghostInterface.f_uGhost.X_0, ghostInterface.g_uGhost.X_0);
+        interfaceSwap(ghostInterface.f_uGhost.X_1, ghostInterface.g_uGhost.X_1);
+        interfaceSwap(ghostInterface.f_uGhost.Y_0, ghostInterface.g_uGhost.Y_0);
+        interfaceSwap(ghostInterface.f_uGhost.Y_1, ghostInterface.g_uGhost.Y_1);
+        interfaceSwap(ghostInterface.f_uGhost.Z_0, ghostInterface.g_uGhost.Z_0);
+        interfaceSwap(ghostInterface.f_uGhost.Z_1, ghostInterface.g_uGhost.Z_1);
+    #endif
+
 }
 
 
@@ -507,6 +542,21 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
     cudaMalloc((void **)&(ghostInterface.Azz_gGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF);
 #endif
 
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+    cudaMalloc((void **)&(ghostInterface.f_uGhost.X_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3);
+    cudaMalloc((void **)&(ghostInterface.f_uGhost.X_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3);
+    cudaMalloc((void **)&(ghostInterface.f_uGhost.Y_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3);
+    cudaMalloc((void **)&(ghostInterface.f_uGhost.Y_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3);
+    cudaMalloc((void **)&(ghostInterface.f_uGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3);
+    cudaMalloc((void **)&(ghostInterface.f_uGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3);
+
+    cudaMalloc((void **)&(ghostInterface.g_uGhost.X_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3);
+    cudaMalloc((void **)&(ghostInterface.g_uGhost.X_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3);
+    cudaMalloc((void **)&(ghostInterface.g_uGhost.Y_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3);
+    cudaMalloc((void **)&(ghostInterface.g_uGhost.Y_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3);
+    cudaMalloc((void **)&(ghostInterface.g_uGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3);
+    cudaMalloc((void **)&(ghostInterface.g_uGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3);
+#endif
 
 
     if (LOAD_CHECKPOINT || CHECKPOINT_SAVE)
@@ -574,6 +624,15 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.Azz_h_fGhost.Y_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF));
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.Azz_h_fGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF));
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.Azz_h_fGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF));
+        #endif
+
+        #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+        checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.X_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3));
+        checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.X_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3));
+        checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.Y_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3));
+        checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.Y_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3));
+        checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3));
+        checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3));
         #endif
     }
 }
@@ -709,9 +768,11 @@ void initializeDomain(
         loadSimCheckpoint(h_fMom, ghostInterface, step);
         checkCudaErrors(cudaMemcpy(d_fMom, h_fMom, sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS, cudaMemcpyHostToDevice));
         interfaceCudaMemcpy(ghostInterface, ghostInterface.fGhost, ghostInterface.h_fGhost, cudaMemcpyHostToDevice, QF);
+
         #ifdef SECOND_DIST
             interfaceCudaMemcpy(ghostInterface, ghostInterface.g_fGhost, ghostInterface.g_h_fGhost, cudaMemcpyHostToDevice, GF);
         #endif
+
         #ifdef A_XX_DIST
             interfaceCudaMemcpy(ghostInterface, ghostInterface.Axx_fGhost, ghostInterface.Axx_h_fGhost, cudaMemcpyHostToDevice, GF);
         #endif
@@ -730,6 +791,11 @@ void initializeDomain(
         #ifdef A_ZZ_DIST
             interfaceCudaMemcpy(ghostInterface, ghostInterface.Azz_fGhost, ghostInterface.Azz_h_fGhost, cudaMemcpyHostToDevice, GF);
         #endif
+
+        #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+            interfaceCudaMemcpy(ghostInterface, ghostInterface.f_uGhost, ghostInterface.h_f_uGhost, cudaMemcpyHostToDevice, 3);
+        #endif
+
     } else {
         if (LOAD_FIELD) {
             // Implement LOAD_FIELD logic if needed
@@ -795,6 +861,9 @@ void initializeDomain(
     #endif
     
     
+    #ifdef A_ZZ_DIST
+        interfaceCudaMemcpy(ghostInterface, ghostInterface.f_uGhost, ghostInterface.g_uGhost, cudaMemcpyDeviceToDevice, 3);
+    #endif
 
     // Synchronize after all initializations
     checkCudaErrors(cudaDeviceSynchronize());

@@ -94,7 +94,11 @@ void meanFlowComputation(
     #endif
 
 
+    #pragma warning(push)
+    #pragma warning(disable: 4804)
     dfloat mean_counter = 1.0/((dfloat)(step/MACR_SAVE)+1.0);
+    #pragma warning(pop)
+    
     int count = 0;
 
     for (int z = 0 ; z <NZ_TOTAL; z++){

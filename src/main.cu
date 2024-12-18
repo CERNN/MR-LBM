@@ -179,12 +179,15 @@ int main() {
         bool reportSave = false;
         bool macrSave = false;
 
+#pragma warning(push)
+#pragma warning(disable: 4804)
         if(aux != 0){
             if(REPORT_SAVE){ reportSave = !(step % REPORT_SAVE);}                
             if(MACR_SAVE){ macrSave   = !(step % MACR_SAVE);}
             if(MACR_SAVE || REPORT_SAVE){ save = (reportSave || macrSave);}
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
         }
+#pragma warning(pop)
        
         gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
 

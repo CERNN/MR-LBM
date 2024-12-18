@@ -94,7 +94,7 @@ constexpr int M_MZZ_INDEX = 9;
     #define M_OFFSET A_YY_CZ_INDEX
 #endif
 
-#ifdef MYZ_DIST
+#ifdef A_YZ_DIST
     constexpr int A_YZ_C_INDEX   = (1+M_OFFSET);
     constexpr int A_YZ_CX_INDEX  = (2+M_OFFSET);
     constexpr int A_YZ_CY_INDEX  = (3+M_OFFSET);
@@ -105,7 +105,7 @@ constexpr int M_MZZ_INDEX = 9;
     #define M_OFFSET A_YZ_CZ_INDEX
 #endif
 
-#ifdef MZZ_DIST
+#ifdef A_ZZ_DIST
     constexpr int A_ZZ_C_INDEX   = (1+M_OFFSET);
     constexpr int A_ZZ_CX_INDEX  = (2+M_OFFSET);
     constexpr int A_ZZ_CY_INDEX  = (3+M_OFFSET);
