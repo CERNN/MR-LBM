@@ -159,6 +159,11 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
     const size_t VEL_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 3;
 #endif
 
+#ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+    #define HALO_SIZE 1
+    const size_t CONFORMATION_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 6;
+#endif
+
 
 
 //FUNCTION DECLARATION MACROS

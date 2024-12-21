@@ -201,6 +201,46 @@ g_idxUZ(
 }
 #endif
 
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+__device__ int __forceinline__
+g_idxConfX(
+    const int ty,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+
+    return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + 6 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxConfY(
+    const int tx,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + 6 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxConfZ(
+    const int tx,
+    const int ty,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + 6 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+#endif
+
+
 
 __host__ __device__
     size_t __forceinline__
@@ -240,6 +280,23 @@ size_t idxVelBlock(const unsigned int tx, const unsigned int ty, const unsigned 
 }
 #endif
 
+
+#ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+/**
+*   @brief Compute linear array index
+*   @param xx: 0
+*   @param xy: 1
+*   @param xz: 2
+*   @param yy: 3
+*   @param yz: 4
+*   @param zz: 5
+*/
+__host__ __device__ __forceinline__ 
+size_t idxConfBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int confIndex)
+{
+    return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * confIndex));
+}
+#endif
 
 /**
 *   @brief Compute the dot product of two vectors.

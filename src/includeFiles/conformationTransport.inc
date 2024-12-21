@@ -1,3 +1,12 @@
+dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+#include "includeFiles\conformationTransport\conformation_gradient.inc"
+
 #include "conformationTransport\Axx.inc"
 #include "conformationTransport\Axy.inc"
 #include "conformationTransport\Axz.inc"
@@ -37,16 +46,19 @@ AyyVar = AyyVar + conformation_G_yy;
 AyzVar = AyzVar + conformation_G_yz;
 AzzVar = AzzVar + conformation_G_zz;
 
+// Save neighboring halo cells in shared memory
+#include "includeFiles\conformationTransport\confSave.inc"
+
 
 //compute force for mometum equation
 //F = div * (mu/lambda)*(A - I)
 //F = (mu/lambda) * div(A);
 //todo COMPUTE GRADIENT OF CONFORMATION VECTOR
-/*
-L_Fx += (dAxxdx + dAxydy + dAxzdz)*(nu_p*inv_fenep_lambda);
-L_Fy += (dAxydx + dAyydy + dAyzdz)*(nu_p*inv_fenep_lambda);
-L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(nu_p*inv_fenep_lambda);
-*/
+
+L_Fx += (dAxxdx + dAxydy + dAxzdz)*(nu_p*inv_fenep_lambda) * 0.0; //zero just to debug for now
+L_Fy += (dAxydx + dAyydy + dAyzdz)*(nu_p*inv_fenep_lambda) * 0.0; //zero just to debug for now
+L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(nu_p*inv_fenep_lambda) * 0.0; //zero just to debug for now
+
 
 //xx
 // direct reconstruction since difussion is zero
