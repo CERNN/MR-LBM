@@ -21,7 +21,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM viscoelastic_couette
+#define BC_PROBLEM viscoelastic_taylorGreen
                                 
 constexpr bool console_flush = false;
 

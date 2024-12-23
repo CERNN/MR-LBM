@@ -1,13 +1,13 @@
-#define FENE_P
+//#define FENE_P
 
 constexpr dfloat RE = 1000;
 
 constexpr int SCALE = 1;
 constexpr int N_STEPS = 10000;
-constexpr int N = 256 * SCALE;
+constexpr int N = 128 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = 8;        // size z of the grid in one GPU
+constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 0.1;  
@@ -29,8 +29,8 @@ __device__ const dfloat UZ_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 
 
-    #define BC_X_WALL
-    #define BC_Y_WALL
+    #define BC_X_PERIODIC
+    #define BC_Y_PERIODIC
     #define BC_Z_PERIODIC
 
 constexpr dfloat VISC = U_MAX * NX / RE;
