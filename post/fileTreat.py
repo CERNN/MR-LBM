@@ -14,6 +14,7 @@ __macr_names__ += ['omega']
 # __macr_names__ += ['bc']
 # Uncomment below for C
 __macr_names__ += ['C']
+__macr_names__ += ['Axx', 'Axy', 'Axz', 'Ayy', 'Ayz', 'Azz']
 
 __info__ = dict()
 

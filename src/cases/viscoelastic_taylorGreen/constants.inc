@@ -1,10 +1,10 @@
-//#define FENE_P
+#define FENE_P
 
 constexpr dfloat RE = 1000;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 10000;
-constexpr int N = 128 * SCALE;
+constexpr int N_STEPS = 100;
+constexpr int N = 64 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = N;        // size z of the grid in one GPU

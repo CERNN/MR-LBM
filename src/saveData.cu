@@ -124,6 +124,7 @@ size_t indexMacr;
     std::string strFileC;
     std::string strFileBc; 
     std::string strFileFx, strFileFy, strFileFz;
+    std::string strFileAxx, strFileAxy, strFileAxz, strFileAyy, strFileAyz, strFileAzz;
 
     strFileRho = getVarFilename("rho", nSteps, ".bin");
     strFileUx = getVarFilename("ux", nSteps, ".bin");
@@ -134,6 +135,24 @@ size_t indexMacr;
     #endif
     #ifdef SECOND_DIST 
     strFileC = getVarFilename("C", nSteps, ".bin");
+    #endif
+    #ifdef A_XX_DIST 
+    strFileAxx = getVarFilename("Axx", nSteps, ".bin");
+    #endif
+    #ifdef A_XY_DIST 
+    strFileAxy = getVarFilename("Axy", nSteps, ".bin");
+    #endif
+    #ifdef A_XZ_DIST 
+    strFileAxz = getVarFilename("Axz", nSteps, ".bin");
+    #endif
+    #ifdef A_YY_DIST 
+    strFileAyy = getVarFilename("Ayy", nSteps, ".bin");
+    #endif
+    #ifdef A_YZ_DIST 
+    strFileAyz = getVarFilename("Ayz", nSteps, ".bin");
+    #endif
+    #ifdef A_ZZ_DIST 
+    strFileAzz = getVarFilename("Azz", nSteps, ".bin");
     #endif
     #if NODE_TYPE_SAVE
     strFileBc = getVarFilename("bc", nSteps, ".bin");
@@ -155,22 +174,22 @@ size_t indexMacr;
     saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef A_XX_DIST 
-    saveVarBin(strFileC, Axx, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef A_XY_DIST 
-    saveVarBin(strFileC, Axy, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef A_XZ_DIST 
-    saveVarBin(strFileC, Axz, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef A_YY_DIST 
-    saveVarBin(strFileC, Ayy, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef A_YZ_DIST 
-    saveVarBin(strFileC, Ayz, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef A_ZZ_DIST 
-    saveVarBin(strFileC, Azz, MEM_SIZE_SCALAR, false);
+    saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
     #endif
     
     #if NODE_TYPE_SAVE

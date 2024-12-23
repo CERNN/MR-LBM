@@ -10,9 +10,9 @@ dfloat zz = 2.0*M_PI*z/L;
 //on malaspinas paper the theta is already accounted for.
 dfloat thetaa = M_PI/2;
 
-ux =  U_MAX*(2.0/sqrtf(3.0))*sin(theta + 2.0*M_PI/3.0)sin(xx)*cos(yy)*cos(zz);
-uy =  U_MAX*(2.0/sqrtf(3.0))*sin(theta - 2.0*M_PI/3.0)cos(xx)*sin(yy)*cos(zz);
-uz =  U_MAX*(2.0/sqrtf(3.0))*sin(theta)cos(xx)*cos(yy)*sin(zz);
+ux =  U_MAX*(2.0/sqrtf(3.0))*sin(thetaa + 2.0*M_PI/3.0)*sin(xx)*cos(yy)*cos(zz);
+uy =  U_MAX*(2.0/sqrtf(3.0))*sin(thetaa - 2.0*M_PI/3.0)*cos(xx)*sin(yy)*cos(zz);
+uz =  U_MAX*(2.0/sqrtf(3.0))*sin(thetaa)*cos(xx)*cos(yy)*sin(zz);
 
 //TODO however when deriving the poisson equation it does not include the theta term
 // the RHO_0 + (U_MAX*U_MAX/cs2) comes from converting pressure to densisty. U_max comes from non-dimensional units
