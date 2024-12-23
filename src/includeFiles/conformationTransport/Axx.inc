@@ -5,9 +5,9 @@ dfloat Axx_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX
 dfloat Axx_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 dfloat Axx_qz_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 
-//dfloat udx_t30 = 0.0;
-//dfloat udy_t30 = 0.0;
-//dfloat udz_t30 = 0.0;
+dfloat Axx_udx_t30 = CONF_DIFF_FLUC_COEF * (Axx_qx_t30*invAxx - ux_t30);
+dfloat Axx_udy_t30 = CONF_DIFF_FLUC_COEF * (Axx_qy_t30*invAxx - uy_t30);
+dfloat Axx_udz_t30 = CONF_DIFF_FLUC_COEF * (Axx_qz_t30*invAxx - uz_t30);
 
 #include COLREC_AXX_RECONSTRUCTION
 
@@ -72,3 +72,6 @@ if(nodeType != BULK){
     Axx_qz_t30 = F_M_I_SCALE*((AxxNode[5] - AxxNode[6] + AxxNode[9] - AxxNode[10] + AxxNode[11] - AxxNode[12] + AxxNode[16] - AxxNode[15] + AxxNode[18] - AxxNode[17]));
 }
 
+Axx_udx_t30 = CONF_DIFF_FLUC_COEF * (Axx_qx_t30*invAxx - ux_t30);
+Axx_udy_t30 = CONF_DIFF_FLUC_COEF * (Axx_qy_t30*invAxx - uy_t30);
+Axx_udz_t30 = CONF_DIFF_FLUC_COEF * (Axx_qz_t30*invAxx - uz_t30);

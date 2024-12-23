@@ -1,21 +1,46 @@
+#ifdef A_XX_DIST
 dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+#endif
+#ifdef A_XY_DIST
 dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+#endif
+#ifdef A_XZ_DIST
 dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+#endif
+#ifdef A_YY_DIST
 dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+#endif
+#ifdef A_YZ_DIST
 dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+#endif
+#ifdef A_ZZ_DIST
+dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+#endif
 
-#include "includeFiles\conformationTransport\conformation_gradient.inc"
+//#include "includeFiles\conformationTransport\conformation_gradient.inc"
 
+#ifdef A_XX_DIST
 #include "conformationTransport\Axx.inc"
+#endif
+#ifdef A_XY_DIST
 #include "conformationTransport\Axy.inc"
+#endif
+#ifdef A_XZ_DIST
 #include "conformationTransport\Axz.inc"
+#endif
+#ifdef A_YY_DIST
 #include "conformationTransport\Ayy.inc"
+#endif
+#ifdef A_YZ_DIST
 #include "conformationTransport\Ayz.inc"
+#endif
+#ifdef A_ZZ_DIST
 #include "conformationTransport\Azz.inc"
+#endif
 
 //compute r  c
 //r  c
+/*
 dfloat AGU_GUTA_xx = 2*AxxVar*duxdx_t30 + 2*AxyVar*duydx_t30 + 2*AxzVar*duzdx_t30;
 dfloat AGU_GUTA_yy = 2*AxyVar*duxdy_t30 + 2*AyyVar*duydy_t30 + 2*AyzVar*duzdy_t30;
 dfloat AGU_GUTA_zz = 2*AxzVar*duxdz_t30 + 2*AyzVar*duydz_t30 + 2*AzzVar*duzdz_t30;
@@ -46,6 +71,7 @@ AyyVar = AyyVar + conformation_G_yy;
 AyzVar = AyzVar + conformation_G_yz;
 AzzVar = AzzVar + conformation_G_zz;
 
+
 // Save neighboring halo cells in shared memory
 #include "includeFiles\conformationTransport\confSave.inc"
 
@@ -59,7 +85,8 @@ L_Fx += (dAxxdx + dAxydy + dAxzdz)*(nu_p*inv_fenep_lambda) * 0.0; //zero just to
 L_Fy += (dAxydx + dAyydy + dAyzdz)*(nu_p*inv_fenep_lambda) * 0.0; //zero just to debug for now
 L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(nu_p*inv_fenep_lambda) * 0.0; //zero just to debug for now
 
-
+*/
+#ifdef A_XX_DIST
 //xx
 // direct reconstruction since difussion is zero
 #include COLREC_AXX_RECONSTRUCTION
@@ -69,7 +96,8 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blo
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qx_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qy_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qz_t30;
-
+#endif
+#ifdef A_XY_DIST
 //xy
 // direct reconstruction since difussion is zero
 #include COLREC_AXY_RECONSTRUCTION
@@ -79,7 +107,8 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blo
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qx_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qy_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qz_t30;
-
+#endif
+#ifdef A_XZ_DIST
 //xz
 // direct reconstruction since difussion is zero
 #include COLREC_AXZ_RECONSTRUCTION
@@ -89,7 +118,8 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blo
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qx_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qy_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qz_t30;
-
+#endif
+#ifdef A_YY_DIST
 //yy
 // direct reconstruction since difussion is zero
 #include COLREC_AYY_RECONSTRUCTION
@@ -99,7 +129,8 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blo
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qx_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qy_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qz_t30;
-
+#endif
+#ifdef A_YZ_DIST
 //yz
 // direct reconstruction since difussion is zero
 #include COLREC_AYZ_RECONSTRUCTION
@@ -109,8 +140,9 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blo
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qx_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qy_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qz_t30;
-
-//yz
+#endif
+#ifdef A_ZZ_DIST
+//zz
 // direct reconstruction since difussion is zero
 #include COLREC_AZZ_RECONSTRUCTION
 //store population in halo
@@ -119,3 +151,4 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blo
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qx_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qy_t30;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qz_t30;
+#endif
