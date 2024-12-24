@@ -68,7 +68,7 @@ Projects:
   ☐ Moving boudnary conditions (e.g. moving particles using voxels)
   ☐ Implementation of DDF-Shift (density is done)
   ☐ Implement viscoelastic model
-    ☐ Method to compute the velocity gradient
+    ☐ Method to compute the velocity divergent
       ☐ Need method to store velocity in the halo similar to populations
         ✔ rewrite ghost values to be a struct @done(24-11-03 18:59)
     ✔ Source term for the advection-diffusion equation @done(24-11-05 01:03)

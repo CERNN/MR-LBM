@@ -26,5 +26,6 @@ src/CUDA/x64
 *.csv
 *.test
 ./bin
+*.ptx
 
 bin/001sim_D3Q19_sm86.exe

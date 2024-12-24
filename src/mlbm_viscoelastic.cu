@@ -150,6 +150,22 @@ __global__ void gpuConformationXXCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Axx.inc"
+
+    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+        if (INTERFACE_BC_WEST) { //w
+            ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 0, bx, by, bz)] = AxxVar;
+        }if (INTERFACE_BC_EAST){                    
+            ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 0, bx, by, bz)] = AxxVar;
+        }if (INTERFACE_BC_SOUTH)  { //s                             
+            ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 0, bx, by, bz)] = AxxVar;
+        }if (INTERFACE_BC_NORTH){             
+            ghostInterface.conf_fGhost.Y_1[g_idxConfY(tx, tz, 0, bx, by, bz)] = AxxVar;
+        }if (INTERFACE_BC_BACK){ //b                          
+            ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 0, bx, by, bz)] = AxxVar;
+        }if (INTERFACE_BC_FRONT){                  
+            ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 0, bx, by, bz)] = AxxVar;
+        }
+    #endif
 }
 #endif
 
@@ -303,6 +319,21 @@ __global__ void gpuConformationXYCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Axy.inc"
+    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+        if (INTERFACE_BC_WEST) { //w
+            ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 1, bx, by, bz)] = AxyVar;
+        }if (INTERFACE_BC_EAST){                    
+            ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 1, bx, by, bz)] = AxyVar;
+        }if (INTERFACE_BC_SOUTH)  { //s                             
+            ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 1, bx, by, bz)] = AxyVar;
+        }if (INTERFACE_BC_NORTH){             
+            ghostInterface.conf_fGhost.Y_1[g_idxConfY(tx, tz, 1, bx, by, bz)] = AxyVar;
+        }if (INTERFACE_BC_BACK){ //b                          
+            ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 1, bx, by, bz)] = AxyVar;
+        }if (INTERFACE_BC_FRONT){                  
+            ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 1, bx, by, bz)] = AxyVar;
+        }
+    #endif
 }
 #endif
 
@@ -456,6 +487,21 @@ __global__ void gpuConformationXZCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Axz.inc"
+    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+        if (INTERFACE_BC_WEST) { //w
+            ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 2, bx, by, bz)] = AxzVar;
+        }if (INTERFACE_BC_EAST){                    
+            ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 2, bx, by, bz)] = AxzVar;
+        }if (INTERFACE_BC_SOUTH)  { //s                             
+            ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 2, bx, by, bz)] = AxzVar;
+        }if (INTERFACE_BC_NORTH){             
+            ghostInterface.conf_fGhost.Y_1[g_idxConfY(tx, tz, 2, bx, by, bz)] = AxzVar;
+        }if (INTERFACE_BC_BACK){ //b                          
+            ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 2, bx, by, bz)] = AxzVar;
+        }if (INTERFACE_BC_FRONT){                  
+            ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 2, bx, by, bz)] = AxzVar;
+        }
+    #endif
 }
 #endif
 
@@ -609,6 +655,21 @@ __global__ void gpuConformationYYCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Ayy.inc"
+    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+        if (INTERFACE_BC_WEST) { //w
+            ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 3, bx, by, bz)] = AyyVar;
+        }if (INTERFACE_BC_EAST){                    
+            ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 3, bx, by, bz)] = AyyVar;
+        }if (INTERFACE_BC_SOUTH)  { //s                             
+            ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 3, bx, by, bz)] = AyyVar;
+        }if (INTERFACE_BC_NORTH){             
+            ghostInterface.conf_fGhost.Y_1[g_idxConfY(tx, tz, 3, bx, by, bz)] = AyyVar;
+        }if (INTERFACE_BC_BACK){ //b                          
+            ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 3, bx, by, bz)] = AyyVar;
+        }if (INTERFACE_BC_FRONT){                  
+            ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 3, bx, by, bz)] = AyyVar;
+        }
+    #endif
 }
 #endif
 
@@ -762,6 +823,21 @@ __global__ void gpuConformationYZCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Ayz.inc"
+    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+        if (INTERFACE_BC_WEST) { //w
+            ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 4, bx, by, bz)] = AyzVar;
+        }if (INTERFACE_BC_EAST){                    
+            ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 4, bx, by, bz)] = AyzVar;
+        }if (INTERFACE_BC_SOUTH)  { //s                             
+            ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 4, bx, by, bz)] = AyzVar;
+        }if (INTERFACE_BC_NORTH){             
+            ghostInterface.conf_fGhost.Y_1[g_idxConfY(tx, tz, 4, bx, by, bz)] = AyzVar;
+        }if (INTERFACE_BC_BACK){ //b                          
+            ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 4, bx, by, bz)] = AyzVar;
+        }if (INTERFACE_BC_FRONT){                  
+            ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 4, bx, by, bz)] = AyzVar;
+        }
+    #endif
 }
 #endif
 
@@ -916,5 +992,20 @@ __global__ void gpuConformationZZCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Azz.inc"
+    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+        if (INTERFACE_BC_WEST) { //w
+            ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 5, bx, by, bz)] = AzzVar;
+        }if (INTERFACE_BC_EAST){                    
+            ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 5, bx, by, bz)] = AzzVar;
+        }if (INTERFACE_BC_SOUTH)  { //s                             
+            ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 5, bx, by, bz)] = AzzVar;
+        }if (INTERFACE_BC_NORTH){             
+            ghostInterface.conf_fGhost.Y_1[g_idxConfY(tx, tz, 5, bx, by, bz)] = AzzVar;
+        }if (INTERFACE_BC_BACK){ //b                          
+            ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 5, bx, by, bz)] = AzzVar;
+        }if (INTERFACE_BC_FRONT){                  
+            ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 5, bx, by, bz)] = AzzVar;
+        }
+    #endif
 }
 #endif

@@ -10,7 +10,7 @@ sharedVel[idxVelBlock(tx, ty, tz, 2)] = uz_t30;
 #include "includeFiles\velLoad.inc"
 __syncthreads();
 
-// Compute unrolled gradient calculations
+// Compute unrolled divergent calculations
 //FINITE CENTRAL DIFFERENCE ORDER 1, otherwise i would have to store a halo with width of 2 in shared memory
 dfloat duxdx_t30 = (sharedVel[idxVelBlock(tx + 1, ty, tz, 0)] - sharedVel[idxVelBlock(tx - 1, ty, tz, 0)]) / 2;
 dfloat duxdy_t30 = (sharedVel[idxVelBlock(tx, ty + 1, tz, 0)] - sharedVel[idxVelBlock(tx, ty - 1, tz, 0)]) / 2;

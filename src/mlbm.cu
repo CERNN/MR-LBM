@@ -112,11 +112,14 @@ __global__ void gpuMomCollisionStream(
     const int bzm1 = (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
     const int bzp1 = (bz+1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
 
-    //need to compute the gradient before they are streamed
-    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-        #include "includeFiles\velocity_gradient.inc"
-    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+    //need to compute the divergent before they are streamed
+    #ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+        #include "includeFiles\velocity_divergent.inc"
+    #endif //COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
 
+    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+    #include "includeFiles\conformationTransport\conformation_divergent.inc"   
+    #endif
     
     //save populations in shared memory
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = pop[ 1];
@@ -431,7 +434,7 @@ __global__ void gpuMomCollisionStream(
 
     #include "includeFiles/popSave.inc"
 
-    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+    #ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
     #include "includeFiles/velSave.inc"
-    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+    #endif //COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
 }

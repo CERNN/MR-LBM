@@ -162,7 +162,7 @@ g_idxPopZ(
 }
 #endif
 
-#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
 __device__ int __forceinline__
 g_idxUX(
     const int ty,
@@ -201,7 +201,7 @@ g_idxUZ(
 }
 #endif
 
-#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
 __device__ int __forceinline__
 g_idxConfX(
     const int ty,
@@ -272,16 +272,18 @@ __host__ __device__
     return x + NX * (y + NY*(z));
 }
 
-#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
 __host__ __device__ __forceinline__ 
 size_t idxVelBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int uIndex)
 {
+    // +1 in thread to offset -1
+    // +2 on block to increase the block size
     return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * uIndex));
 }
 #endif
 
 
-#ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
 /**
 *   @brief Compute linear array index
 *   @param xx: 0

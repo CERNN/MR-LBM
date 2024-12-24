@@ -1,3 +1,11 @@
+dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+
+
 //define shared memory
 __shared__ dfloat sharedConf[CONFORMATION_GRAD_BLOCK_SIZE];
 
@@ -13,7 +21,7 @@ sharedConf[idxConfBlock(tx, ty, tz, 5)] = AzzVar;
 
 __syncthreads();
 
-// Compute unrolled gradient calculations
+// Compute unrolled divergent calculations
 //FINITE CENTRAL DIFFERENCE ORDER 1, otherwise i would have to store a halo with width of 2 in shared memory
 dfloat dAxxdx = (sharedConf[idxConfBlock(tx + 1, ty, tz, 0)] - sharedConf[idxConfBlock(tx - 1, ty, tz, 0)])/2;
 dfloat dAxydx = (sharedConf[idxConfBlock(tx + 1, ty, tz, 1)] - sharedConf[idxConfBlock(tx - 1, ty, tz, 1)])/2;
