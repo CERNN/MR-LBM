@@ -1,5 +1,3 @@
-dfloat AxyNode[GQ];
-
 dfloat invAxy = 1/AxyVar;
 dfloat Axy_qx_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
 dfloat Axy_qy_t30   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -14,47 +12,47 @@ dfloat Axy_udz_t30 = CONF_DIFF_FLUC_COEF * (Axy_qz_t30*invAxy - uz_t30);
 __syncthreads();
 
 //overwrite values
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = AxyNode[ 1];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1)] = AxyNode[ 2];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2)] = AxyNode[ 3];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3)] = AxyNode[ 4];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4)] = AxyNode[ 5];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5)] = AxyNode[ 6];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6)] = AxyNode[ 7];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7)] = AxyNode[ 8];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8)] = AxyNode[ 9];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9)] = AxyNode[10];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10)] = AxyNode[11];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11)] = AxyNode[12];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12)] = AxyNode[13];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13)] = AxyNode[14];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14)] = AxyNode[15];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15)] = AxyNode[16];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16)] = AxyNode[17];
-s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17)] = AxyNode[18];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = ANode[ 1];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  1)] = ANode[ 2];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  2)] = ANode[ 3];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  3)] = ANode[ 4];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  4)] = ANode[ 5];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  5)] = ANode[ 6];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  6)] = ANode[ 7];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  7)] = ANode[ 8];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  8)] = ANode[ 9];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  9)] = ANode[10];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 10)] = ANode[11];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 11)] = ANode[12];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 12)] = ANode[13];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 13)] = ANode[14];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 14)] = ANode[15];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 15)] = ANode[16];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 16)] = ANode[17];
+s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z, 17)] = ANode[18];
 
 //sync threads of the block so all populations are saved
 __syncthreads();
 
 /* pull */
-AxyNode[ 1] = s_pop[idxPopBlock(xm1, threadIdx.y, threadIdx.z, 0)];
-AxyNode[ 2] = s_pop[idxPopBlock(xp1, threadIdx.y, threadIdx.z, 1)];
-AxyNode[ 3] = s_pop[idxPopBlock(threadIdx.x, ym1, threadIdx.z, 2)];
-AxyNode[ 4] = s_pop[idxPopBlock(threadIdx.x, yp1, threadIdx.z, 3)];
-AxyNode[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, zm1, 4)];
-AxyNode[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, zp1, 5)];
-AxyNode[ 7] = s_pop[idxPopBlock(xm1, ym1, threadIdx.z, 6)];
-AxyNode[ 8] = s_pop[idxPopBlock(xp1, yp1, threadIdx.z, 7)];
-AxyNode[ 9] = s_pop[idxPopBlock(xm1, threadIdx.y, zm1, 8)];
-AxyNode[10] = s_pop[idxPopBlock(xp1, threadIdx.y, zp1, 9)];
-AxyNode[11] = s_pop[idxPopBlock(threadIdx.x, ym1, zm1, 10)];
-AxyNode[12] = s_pop[idxPopBlock(threadIdx.x, yp1, zp1, 11)];
-AxyNode[13] = s_pop[idxPopBlock(xm1, yp1, threadIdx.z, 12)];
-AxyNode[14] = s_pop[idxPopBlock(xp1, ym1, threadIdx.z, 13)];
-AxyNode[15] = s_pop[idxPopBlock(xm1, threadIdx.y, zp1, 14)];
-AxyNode[16] = s_pop[idxPopBlock(xp1, threadIdx.y, zm1, 15)];
-AxyNode[17] = s_pop[idxPopBlock(threadIdx.x, ym1, zp1, 16)];
-AxyNode[18] = s_pop[idxPopBlock(threadIdx.x, yp1, zm1, 17)];
+ANode[ 1] = s_pop[idxPopBlock(xm1, threadIdx.y, threadIdx.z, 0)];
+ANode[ 2] = s_pop[idxPopBlock(xp1, threadIdx.y, threadIdx.z, 1)];
+ANode[ 3] = s_pop[idxPopBlock(threadIdx.x, ym1, threadIdx.z, 2)];
+ANode[ 4] = s_pop[idxPopBlock(threadIdx.x, yp1, threadIdx.z, 3)];
+ANode[ 5] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, zm1, 4)];
+ANode[ 6] = s_pop[idxPopBlock(threadIdx.x, threadIdx.y, zp1, 5)];
+ANode[ 7] = s_pop[idxPopBlock(xm1, ym1, threadIdx.z, 6)];
+ANode[ 8] = s_pop[idxPopBlock(xp1, yp1, threadIdx.z, 7)];
+ANode[ 9] = s_pop[idxPopBlock(xm1, threadIdx.y, zm1, 8)];
+ANode[10] = s_pop[idxPopBlock(xp1, threadIdx.y, zp1, 9)];
+ANode[11] = s_pop[idxPopBlock(threadIdx.x, ym1, zm1, 10)];
+ANode[12] = s_pop[idxPopBlock(threadIdx.x, yp1, zp1, 11)];
+ANode[13] = s_pop[idxPopBlock(xm1, yp1, threadIdx.z, 12)];
+ANode[14] = s_pop[idxPopBlock(xp1, ym1, threadIdx.z, 13)];
+ANode[15] = s_pop[idxPopBlock(xm1, threadIdx.y, zp1, 14)];
+ANode[16] = s_pop[idxPopBlock(xp1, threadIdx.y, zm1, 15)];
+ANode[17] = s_pop[idxPopBlock(threadIdx.x, ym1, zp1, 16)];
+ANode[18] = s_pop[idxPopBlock(threadIdx.x, yp1, zm1, 17)];
 
 /* load pop from global in cover nodes */
 
@@ -63,13 +61,13 @@ AxyNode[18] = s_pop[idxPopBlock(threadIdx.x, yp1, zm1, 17)];
 if(nodeType != BULK){
     #include CASE_AXY_BC_DEF
 }else{
-    AxyVar = AxyNode[0] + AxyNode[1] + AxyNode[2] + AxyNode[3] + AxyNode[4] + AxyNode[5] + AxyNode[6] + AxyNode[7] + AxyNode[8] + AxyNode[9] + AxyNode[10] + AxyNode[11] + AxyNode[12] + AxyNode[13] + AxyNode[14] + AxyNode[15] + AxyNode[16] + AxyNode[17] + AxyNode[18];
+    AxyVar = ANode[0] + ANode[1] + ANode[2] + ANode[3] + ANode[4] + ANode[5] + ANode[6] + ANode[7] + ANode[8] + ANode[9] + ANode[10] + ANode[11] + ANode[12] + ANode[13] + ANode[14] + ANode[15] + ANode[16] + ANode[17] + ANode[18];
     AxyVar = AxyVar; // + T_Q_INTERNAL_D_Cp;
     invAxy= 1.0/AxyVar;
 
-    Axy_qx_t30 = F_M_I_SCALE*((AxyNode[1] - AxyNode[2] + AxyNode[7] - AxyNode[ 8] + AxyNode[ 9] - AxyNode[10] + AxyNode[13] - AxyNode[14] + AxyNode[15] - AxyNode[16]));
-    Axy_qy_t30 = F_M_I_SCALE*((AxyNode[3] - AxyNode[4] + AxyNode[7] - AxyNode[ 8] + AxyNode[11] - AxyNode[12] + AxyNode[14] - AxyNode[13] + AxyNode[17] - AxyNode[18]));
-    Axy_qz_t30 = F_M_I_SCALE*((AxyNode[5] - AxyNode[6] + AxyNode[9] - AxyNode[10] + AxyNode[11] - AxyNode[12] + AxyNode[16] - AxyNode[15] + AxyNode[18] - AxyNode[17]));
+    Axy_qx_t30 = F_M_I_SCALE*((ANode[1] - ANode[2] + ANode[7] - ANode[ 8] + ANode[ 9] - ANode[10] + ANode[13] - ANode[14] + ANode[15] - ANode[16]));
+    Axy_qy_t30 = F_M_I_SCALE*((ANode[3] - ANode[4] + ANode[7] - ANode[ 8] + ANode[11] - ANode[12] + ANode[14] - ANode[13] + ANode[17] - ANode[18]));
+    Axy_qz_t30 = F_M_I_SCALE*((ANode[5] - ANode[6] + ANode[9] - ANode[10] + ANode[11] - ANode[12] + ANode[16] - ANode[15] + ANode[18] - ANode[17]));
 }
 
 Axy_udx_t30 = CONF_DIFF_FLUC_COEF * (Axy_qx_t30*invAxy - ux_t30);

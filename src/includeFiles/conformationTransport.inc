@@ -18,6 +18,7 @@ dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX,
 #endif
 
 //#include "includeFiles\conformationTransport\conformation_gradient.inc"
+dfloat ANode[GQ];
 
 #ifdef A_XX_DIST
 #include "conformationTransport\Axx.inc"
