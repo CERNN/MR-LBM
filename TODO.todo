@@ -72,6 +72,7 @@ Projects:
       ☐ Need method to store velocity in the halo similar to populations
         ✔ rewrite ghost values to be a struct @done(24-11-03 18:59)
     ✔ Source term for the advection-diffusion equation @done(24-11-05 01:03)
+    ☐ Unify the transport equations in a single kernel
       ☐Maybe not sure about the q term if is correct by adding the source term (doesnt appear to impact the solution)
   ☐ Async call to python script to convert bin files into vtr files
 Archive:\

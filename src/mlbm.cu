@@ -186,14 +186,7 @@ __global__ void gpuMomCollisionStream(
 
     /* load pop from global in cover nodes */
 
-   
     #include "includeFiles/popLoad.inc"
-
-
-    #ifdef CONFORMATION_TENSOR
-    #include "includeFiles\conformationTransport.inc"
-    #endif
-
 
     dfloat invRho;
     if(nodeType != BULK){
