@@ -30,6 +30,7 @@ __global__ void gpuConformationXXCollisionStream(
 
     //
     dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat GxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat invAxx = 1/AxxVar;
     dfloat Axx_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat Axx_qy_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -128,7 +129,7 @@ __global__ void gpuConformationXXCollisionStream(
         #include CASE_AXX_BC_DEF
     }else{
         AxxVar = ANode[0] + ANode[1] + ANode[2] + ANode[3] + ANode[4] + ANode[5] + ANode[6] + ANode[7] + ANode[8] + ANode[9] + ANode[10] + ANode[11] + ANode[12] + ANode[13] + ANode[14] + ANode[15] + ANode[16] + ANode[17] + ANode[18];
-        AxxVar = AxxVar; // + T_Q_INTERNAL_D_Cp;
+        AxxVar = AxxVar + GxxVar;
         invAxx= 1.0/AxxVar;
 
         Axx_qx_t30 = F_M_I_SCALE*((ANode[1] - ANode[2] + ANode[7] - ANode[ 8] + ANode[ 9] - ANode[10] + ANode[13] - ANode[14] + ANode[15] - ANode[16]));
@@ -199,6 +200,7 @@ __global__ void gpuConformationXYCollisionStream(
 
     //
     dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat GxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat invAxy = 1/AxyVar;
     dfloat Axy_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat Axy_qy_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -297,7 +299,7 @@ __global__ void gpuConformationXYCollisionStream(
         #include CASE_AXY_BC_DEF
     }else{
         AxyVar = ANode[0] + ANode[1] + ANode[2] + ANode[3] + ANode[4] + ANode[5] + ANode[6] + ANode[7] + ANode[8] + ANode[9] + ANode[10] + ANode[11] + ANode[12] + ANode[13] + ANode[14] + ANode[15] + ANode[16] + ANode[17] + ANode[18];
-        AxyVar = AxyVar; // + T_Q_INTERNAL_D_Cp;
+        AxyVar = AxyVar + GxyVar;
         invAxy= 1.0/AxyVar;
 
         Axy_qx_t30 = F_M_I_SCALE*((ANode[1] - ANode[2] + ANode[7] - ANode[ 8] + ANode[ 9] - ANode[10] + ANode[13] - ANode[14] + ANode[15] - ANode[16]));
@@ -367,6 +369,7 @@ __global__ void gpuConformationXZCollisionStream(
 
     //
     dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat GxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat invAxz = 1/AxzVar;
     dfloat Axz_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat Axz_qy_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -465,7 +468,7 @@ __global__ void gpuConformationXZCollisionStream(
         #include CASE_AXZ_BC_DEF
     }else{
         AxzVar = ANode[0] + ANode[1] + ANode[2] + ANode[3] + ANode[4] + ANode[5] + ANode[6] + ANode[7] + ANode[8] + ANode[9] + ANode[10] + ANode[11] + ANode[12] + ANode[13] + ANode[14] + ANode[15] + ANode[16] + ANode[17] + ANode[18];
-        AxzVar = AxzVar; // + T_Q_INTERNAL_D_Cp;
+        AxzVar = AxzVar + GxzVar;
         invAxz= 1.0/AxzVar;
 
         Axz_qx_t30 = F_M_I_SCALE*((ANode[1] - ANode[2] + ANode[7] - ANode[ 8] + ANode[ 9] - ANode[10] + ANode[13] - ANode[14] + ANode[15] - ANode[16]));
@@ -535,6 +538,7 @@ __global__ void gpuConformationYYCollisionStream(
 
     //
     dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat GyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat invAyy = 1/AyyVar;
     dfloat Ayy_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat Ayy_qy_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -633,7 +637,7 @@ __global__ void gpuConformationYYCollisionStream(
         #include CASE_AYY_BC_DEF
     }else{
         AyyVar = ANode[0] + ANode[1] + ANode[2] + ANode[3] + ANode[4] + ANode[5] + ANode[6] + ANode[7] + ANode[8] + ANode[9] + ANode[10] + ANode[11] + ANode[12] + ANode[13] + ANode[14] + ANode[15] + ANode[16] + ANode[17] + ANode[18];
-        AyyVar = AyyVar; // + T_Q_INTERNAL_D_Cp;
+        AyyVar = AyyVar + GyyVar;
         invAyy= 1.0/AyyVar;
 
         Ayy_qx_t30 = F_M_I_SCALE*((ANode[1] - ANode[2] + ANode[7] - ANode[ 8] + ANode[ 9] - ANode[10] + ANode[13] - ANode[14] + ANode[15] - ANode[16]));
@@ -703,6 +707,7 @@ __global__ void gpuConformationYZCollisionStream(
 
     //
     dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat GyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat invAyz = 1/AyzVar;
     dfloat Ayz_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat Ayz_qy_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -801,7 +806,7 @@ __global__ void gpuConformationYZCollisionStream(
         #include CASE_AYZ_BC_DEF
     }else{
         AyzVar = ANode[0] + ANode[1] + ANode[2] + ANode[3] + ANode[4] + ANode[5] + ANode[6] + ANode[7] + ANode[8] + ANode[9] + ANode[10] + ANode[11] + ANode[12] + ANode[13] + ANode[14] + ANode[15] + ANode[16] + ANode[17] + ANode[18];
-        AyzVar = AyzVar; // + T_Q_INTERNAL_D_Cp;
+        AyzVar = AyzVar + GyzVar;
         invAyz= 1.0/AyzVar;
 
         Ayz_qx_t30 = F_M_I_SCALE*((ANode[1] - ANode[2] + ANode[7] - ANode[ 8] + ANode[ 9] - ANode[10] + ANode[13] - ANode[14] + ANode[15] - ANode[16]));
@@ -872,6 +877,7 @@ __global__ void gpuConformationZZCollisionStream(
 
     //
     dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat GzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat invAzz = 1/AzzVar;
     dfloat Azz_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     dfloat Azz_qy_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -970,7 +976,7 @@ __global__ void gpuConformationZZCollisionStream(
         #include CASE_AZZ_BC_DEF
     }else{
         AzzVar = ANode[0] + ANode[1] + ANode[2] + ANode[3] + ANode[4] + ANode[5] + ANode[6] + ANode[7] + ANode[8] + ANode[9] + ANode[10] + ANode[11] + ANode[12] + ANode[13] + ANode[14] + ANode[15] + ANode[16] + ANode[17] + ANode[18];
-        AzzVar = AzzVar; // + T_Q_INTERNAL_D_Cp;
+        AzzVar = AzzVar + GzzVar;
         invAzz= 1.0/AzzVar;
 
         Azz_qx_t30 = F_M_I_SCALE*((ANode[1] - ANode[2] + ANode[7] - ANode[ 8] + ANode[ 9] - ANode[10] + ANode[13] - ANode[14] + ANode[15] - ANode[16]));

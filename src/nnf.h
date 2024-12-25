@@ -59,18 +59,10 @@ constexpr dfloat eta_0 =  1e-3;
 /* ----------------------------- FENE_P ------------------------------------- */
 
 #ifdef FENE_P
-#define CONFORMATION_TENSOR
-#define COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-#define COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
 
-#define A_XX_DIST
-#define A_XY_DIST
-#define A_XZ_DIST
-#define A_YY_DIST
-#define A_YZ_DIST
-#define A_ZZ_DIST
 
-// Input
+constexpr dfloat CONF_ZERO = 1.0;
+constexpr dfloat fenep_mu_d_lambda = nu_p / fenep_lambda;
 
 #endif
 

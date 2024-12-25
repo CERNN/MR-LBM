@@ -117,9 +117,16 @@ __global__ void gpuMomCollisionStream(
         #include "includeFiles\velocity_divergent.inc"
     #endif //COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
 
-    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
-    #include "includeFiles\conformationTransport\conformation_divergent.inc"   
+
+    #ifdef CONFORMATION_TENSOR
+        #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+        #include "includeFiles\conformationTransport\conformation_divergent.inc"   
+        #endif
+
+    #include "includeFiles\conformationTransport\conformation_evolution.inc"
     #endif
+
+
     
     //save populations in shared memory
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = pop[ 1];

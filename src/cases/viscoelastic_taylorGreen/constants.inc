@@ -1,16 +1,16 @@
 #define FENE_P
 
-constexpr dfloat RE = 1000;
+constexpr dfloat RE = 1;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 100;
-constexpr int N = 64 * SCALE;
+constexpr int N_STEPS = 1000;
+constexpr int N = 128 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.1;  
+constexpr dfloat U_MAX = 0.01;  
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
@@ -29,28 +29,18 @@ __device__ const dfloat UZ_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 
 
-    #define BC_X_PERIODIC
-    #define BC_Y_PERIODIC
-    #define BC_Z_PERIODIC
+#define BC_X_PERIODIC
+#define BC_Y_PERIODIC
+#define BC_Z_PERIODIC
 
-constexpr dfloat VISC = U_MAX * NX / RE;
+constexpr dfloat L = N;
+constexpr dfloat kinematic_viscosity_ratio = 0.1; //R_v
+constexpr dfloat VISC = U_MAX*L*kinematic_viscosity_ratio/RE;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 
-/* --------------------- VISCOELASTIC -------------------- */
-#define D3G19
 
-constexpr dfloat Weissenberg_number = 10;
-constexpr dfloat kinematic_viscosity_ratio = 0.1;
-constexpr dfloat L = N;
-constexpr dfloat fenep_lambda = Weissenberg_number/(U_MAX/L);
-constexpr dfloat inv_fenep_lambda = 1.0/fenep_lambda;
-constexpr dfloat nu_s = VISC/RHO_0;
-constexpr dfloat nu_p = (nu_s/kinematic_viscosity_ratio) - nu_s;
-constexpr dfloat rho_p = 1.0;
-constexpr dfloat fenep_mup = nu_p*rho_p;
-constexpr dfloat fenep_re = 1.0;
 
 
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
@@ -67,3 +57,41 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define CHECKPOINT_SAVE false // the frequency on which the simulation checkpoint is saved
 #define LOAD_FIELD false
 #define LOAD_FIELD_STEP 0
+
+/* --------------------- VISCOELASTIC -------------------- */
+#ifdef FENE_P
+#define OLDROYD_B
+
+#define D3G19
+
+#define CONFORMATION_TENSOR    
+#define A_XX_DIST
+#define A_XY_DIST
+#define A_XZ_DIST
+#define A_YY_DIST
+#define A_YZ_DIST
+#define A_ZZ_DIST
+
+#define COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+#define COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+
+
+    constexpr dfloat Weissenberg_number = 10;
+    constexpr dfloat fenep_lambda = Weissenberg_number*L/U_MAX;
+    constexpr dfloat inv_fenep_lambda = 1.0/fenep_lambda;
+    //constexpr dfloat nu_p = -VISC*(1-1/kinematic_viscosity_ratio);
+    constexpr dfloat nu_p = (VISC/kinematic_viscosity_ratio) - VISC;
+    constexpr dfloat fenep_re = 1.0;
+
+    constexpr dfloat CONF_DIFFUSIVITY_RATIO = 100; //OR Pr in malaspinas
+    constexpr dfloat CONF_DIFFUSIVITY = VISC/CONF_DIFFUSIVITY_RATIO; // alpha
+
+    constexpr dfloat CONF_DIFF_REF = (1.0/6);
+    constexpr dfloat CONF_TAU = CONF_DIFF_REF*3+0.5;
+    constexpr dfloat CONF_OMEGA  = 1.0/CONF_TAU;
+    constexpr dfloat CONF_TT_OMEGA = 1.0-0.5*CONF_OMEGA;
+
+    constexpr dfloat CONF_DIFF_FLUC = CONF_DIFFUSIVITY - CONF_DIFF_REF;
+    constexpr dfloat CONF_AAA = (3*CONF_DIFF_FLUC*CONF_OMEGA);
+    constexpr dfloat CONF_DIFF_FLUC_COEF = CONF_AAA/(1.0+CONF_AAA);
+#endif

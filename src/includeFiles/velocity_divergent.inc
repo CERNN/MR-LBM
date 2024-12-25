@@ -55,3 +55,6 @@ if ((nodeType & 0b00001111) == 0b00001111) { // wall back
     duydz_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 1)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 1)]);
     duzdz_t30 = (sharedVel[idxVelBlock(tx, ty, tz, 2)] - sharedVel[idxVelBlock(tx, ty, tz - 1, 2)]);
 }
+//
+//if(x == 4 && z == 4 && step == 100000)
+//    printf("step %d y = %d grad %f \n",step,y,duzdy_t30/3.0);
