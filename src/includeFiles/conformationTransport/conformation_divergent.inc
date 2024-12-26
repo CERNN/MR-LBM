@@ -32,6 +32,9 @@ dfloat dAxzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 2)] - s_pop[idxConfBlock(tx,
 dfloat dAyzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 4)] - s_pop[idxConfBlock(tx, ty, tz - 1, 4)])/2;
 dfloat dAzzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 5)] - s_pop[idxConfBlock(tx, ty, tz - 1, 5)])/2;
 
+//if(x == 32 && z == 32)
+//    printf("y: %d dAyydy %f Ayy_p1 %f Ayy %f Ayy_m1 %f  \n",y,dAyydy,s_pop[idxConfBlock(tx, ty + 1, tz, 3)],s_pop[idxConfBlock(tx, ty, tz, 3)],s_pop[idxConfBlock(tx, ty - 1, tz, 3)]);
+//
 //OVERWRITE FOR NEAR WALL NODES
 if ((nodeType & 0b01010101) == 0b01010101) { // wall west
     dAxxdx = (s_pop[idxConfBlock(tx + 1, ty, tz, 0)] - s_pop[idxConfBlock(tx, ty, tz, 0)]);

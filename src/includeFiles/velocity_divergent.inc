@@ -20,6 +20,9 @@ dfloat duzdx_t30 = (s_pop[idxVelBlock(tx + 1, ty, tz, 2)] - s_pop[idxVelBlock(tx
 dfloat duzdy_t30 = (s_pop[idxVelBlock(tx, ty + 1, tz, 2)] - s_pop[idxVelBlock(tx, ty - 1, tz, 2)]) / 2;
 dfloat duzdz_t30 = (s_pop[idxVelBlock(tx, ty, tz + 1, 2)] - s_pop[idxVelBlock(tx, ty, tz - 1, 2)]) / 2;
 
+//if(x == 32 && z == 32)
+//    printf("y: %d duydy_t30 %f uy_p1 %f uy %f uy_m1 %f  \n",y,duydy_t30,s_pop[idxVelBlock(tx, ty + 1, tz, 3)],s_pop[idxVelBlock(tx, ty, tz, 3)],s_pop[idxVelBlock(tx, ty - 1, tz, 3)]);
+
 //OVERWRITE FOR NEAR WALL NODES
 if ((nodeType & 0b01010101) == 0b01010101) { // wall west
     duxdx_t30 = (s_pop[idxVelBlock(tx + 1, ty, tz, 0)] - s_pop[idxVelBlock(tx, ty, tz, 0)]);

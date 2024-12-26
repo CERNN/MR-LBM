@@ -273,11 +273,10 @@ __host__ __device__
 }
 
 #ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+//   @note: not unsigned because it uses negative values for thread index to pad from the halo
 __host__ __device__ __forceinline__ 
-size_t idxVelBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int uIndex)
+size_t idxVelBlock(const int tx, const int ty, const int tz, const int uIndex)
 {
-    // +1 in thread to offset -1
-    // +2 on block to increase the block size
     return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * uIndex));
 }
 #endif
@@ -292,9 +291,10 @@ size_t idxVelBlock(const unsigned int tx, const unsigned int ty, const unsigned 
 *   @param yy: 3
 *   @param yz: 4
 *   @param zz: 5
+*   @note: not unsigned because it uses negative values for thread index to pad from the halo
 */
 __host__ __device__ __forceinline__ 
-size_t idxConfBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int confIndex)
+size_t idxConfBlock(const int tx, const int ty, const int tz, const int confIndex)
 {
     return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * confIndex));
 }

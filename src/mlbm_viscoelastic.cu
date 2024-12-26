@@ -40,6 +40,11 @@ __global__ void gpuConformationXXCollisionStream(
     dfloat Axx_udy_t30 = CONF_DIFF_FLUC_COEF * (Axx_qy_t30*invAxx - uy_t30);
     dfloat Axx_udz_t30 = CONF_DIFF_FLUC_COEF * (Axx_qz_t30*invAxx - uz_t30);
     
+
+    //if(x == 60 && y == 60 && z == 60)
+    //    printf("step %d xx %f \n", step,GxxVar);
+
+
     #include COLREC_AXX_RECONSTRUCTION
 
     const unsigned short int xp1 = (threadIdx.x + 1 + BLOCK_NX) % BLOCK_NX;
@@ -152,6 +157,7 @@ __global__ void gpuConformationXXCollisionStream(
     
     #include "includeFiles\conformationTransport\popSave_Axx.inc"
 
+    /*
     #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
         if (INTERFACE_BC_WEST) { //w
             ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 0, bx, by, bz)] = AxxVar;
@@ -167,6 +173,7 @@ __global__ void gpuConformationXXCollisionStream(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 0, bx, by, bz)] = AxxVar;
         }
     #endif
+    */
 }
 #endif
 
@@ -209,6 +216,10 @@ __global__ void gpuConformationXYCollisionStream(
     dfloat Axy_udx_t30 = CONF_DIFF_FLUC_COEF * (Axy_qx_t30*invAxy - ux_t30);
     dfloat Axy_udy_t30 = CONF_DIFF_FLUC_COEF * (Axy_qy_t30*invAxy - uy_t30);
     dfloat Axy_udz_t30 = CONF_DIFF_FLUC_COEF * (Axy_qz_t30*invAxy - uz_t30);
+
+        //if(x == 60 && y == 60 && z == 60)
+        //printf("step %d xy %f \n", step,GxyVar);
+
     
     #include COLREC_AXY_RECONSTRUCTION
 
@@ -321,6 +332,7 @@ __global__ void gpuConformationXYCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Axy.inc"
+    /*
     #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
         if (INTERFACE_BC_WEST) { //w
             ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 1, bx, by, bz)] = AxyVar;
@@ -336,6 +348,7 @@ __global__ void gpuConformationXYCollisionStream(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 1, bx, by, bz)] = AxyVar;
         }
     #endif
+    */
 }
 #endif
 
@@ -378,6 +391,10 @@ __global__ void gpuConformationXZCollisionStream(
     dfloat Axz_udx_t30 = CONF_DIFF_FLUC_COEF * (Axz_qx_t30*invAxz - ux_t30);
     dfloat Axz_udy_t30 = CONF_DIFF_FLUC_COEF * (Axz_qy_t30*invAxz - uy_t30);
     dfloat Axz_udz_t30 = CONF_DIFF_FLUC_COEF * (Axz_qz_t30*invAxz - uz_t30);
+
+        //if(x == 60 && y == 60 && z == 60)
+        //printf("step %d xz %f \n", step,GxzVar);
+
     
     #include COLREC_AXZ_RECONSTRUCTION
 
@@ -490,6 +507,7 @@ __global__ void gpuConformationXZCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Axz.inc"
+    /*
     #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
         if (INTERFACE_BC_WEST) { //w
             ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 2, bx, by, bz)] = AxzVar;
@@ -505,6 +523,7 @@ __global__ void gpuConformationXZCollisionStream(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 2, bx, by, bz)] = AxzVar;
         }
     #endif
+    */
 }
 #endif
 
@@ -547,6 +566,10 @@ __global__ void gpuConformationYYCollisionStream(
     dfloat Ayy_udx_t30 = CONF_DIFF_FLUC_COEF * (Ayy_qx_t30*invAyy - ux_t30);
     dfloat Ayy_udy_t30 = CONF_DIFF_FLUC_COEF * (Ayy_qy_t30*invAyy - uy_t30);
     dfloat Ayy_udz_t30 = CONF_DIFF_FLUC_COEF * (Ayy_qz_t30*invAyy - uz_t30);
+
+        //if(x == 60 && y == 60 && z == 60)
+        //printf("step %d yy %f \n", step,GyyVar);
+
     
     #include COLREC_AYY_RECONSTRUCTION
 
@@ -659,6 +682,7 @@ __global__ void gpuConformationYYCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Ayy.inc"
+    /*
     #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
         if (INTERFACE_BC_WEST) { //w
             ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 3, bx, by, bz)] = AyyVar;
@@ -674,6 +698,7 @@ __global__ void gpuConformationYYCollisionStream(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 3, bx, by, bz)] = AyyVar;
         }
     #endif
+    */
 }
 #endif
 
@@ -716,6 +741,10 @@ __global__ void gpuConformationYZCollisionStream(
     dfloat Ayz_udx_t30 = CONF_DIFF_FLUC_COEF * (Ayz_qx_t30*invAyz - ux_t30);
     dfloat Ayz_udy_t30 = CONF_DIFF_FLUC_COEF * (Ayz_qy_t30*invAyz - uy_t30);
     dfloat Ayz_udz_t30 = CONF_DIFF_FLUC_COEF * (Ayz_qz_t30*invAyz - uz_t30);
+
+        //if(x == 60 && y == 60 && z == 60)
+        //printf("step %d yz %f \n", step,GyzVar);
+
     
     #include COLREC_AYZ_RECONSTRUCTION
 
@@ -828,6 +857,7 @@ __global__ void gpuConformationYZCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Ayz.inc"
+    /*
     #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
         if (INTERFACE_BC_WEST) { //w
             ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 4, bx, by, bz)] = AyzVar;
@@ -843,6 +873,7 @@ __global__ void gpuConformationYZCollisionStream(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 4, bx, by, bz)] = AyzVar;
         }
     #endif
+    */
 }
 #endif
 
@@ -886,6 +917,10 @@ __global__ void gpuConformationZZCollisionStream(
     dfloat Azz_udx_t30 = CONF_DIFF_FLUC_COEF * (Azz_qx_t30*invAzz - ux_t30);
     dfloat Azz_udy_t30 = CONF_DIFF_FLUC_COEF * (Azz_qy_t30*invAzz - uy_t30);
     dfloat Azz_udz_t30 = CONF_DIFF_FLUC_COEF * (Azz_qz_t30*invAzz - uz_t30);
+
+        //if(x == 60 && y == 60 && z == 60)
+        //printf("step %d zz %f \n", step,GzzVar);
+
     
     #include COLREC_AZZ_RECONSTRUCTION
 
@@ -998,6 +1033,7 @@ __global__ void gpuConformationZZCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qz_t30;
     
     #include "includeFiles\conformationTransport\popSave_Azz.inc"
+    /*
     #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
         if (INTERFACE_BC_WEST) { //w
             ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 5, bx, by, bz)] = AzzVar;
@@ -1013,5 +1049,6 @@ __global__ void gpuConformationZZCollisionStream(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 5, bx, by, bz)] = AzzVar;
         }
     #endif
+    */
 }
 #endif

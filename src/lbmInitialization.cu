@@ -351,7 +351,9 @@ __global__ void gpuInitialization_pop(
             #endif                    
         }
     #endif //SECOND_DIST
+    #ifdef CONFORMATION_TENSOR
     dfloat ANode[GQ];
+    #endif
     #ifdef A_XX_DIST 
         
         dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -794,7 +796,7 @@ __global__ void gpuInitialization_pop(
             ghostInterface.f_uGhost.Z_1[g_idxUZ(tx, ty, 2, bx, by, bz)] = uz_t30;
         }
     #endif
-
+    /*
     #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
 
     if (threadIdx.x == 0) { //w
@@ -845,7 +847,7 @@ __global__ void gpuInitialization_pop(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 5, bx, by, bz)] = AzzVar;
         }
     #endif
-
+    */
 }
 
 
