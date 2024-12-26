@@ -21,7 +21,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM viscoelastic_taylorGreen
+#define BC_PROBLEM viscoelastic_fourRollMill
                                 
 constexpr bool console_flush = false;
 

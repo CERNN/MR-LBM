@@ -61,7 +61,7 @@ constexpr dfloat eta_0 =  1e-3;
 #ifdef FENE_P
 
 
-constexpr dfloat CONF_ZERO = 1.0;
+constexpr dfloat CONF_ZERO = (dfloat)(1);
 constexpr dfloat fenep_mu_d_lambda = nu_p / fenep_lambda;
 
 #endif

@@ -64,9 +64,13 @@ __global__ void gpuMomCollisionStream(
     }*/
 
     //Local forces
-    dfloat L_Fx = FX;
-    dfloat L_Fy = FY;
-    dfloat L_Fz = FZ;
+    dfloat xx = 2.0 * M_PI * x / L;
+    dfloat yy = 2.0 * M_PI * y / L;
+    dfloat zz = 2.0 * M_PI * z / L;
+
+    dfloat L_Fx = 2.0 * VISC * sin(xx) * cos(yy) * 5e-4;
+    dfloat L_Fy = -2.0 * VISC * sin(yy) * cos(xx) * 5e-4;
+    dfloat L_Fz = 0.00;
 
     #ifdef BC_FORCES
     dfloat L_BC_Fx = 0.0;
