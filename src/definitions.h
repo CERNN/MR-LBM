@@ -92,6 +92,8 @@ constexpr BlockDim optimalBlockDimArray = findOptimalBlockDimensions(MAX_ELEMENT
 
 #define BLOCK_LBM_SIZE (BLOCK_NX * BLOCK_NY * BLOCK_NZ)
 
+const size_t BLOCK_LBM_SIZE_POP = BLOCK_LBM_SIZE * (Q - 1);
+
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;
 const size_t BLOCK_FACE_XZ = BLOCK_NX * BLOCK_NZ;
 const size_t BLOCK_FACE_YZ = BLOCK_NY * BLOCK_NZ;
@@ -157,14 +159,18 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 #ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
     #define HALO_SIZE 1
     const size_t VEL_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 3;
+#else
+    const size_t VEL_GRAD_BLOCK_SIZE = 0;
 #endif
 
 #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
     #define HALO_SIZE 1
     const size_t CONFORMATION_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 6;
+#else
+    const size_t CONFORMATION_GRAD_BLOCK_SIZE = 0;
 #endif
 
-
+constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_BLOCK_SIZE, CONFORMATION_GRAD_BLOCK_SIZE));
 
 //FUNCTION DECLARATION MACROS
 #ifdef DYNAMIC_SHARED_MEMORY

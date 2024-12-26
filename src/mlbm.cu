@@ -22,7 +22,7 @@ __global__ void gpuMomCollisionStream(
     #ifdef DYNAMIC_SHARED_MEMORY
     extern __shared__ dfloat s_pop[]; 
     #else
-    __shared__ dfloat s_pop[BLOCK_LBM_SIZE * (Q - 1)];
+    __shared__ dfloat s_pop[MAX_SHARED_MEMORY_SIZE];
     #endif
 
 

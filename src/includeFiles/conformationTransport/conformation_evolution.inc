@@ -47,6 +47,9 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blo
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = G_yz;
 fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = G_zz;
 
+//if(x == 60 && y == 60 && z == 60)
+//    printf("step %d xx %f \n", step,G_xx);
+
 //compute the soource term for mass-momentum transport, eq36 malaspinas
 // rho.g = div * PI =  (mu/lambda)*(a*A - b*I)
 //F = (mu/lambda) * div(A) - div(I); but div(I) = 0
