@@ -1,11 +1,3 @@
-dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-
-
 s_pop[idxConfBlock(tx, ty, tz, 0)] = AxxVar;
 s_pop[idxConfBlock(tx, ty, tz, 1)] = AxyVar;
 s_pop[idxConfBlock(tx, ty, tz, 2)] = AxzVar;
@@ -14,7 +6,7 @@ s_pop[idxConfBlock(tx, ty, tz, 4)] = AyzVar;
 s_pop[idxConfBlock(tx, ty, tz, 5)] = AzzVar;
 
 // Load neighboring halo cells in shared memory
-#include "includeFiles\conformationTransport\confLoad.inc"
+#include "includeFiles/conformationTransport\confLoad.inc"
 
 __syncthreads();
 

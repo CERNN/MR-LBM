@@ -3,7 +3,7 @@ s_pop[idxVelBlock(tx, ty, tz, 1)] = uy_t30;
 s_pop[idxVelBlock(tx, ty, tz, 2)] = uz_t30;
 
 // Load neighboring halo cells in shared memory
-#include "includeFiles\velLoad.inc"
+#include "includeFiles/velLoad.inc"
 __syncthreads();
 
 // Compute unrolled divergent calculations

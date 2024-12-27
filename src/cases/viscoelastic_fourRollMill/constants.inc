@@ -7,7 +7,7 @@ constexpr int N_STEPS = 10000;
 constexpr int N = 64 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = N;        // size z of the grid in one GPU
+constexpr int NZ = 8;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 0.01;  
@@ -61,7 +61,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 /* --------------------- VISCOELASTIC -------------------- */
 #ifdef FENE_P
 #define OLDROYD_B
-
+#define CONVECTION_DIFFUSION_TRANSPORT
 #define D3G19
 
 #define CONFORMATION_TENSOR    

@@ -40,12 +40,12 @@ dfloat G_xy =  ADU_DUTA_xy_t30/F_M_I_SCALE - inv_fenep_lambda * aa * AxyVar;
 dfloat G_xz =  ADU_DUTA_xz_t30/F_M_I_SCALE - inv_fenep_lambda * aa * AxzVar;
 dfloat G_yz =  ADU_DUTA_yz_t30/F_M_I_SCALE - inv_fenep_lambda * aa * AyzVar;
 
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 1.0*G_xx;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 1.0*G_xy;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 1.0*G_xz;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 1.0*G_yy;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 1.0*G_yz;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 1.0*G_zz;
+fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0*G_xx;
+fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0*G_xy;
+fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0*G_xz;
+fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0*G_yy;
+fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0*G_yz;
+fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0*G_zz;
 
 //if(x == 60 && y == 60 && z == 60)
 //    printf("step %d xx %f \n", step,G_xx);
@@ -55,18 +55,17 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blo
 //F = (mu/lambda) * div(A) - div(I); but div(I) = 0
 //F = (mu/lambda)*div(A)
 
-L_Fx += (dAxxdx + dAxydy + dAxzdz)*(fenep_mu_d_lambda)*1.0; //zero just to debug for now
-L_Fy += (dAxydx + dAyydy + dAyzdz)*(fenep_mu_d_lambda)*1.0; //zero just to debug for now
-L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(fenep_mu_d_lambda)*1.0; //zero just to debug for now
+L_Fx += (dAxxdx + dAxydy + dAxzdz)*(fenep_mu_d_lambda)*0.0; //zero just to debug for now
+L_Fy += (dAxydx + dAyydy + dAyzdz)*(fenep_mu_d_lambda)*0.0; //zero just to debug for now
+L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(fenep_mu_d_lambda)*0.0; //zero just to debug for now
 
 
-//add offset back . not necessary since i dont use it again on mlbm.cu
-//AxxVar += CONF_ZERO;
-//AxyVar += CONF_ZERO;
-//AxzVar += CONF_ZERO;
-//AyyVar += CONF_ZERO;
-//AyzVar += CONF_ZERO;
-//AzzVar += CONF_ZERO;
+AxxVar += CONF_ZERO;
+AxyVar += CONF_ZERO;
+AxzVar += CONF_ZERO;
+AyyVar += CONF_ZERO;
+AyzVar += CONF_ZERO;
+AzzVar += CONF_ZERO;
 
 
 

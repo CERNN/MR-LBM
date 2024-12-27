@@ -26,7 +26,6 @@
 //#include "globalFunctions.h"
 #include "lbmInitialization.cuh"
 #include "mlbm.cuh"
-#include "mlbm_viscoelastic.cuh"
 #include "saveData.cuh"
 #include "checkpoint.cuh"
 

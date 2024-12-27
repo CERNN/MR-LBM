@@ -36,10 +36,6 @@ dfloat d3 = dy * dy + dz * dz;
 
 dfloat range = 0.1;
 
-cVar = T_REFERENCE;
-    qx_t30  = 0; 
-    qy_t30  = 0; 
-    qz_t30  = 0; 
 /*
 #ifdef A_XX_DIST
 AxxVar = (CONF_ZERO-range/2.0) + range / (1.0 + exp((d3 - R * R) / (sigma * sigma)));

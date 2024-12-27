@@ -35,7 +35,7 @@ void initializationRandomNumbers(
 *   @param fMom: moments to be inialized to be initialized 
 */
 __global__ void gpuInitialization_mom(
-    dfloat *fMom, float* randomNumbers);
+    dfloat *fMom, dfloat* randomNumbers);
 
 /*
 *   @brief Initializes populations in the intefaces based on the moments 

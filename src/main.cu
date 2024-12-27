@@ -95,8 +95,8 @@ int main() {
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     int step = 0;
 
-    float** randomNumbers = nullptr; // useful for turbulence
-    randomNumbers = (float**)malloc(sizeof(float*));
+    dfloat** randomNumbers = nullptr; // useful for turbulence
+    randomNumbers = (dfloat**)malloc(sizeof(dfloat*));
 
     allocateHostMemory(
         &h_fMom, &rho, &ux, &uy, &uz
@@ -190,26 +190,6 @@ int main() {
 #pragma warning(pop)
        
         gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
-
-        #ifdef A_XX_DIST
-        gpuConformationXXCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface,step, save); 
-        #endif
-        #ifdef A_XY_DIST
-        gpuConformationXYCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface,step, save); 
-        #endif
-        #ifdef A_XZ_DIST
-        gpuConformationXZCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface,step, save); 
-        #endif
-        #ifdef A_YY_DIST
-        gpuConformationYYCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface,step, save); 
-        #endif
-        #ifdef A_YZ_DIST
-        gpuConformationYZCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface,step, save); 
-        #endif
-        #ifdef A_ZZ_DIST
-        gpuConformationZZCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface,step, save); 
-        #endif
-
         #ifdef PARTICLE_TRACER
             checkCudaErrors(cudaDeviceSynchronize());
             updateParticlePos(d_particlePos, h_particlePos, d_fMom, streamsPart[0],step);

@@ -29,18 +29,18 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 
 /* ------------------------------ VELOCITY SET ------------------------------ */
 #ifdef D3Q19
-    #include "includeFiles\velocitySets\D3Q19.inc"
+    #include "includeFiles/velocitySets/D3Q19.inc"
 #endif //D3Q19
 #ifdef D3Q27
-    #include "includeFiles\velocitySets\D3Q27.inc"
+    #include "includeFiles/velocitySets/D3Q27.inc"
 #endif //D3Q27
 
 // #define SECOND_DIST
 #ifdef D3G7
-    #include "includeFiles\velocitySets\D3G7.inc"
+    #include "includeFiles/velocitySets/D3G7.inc"
 #endif
 #ifdef D3G19
-    #include "includeFiles\velocitySets\D3G19.inc"
+    #include "includeFiles/velocitySets/D3G19.inc"
 #endif
 
 /* ------------------------------ MODEL MACROS ------------------------------ */
