@@ -348,6 +348,38 @@ void transpose_matrix_3x3(dfloat matrix[3][3], dfloat result[3][3]);
 */
 __host__ __device__
 void multiply_matrices_3x3(dfloat A[3][3], dfloat B[3][3], dfloat result[3][3]);
+
+/**
+*   @brief Compute the determinant of a 3x3 matrix.
+*   @param A: The input 3x3 matrix whose determinant is to be computed.
+*   @return The determinant of the matrix A.
+*/
+__host__ __device__
+dfloat determinant_3x3(dfloat A[3][3]);
+/**
+*   @brief Compute the adjugate (or adjoint) of a 3x3 matrix.
+*   @param A: The input 3x3 matrix whose adjugate is to be computed.
+*   @param adj: The output 3x3 matrix that will contain the adjugate of matrix A.
+*/
+__host__ __device__
+void adjugate_3x3(dfloat A[3][3], dfloat adj[3][3]);
+/**
+*   @brief Compute the inverse of a 3x3 matrix.
+*   @param A: The input 3x3 matrix to be inverted.
+*   @param result: The output 3x3 matrix that will contain the inverse of matrix A.
+*/
+__host__ __device__
+void inverse_3x3(dfloat A[3][3], dfloat result[3][3]);
+
+/**
+*   @brief Result = scalar * A + B.
+*   @param scalar: the scalar that multiplies A before adding.
+*   @param A: The first 3x3 matrix to be multiplied.
+*   @param B: The second 3x3 matrix to be multiplied.
+*   @param result: The output 3x3 matrix that will contain the product of matrices A and B..
+*/
+__host__ __device__
+void add_matrices_3x3(dfloat scalar, dfloat A[3][3], dfloat B[3][3], dfloat result[3][3]);
 /**
 *   @brief Convert a dfloat6 structure to a 3x3 matrix.
 *   @param I: dfloat6 structure containing inertia tensor components.
