@@ -764,7 +764,7 @@ __global__ void gpuInitialization_pop(
     #endif //A_ZZ_DIST
     #endif //CONVECTION_DIFFUSION_TRANSPORT
 
-    #ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
     if (threadIdx.x == 0) { //w
             ghostInterface.f_uGhost.X_0[g_idxUX(ty, tz, 0, bx, by, bz)] = ux_t30;
@@ -797,7 +797,7 @@ __global__ void gpuInitialization_pop(
         }
     #endif
     /*
-    #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+    #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
 
     if (threadIdx.x == 0) { //w
             ghostInterface.conf_fGhost.X_0[g_idxConfX(ty, tz, 0, bx, by, bz)] = AxxVar;

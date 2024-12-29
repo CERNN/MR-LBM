@@ -72,8 +72,8 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define A_YZ_DIST
 #define A_ZZ_DIST
 
-#define COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
-#define COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+#define COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+#define COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
 
     constexpr dfloat Weissenberg_number = 10;

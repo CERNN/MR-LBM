@@ -344,14 +344,14 @@ __global__ void gpuMomCollisionStream(
         #endif //A_ZZ_DIST
     #endif //CONVECTION_DIFFUSION_TRANSPORT
 
-    //need to compute the divergent before the moments are recalculated
-    #ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
-        #include "includeFiles/velocity_divergent.inc"
-    #endif //COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+    //need to compute the gradient before the moments are recalculated
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+        #include "includeFiles/velocity_gradient.inc"
+    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
     #ifdef CONFORMATION_TENSOR
-        #ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
-        #include "includeFiles/conformationTransport\conformation_divergent.inc"   
+        #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+        #include "includeFiles/conformationTransport\conformation_gradient.inc"   
         #endif
 
         #include "includeFiles/conformationTransport\conformation_evolution.inc"
@@ -679,9 +679,9 @@ __global__ void gpuMomCollisionStream(
 
     #include "includeFiles/popSave.inc"
 
-    //save velocities in the end in order to load next step to compute the divergent
-    #ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+    //save velocities in the end in order to load next step to compute the gradient
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
     #include "includeFiles/velSave.inc"
-    #endif //COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
 }

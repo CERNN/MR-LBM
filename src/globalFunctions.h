@@ -162,7 +162,7 @@ g_idxPopZ(
 }
 #endif
 
-#ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 __device__ int __forceinline__
 g_idxUX(
     const int ty,
@@ -201,7 +201,7 @@ g_idxUZ(
 }
 #endif
 
-#ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 __device__ int __forceinline__
 g_idxConfX(
     const int ty,
@@ -272,7 +272,7 @@ __host__ __device__
     return x + NX * (y + NY*(z));
 }
 
-#ifdef COMPUTE_VEL_DIVERGENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 //   @note: not unsigned because it uses negative values for thread index to pad from the halo
 __host__ __device__ __forceinline__ 
 size_t idxVelBlock(const int tx, const int ty, const int tz, const int uIndex)
@@ -282,7 +282,7 @@ size_t idxVelBlock(const int tx, const int ty, const int tz, const int uIndex)
 #endif
 
 
-#ifdef COMPUTE_CONF_DIVERGENT_FINITE_DIFFERENCE
+#ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
 /**
 *   @brief Compute linear array index
 *   @param xx: 0

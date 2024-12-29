@@ -10,7 +10,7 @@ s_pop[idxConfBlock(tx, ty, tz, 5)] = AzzVar;
 
 __syncthreads();
 
-// Compute unrolled divergent calculations
+// Compute unrolled gradient calculations
 //FINITE CENTRAL DIFFERENCE ORDER 1, otherwise i would have to store a halo with width of 2 in shared memory
 dfloat dAxxdx = (s_pop[idxConfBlock(tx + 1, ty, tz, 0)] - s_pop[idxConfBlock(tx - 1, ty, tz, 0)])/2;
 dfloat dAxydx = (s_pop[idxConfBlock(tx + 1, ty, tz, 1)] - s_pop[idxConfBlock(tx - 1, ty, tz, 1)])/2;
