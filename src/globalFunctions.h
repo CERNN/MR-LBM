@@ -172,8 +172,8 @@ g_idxUX(
     const int by,
     const int bz)
 {
-
-    return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return dir + 3*(ty + BLOCK_NY*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+    //return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
 
 __device__ int __forceinline__
@@ -185,7 +185,8 @@ g_idxUY(
     const int by,
     const int bz)
 {
-    return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return dir + 3*(tx + BLOCK_NX*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+    //return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
 
 __device__ int __forceinline__
@@ -197,7 +198,8 @@ g_idxUZ(
     const int by,
     const int bz)
 {
-    return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return dir + 3*(tx + BLOCK_NX*(ty + BLOCK_NY*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+    //return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
 #endif
 
@@ -277,7 +279,7 @@ __host__ __device__
 __host__ __device__ __forceinline__ 
 size_t idxVelBlock(const int tx, const int ty, const int tz, const int uIndex)
 {
-    return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * uIndex));
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(uIndex)) );
 }
 #endif
 
@@ -296,7 +298,7 @@ size_t idxVelBlock(const int tx, const int ty, const int tz, const int uIndex)
 __host__ __device__ __forceinline__ 
 size_t idxConfBlock(const int tx, const int ty, const int tz, const int confIndex)
 {
-    return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * confIndex));
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(confIndex)) );
 }
 #endif
 

@@ -334,7 +334,7 @@ int main() {
     #ifdef A_ZZ_DIST 
     Azz,
     #endif
-    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(PREFIX) step);
+    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
 
     #ifdef PARTICLE_TRACER
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
