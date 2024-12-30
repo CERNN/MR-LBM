@@ -14,9 +14,9 @@ if (ty == 0) {
     s_pop[idxVelBlock(tx, ty - 1, tz, 2)] = ghostInterface.f_uGhost.Y_1[g_idxUY(tx, tz, 2, bx, bym1, bz)];
 }
 if (ty == BLOCK_NY - 1) {
-    s_pop[idxVelBlock(tx, ty + 1, tz, 0)] = ghostInterface.f_uGhost.Y_0[g_idxUY(tx, ty, 0, bx, byp1, bz)];
-    s_pop[idxVelBlock(tx, ty + 1, tz, 1)] = ghostInterface.f_uGhost.Y_0[g_idxUY(tx, ty, 1, bx, byp1, bz)];
-    s_pop[idxVelBlock(tx, ty + 1, tz, 2)] = ghostInterface.f_uGhost.Y_0[g_idxUY(tx, ty, 2, bx, byp1, bz)];
+    s_pop[idxVelBlock(tx, ty + 1, tz, 0)] = ghostInterface.f_uGhost.Y_0[g_idxUY(tx, tz, 0, bx, byp1, bz)];
+    s_pop[idxVelBlock(tx, ty + 1, tz, 1)] = ghostInterface.f_uGhost.Y_0[g_idxUY(tx, tz, 1, bx, byp1, bz)];
+    s_pop[idxVelBlock(tx, ty + 1, tz, 2)] = ghostInterface.f_uGhost.Y_0[g_idxUY(tx, tz, 2, bx, byp1, bz)];
 }
 if (tz == 0) {
     s_pop[idxVelBlock(tx, ty, tz - 1, 0)] = ghostInterface.f_uGhost.Z_1[g_idxUZ(tx, ty, 0, bx, by, bzm1)];

@@ -75,12 +75,12 @@ if (ty == 0) {
     s_pop[idxConfBlock(tx, ty - 1, tz, 5)] = ghostInterface.conf_fGhost.Y_1[g_idxConfY(tx, tz, 5, bx, bym1, bz)];
 }
 if (ty == BLOCK_NY - 1) {
-    s_pop[idxConfBlock(tx, ty + 1, tz, 0)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, ty, 0, bx, byp1, bz)];
-    s_pop[idxConfBlock(tx, ty + 1, tz, 1)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, ty, 1, bx, byp1, bz)];
-    s_pop[idxConfBlock(tx, ty + 1, tz, 2)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, ty, 2, bx, byp1, bz)];
-    s_pop[idxConfBlock(tx, ty + 1, tz, 3)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, ty, 3, bx, byp1, bz)];
-    s_pop[idxConfBlock(tx, ty + 1, tz, 4)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, ty, 4, bx, byp1, bz)];
-    s_pop[idxConfBlock(tx, ty + 1, tz, 5)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, ty, 5, bx, byp1, bz)];
+    s_pop[idxConfBlock(tx, ty + 1, tz, 0)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 0, bx, byp1, bz)];
+    s_pop[idxConfBlock(tx, ty + 1, tz, 1)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 1, bx, byp1, bz)];
+    s_pop[idxConfBlock(tx, ty + 1, tz, 2)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 2, bx, byp1, bz)];
+    s_pop[idxConfBlock(tx, ty + 1, tz, 3)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 3, bx, byp1, bz)];
+    s_pop[idxConfBlock(tx, ty + 1, tz, 4)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 4, bx, byp1, bz)];
+    s_pop[idxConfBlock(tx, ty + 1, tz, 5)] = ghostInterface.conf_fGhost.Y_0[g_idxConfY(tx, tz, 5, bx, byp1, bz)];
 }
 if (tz == 0) {
     s_pop[idxConfBlock(tx, ty, tz - 1, 0)] = ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 0, bx, by, bzm1)];
