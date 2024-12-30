@@ -75,13 +75,13 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
 #define COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
-
+    constexpr dfloat CONF_ZERO = (dfloat)(10);
     constexpr dfloat Weissenberg_number = 10;
     constexpr dfloat fenep_lambda = Weissenberg_number*L/U_MAX;
     constexpr dfloat inv_fenep_lambda = 1.0/fenep_lambda;
     //constexpr dfloat nu_p = -VISC*(1-1/kinematic_viscosity_ratio);
     constexpr dfloat nu_p = (VISC/kinematic_viscosity_ratio) - VISC;
-    constexpr dfloat fenep_re = 1.0;
+    constexpr dfloat fenep_re = 10.0;
 
     constexpr dfloat CONF_DIFFUSIVITY_RATIO = 10; //OR Pr in malaspinas
     constexpr dfloat CONF_DIFFUSIVITY = VISC/CONF_DIFFUSIVITY_RATIO; // alpha

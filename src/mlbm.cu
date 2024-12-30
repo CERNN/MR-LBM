@@ -115,8 +115,40 @@ __global__ void gpuMomCollisionStream(
 
     const int bzm1 = (bz-1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
     const int bzp1 = (bz+1+NUM_BLOCK_Z)%NUM_BLOCK_Z;
+
+    //need to compute the gradient before the moments are recalculated
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+        #include "includeFiles/velocity_gradient.inc"
+    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+
     
-    
+    #ifdef CONFORMATION_TENSOR
+        #ifdef A_XX_DIST
+            dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        #endif //A_XX_DIST
+        #ifdef A_XY_DIST
+            dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        #endif //A_XY_DIST
+        #ifdef A_XZ_DIST
+            dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        #endif //A_XZ_DIST
+        #ifdef A_YY_DIST
+            dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        #endif //A_YY_DIST
+        #ifdef A_YZ_DIST
+            dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        #endif //A_YZ_DIST
+        #ifdef A_ZZ_DIST
+            dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+        #endif //A_ZZ_DIST
+
+        #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+            #include "includeFiles/conformationTransport/conformation_gradient.inc"   
+        #endif
+
+        #include "includeFiles/conformationTransport/conformation_evolution.inc"
+    #endif
+
     #ifdef CONVECTION_DIFFUSION_TRANSPORT
         #ifdef SECOND_DIST 
             dfloat cVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -151,7 +183,6 @@ __global__ void gpuMomCollisionStream(
             }
         #endif
         #ifdef A_XX_DIST
-            dfloat AxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat GxxVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat invAxx = 1/AxxVar;
             dfloat Axx_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -183,7 +214,6 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XX_DIST
         #ifdef A_XY_DIST
-            dfloat AxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat GxyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat invAxy = 1/AxyVar;
             dfloat Axy_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -215,7 +245,6 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XY_DIST
         #ifdef A_XZ_DIST
-            dfloat AxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat GxzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat invAxz = 1/AxzVar;
             dfloat Axz_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -247,7 +276,6 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XZ_DIST
         #ifdef A_YY_DIST
-            dfloat AyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat GyyVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat invAyy = 1/AyyVar;
             dfloat Ayy_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -279,7 +307,6 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_YY_DIST
         #ifdef A_YZ_DIST
-            dfloat AyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat GyzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat invAyz = 1/AyzVar;
             dfloat Ayz_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -311,7 +338,6 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_YZ_DIST
         #ifdef A_ZZ_DIST
-            dfloat AzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat GzzVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
             dfloat invAzz = 1/AzzVar;
             dfloat Azz_qx_t30 = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -342,20 +368,10 @@ __global__ void gpuMomCollisionStream(
                 Azz_qz_t30 = F_M_I_SCALE*((gNode[5] - gNode[6] + gNode[9] - gNode[10] + gNode[11] - gNode[12] + gNode[16] - gNode[15] + gNode[18] - gNode[17]));
             }
         #endif //A_ZZ_DIST
+        
+        //save conformation tensor components in the halo
+        #include "includeFIles/conformationTransport/confSave.inc"
     #endif //CONVECTION_DIFFUSION_TRANSPORT
-
-    //need to compute the gradient before the moments are recalculated
-    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-        #include "includeFiles/velocity_gradient.inc"
-    #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-
-    #ifdef CONFORMATION_TENSOR
-        #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
-        #include "includeFiles/conformationTransport\conformation_gradient.inc"   
-        #endif
-
-        #include "includeFiles/conformationTransport\conformation_evolution.inc"
-    #endif
 
     //save populations in shared memory
     s_pop[idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0)] = pop[ 1];

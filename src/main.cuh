@@ -209,7 +209,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
         cudaFree(ghostInterface.g_uGhost.Z_1);
     #endif
 
-    /*
+    
     #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
         cudaFree(ghostInterface.conf_fGhost.X_0);
         cudaFree(ghostInterface.conf_fGhost.X_1);
@@ -225,7 +225,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
         cudaFree(ghostInterface.conf_gGhost.Z_0);
         cudaFree(ghostInterface.conf_gGhost.Z_1);
     #endif
-    */
+    
 
     if (LOAD_CHECKPOINT){
         cudaFree(ghostInterface.h_fGhost.X_0);
@@ -300,7 +300,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
             cudaFree(ghostInterface.h_f_uGhost.Z_1);
         #endif
 
-        /*
+
         #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
             cudaFree(ghostInterface.conf_h_fGhost.X_0);
             cudaFree(ghostInterface.conf_h_fGhost.X_1);
@@ -309,7 +309,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
             cudaFree(ghostInterface.conf_h_fGhost.Z_0);
             cudaFree(ghostInterface.conf_h_fGhost.Z_1);
         #endif
-        */
+
     }
 }
 
@@ -434,7 +434,7 @@ void swapGhostInterfaces(GhostInterfaceData& ghostInterface) {
         interfaceSwap(ghostInterface.f_uGhost.Z_0, ghostInterface.g_uGhost.Z_0);
         interfaceSwap(ghostInterface.f_uGhost.Z_1, ghostInterface.g_uGhost.Z_1);
     #endif
-    /*
+
     #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
         interfaceSwap(ghostInterface.conf_fGhost.X_0, ghostInterface.conf_gGhost.X_0);
         interfaceSwap(ghostInterface.conf_fGhost.X_1, ghostInterface.conf_gGhost.X_1);
@@ -443,7 +443,7 @@ void swapGhostInterfaces(GhostInterfaceData& ghostInterface) {
         interfaceSwap(ghostInterface.conf_fGhost.Z_0, ghostInterface.conf_gGhost.Z_0);
         interfaceSwap(ghostInterface.conf_fGhost.Z_1, ghostInterface.conf_gGhost.Z_1);
     #endif
-    */
+
 }
 
 
@@ -596,7 +596,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
     cudaMalloc((void **)&(ghostInterface.g_uGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3);
 #endif
 
-/*
+
 #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
     cudaMalloc((void **)&(ghostInterface.conf_fGhost.X_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 6);
     cudaMalloc((void **)&(ghostInterface.conf_fGhost.X_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 6);
@@ -612,7 +612,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
     cudaMalloc((void **)&(ghostInterface.conf_gGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6);
     cudaMalloc((void **)&(ghostInterface.conf_gGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6);
 #endif
-*/
+
 
 
     if (LOAD_CHECKPOINT || CHECKPOINT_SAVE)
@@ -691,7 +691,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3));
         #endif
 
-        /*
+        
         #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.conf_h_fGhost.X_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 6));
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.conf_h_fGhost.X_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 6));
@@ -700,7 +700,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.conf_h_fGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6));
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.conf_h_fGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6));
         #endif
-        */
+        
     }
 }
 
@@ -863,11 +863,11 @@ void initializeDomain(
             interfaceCudaMemcpy(ghostInterface, ghostInterface.f_uGhost, ghostInterface.h_f_uGhost, cudaMemcpyHostToDevice, 3);
         #endif
 
-        /*
+        
         #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
             interfaceCudaMemcpy(ghostInterface, ghostInterface.conf_fGhost, ghostInterface.conf_h_fGhost, cudaMemcpyHostToDevice, 6);
         #endif
-        */
+        
 
     } else {
         if (LOAD_FIELD) {

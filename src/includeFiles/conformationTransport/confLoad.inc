@@ -1,3 +1,4 @@
+/*
 if (tx == 0) {                                 
     s_pop[idxConfBlock(tx - 1, ty, tz, 0)] = fMom[idxMom(txm1, ty, tz, A_XX_C_INDEX, bxm1, by, bz)];
     s_pop[idxConfBlock(tx - 1, ty, tz, 1)] = fMom[idxMom(txm1, ty, tz, A_XY_C_INDEX, bxm1, by, bz)];
@@ -46,8 +47,9 @@ if (tz == BLOCK_NZ - 1) {
     s_pop[idxConfBlock(tx, ty, tz + 1, 4)] = fMom[idxMom(tx, ty, tzp1, A_YZ_C_INDEX, bx, by, bzp1)];
     s_pop[idxConfBlock(tx, ty, tz + 1, 5)] = fMom[idxMom(tx, ty, tzp1, A_ZZ_C_INDEX, bx, by, bzp1)];
 }
+*/
 
-/*
+
 if (tx == 0) {                                 
     s_pop[idxConfBlock(tx - 1, ty, tz, 0)] = ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 0, bxm1, by, bz)];
     s_pop[idxConfBlock(tx - 1, ty, tz, 1)] = ghostInterface.conf_fGhost.X_1[g_idxConfX(ty, tz, 1, bxm1, by, bz)];
@@ -96,4 +98,3 @@ if (tz == BLOCK_NZ - 1) {
     s_pop[idxConfBlock(tx, ty, tz + 1, 4)] = ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 4, bx, by, bzp1)];
     s_pop[idxConfBlock(tx, ty, tz + 1, 5)] = ghostInterface.conf_fGhost.Z_0[g_idxConfZ(tx, ty, 5, bx, by, bzp1)];
 }
-*/
