@@ -214,7 +214,7 @@ g_idxConfX(
     const int bz)
 {
 
-    return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + 6 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return dir + 6*(ty + BLOCK_NY*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
 }
 
 __device__ int __forceinline__
@@ -226,7 +226,7 @@ g_idxConfY(
     const int by,
     const int bz)
 {
-    return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + 6 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return dir + 6*(tx + BLOCK_NX*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
 }
 
 __device__ int __forceinline__
@@ -238,7 +238,7 @@ g_idxConfZ(
     const int by,
     const int bz)
 {
-    return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + 6 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+    return dir + 6*(tx + BLOCK_NX*(ty + BLOCK_NY*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
 }
 #endif
 
