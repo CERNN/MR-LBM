@@ -192,7 +192,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
         cudaFree(ghostInterface.Azz_gGhost.Z_0);
         cudaFree(ghostInterface.Azz_gGhost.Z_1);
     #endif
-
+    /*
     #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
         cudaFree(ghostInterface.f_uGhost.X_0);
         cudaFree(ghostInterface.f_uGhost.X_1);
@@ -225,7 +225,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
         cudaFree(ghostInterface.conf_gGhost.Z_0);
         cudaFree(ghostInterface.conf_gGhost.Z_1);
     #endif
-    
+    */
 
     if (LOAD_CHECKPOINT){
         cudaFree(ghostInterface.h_fGhost.X_0);
@@ -290,7 +290,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
             cudaFree(ghostInterface.Azz_h_fGhost.Z_0);
             cudaFree(ghostInterface.Azz_h_fGhost.Z_1);
         #endif
-
+/*  
         #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
             cudaFree(ghostInterface.h_f_uGhost.X_0);
             cudaFree(ghostInterface.h_f_uGhost.X_1);
@@ -309,7 +309,7 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
             cudaFree(ghostInterface.conf_h_fGhost.Z_0);
             cudaFree(ghostInterface.conf_h_fGhost.Z_1);
         #endif
-
+    */
     }
 }
 
@@ -425,7 +425,7 @@ void swapGhostInterfaces(GhostInterfaceData& ghostInterface) {
     interfaceSwap(ghostInterface.Azz_fGhost.Z_0, ghostInterface.Azz_gGhost.Z_0);
     interfaceSwap(ghostInterface.Azz_fGhost.Z_1, ghostInterface.Azz_gGhost.Z_1);
     #endif
-
+/*
     #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
         interfaceSwap(ghostInterface.f_uGhost.X_0, ghostInterface.g_uGhost.X_0);
         interfaceSwap(ghostInterface.f_uGhost.X_1, ghostInterface.g_uGhost.X_1);
@@ -443,7 +443,7 @@ void swapGhostInterfaces(GhostInterfaceData& ghostInterface) {
         interfaceSwap(ghostInterface.conf_fGhost.Z_0, ghostInterface.conf_gGhost.Z_0);
         interfaceSwap(ghostInterface.conf_fGhost.Z_1, ghostInterface.conf_gGhost.Z_1);
     #endif
-
+    */
 }
 
 
@@ -579,7 +579,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
     cudaMalloc((void **)&(ghostInterface.Azz_gGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF);
     cudaMalloc((void **)&(ghostInterface.Azz_gGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF);
 #endif
-
+/*
 #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
     cudaMalloc((void **)&(ghostInterface.f_uGhost.X_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3);
     cudaMalloc((void **)&(ghostInterface.f_uGhost.X_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3);
@@ -613,7 +613,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
     cudaMalloc((void **)&(ghostInterface.conf_gGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6);
 #endif
 
-
+*/
 
     if (LOAD_CHECKPOINT || CHECKPOINT_SAVE)
     {
@@ -681,7 +681,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.Azz_h_fGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF));
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.Azz_h_fGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF));
         #endif
-
+/*
         #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.X_0), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3));
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.h_f_uGhost.X_1), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3));
@@ -700,7 +700,7 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.conf_h_fGhost.Z_0), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6));
         checkCudaErrors(cudaMallocHost((void **)&(ghostInterface.conf_h_fGhost.Z_1), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6));
         #endif
-        
+        */
     }
 }
 
@@ -858,7 +858,7 @@ void initializeDomain(
         #ifdef A_ZZ_DIST
             interfaceCudaMemcpy(ghostInterface, ghostInterface.Azz_fGhost, ghostInterface.Azz_h_fGhost, cudaMemcpyHostToDevice, GF);
         #endif
-
+        /*
         #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
             interfaceCudaMemcpy(ghostInterface, ghostInterface.f_uGhost, ghostInterface.h_f_uGhost, cudaMemcpyHostToDevice, 3);
         #endif
@@ -867,7 +867,7 @@ void initializeDomain(
         #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
             interfaceCudaMemcpy(ghostInterface, ghostInterface.conf_fGhost, ghostInterface.conf_h_fGhost, cudaMemcpyHostToDevice, 6);
         #endif
-        
+        */
 
     } else {
         if (LOAD_FIELD) {
@@ -933,10 +933,14 @@ void initializeDomain(
         interfaceCudaMemcpy(ghostInterface, ghostInterface.Azz_gGhost, ghostInterface.Azz_fGhost, cudaMemcpyDeviceToDevice, GF);
     #endif
     
-    
-    #ifdef A_ZZ_DIST
+    /*
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
         interfaceCudaMemcpy(ghostInterface, ghostInterface.f_uGhost, ghostInterface.g_uGhost, cudaMemcpyDeviceToDevice, 3);
     #endif
+    #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+        interfaceCudaMemcpy(ghostInterface, ghostInterface.conf_fGhost, ghostInterface.conf_gGhost, cudaMemcpyDeviceToDevice, 3);
+    #endif
+    */
 
     // Synchronize after all initializations
     checkCudaErrors(cudaDeviceSynchronize());

@@ -763,7 +763,7 @@ __global__ void gpuInitialization_pop(
         }
     #endif //A_ZZ_DIST
     #endif //CONVECTION_DIFFUSION_TRANSPORT
-
+    /*
     #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
     if (threadIdx.x == 0) { //w
@@ -847,6 +847,7 @@ __global__ void gpuInitialization_pop(
             ghostInterface.conf_fGhost.Z_1[g_idxConfZ(tx, ty, 5, bx, by, bz)] = AzzVar;
         }
     #endif
+    */
     
 }
 

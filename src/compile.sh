@@ -28,3 +28,4 @@ fi
         # -diag-suppress 550 \
         # -diag-suppress 549 \
         # -diag-suppress 177 \
+        # -lineinfo \ #usefull for nsight compute debug

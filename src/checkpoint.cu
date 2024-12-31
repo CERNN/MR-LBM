@@ -233,7 +233,7 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.Azz_fGhost.Z_1, f_filename("Ayz_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     printf("Loaded checkpoint: Azz_pop \n");
     #endif
-
+    /*
     #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
         f_arr(ghostInterface.f_uGhost.X_0, f_filename("f_uGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3, tmp);
@@ -253,7 +253,7 @@ void operateSimCheckpoint(
         f_arr(ghostInterface.conf_fGhost.Z_0, f_filename("conf_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6, tmp);
         f_arr(ghostInterface.conf_fGhost.Z_1, f_filename("conf_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6, tmp);        
     #endif
-    
+    */
 
 
     free(tmp);

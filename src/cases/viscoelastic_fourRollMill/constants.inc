@@ -1,10 +1,11 @@
 #define FENE_P
 
-constexpr dfloat RE = 1;
+constexpr dfloat RE = 4;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 10000;
-constexpr int N = 64 * SCALE;
+constexpr int N_STEPS = 20000;
+constexpr int CONFORMATION_SWITCH = 12500;
+constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = 8;        // size z of the grid in one GPU
@@ -76,14 +77,14 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
     constexpr dfloat CONF_ZERO = (dfloat)(10);
-    constexpr dfloat Weissenberg_number = 10;
+    constexpr dfloat Weissenberg_number = 0.6;
     constexpr dfloat fenep_lambda = Weissenberg_number*L/U_MAX;
     constexpr dfloat inv_fenep_lambda = 1.0/fenep_lambda;
     //constexpr dfloat nu_p = -VISC*(1-1/kinematic_viscosity_ratio);
     constexpr dfloat nu_p = (VISC/kinematic_viscosity_ratio) - VISC;
     constexpr dfloat fenep_re = 10.0;
 
-    constexpr dfloat CONF_DIFFUSIVITY_RATIO = 10; //OR Pr in malaspinas
+    constexpr dfloat CONF_DIFFUSIVITY_RATIO = 100; //OR Pr in malaspinas
     constexpr dfloat CONF_DIFFUSIVITY = VISC/CONF_DIFFUSIVITY_RATIO; // alpha
 
     constexpr dfloat CONF_DIFF_REF = (1.0/6);
