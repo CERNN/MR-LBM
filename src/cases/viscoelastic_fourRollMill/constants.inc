@@ -1,17 +1,24 @@
 #define FENE_P
 
-constexpr dfloat RE = 4;
+constexpr dfloat RE = 1;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 20000;
-constexpr int CONFORMATION_SWITCH = 12500;
 constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = 8;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.01;  
+constexpr dfloat K_const = 2*M_PI/N;
+constexpr dfloat U_MAX = 0.0049087385;  
+constexpr dfloat VISC = U_MAX/(RE*K_const);
+constexpr dfloat F_0 = 2*U_MAX*VISC*K_const*K_const;
+constexpr dfloat t_c = 2*VISC*K_const/F_0;
+
+constexpr int CONFORMATION_SWITCH = 6*(int)t_c;
+constexpr int N_STEPS = CONFORMATION_SWITCH + 10*(int)t_c;
+
+
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
@@ -35,13 +42,8 @@ __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 #define BC_Z_PERIODIC
 
 constexpr dfloat L = N;
-constexpr dfloat kinematic_viscosity_ratio = 0.1; //R_v
-constexpr dfloat VISC = U_MAX*L*kinematic_viscosity_ratio/RE;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
-
-
-
 
 
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
@@ -77,14 +79,16 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
     constexpr dfloat CONF_ZERO = (dfloat)(10);
-    constexpr dfloat Weissenberg_number = 0.6;
-    constexpr dfloat fenep_lambda = Weissenberg_number*L/U_MAX;
-    constexpr dfloat inv_fenep_lambda = 1.0/fenep_lambda;
-    //constexpr dfloat nu_p = -VISC*(1-1/kinematic_viscosity_ratio);
-    constexpr dfloat nu_p = (VISC/kinematic_viscosity_ratio) - VISC;
+    constexpr dfloat BETA = 0.5;
+    constexpr dfloat nu_p = (VISC/BETA) - VISC;
+    constexpr dfloat Weissenberg_number = 5;
+
+    constexpr dfloat LAMBDA = Weissenberg_number*(t_c);
+    constexpr dfloat inv_lambda = 1.0/LAMBDA;
     constexpr dfloat fenep_re = 10.0;
 
-    constexpr dfloat CONF_DIFFUSIVITY_RATIO = 100; //OR Pr in malaspinas
+    //ADVECTION-DIFFUSIONS CONSTANTS
+    constexpr dfloat CONF_DIFFUSIVITY_RATIO = 1000; //OR Pr in malaspinas
     constexpr dfloat CONF_DIFFUSIVITY = VISC/CONF_DIFFUSIVITY_RATIO; // alpha
 
     constexpr dfloat CONF_DIFF_REF = (1.0/6);

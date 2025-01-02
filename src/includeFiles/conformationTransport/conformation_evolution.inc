@@ -26,8 +26,8 @@ dfloat aa, bb;
 #ifdef FENE_P
     //trace of A
     dfloat trA = AxxVar + AyyVar + AzzVar;
-    aa = -inv_fenep_lambda/(1-trA/(fenep_re*fenep_re));
-    bb = -inv_fenep_lambda/(1-3.0/(fenep_re*fenep_re));
+    aa = -inv_lambda/(1-trA/(fenep_re*fenep_re));
+    bb = -inv_lambda/(1-3.0/(fenep_re*fenep_re));
     #ifdef OLDROYD_B
     aa = 1.0;
     bb = 1.0;
@@ -60,9 +60,9 @@ fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blo
 //F = (mu/lambda) * div(A) - div(I); but div(I) = 0
 //F = (mu/lambda)*div(A)
 
-L_Fx += (dAxxdx + dAxydy + dAxzdz)*(fenep_mu_d_lambda)*switch_conf; //zero just to debug for now
-L_Fy += (dAxydx + dAyydy + dAyzdz)*(fenep_mu_d_lambda)*switch_conf; //zero just to debug for now
-L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(fenep_mu_d_lambda)*switch_conf; //zero just to debug for now
+L_Fx += (dAxxdx + dAxydy + dAxzdz)*(nu_p*inv_lambda)*switch_conf; //zero just to debug for now
+L_Fy += (dAxydx + dAyydy + dAyzdz)*(nu_p*inv_lambda)*switch_conf; //zero just to debug for now
+L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(nu_p*inv_lambda)*switch_conf; //zero just to debug for now
 
 
 AxxVar += CONF_ZERO;
