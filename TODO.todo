@@ -11,7 +11,8 @@ Projects:
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
     ☐ Edit local force field to moment array
     ☐ change the name moment array to something more descreptive
-  ☐ find a way to compute the best block size on compilation time (most likely make the sh script create a file which later is included to edit the block size)
+  ✔ find a way to compute the best block size on compilation time (most likely make the sh script create a file which later is included to edit the block size) @done(25-01-03 16:04)
+    ☐  there is some bug on it for now with parallel reduction, trying to figure out what is wrong
   ✔ allocatate the correct ammount of shared memory based on the blockSize @done(24-11-07 16:23)
     ✔ need to find a way to compile depending on the architure @done(24-11-15 18:14)
   ☐ Change macro condition from (non_newtonian || les model to local viscosity)
@@ -49,6 +50,7 @@ Projects:
     ✔ change nodeType from char to int @done(24-02-24 10:41)
     ✔ add new types of boundary conditions @done(24-03-24 10:58)
   ✔ higher shared memory size for cuda compute 8.0+ (requires dynamic shared memory which has worse performance 70% of original @done(24-01-19 22:27)
+  ☐ change all operations using fMom[idxMom()] to be float point operations (use index UX for first one them use a offset between each stored unit)
 
   ✔ Push thermal model @done(24-05-17 22:52)
     ✔ First Implementation @done(24-04-13 23:55)
@@ -67,12 +69,11 @@ Projects:
   ☐ Curved boundary conditions
   ☐ Moving boudnary conditions (e.g. moving particles using voxels)
   ☐ Implementation of DDF-Shift (density is done)
-  ☐ Implement viscoelastic model
-    ☐ Method to compute the velocity gradient
-      ☐ Need method to store velocity in the halo similar to populations
+  ✔ Implement viscoelastic model @done(25-01-03 16:02)
+    ✔ Method to compute the velocity gradient @done(25-01-03 16:02)
+      ✔ Need method to store velocity in the halo similar to populations @done(25-01-03 11:19)
         ✔ rewrite ghost values to be a struct @done(24-11-03 18:59)
     ✔ Source term for the advection-diffusion equation @done(24-11-05 01:03)
-    ☐ Unify the transport equations in a single kernel
-      ☐Maybe not sure about the q term if is correct by adding the source term (doesnt appear to impact the solution)
+    ✔ Unify the transport equations in a single kernel @done(25-01-03 11:19)
   ☐ Async call to python script to convert bin files into vtr files
 Archive:\

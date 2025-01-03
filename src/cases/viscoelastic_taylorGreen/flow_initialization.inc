@@ -88,7 +88,7 @@ rho = RHO_0 + (U_MAX*U_MAX/cs2)*(1.0/6.0)*(0.25*cos(2*yy) + 0.25*cos(-2*yy+2*xx)
                                                      + (1.0/24)*cos( 2*zz+2*xx) + (1.0/24)*cos(-2*zz+2*xx) + 0.25*cos(2*xx) - 1);
 
 #ifdef A_XX_DIST
-AxxVar = CONF_ZERO;
+AxxVar = CONF_ZERO + 1.0;
 #endif
 #ifdef A_XY_DIST
 AxyVar = CONF_ZERO;
@@ -97,13 +97,13 @@ AxyVar = CONF_ZERO;
 AxzVar = CONF_ZERO;
 #endif
 #ifdef A_YY_DIST
-AyyVar = CONF_ZERO;
+AyyVar = CONF_ZERO + 1.0;
 #endif
 #ifdef A_YZ_DIST
 AyzVar = CONF_ZERO;
 #endif
 #ifdef A_ZZ_DIST
-AzzVar = CONF_ZERO;
+AzzVar = CONF_ZERO + 1.0;
 #endif
 
 #ifdef NON_NEWTONIAN_FLUID

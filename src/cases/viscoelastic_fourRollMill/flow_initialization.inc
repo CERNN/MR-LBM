@@ -4,7 +4,7 @@ uy = U_0_Y;
 uz = U_0_Z;
 
 #ifdef A_XX_DIST
-AxxVar = CONF_ZERO;
+AxxVar = CONF_ZERO + 1.0;
 #endif
 #ifdef A_XY_DIST
 AxyVar = CONF_ZERO;
@@ -13,14 +13,15 @@ AxyVar = CONF_ZERO;
 AxzVar = CONF_ZERO;
 #endif
 #ifdef A_YY_DIST
-AyyVar = CONF_ZERO;
+AyyVar = CONF_ZERO + 1.0;
 #endif
 #ifdef A_YZ_DIST
 AyzVar = CONF_ZERO;
 #endif
 #ifdef A_ZZ_DIST
-AzzVar = CONF_ZERO;
+AzzVar = CONF_ZERO + 1.0;
 #endif
+
 
 dfloat R = 16;
 dfloat sigma = 3.0;    // Smoothing parameter

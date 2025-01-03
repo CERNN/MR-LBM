@@ -1,30 +1,30 @@
 // Fetch neighboring values for Axx, Axy, Axz, Ayy, Ayz, Azz
-dfloat Axx_xm1 = fMom[idxMom(txm1, ty, tz, A_XX_C_INDEX, ((x - 1 + NX) % NX) / BLOCK_NX, by, bz)];
-dfloat Axx_xp1 = fMom[idxMom(txp1, ty, tz, A_XX_C_INDEX, ((x + 1) % NX) / BLOCK_NX, by, bz)];
+dfloat Axx_xm1 = fMom[idxMom(txm1, ty, tz, A_XX_C_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+dfloat Axx_xp1 = fMom[idxMom(txp1, ty, tz, A_XX_C_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
 
-dfloat Axy_ym1 = fMom[idxMom(tx, tym1, tz, A_XY_C_INDEX, bx, ((y - 1 + NY) % NY) / BLOCK_NY, bz)];
-dfloat Axy_yp1 = fMom[idxMom(tx, typ1, tz, A_XY_C_INDEX, bx, ((y + 1) % NY) / BLOCK_NY, bz)];
+dfloat Axy_ym1 = fMom[idxMom(tx, tym1, tz, A_XY_C_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+dfloat Axy_yp1 = fMom[idxMom(tx, typ1, tz, A_XY_C_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
 
-dfloat Axz_zm1 = fMom[idxMom(tx, ty, tzm1, A_XZ_C_INDEX, bx, by, ((z - 1 + NZ) % NZ) / BLOCK_NZ)];
-dfloat Axz_zp1 = fMom[idxMom(tx, ty, tzp1, A_XZ_C_INDEX, bx, by, ((z + 1) % NZ) / BLOCK_NZ)];
+dfloat Axz_zm1 = fMom[idxMom(tx, ty, tzm1, A_XZ_C_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+dfloat Axz_zp1 = fMom[idxMom(tx, ty, tzp1, A_XZ_C_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
 
-dfloat Axy_xm1 = fMom[idxMom(txm1, ty, tz, A_XY_C_INDEX, ((x - 1 + NX) % NX) / BLOCK_NX, by, bz)];
-dfloat Axy_xp1 = fMom[idxMom(txp1, ty, tz, A_XY_C_INDEX, ((x + 1) % NX) / BLOCK_NX, by, bz)];
+dfloat Axy_xm1 = fMom[idxMom(txm1, ty, tz, A_XY_C_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+dfloat Axy_xp1 = fMom[idxMom(txp1, ty, tz, A_XY_C_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
 
-dfloat Ayy_ym1 = fMom[idxMom(tx, tym1, tz, A_YY_C_INDEX, bx, ((y - 1 + NY) % NY) / BLOCK_NY, bz)];
-dfloat Ayy_yp1 = fMom[idxMom(tx, typ1, tz, A_YY_C_INDEX, bx, ((y + 1) % NY) / BLOCK_NY, bz)];
+dfloat Ayy_ym1 = fMom[idxMom(tx, tym1, tz, A_YY_C_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+dfloat Ayy_yp1 = fMom[idxMom(tx, typ1, tz, A_YY_C_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
 
-dfloat Ayz_zm1 = fMom[idxMom(tx, ty, tzm1, A_YZ_C_INDEX, bx, by, ((z - 1 + NZ) % NZ) / BLOCK_NZ)];
-dfloat Ayz_zp1 = fMom[idxMom(tx, ty, tzp1, A_YZ_C_INDEX, bx, by, ((z + 1) % NZ) / BLOCK_NZ)];
+dfloat Ayz_zm1 = fMom[idxMom(tx, ty, tzm1, A_YZ_C_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+dfloat Ayz_zp1 = fMom[idxMom(tx, ty, tzp1, A_YZ_C_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
 
-dfloat Axz_xm1 = fMom[idxMom(txm1, ty, tz, A_XZ_C_INDEX, ((x - 1 + NX) % NX) / BLOCK_NX, by, bz)];
-dfloat Axz_xp1 = fMom[idxMom(txp1, ty, tz, A_XZ_C_INDEX, ((x + 1) % NX) / BLOCK_NX, by, bz)];
+dfloat Axz_xm1 = fMom[idxMom(txm1, ty, tz, A_XZ_C_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+dfloat Axz_xp1 = fMom[idxMom(txp1, ty, tz, A_XZ_C_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
 
-dfloat Ayz_ym1 = fMom[idxMom(tx, tym1, tz, A_YZ_C_INDEX, bx, ((y - 1 + NY) % NY) / BLOCK_NY, bz)];
-dfloat Ayz_yp1 = fMom[idxMom(tx, typ1, tz, A_YZ_C_INDEX, bx, ((y + 1) % NY) / BLOCK_NY, bz)];
+dfloat Ayz_ym1 = fMom[idxMom(tx, tym1, tz, A_YZ_C_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+dfloat Ayz_yp1 = fMom[idxMom(tx, typ1, tz, A_YZ_C_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
 
-dfloat Azz_zm1 = fMom[idxMom(tx, ty, tzm1, A_ZZ_C_INDEX, bx, by, ((z - 1 + NZ) % NZ) / BLOCK_NZ)];
-dfloat Azz_zp1 = fMom[idxMom(tx, ty, tzp1, A_ZZ_C_INDEX, bx, by, ((z + 1) % NZ) / BLOCK_NZ)];
+dfloat Azz_zm1 = fMom[idxMom(tx, ty, tzm1, A_ZZ_C_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+dfloat Azz_zp1 = fMom[idxMom(tx, ty, tzp1, A_ZZ_C_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
 
 // Compute derivatives
 dfloat dAxxdx = (Axx_xp1 - Axx_xm1) / 2;
