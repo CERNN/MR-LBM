@@ -319,8 +319,8 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
     strSimInfo << "             Nsteps: " << step << "\n";
     strSimInfo << "              MLUPS: " << MLUPS << "\n";
-    strSimInfo << std::scientific << std::setprecision(0);
-        strSimInfo << "             BX: " << BLOCK_NX << "\n";
+        strSimInfo << std::scientific << std::setprecision(0);
+    strSimInfo << "                 BX: " << BLOCK_NX << "\n";
     strSimInfo << "                 BY: " << BLOCK_NY << "\n";
     strSimInfo << "                 BZ: " << BLOCK_NZ << "\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
@@ -381,9 +381,30 @@ std::string getSimInfoString(int step,dfloat MLUPS)
 
     strSimInfo << "--------------------------------------------------------------------------------\n";
     #endif// THERMAL_MODEL
-
-
-
+    #ifdef FENE_P 
+    strSimInfo << "\n------------------------------ VISCOELASTIC -----------------------------\n";
+        strSimInfo << std::scientific << std::setprecision(4);
+    strSimInfo << " Weissenberg Number: " << Weissenberg_number << "\n";
+    strSimInfo << "    Sum Viscosities: " << SUM_VISC << "\n";
+    strSimInfo << "    Viscosity Ratio: " << BETA << "\n";
+    strSimInfo << "  Solvent Viscosity: " << VISC << "\n";
+    strSimInfo << "  Polymer Viscosity: " << nu_p << "\n";
+    strSimInfo << "             Lambda: " << LAMBDA << "\n";
+    strSimInfo << "           FENE-P A: " << 1 << "\n"; //todo fix when fenep
+    strSimInfo << "           FENE-P B: " << 1 << "\n"; //todo fix when fenep
+    strSimInfo << "          FENE-P Re: " << fenep_re << "\n";
+    strSimInfo << "\n                                                                         \n";
+        strSimInfo << std::scientific << std::setprecision(4);
+    strSimInfo << "  Diffusivity ratio: " << CONF_DIFFUSIVITY_RATIO << "\n";
+    strSimInfo << "  Diffusivity Coef.: " << CONF_DIFFUSIVITY << "\n";
+    strSimInfo << "Conformation Offset: " << CONF_ZERO << "\n";
+    strSimInfo << "           CONF_TAU: " << CONF_TAU << "\n";
+    strSimInfo << "         CONF_OMEGA: " << CONF_OMEGA << "\n";
+    strSimInfo << "     CONF_DIFF_FLUC: " << CONF_DIFF_FLUC << "\n";
+    strSimInfo << "           CONF_AAA: " << CONF_AAA << "\n";
+    strSimInfo << "CONF_DIFF_FLUC_COEF: " << CONF_DIFF_FLUC_COEF << "\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif// FENE_P
     return strSimInfo.str();
 }
 

@@ -150,7 +150,7 @@ void totalKineticEnergy(
     dfloat temp;
     
     checkCudaErrors(cudaMemcpy(&temp, sumKE, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
-    temp = (temp)/(U_MAX*U_MAX*NUMBER_LBM_NODES);
+    temp = (temp)/(NUMBER_LBM_NODES);
 
     std::ostringstream strDataInfo("");
     strDataInfo << std::scientific;
@@ -215,7 +215,7 @@ void totalSpringEnergy(
     
     checkCudaErrors(cudaMemcpy(&temp, sumKE, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
     temp = (temp/2.0) * nu_p * inv_lambda;
-    temp = (temp)/(U_MAX*U_MAX*NUMBER_LBM_NODES);
+    temp = (temp)/(NUMBER_LBM_NODES);
 
     std::ostringstream strDataInfo("");
     strDataInfo << std::scientific;
