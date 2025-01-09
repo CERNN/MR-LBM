@@ -1,7 +1,7 @@
-#define FENE_P
+//#define FENE_P
 #define TREAT_DATA_INCLUDE
 
-constexpr dfloat RE = 10;
+constexpr dfloat RE = 1600;
 
 constexpr int SCALE = 1;
 
@@ -13,7 +13,7 @@ constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 constexpr dfloat L = N;
 
-constexpr dfloat U_MAX = 0.01;  
+constexpr dfloat U_MAX = 0.05;  
 
 constexpr dfloat t_c = L/U_MAX;
 constexpr int N_STEPS = 5*t_c;
@@ -40,7 +40,7 @@ __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 #define BC_Z_PERIODIC
 
 constexpr dfloat SUM_VISC = (U_MAX*L)/RE;
-constexpr dfloat BETA = 0.1; //R_v
+constexpr dfloat BETA = 1; //R_v
 constexpr dfloat VISC = BETA * SUM_VISC;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
@@ -84,7 +84,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 
     constexpr dfloat CONF_ZERO = (dfloat)(10.0);
 
-    constexpr dfloat nu_p = (VISC/BETA) - VISC;
+    constexpr dfloat nu_p = SUM_VISC - VISC;
     constexpr dfloat Weissenberg_number = 1.0;
 
     constexpr dfloat LAMBDA = Weissenberg_number*t_c;

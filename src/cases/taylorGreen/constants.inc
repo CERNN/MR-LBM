@@ -1,6 +1,6 @@
 #define TREAT_DATA_INCLUDE
 
-constexpr dfloat RE = 1600;
+constexpr dfloat RE = 1;
 
 constexpr int SCALE = 1;
 constexpr int N = 128 * SCALE;
@@ -10,7 +10,7 @@ constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 
-constexpr dfloat U_MAX = 16.0/(125.0*M_PI); 
+constexpr dfloat U_MAX = 1.0/(125.0*M_PI); 
 constexpr dfloat L = (dfloat)N / (2.0 * M_PI);
 
 constexpr dfloat VISC = L*U_MAX / RE;
