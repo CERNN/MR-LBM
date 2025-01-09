@@ -23,7 +23,7 @@ dfloat ADU_DUTA_xz_t30 = AxxVar*0 + 0*duxdx_t30 + AxyVar*0 + 0*0 + 0*duxdy_t30 +
 dfloat ADU_DUTA_yz_t30 = AxyVar*0 + 0*duydx_t30 + AyyVar*0 + 0*duydy_t30 + 0*0 + 0*0;
 */
 
-dfloat ADU_DUTA_xx_t30 = 2*AxxVar*duxdx_t30 + 2*AxyVar*duxdy_t30 + 2*0*0
+dfloat ADU_DUTA_xx_t30 = 2*AxxVar*duxdx_t30 + 2*AxyVar*duxdy_t30 + 2*0*0;
 dfloat ADU_DUTA_yy_t30 = 2*AxyVar*duydx_t30 + 2*AyyVar*duydy_t30 + 2*0*0;
 dfloat ADU_DUTA_zz_t30 = 2*0*0 + 2*0*0 + 2*0*0;
 

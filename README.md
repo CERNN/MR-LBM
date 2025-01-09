@@ -141,10 +141,11 @@ The following table summarizes performance benchmarks on various GPUs:
 | A100          | 80 | ### GHz         | ### GHz            | 16x8x8 (D)      | #####     | waiting to test                       |
 | A100          | 80 | ### GHz         | ### GHz            | 8x8x8           | #####     | waiting to test                       |
 |---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
-|  RTX 2060     | 75 |  1.9   GHz      |  1.7 GHz           |  8x8x8          |  2357     |                                       |
+|  RTX 2060     | 75 |  1.9 GHz        |  1.7 GHz           |  8x8x8          |  2357     |                                       |
 |  GTX 1660     | 75 |  1.9 GHz        |  2.0 GHz           |  8x8x8          |  1252     |                                       |
 |  GTX 1660     | 75 |  1.9 GHz        |  2.0 GHz           |  8x8x4          |  1251     |                                       |
 |  GTX 1660     | 75 |  1.9 GHz        |  2.0 GHz           |  16x4x4         |  1212     |                                       |
+|  T600         | 75 |  1.5 GHz        |  1.25 GHz          |  8x8x8          |  881      | Limited by GPU, Memory controler 84%  |
 |---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
 |  K20x         | 35 |  0.7 GHz        |  1.3 GHz           |  8x8x4          |  730      | Limited by GPU, Memory controler 47%  |
 |  K20x         | 35 |  0.7 GHz        |  1.3 GHz           |  8x8x8          |  670      | Limited by GPU, Memory controler 40%  |
