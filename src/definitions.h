@@ -64,14 +64,14 @@ constexpr dfloat Implicit_const = 2.0*SQRT_2*3*3/(RHO_0)*CONST_SMAGORINSKY*CONST
 // Calculate maximum number of elements in a block
 //#define DYNAMIC_SHARED_MEMORY
 #ifdef DYNAMIC_SHARED_MEMORY
-    #if defined(SM_90)
-        constexpr size_t SHARED_MEMORY_LIMIT = 232448;  // sm90
-    #elif defined(SM_86)
-        constexpr size_t SHARED_MEMORY_LIMIT = 101376;  // sm86
-    #elif defined(SM_80)
-        constexpr size_t SHARED_MEMORY_LIMIT = 166912;  // sm80
-    #else
-        #error "Unsupported architecture. Please define SHARED_MEMORY_LIMIT."
+    #if (defined(SM_90) || defined(SM_100) || defined(SM_120))
+        constexpr size_t SHARED_MEMORY_SIZE = 232448;  // sm90
+    #endif
+    #if (defined(SM_80)) || (defined(SM_87))
+        constexpr size_t SHARED_MEMORY_SIZE = 166912;  // sm80
+    #endif
+    #if (defined(SM_86) || defined(SM_89))
+        constexpr size_t SHARED_MEMORY_SIZE = 101376;  // sm86
     #endif
 #endif
 

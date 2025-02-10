@@ -21,13 +21,13 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM viscoelastic_fourRollMill
+#define BC_PROBLEM benchmark
                                 
 constexpr bool console_flush = false;
 
-
-
 #define GPU_INDEX 0
+
+
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 
 #define STR_IMPL(A) #A

@@ -43,7 +43,7 @@ To compile the project, you can use the provided [bash script](./src/compile.sh)
 
 ### Installation Steps
 1. Install the CUDA toolkit from [Nvidia's website](https://developer.nvidia.com/cuda-toolkit).
-2. Modify the `compile.sh` file if necessary for your GPU.
+2. Modify the `compile.sh` file if necessary for your GPU when on Windows. `compile_linux.sh` for linux machines
 3. Run the script to compile the project.
 
 ## Simulation
@@ -137,9 +137,8 @@ The following table summarizes performance benchmarks on various GPUs:
 |  RTX 3060 OC  | 86 |  2.0 GHz        |  2.0 GHz           |  8x8x8          |  3083     |                                       |
 |  RTX 3060     | 86 |  1.8 GHz        |  1.8 GHz           |  8x8x8          |  2755     |                                       |
 |---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
-| A100          | 80 | ### GHz         | ### GHz            | 16x16x8 (D)     | #####     | waiting to test                       |
-| A100          | 80 | ### GHz         | ### GHz            | 16x8x8 (D)      | #####     | waiting to test                       |
-| A100          | 80 | ### GHz         | ### GHz            | 8x8x8           | #####     | waiting to test                       |
+| A100          | 80 | ### GHz         | ### GHz            | 16x8x8 (D)      | 10243     |                                       |
+| A100          | 80 | 1.3 GHz         | 1.5 GHz            | 8x8x8           | 11390     |                                       |
 |---------------|----|-----------------|--------------------|-----------------|-----------|---------------------------------------|
 |  RTX 2060     | 75 |  1.9 GHz        |  1.7 GHz           |  8x8x8          |  2357     |                                       |
 |  GTX 1660     | 75 |  1.9 GHz        |  2.0 GHz           |  8x8x8          |  1252     |                                       |

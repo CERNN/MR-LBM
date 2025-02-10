@@ -23,6 +23,9 @@
 #include "globalFunctions.h"
 #include "var.h"
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 
 #define __LOAD_CHECKPOINT 1

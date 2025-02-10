@@ -22,20 +22,24 @@
 #include "checkpoint.cuh"
 
 
-void createFolder(
-    std::string foldername
-){
+void createFolder(std::string foldername)
+{
     // Check if folder exists
     struct stat buffer;
-    if(stat(foldername.c_str(), &buffer) == 0)
+    if (stat(foldername.c_str(), &buffer) == 0)
         return;
+
     #ifdef _WIN32
+    // Windows-specific code
     std::string cmd = "md ";
     cmd += foldername;
     system(cmd.c_str());
     #else
-    if(std::mkdir(foldername, 0777) == -1)
+    // Linux/macOS-specific code
+    if (mkdir(foldername.c_str(), 0777) == -1)  // Convert foldername to C-string
+    {
         std::cout << "Error creating folder '" << foldername << "'.\n";
+    }
     #endif
 }
 
