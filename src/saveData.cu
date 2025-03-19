@@ -1,5 +1,5 @@
 #include "saveData.cuh"
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
 #include "nnf.h"
 #endif
 
@@ -10,9 +10,27 @@ void saveMacr(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
+    #endif
+    #ifdef A_XX_DIST 
+    dfloat* Axx,
+    #endif
+    #ifdef A_XY_DIST 
+    dfloat* Axy,
+    #endif
+    #ifdef A_XZ_DIST 
+    dfloat* Axz,
+    #endif
+    #ifdef A_YY_DIST 
+    dfloat* Ayy,
+    #endif
+    #ifdef A_YZ_DIST 
+    dfloat* Ayz,
+    #endif
+    #ifdef A_ZZ_DIST 
+    dfloat* Azz,
     #endif
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
@@ -20,8 +38,8 @@ void saveMacr(
 ){
 
 
-//linearize
-size_t indexMacr;
+    //linearize
+    size_t indexMacr;
     for(int z = 0; z< NZ;z++){
         ///printf("z %d \n", z);
         for(int y = 0; y< NY;y++){
@@ -33,12 +51,30 @@ size_t indexMacr;
                 uy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
                 uz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
-                #ifdef NON_NEWTONIAN_FLUID
+                #ifdef OMEGA_FIELD
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
                 #endif
 
                 #ifdef SECOND_DIST 
-                C[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                C[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+                #endif
+                #ifdef A_XX_DIST 
+                Axx[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XX_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
+                #endif
+                #ifdef A_XY_DIST 
+                Axy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XY_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
+                #endif
+                #ifdef A_XZ_DIST 
+                Axz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
+                #endif
+                #ifdef A_YY_DIST 
+                Ayy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_YY_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
+                #endif
+                #ifdef A_YZ_DIST 
+                Ayz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_YZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
+                #endif
+                #ifdef A_ZZ_DIST 
+                Azz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_ZZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
                 #endif
                 
                 #if NODE_TYPE_SAVE
@@ -88,16 +124,35 @@ size_t indexMacr;
     std::string strFileC;
     std::string strFileBc; 
     std::string strFileFx, strFileFy, strFileFz;
+    std::string strFileAxx, strFileAxy, strFileAxz, strFileAyy, strFileAyz, strFileAzz;
 
     strFileRho = getVarFilename("rho", nSteps, ".bin");
     strFileUx = getVarFilename("ux", nSteps, ".bin");
     strFileUy = getVarFilename("uy", nSteps, ".bin");
     strFileUz = getVarFilename("uz", nSteps, ".bin");
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     strFileOmega = getVarFilename("omega", nSteps, ".bin");
     #endif
     #ifdef SECOND_DIST 
     strFileC = getVarFilename("C", nSteps, ".bin");
+    #endif
+    #ifdef A_XX_DIST 
+    strFileAxx = getVarFilename("Axx", nSteps, ".bin");
+    #endif
+    #ifdef A_XY_DIST 
+    strFileAxy = getVarFilename("Axy", nSteps, ".bin");
+    #endif
+    #ifdef A_XZ_DIST 
+    strFileAxz = getVarFilename("Axz", nSteps, ".bin");
+    #endif
+    #ifdef A_YY_DIST 
+    strFileAyy = getVarFilename("Ayy", nSteps, ".bin");
+    #endif
+    #ifdef A_YZ_DIST 
+    strFileAyz = getVarFilename("Ayz", nSteps, ".bin");
+    #endif
+    #ifdef A_ZZ_DIST 
+    strFileAzz = getVarFilename("Azz", nSteps, ".bin");
     #endif
     #if NODE_TYPE_SAVE
     strFileBc = getVarFilename("bc", nSteps, ".bin");
@@ -112,12 +167,31 @@ size_t indexMacr;
     saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef SECOND_DIST
     saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
     #endif
+    #ifdef A_XX_DIST 
+    saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_XY_DIST 
+    saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_XZ_DIST 
+    saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_YY_DIST 
+    saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_YZ_DIST 
+    saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
+    #endif
+    #ifdef A_ZZ_DIST 
+    saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
+    #endif
+    
     #if NODE_TYPE_SAVE
     saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
     #endif
@@ -245,8 +319,8 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "         Save steps: " << MACR_SAVE << "\n";
     strSimInfo << "             Nsteps: " << step << "\n";
     strSimInfo << "              MLUPS: " << MLUPS << "\n";
-    strSimInfo << std::scientific << std::setprecision(0);
-        strSimInfo << "             BX: " << BLOCK_NX << "\n";
+        strSimInfo << std::scientific << std::setprecision(0);
+    strSimInfo << "                 BX: " << BLOCK_NX << "\n";
     strSimInfo << "                 BY: " << BLOCK_NY << "\n";
     strSimInfo << "                 BZ: " << BLOCK_NZ << "\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
@@ -259,7 +333,7 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
 
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     strSimInfo << "\n------------------------------ NON NEWTONIAN FLUID -----------------------------\n";
     strSimInfo << std::scientific << std::setprecision(6);
     
@@ -277,7 +351,7 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "      Plastic omega: " << OMEGA_P << "\n";
     #endif // BINGHAM
     strSimInfo << "--------------------------------------------------------------------------------\n";
-    #endif // NON_NEWTONIAN_FLUID
+    #endif // OMEGA_FIELD
     #ifdef LES_MODEL
     strSimInfo << "\t Smagorisky Constant:" << CONST_SMAGORINSKY <<"\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
@@ -307,9 +381,30 @@ std::string getSimInfoString(int step,dfloat MLUPS)
 
     strSimInfo << "--------------------------------------------------------------------------------\n";
     #endif// THERMAL_MODEL
-
-
-
+    #ifdef FENE_P 
+    strSimInfo << "\n------------------------------ VISCOELASTIC -----------------------------\n";
+        strSimInfo << std::scientific << std::setprecision(4);
+    strSimInfo << " Weissenberg Number: " << Weissenberg_number << "\n";
+    strSimInfo << "    Sum Viscosities: " << SUM_VISC << "\n";
+    strSimInfo << "    Viscosity Ratio: " << BETA << "\n";
+    strSimInfo << "  Solvent Viscosity: " << VISC << "\n";
+    strSimInfo << "  Polymer Viscosity: " << nu_p << "\n";
+    strSimInfo << "             Lambda: " << LAMBDA << "\n";
+    strSimInfo << "           FENE-P A: " << 1 << "\n"; //todo fix when fenep
+    strSimInfo << "           FENE-P B: " << 1 << "\n"; //todo fix when fenep
+    strSimInfo << "          FENE-P Re: " << fenep_re << "\n";
+    strSimInfo << "\n                                                                         \n";
+        strSimInfo << std::scientific << std::setprecision(4);
+    strSimInfo << "  Diffusivity ratio: " << CONF_DIFFUSIVITY_RATIO << "\n";
+    strSimInfo << "  Diffusivity Coef.: " << CONF_DIFFUSIVITY << "\n";
+    strSimInfo << "Conformation Offset: " << CONF_ZERO << "\n";
+    strSimInfo << "           CONF_TAU: " << CONF_TAU << "\n";
+    strSimInfo << "         CONF_OMEGA: " << CONF_OMEGA << "\n";
+    strSimInfo << "     CONF_DIFF_FLUC: " << CONF_DIFF_FLUC << "\n";
+    strSimInfo << "           CONF_AAA: " << CONF_AAA << "\n";
+    strSimInfo << "CONF_DIFF_FLUC_COEF: " << CONF_DIFF_FLUC_COEF << "\n";
+    strSimInfo << "--------------------------------------------------------------------------------\n";
+    #endif// FENE_P
     return strSimInfo.str();
 }
 
@@ -379,7 +474,7 @@ void loadMoments(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -392,7 +487,7 @@ void loadMoments(
     dfloat pixx, pixy, pixz, piyy, piyz, pizz;
     dfloat invRho;
     dfloat pop[Q];
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     dfloat omegaVar;
     #endif
     #ifdef SECOND_DIST 
@@ -444,14 +539,14 @@ void loadMoments(
                 h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*pizz;
 
 
-                #ifdef NON_NEWTONIAN_FLUID
+                #ifdef OMEGA_FIELD
                 omegaVar = omega[indexMacr];
                 h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = omegaVar; 
                 #endif
 
                 #ifdef SECOND_DIST 
                 cVar = C[indexMacr];
-                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = cVar;
+                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = cVar;
 
                 dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC - uxVar*F_M_I_SCALE);
                 dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uyVar*F_M_I_SCALE);
@@ -489,9 +584,9 @@ void loadMoments(
 
 
 
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30;
+                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30;
                 #endif
 
 
@@ -509,7 +604,7 @@ void loadSimField(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -524,7 +619,7 @@ void loadSimField(
     strFileUx = getVarFilename("ux", LOAD_FIELD_STEP, ".bin");
     strFileUy = getVarFilename("uy", LOAD_FIELD_STEP, ".bin");
     strFileUz = getVarFilename("uz", LOAD_FIELD_STEP, ".bin");
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     strFileOmega = getVarFilename("omega", LOAD_FIELD_STEP, ".bin");
     #endif
     #ifdef SECOND_DIST 
@@ -544,7 +639,7 @@ void loadSimField(
     loadVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
     loadVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
     loadVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     loadVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
     #endif
     #ifdef SECOND_DIST
@@ -560,7 +655,7 @@ void loadSimField(
     #endif
 
 
-    loadMoments(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    loadMoments(h_fMom,rho,ux,uy,uz, OMEGA_FIELD_PARAMS_DECLARATION
             #ifdef SECOND_DIST
             C
             #endif 

@@ -29,25 +29,25 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 
 /* ------------------------------ VELOCITY SET ------------------------------ */
 #ifdef D3Q19
-    #include "includeFiles\velocitySets\D3Q19.inc"
+    #include "includeFiles/velocitySets/D3Q19.inc"
 #endif //D3Q19
 #ifdef D3Q27
-    #include "includeFiles\velocitySets\D3Q27.inc"
+    #include "includeFiles/velocitySets/D3Q27.inc"
 #endif //D3Q27
 
 // #define SECOND_DIST
 #ifdef D3G7
-    #include "includeFiles\velocitySets\D3G7.inc"
+    #include "includeFiles/velocitySets/D3G7.inc"
 #endif
 #ifdef D3G19
-    #include "includeFiles\velocitySets\D3G19.inc"
+    #include "includeFiles/velocitySets/D3G19.inc"
 #endif
 
 /* ------------------------------ MODEL MACROS ------------------------------ */
 
 
 #if defined(POWERLAW) || defined(BINGHAM) || defined(BI_VISCOSITY)
-    #define NON_NEWTONIAN_FLUID
+    #define OMEGA_FIELD
 #endif
 
 
@@ -64,14 +64,14 @@ constexpr dfloat Implicit_const = 2.0*SQRT_2*3*3/(RHO_0)*CONST_SMAGORINSKY*CONST
 // Calculate maximum number of elements in a block
 //#define DYNAMIC_SHARED_MEMORY
 #ifdef DYNAMIC_SHARED_MEMORY
-    #if defined(SM_90)
-        constexpr size_t SHARED_MEMORY_LIMIT = 232448;  // sm90
-    #elif defined(SM_86)
-        constexpr size_t SHARED_MEMORY_LIMIT = 101376;  // sm86
-    #elif defined(SM_80)
-        constexpr size_t SHARED_MEMORY_LIMIT = 166912;  // sm80
-    #else
-        #error "Unsupported architecture. Please define SHARED_MEMORY_LIMIT."
+    #if (defined(SM_90) || defined(SM_100) || defined(SM_120))
+        constexpr size_t SHARED_MEMORY_SIZE = 232448;  // sm90
+    #endif
+    #if (defined(SM_80)) || (defined(SM_87))
+        constexpr size_t SHARED_MEMORY_SIZE = 166912;  // sm80
+    #endif
+    #if (defined(SM_86) || defined(SM_89))
+        constexpr size_t SHARED_MEMORY_SIZE = 101376;  // sm86
     #endif
 #endif
 
@@ -92,6 +92,8 @@ constexpr BlockDim optimalBlockDimArray = findOptimalBlockDimensions(MAX_ELEMENT
 
 #define BLOCK_LBM_SIZE (BLOCK_NX * BLOCK_NY * BLOCK_NZ)
 
+const size_t BLOCK_LBM_SIZE_POP = BLOCK_LBM_SIZE * (Q - 1);
+
 const size_t BLOCK_FACE_XY = BLOCK_NX * BLOCK_NY;
 const size_t BLOCK_FACE_XZ = BLOCK_NX * BLOCK_NZ;
 const size_t BLOCK_FACE_YZ = BLOCK_NY * BLOCK_NZ;
@@ -111,10 +113,10 @@ const size_t NUMBER_GHOST_FACE_XZ = BLOCK_NX*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NU
 const size_t NUMBER_GHOST_FACE_YZ = BLOCK_NY*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 
 //#define MOMENT_ORDER (1+2)
-//#ifdef NON_NEWTONIAN_FLUID
+//#ifdef OMEGA_FIELD
 //const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6 + 1;
 //#endif
-//#ifndef NON_NEWTONIAN_FLUID
+//#ifndef OMEGA_FIELD
 //const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6;
 //#endif
 
@@ -148,16 +150,6 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 
 /* --------------------------------- MACROS --------------------------------- */
 
-
-#ifndef myMax
-#define myMax(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
-
-#ifndef myMin
-#define myMin(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
-
-
 #if defined(HO_RR) || defined(HOME_LBM)
     #define HIGH_ORDER_COLLISION
 #endif
@@ -167,9 +159,18 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
     #define HALO_SIZE 1
     const size_t VEL_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 3;
+#else
+    const size_t VEL_GRAD_BLOCK_SIZE = 0;
 #endif
 
+#ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+    #define HALO_SIZE 1
+    const size_t CONFORMATION_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 6;
+#else
+    const size_t CONFORMATION_GRAD_BLOCK_SIZE = 0;
+#endif
 
+constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_BLOCK_SIZE, CONFORMATION_GRAD_BLOCK_SIZE));
 
 //FUNCTION DECLARATION MACROS
 #ifdef DYNAMIC_SHARED_MEMORY
@@ -219,23 +220,23 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 
 
 
-#ifdef NON_NEWTONIAN_FLUID
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION dfloat *omega,
-    #define NON_NEWTONIAN_FLUID_PARAMS omega,
+#ifdef OMEGA_FIELD
+    #define OMEGA_FIELD_PARAMS_DECLARATION dfloat *omega,
+    #define OMEGA_FIELD_PARAMS omega,
 #else
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
-    #define NON_NEWTONIAN_FLUID_PARAMS
+    #define OMEGA_FIELD_PARAMS_DECLARATION
+    #define OMEGA_FIELD_PARAMS
 #endif
 
 
 
 // Double-pointer macros 
-#ifdef NON_NEWTONIAN_FLUID
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION_PTR ,dfloat** omega
-    #define NON_NEWTONIAN_FLUID_PARAMS_PTR ,&omega
+#ifdef OMEGA_FIELD
+    #define OMEGA_FIELD_PARAMS_DECLARATION_PTR ,dfloat** omega
+    #define OMEGA_FIELD_PARAMS_PTR ,&omega
 #else
-    #define NON_NEWTONIAN_FLUID_PARAMS_DECLARATION_PTR
-    #define NON_NEWTONIAN_FLUID_PARAMS_PTR
+    #define OMEGA_FIELD_PARAMS_DECLARATION_PTR
+    #define OMEGA_FIELD_PARAMS_PTR
 #endif
 
 
@@ -247,6 +248,57 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
     #define SECOND_DIST_PARAMS_DECLARATION_PTR
     #define SECOND_DIST_PARAMS_PTR
 #endif
+
+
+#ifdef A_XX_DIST
+    #define A_XX_DIST_PARAMS_DECLARATION_PTR ,dfloat** Axx
+    #define A_XX_DIST_PARAMS_PTR ,&Axx
+#else
+    #define A_XX_DIST_PARAMS_DECLARATION_PTR
+    #define A_XX_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_XY_DIST
+    #define A_XY_DIST_PARAMS_DECLARATION_PTR ,dfloat** Axy
+    #define A_XY_DIST_PARAMS_PTR ,&Axy
+#else
+    #define A_XY_DIST_PARAMS_DECLARATION_PTR
+    #define A_XY_DIST_PARAMS_PTR
+#endif
+
+
+#ifdef A_XZ_DIST
+    #define A_XZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Axz
+    #define A_XZ_DIST_PARAMS_PTR ,&Axz
+#else
+    #define A_XZ_DIST_PARAMS_DECLARATION_PTR
+    #define A_XZ_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_YY_DIST
+    #define A_YY_DIST_PARAMS_DECLARATION_PTR ,dfloat** Ayy
+    #define A_YY_DIST_PARAMS_PTR ,&Ayy
+#else
+    #define A_YY_DIST_PARAMS_DECLARATION_PTR
+    #define A_YY_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_YZ_DIST
+    #define A_YZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Ayz
+    #define A_YZ_DIST_PARAMS_PTR ,&Ayz
+#else
+    #define A_YZ_DIST_PARAMS_DECLARATION_PTR
+    #define A_YZ_DIST_PARAMS_PTR
+#endif
+
+#ifdef A_ZZ_DIST
+    #define A_ZZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Azz
+    #define A_ZZ_DIST_PARAMS_PTR ,&Azz
+#else
+    #define A_ZZ_DIST_PARAMS_DECLARATION_PTR
+    #define A_ZZ_DIST_PARAMS_PTR
+#endif
+
 
 
 

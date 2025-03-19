@@ -57,7 +57,10 @@ void mean_moment( dfloat *fMom,  dfloat *meanMom, int m_index, size_t step, int 
 __host__ 
 void totalKineticEnergy(dfloat *fMom, size_t step);
 
-
+#ifdef CONVECTION_DIFFUSION_TRANSPORT
+__host__ 
+void totalSpringEnergy(dfloat *fMom,size_t step);
+#endif
 /*
 *   @brief Calculate the total drag caused by boudary conditions
 *   @param d_BC_Fx: device boundary condition force field
@@ -89,7 +92,7 @@ void velocityProfile(
 */
 __host__
 void probeExport(
-    dfloat* fMom, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION unsigned int step
+    dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step
 );
 __host__
 void computeNusseltNumber(

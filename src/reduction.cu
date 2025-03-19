@@ -38,7 +38,7 @@ __global__
 void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index)
 {
 
-    #include "includeFiles\shared_reduction.inc"
+    #include "includeFiles/shared_reduction.inc"
 
 
     //global index in the array
@@ -65,7 +65,7 @@ void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index)
 __global__ 
 void sumReductionThread_TKE(dfloat* g_idata, dfloat* g_odata, dfloat *meanMom)
 {
-    #include "includeFiles\shared_reduction.inc"
+    #include "includeFiles/shared_reduction.inc"
 
 
     //global index in the array
@@ -100,7 +100,7 @@ __global__
 void sumReductionThread_rho(dfloat* g_idata, dfloat* g_odata)
 {
 
-    #include "includeFiles\shared_reduction.inc"
+    #include "includeFiles/shared_reduction.inc"
 
 
     //global index in the array
@@ -128,9 +128,10 @@ __global__
 void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata)
 {
 
-    #include "includeFiles\shared_reduction.inc"
+    #include "includeFiles/shared_reduction.inc"
 
     //global index in the array
+    unsigned int ip =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_RHO_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
     unsigned int ix =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
     unsigned int iy =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
     unsigned int iz =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
@@ -139,7 +140,7 @@ void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata)
     //block index
     unsigned int bid = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z));
 
-    sdata[tid] = (g_idata[ix]*g_idata[ix] + g_idata[iy]*g_idata[iy]+g_idata[iz]*g_idata[iz])/2;
+    sdata[tid] = (g_idata[ip] + RHO_0)*(g_idata[ix]*g_idata[ix] + g_idata[iy]*g_idata[iy]+g_idata[iz]*g_idata[iz])/(2*F_M_I_SCALE*F_M_I_SCALE);
     __syncthreads();
     for (unsigned int s = (blockDim.x * blockDim.y * blockDim.z) / 2; s > 0; s >>= 1) {
         if (tid < s) {
@@ -153,12 +154,42 @@ void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata)
     }
 }
 
+#ifdef CONVECTION_DIFFUSION_TRANSPORT
+__global__ 
+void sumReductionThread_SE(dfloat* g_idata, dfloat* g_odata)
+{
+
+    #include "includeFiles/shared_reduction.inc"
+
+    //global index in the array
+    unsigned int ixx =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
+    unsigned int iyy =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
+    unsigned int izz =  idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z);
+    //thread index in the array
+    unsigned int tid = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z));
+    //block index
+    unsigned int bid = blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z));
+    //sdata[tid] = ((g_idata[ixx] - 1.0 - CONF_ZERO)*(g_idata[ixx] - 1.0 - CONF_ZERO) + (g_idata[iyy] - 1.0 - CONF_ZERO)*(g_idata[iyy] - 1.0 - CONF_ZERO) + (g_idata[izz] - 1.0 - CONF_ZERO)*(g_idata[izz] - 1.0 - CONF_ZERO));
+    sdata[tid] = (g_idata[ixx] + g_idata[iyy]+ g_idata[izz] - 3.0 - 3*CONF_ZERO);
+    __syncthreads();
+    for (unsigned int s = (blockDim.x * blockDim.y * blockDim.z) / 2; s > 0; s >>= 1) {
+        if (tid < s) {
+            sdata[tid] += sdata[tid + s];
+        }
+        __syncthreads();
+    }
+    
+    if (tid == 0) {
+        g_odata[bid] = sdata[0];
+    }
+}
+#endif
 
 __global__ 
 void sumReductionScalar(dfloat* g_idata, dfloat* g_odata)
 {
 
-    #include "includeFiles\shared_reduction.inc"
+    #include "includeFiles/shared_reduction.inc"
 
     //global index in the array
     unsigned int i =  idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z, blockIdx.x, blockIdx.y, blockIdx.z);
@@ -187,7 +218,7 @@ __global__
 void sumReductionBlock(dfloat* g_idata, dfloat* g_odata)
 {
 
-    #include "includeFiles\shared_reduction.inc"
+    #include "includeFiles/shared_reduction.inc"
 
     //global index in the array
     unsigned int i = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y * (threadIdx.z + blockDim.z * ((blockIdx.x + gridDim.x * (blockIdx.y + gridDim.y * (blockIdx.z))))));

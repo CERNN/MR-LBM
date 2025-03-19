@@ -14,7 +14,7 @@ void treatData(
     #endif
 
     #if TREATPOINT
-    probeExport(fMom, NON_NEWTONIAN_FLUID_PARAMS step);
+    probeExport(fMom, OMEGA_FIELD_PARAMS step);
     #endif
     #if TREATLINE
     velocityProfile(fMom,1,step);
@@ -23,6 +23,10 @@ void treatData(
     velocityProfile(fMom,4,step);
     velocityProfile(fMom,5,step);
     velocityProfile(fMom,6,step);
+    #endif
+
+    #ifdef TREAT_DATA_INCLUDE
+    #include CASE_TREAT_DATA
     #endif
 
     //totalKineticEnergy(fMom,step);         
@@ -146,7 +150,7 @@ void totalKineticEnergy(
     dfloat temp;
     
     checkCudaErrors(cudaMemcpy(&temp, sumKE, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
-    temp = (temp)/(U_MAX*U_MAX*NUMBER_LBM_NODES);
+    temp = (temp)/(NUMBER_LBM_NODES);
 
     std::ostringstream strDataInfo("");
     strDataInfo << std::scientific;
@@ -159,6 +163,72 @@ void totalKineticEnergy(
     saveTreatData("_totalKineticEnergy",strDataInfo.str(),step);
     cudaFree(sumKE);
 }
+
+#ifdef CONVECTION_DIFFUSION_TRANSPORT
+__host__ 
+void totalSpringEnergy(
+    dfloat *fMom, 
+    size_t step
+){
+    dfloat* sumKE;
+    cudaMalloc((void**)&sumKE, NUM_BLOCK * sizeof(dfloat));
+
+    int nt_x = BLOCK_NX;
+    int nt_y = BLOCK_NY;
+    int nt_z = BLOCK_NZ;
+    int nb_x = NX / nt_x;
+    int nb_y = NY / nt_y;
+    int nb_z = NZ / nt_z;
+
+    sumReductionThread_SE << <dim3(NUM_BLOCK_X, NUM_BLOCK_Y, NUM_BLOCK_Z), dim3(BLOCK_NX, BLOCK_NY, BLOCK_NZ) >> > (fMom, sumKE);
+
+    nb_x = NUM_BLOCK_X;
+    nb_y = NUM_BLOCK_Y;
+    nb_z = NUM_BLOCK_Z;
+
+    int current_block_size = nb_x * nb_y * nb_z;
+
+    while (true) {
+        current_block_size = nb_x * nb_y * nb_z;
+        if (current_block_size <= BLOCK_LBM_SIZE) { // last reduction
+            sumReductionBlock << <1, dim3(nb_x, nb_y, nb_z) >> > (sumKE, sumKE);
+            break;
+        }
+        else {
+            nb_x = (nb_x < BLOCK_NX ? 1 : nb_x / BLOCK_NX);
+            nb_y = (nb_y < BLOCK_NY ? 1 : nb_y / BLOCK_NY);
+            nb_z = (nb_z < BLOCK_NZ ? 1 : nb_z / BLOCK_NZ);
+            if (nb_x * nb_y * nb_z * nt_x * nt_y * nt_z > current_block_size) {
+                if (nb_x > nb_y && nb_x > nb_z)
+                    nt_x /= 2;
+                else if (nb_y > nb_x && nb_y > nb_z)
+                    nt_y /= 2;
+                else
+                    nt_z /= 2;
+            }
+            sumReductionBlock << <dim3(nb_x, nb_y, nb_z), dim3(nt_x, nt_y, nt_z) >> > (sumKE, sumKE);
+        }
+    }
+
+    checkCudaErrors(cudaDeviceSynchronize());
+    dfloat temp;
+    
+    checkCudaErrors(cudaMemcpy(&temp, sumKE, sizeof(dfloat), cudaMemcpyDeviceToHost)); 
+    temp = (temp/2.0) * nu_p * inv_lambda;
+    temp = (temp)/(NUMBER_LBM_NODES);
+
+    std::ostringstream strDataInfo("");
+    strDataInfo << std::scientific;
+    strDataInfo << std::setprecision(6);
+
+    strDataInfo <<"step,"<< step<< "," << temp;// << "," << mean_counter;
+
+
+
+    saveTreatData("_totalSpringEnergy",strDataInfo.str(),step);
+    cudaFree(sumKE);
+}
+#endif
 
 __host__ 
 void turbulentKineticEnergy(
@@ -426,7 +496,7 @@ void velocityProfile(
 
 
 __host__
-void probeExport(dfloat* fMom, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION unsigned int step){
+void probeExport(dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step){
     std::ostringstream strDataInfo("");
     strDataInfo << std::scientific;
     strDataInfo << std::setprecision(6);
@@ -542,10 +612,10 @@ void computeNusseltNumber(
 
     for (int z = 0; z <NZ_TOTAL; z++){
         for(int y = 0; y< NY-0;y++){
-            C_x0 = h_fMom[idxMom(x0%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x0/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-            C_x1 = h_fMom[idxMom(x1%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x1/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-            C_x2 = h_fMom[idxMom(x2%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x2/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-            C_x3 = h_fMom[idxMom(x3%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_C_INDEX, x3/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x0 = h_fMom[idxMom(x0%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x0/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x1 = h_fMom[idxMom(x1%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x1/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x2 = h_fMom[idxMom(x2%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x2/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
+            C_x3 = h_fMom[idxMom(x3%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x3/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
 
             Nu_sum +=-(C_x1 - C_x0);
             Nu_sum +=(C_x3 - C_x2);
@@ -616,9 +686,11 @@ void computeTurbulentEnergies(
     dfloat m_Syz = 0;
     dfloat m_Szz = 0;
 
+#pragma warning(push)
+#pragma warning(disable: 4804)
     dfloat mean_counter = 1.0/((dfloat)(step/MACR_SAVE)+1.0);
     count = 0;
-
+#pragma warning(pop)
 
     //left side of the equation
     for (int z = 0 ; z <NZ_TOTAL; z++){

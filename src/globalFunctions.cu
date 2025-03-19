@@ -58,6 +58,66 @@ void multiply_matrices_3x3(dfloat A[3][3], dfloat B[3][3], dfloat result[3][3]) 
 }
 
 __host__ __device__
+void add_matrices_3x3(dfloat scalar, dfloat A[3][3], dfloat B[3][3], dfloat result[3][3]) {
+    result[0][0] = scalar * A[0][0] + B[0][0];
+    result[0][1] = scalar * A[0][1] + B[0][1];
+    result[0][2] = scalar * A[0][2] + B[0][2];
+    
+    result[1][0] = scalar * A[1][0] + B[1][0];
+    result[1][1] = scalar * A[1][1] + B[1][1];
+    result[1][2] = scalar * A[1][2] + B[1][2];
+    
+    result[2][0] = scalar * A[2][0] + B[2][0];
+    result[2][1] = scalar * A[2][1] + B[2][1];
+    result[2][2] = scalar * A[2][2] + B[2][2];
+}
+
+__host__ __device__
+dfloat determinant_3x3(dfloat A[3][3]) {
+    return A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1]) 
+         - A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0]) 
+         + A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+}
+
+__host__ __device__
+void adjugate_3x3(dfloat A[3][3], dfloat adj[3][3]) {
+    adj[0][0] = A[1][1] * A[2][2] - A[1][2] * A[2][1];
+    adj[0][1] = -(A[1][0] * A[2][2] - A[1][2] * A[2][0]);
+    adj[0][2] = A[1][0] * A[2][1] - A[1][1] * A[2][0];
+    
+    adj[1][0] = -(A[0][1] * A[2][2] - A[0][2] * A[2][1]);
+    adj[1][1] = A[0][0] * A[2][2] - A[0][2] * A[2][0];
+    adj[1][2] = -(A[0][0] * A[2][1] - A[0][1] * A[2][0]);
+    
+    adj[2][0] = A[0][1] * A[1][2] - A[0][2] * A[1][1];
+    adj[2][1] = -(A[0][0] * A[1][2] - A[0][2] * A[1][0]);
+    adj[2][2] = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+}
+
+__host__ __device__
+void inverse_3x3(dfloat A[3][3], dfloat result[3][3]) {
+    dfloat det = determinant_3x3(A);
+        
+    dfloat adj[3][3];
+    adjugate_3x3(A, adj);
+    
+    dfloat inv_det = 1.0 / det;
+    
+    // Compute the inverse matrix without loops
+    result[0][0] = adj[0][0] * inv_det;
+    result[0][1] = adj[0][1] * inv_det;
+    result[0][2] = adj[0][2] * inv_det;
+    
+    result[1][0] = adj[1][0] * inv_det;
+    result[1][1] = adj[1][1] * inv_det;
+    result[1][2] = adj[1][2] * inv_det;
+    
+    result[2][0] = adj[2][0] * inv_det;
+    result[2][1] = adj[2][1] * inv_det;
+    result[2][2] = adj[2][2] * inv_det;
+}
+
+__host__ __device__
 void dfloat6_to_matrix(dfloat6 I, dfloat M[3][3]) {
     M[0][0] = I.xx;     M[1][0] = I.xy;     M[2][0] = I.xz; 
     M[0][1] = I.xy;     M[1][1] = I.yy;     M[2][1] = I.yz;

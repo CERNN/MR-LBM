@@ -33,7 +33,7 @@
 *   @param nSteps: number of steps of the simulation
 */
 __host__
-void linearMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+void linearMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif 
@@ -56,7 +56,7 @@ void loadMoments(
     dfloat* rho,
     dfloat* ux,
     dfloat* uy,
-    dfloat* uz, NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    dfloat* uz, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -69,7 +69,7 @@ void loadSimField(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
-    NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+    OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST
     dfloat* C
     #endif 
@@ -94,10 +94,28 @@ void loadVarBin(
 *        so the variables starts on SWF and ends in NEB
 */
 __host__
-void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz,  NON_NEWTONIAN_FLUID_PARAMS_DECLARATION
+void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz,  OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
     #endif 
+    #ifdef A_XX_DIST 
+    dfloat* Axx,
+    #endif
+    #ifdef A_XY_DIST 
+    dfloat* Axy,
+    #endif
+    #ifdef A_XZ_DIST 
+    dfloat* Axz,
+    #endif
+    #ifdef A_YY_DIST 
+    dfloat* Ayy,
+    #endif
+    #ifdef A_YZ_DIST 
+    dfloat* Ayz,
+    #endif
+    #ifdef A_ZZ_DIST 
+    dfloat* Azz,
+    #endif
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps
