@@ -266,7 +266,7 @@ void operateSimCheckpoint(
 __host__
 int getStep(){
     std::string filename = SIMULATION_FOLDER_LOAD_CHECKPOINT;
-    std::string DIR_PATH = "../bin/" + filename + "/" + ID_SIM + "/checkpoint/" + "_";
+    std::string DIR_PATH = "..\\\\bin\\\\" + filename + "\\\\" + ID_SIM + "\\\\checkpoint\\\\" + "_";
 
     std::ifstream fileread(DIR_PATH + "curr_step.bin", std::ios::binary);
 
