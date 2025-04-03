@@ -831,7 +831,6 @@ void initializeDomain(
     // LBM Initialization
     if (LOAD_CHECKPOINT) {
         printf("Loading checkpoint\n");
-        step[0] = INI_STEP;
         loadSimCheckpoint(h_fMom, ghostInterface, step);
         checkCudaErrors(cudaMemcpy(d_fMom, h_fMom, sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS, cudaMemcpyHostToDevice));
         interfaceCudaMemcpy(ghostInterface, ghostInterface.fGhost, ghostInterface.h_fGhost, cudaMemcpyHostToDevice, QF);

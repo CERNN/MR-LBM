@@ -263,6 +263,39 @@ void operateSimCheckpoint(
     free(tmp);
 }
 
+__host__
+int getStep(){
+    std::string filename = SIMULATION_FOLDER_LOAD_CHECKPOINT;
+    std::string DIR_PATH = "../bin/" + filename + "/" + ID_SIM + "/checkpoint/" + "_";
+
+    std::ifstream fileread(DIR_PATH + "curr_step.bin", std::ios::binary);
+
+    if (!fileread) {
+        std::cerr << "Error opening file: " << (DIR_PATH + "curr_step.bin") << std::endl;
+        return 0;
+    }
+
+    fileread.seekg(0, std::ios::end);
+    std::streampos filesize = fileread.tellg();
+
+    if (filesize < sizeof(int)) {
+        std::cerr << "Error: File smaller than expected!" << std::endl;
+        return 0;
+    }
+
+    fileread.seekg(-sizeof(int), std::ios::end);
+
+    int laststep = 0;
+    fileread.read(reinterpret_cast<char*>(&laststep), sizeof(int));
+
+    if (!fileread.good()) {
+        std::cerr << "Error reading data from file!" << std::endl;
+        return 0;
+    }
+    
+    fileread.close();
+    return laststep;
+}
 
 __host__
 void loadSimCheckpoint( 
@@ -270,6 +303,7 @@ void loadSimCheckpoint(
     ghostInterfaceData ghostInterface,
     int *step
     ){
+    step[0] = getStep();
     operateSimCheckpoint(__LOAD_CHECKPOINT, fMom, ghostInterface,step);
 }
 
