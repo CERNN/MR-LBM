@@ -49,6 +49,26 @@ int main() {
     #ifdef A_ZZ_DIST
     dfloat* Azz;
     #endif
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST
+        dfloat* Cxx;
+        #endif
+        #ifdef A_XY_DIST
+        dfloat* Cxy;
+        #endif
+        #ifdef A_XZ_DIST
+        dfloat* Cxz;
+        #endif
+        #ifdef A_YY_DIST
+        dfloat* Cyy;
+        #endif
+        #ifdef A_YZ_DIST
+        dfloat* Cyz;
+        #endif
+        #ifdef A_ZZ_DIST
+        dfloat* Czz;
+        #endif
+    #endif //LOG_CONFORMATION
 
     #if NODE_TYPE_SAVE
     dfloat* nodeTypeSave;
@@ -277,6 +297,26 @@ int main() {
                     #ifdef A_ZZ_DIST 
                     Azz,
                     #endif
+                    #ifdef LOG_CONFORMATION
+                        #ifdef A_XX_DIST
+                        Cxx,
+                        #endif
+                        #ifdef A_XY_DIST
+                        Cxy,
+                        #endif
+                        #ifdef A_XZ_DIST
+                        Cxz,
+                        #endif
+                        #ifdef A_YY_DIST
+                        Cyy,
+                        #endif
+                        #ifdef A_YZ_DIST
+                        Cyz,
+                        #endif
+                        #ifdef A_ZZ_DIST
+                        Czz,
+                        #endif
+                    #endif //LOG_CONFORMATION
                     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
                 }
             //}
@@ -334,6 +374,26 @@ int main() {
     #ifdef A_ZZ_DIST 
     Azz,
     #endif
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST
+        Cxx,
+        #endif
+        #ifdef A_XY_DIST
+        Cxy,
+        #endif
+        #ifdef A_XZ_DIST
+        Cxz,
+        #endif
+        #ifdef A_YY_DIST
+        Cyy,
+        #endif
+        #ifdef A_YZ_DIST
+        Cyz,
+        #endif
+        #ifdef A_ZZ_DIST
+        Czz,
+        #endif
+    #endif //LOG_CONFORMATION
     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
 
     #ifdef PARTICLE_TRACER
@@ -414,6 +474,28 @@ int main() {
     #endif
     #ifdef A_ZZ_DIST 
     cudaFree(Azz);
+    #endif
+
+
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST 
+        cudaFree(Cxx);
+        #endif 
+        #ifdef A_XY_DIST 
+        cudaFree(Cxy);
+        #endif
+        #ifdef A_XZ_DIST 
+        cudaFree(Cxz);
+        #endif
+        #ifdef A_YY_DIST 
+        cudaFree(Cyy);
+        #endif
+        #ifdef A_YZ_DIST 
+        cudaFree(Cyz);
+        #endif
+        #ifdef A_ZZ_DIST 
+        cudaFree(Czz);
+        #endif
     #endif
 
     interfaceFree(ghostInterface);

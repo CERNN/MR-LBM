@@ -1,6 +1,6 @@
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
-#define ID_SIM "001"            // prefix for simulation's files
-#define PATH_FILES "TEST"  // path to save simulation's files
+#define ID_SIM "N64_Wi10_B01"            // prefix for simulation's files
+#define PATH_FILES "Parallel_plates_viscoelastic"  // path to save simulation's files
 #define TREATFIELD (false) //treat data over the entire field
 #define TREATPOINT (false) //treat data in a single or several points
 #define TREATLINE (false) //save the macro in a line
@@ -9,7 +9,7 @@
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define NODE_TYPE_SAVE (false) //save the bc conditions, usefull for drawing the surface
 #define ONLY_FINAL_MACRO (false) //save only the last time step macroscopic
-#define MACR_SAVE (12800)
+#define MACR_SAVE (64000)
 #define REPORT_SAVE (false)
 
 

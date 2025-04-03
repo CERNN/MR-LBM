@@ -754,6 +754,29 @@ void allocateHostMemory(
     checkCudaErrors(cudaMallocHost((void**)Azz, MEM_SIZE_SCALAR));
     #endif
 
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST
+        checkCudaErrors(cudaMallocHost((void**)Cxx, MEM_SIZE_SCALAR));
+        #endif 
+        #ifdef A_XY_DIST
+        checkCudaErrors(cudaMallocHost((void**)Cxy, MEM_SIZE_SCALAR));
+        #endif 
+        #ifdef A_XZ_DIST
+        checkCudaErrors(cudaMallocHost((void**)Cxz, MEM_SIZE_SCALAR));
+        #endif
+        #ifdef A_YY_DIST
+        checkCudaErrors(cudaMallocHost((void**)Cyy, MEM_SIZE_SCALAR));
+        #endif
+        #ifdef A_YZ_DIST
+        checkCudaErrors(cudaMallocHost((void**)Cyz, MEM_SIZE_SCALAR));
+        #endif 
+        #ifdef A_ZZ_DIST
+        checkCudaErrors(cudaMallocHost((void**)Czz, MEM_SIZE_SCALAR));
+        #endif
+    #endif //LOG_CONFORMATION
+
+
+
     #ifdef PARTICLE_TRACER
     checkCudaErrors(cudaMallocHost((void**)h_particlePos, sizeof(dfloat3) * NUM_PARTICLES));
     #endif

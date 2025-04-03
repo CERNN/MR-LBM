@@ -21,7 +21,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM benchmark
+#define BC_PROBLEM viscoelasitc_parallelPlates_D3Q19
                                 
 constexpr bool console_flush = false;
 

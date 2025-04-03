@@ -32,6 +32,26 @@ void saveMacr(
     #ifdef A_ZZ_DIST 
     dfloat* Azz,
     #endif
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST
+        dfloat* Cxx,
+        #endif
+        #ifdef A_XY_DIST
+        dfloat* Cxy,
+        #endif
+        #ifdef A_XZ_DIST
+        dfloat* Cxz,
+        #endif
+        #ifdef A_YY_DIST
+        dfloat* Cyy,
+        #endif
+        #ifdef A_YZ_DIST
+        dfloat* Cyz,
+        #endif
+        #ifdef A_ZZ_DIST
+        dfloat* Czz,
+        #endif
+    #endif //LOG_CONFORMATION
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps

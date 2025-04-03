@@ -1,67 +1,103 @@
-// TODO NOT WORKING. NEED PROPER TREATMENT OF THE GRADIENT OF THE CONFORMATION TENSOR
-// THE PROBLEM RESIDES IN HOW TO OBTAIN THE VALUES OF THE NEIGHBORING LATTICES WITHOUT COMPUTINGT THE EIGIN VALUES AND EIGEN VECTORS AGAIN.
+// Fetch neighboring values for Cxx, Cxy, Cxz, Cyy, Cyz, Czz
 
-s_pop[idxConfBlock(tx, ty, tz, 0)] = Cxx;
-s_pop[idxConfBlock(tx, ty, tz, 1)] = Cxy;
-s_pop[idxConfBlock(tx, ty, tz, 2)] = Cxz;
-s_pop[idxConfBlock(tx, ty, tz, 3)] = Cyy;
-s_pop[idxConfBlock(tx, ty, tz, 4)] = Cyz;
-s_pop[idxConfBlock(tx, ty, tz, 5)] = Czz;
+//store to be used in the next step
+if(step%2 == 0){
+    dfloat Cxx_xm1 = fMom[idxMom(txm1, ty, tz, C_XX_2_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+    dfloat Cxx_xp1 = fMom[idxMom(txp1, ty, tz, C_XX_2_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
+    
+    dfloat Cxy_ym1 = fMom[idxMom(tx, tym1, tz, C_XY_2_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+    dfloat Cxy_yp1 = fMom[idxMom(tx, typ1, tz, C_XY_2_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
+    
+    dfloat Cxz_zm1 = fMom[idxMom(tx, ty, tzm1, C_XZ_2_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+    dfloat Cxz_zp1 = fMom[idxMom(tx, ty, tzp1, C_XZ_2_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
+    
+    dfloat Cxy_xm1 = fMom[idxMom(txm1, ty, tz, C_XY_2_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+    dfloat Cxy_xp1 = fMom[idxMom(txp1, ty, tz, C_XY_2_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
+    
+    dfloat Cyy_ym1 = fMom[idxMom(tx, tym1, tz, C_YY_2_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+    dfloat Cyy_yp1 = fMom[idxMom(tx, typ1, tz, C_YY_2_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
+    
+    dfloat Cyz_zm1 = fMom[idxMom(tx, ty, tzm1, C_YZ_2_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+    dfloat Cyz_zp1 = fMom[idxMom(tx, ty, tzp1, C_YZ_2_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
+    
+    dfloat Cxz_xm1 = fMom[idxMom(txm1, ty, tz, C_XZ_2_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+    dfloat Cxz_xp1 = fMom[idxMom(txp1, ty, tz, C_XZ_2_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
+    
+    dfloat Cyz_ym1 = fMom[idxMom(tx, tym1, tz, C_YZ_2_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+    dfloat Cyz_yp1 = fMom[idxMom(tx, typ1, tz, C_YZ_2_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
+    
+    dfloat Czz_zm1 = fMom[idxMom(tx, ty, tzm1, C_ZZ_2_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+    dfloat Czz_zp1 = fMom[idxMom(tx, ty, tzp1, C_ZZ_2_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
+}else{
+    dfloat Cxx_xm1 = fMom[idxMom(txm1, ty, tz, C_XX_1_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+    dfloat Cxx_xp1 = fMom[idxMom(txp1, ty, tz, C_XX_1_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
+    
+    dfloat Cxy_ym1 = fMom[idxMom(tx, tym1, tz, C_XY_1_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+    dfloat Cxy_yp1 = fMom[idxMom(tx, typ1, tz, C_XY_1_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
+    
+    dfloat Cxz_zm1 = fMom[idxMom(tx, ty, tzm1, C_XZ_1_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+    dfloat Cxz_zp1 = fMom[idxMom(tx, ty, tzp1, C_XZ_1_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
+    
+    dfloat Cxy_xm1 = fMom[idxMom(txm1, ty, tz, C_XY_1_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+    dfloat Cxy_xp1 = fMom[idxMom(txp1, ty, tz, C_XY_1_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
+    
+    dfloat Cyy_ym1 = fMom[idxMom(tx, tym1, tz, C_YY_1_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+    dfloat Cyy_yp1 = fMom[idxMom(tx, typ1, tz, C_YY_1_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
+    
+    dfloat Cyz_zm1 = fMom[idxMom(tx, ty, tzm1, C_YZ_1_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+    dfloat Cyz_zp1 = fMom[idxMom(tx, ty, tzp1, C_YZ_1_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
+    
+    dfloat Cxz_xm1 = fMom[idxMom(txm1, ty, tz, C_XZ_1_INDEX, ((tx == 0) ? bxm1 : bx) , by, bz)];
+    dfloat Cxz_xp1 = fMom[idxMom(txp1, ty, tz, C_XZ_1_INDEX, ((tx == (BLOCK_NX - 1)) ? bxp1 : bx), by, bz)];
+    
+    dfloat Cyz_ym1 = fMom[idxMom(tx, tym1, tz, C_YZ_1_INDEX, bx, ((ty == 0) ? bym1 : by), bz)];
+    dfloat Cyz_yp1 = fMom[idxMom(tx, typ1, tz, C_YZ_1_INDEX, bx, ((ty == (BLOCK_NY - 1)) ? byp1 : by) , bz)];
+    
+    dfloat Czz_zm1 = fMom[idxMom(tx, ty, tzm1, C_ZZ_1_INDEX, bx, by, ((tz == 0) ? bzm1 : bz))];
+    dfloat Czz_zp1 = fMom[idxMom(tx, ty, tzp1, C_ZZ_1_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
+}
 
-// Load neighboring halo cells in shared memory
-#include "includeFiles/conformationTransport\confLoad.inc"
 
-__syncthreads();
+// Compute derivatives
+dfloat dCxxdx = (Cxx_xp1 - Cxx_xm1) / 2;
+dfloat dCxydy = (Cxy_yp1 - Cxy_ym1) / 2;
+dfloat dCxzdz = (Cxz_zp1 - Cxz_zm1) / 2;
 
-// Compute unrolled gradient calculations
-//FINITE CENTRAL DIFFERENCE ORDER 1, otherwise i would have to store a halo with width of 2 in shared memory
-dfloat dCxxdx = (s_pop[idxConfBlock(tx + 1, ty, tz, 0)] - s_pop[idxConfBlock(tx - 1, ty, tz, 0)])/2;
-dfloat dCxydx = (s_pop[idxConfBlock(tx + 1, ty, tz, 1)] - s_pop[idxConfBlock(tx - 1, ty, tz, 1)])/2;
-dfloat dCxzdx = (s_pop[idxConfBlock(tx + 1, ty, tz, 2)] - s_pop[idxConfBlock(tx - 1, ty, tz, 2)])/2;
+dfloat dCxydx = (Cxy_xp1 - Cxy_xm1) / 2;
+dfloat dCyydy = (Cyy_yp1 - Cyy_ym1) / 2;
+dfloat dCyzdz = (Cyz_zp1 - Cyz_zm1) / 2;
 
-dfloat dCxydy = (s_pop[idxConfBlock(tx, ty + 1, tz, 1)] - s_pop[idxConfBlock(tx, ty - 1, tz, 1)])/2;
-dfloat dCyydy = (s_pop[idxConfBlock(tx, ty + 1, tz, 3)] - s_pop[idxConfBlock(tx, ty - 1, tz, 3)])/2;
-dfloat dCyzdy = (s_pop[idxConfBlock(tx, ty + 1, tz, 4)] - s_pop[idxConfBlock(tx, ty - 1, tz, 4)])/2;
+dfloat dCxzdx = (Cxz_xp1 - Cxz_xm1) / 2;
+dfloat dCyzdy = (Cyz_yp1 - Cyz_ym1) / 2;
+dfloat dCzzdz = (Czz_zp1 - Czz_zm1) / 2;
 
-dfloat dCxzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 2)] - s_pop[idxConfBlock(tx, ty, tz - 1, 2)])/2;
-dfloat dCyzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 4)] - s_pop[idxConfBlock(tx, ty, tz - 1, 4)])/2;
-dfloat dCzzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 5)] - s_pop[idxConfBlock(tx, ty, tz - 1, 5)])/2;
-
-//if(x == 32 && z == 32)
-//    printf("y: %d dAyydy %f Ayy_p1 %f Ayy %f Ayy_m1 %f  \n",y,dAyydy,s_pop[idxConfBlock(tx, ty + 1, tz, 3)],s_pop[idxConfBlock(tx, ty, tz, 3)],s_pop[idxConfBlock(tx, ty - 1, tz, 3)]);
-//
-//OVERWRITE FOR NEAR WALL NODES
 if ((nodeType & 0b01010101) == 0b01010101) { // wall west
-    dCxxdx = (s_pop[idxConfBlock(tx + 1, ty, tz, 0)] - s_pop[idxConfBlock(tx, ty, tz, 0)]);
-    dCxydx = (s_pop[idxConfBlock(tx + 1, ty, tz, 1)] - s_pop[idxConfBlock(tx, ty, tz, 1)]);
-    dCxzdx = (s_pop[idxConfBlock(tx + 1, ty, tz, 2)] - s_pop[idxConfBlock(tx, ty, tz, 2)]);
+    dCxxdx = (Cxx_xp1 - CxxVar);
+    dCxydx = (Cxy_xp1 - CxyVar);
+    dCxzdx = (Cxz_xp1 - CxzVar);
 }
 if ((nodeType & 0b10101010) == 0b10101010) { // wall east
-    dCxxdx = (s_pop[idxConfBlock(tx, ty, tz, 0)] - s_pop[idxConfBlock(tx - 1, ty, tz, 0)]);
-    dCxydx = (s_pop[idxConfBlock(tx, ty, tz, 1)] - s_pop[idxConfBlock(tx - 1, ty, tz, 1)]);
-    dCxzdx = (s_pop[idxConfBlock(tx, ty, tz, 2)] - s_pop[idxConfBlock(tx - 1, ty, tz, 2)]);
+    dCxxdx = (CxxVar - Cxx_xm1);
+    dCxydx = (CxyVar - Cxy_xm1);
+    dCxzdx = (CxzVar - Cxz_xm1);
 }
 if ((nodeType & 0b00110011) == 0b00110011) { // wall south
-    dCxydy = (s_pop[idxConfBlock(tx, ty + 1, tz, 1)] - s_pop[idxConfBlock(tx, ty, tz, 1)]);
-    dCyydy = (s_pop[idxConfBlock(tx, ty + 1, tz, 3)] - s_pop[idxConfBlock(tx, ty, tz, 3)]);
-    dCyzdy = (s_pop[idxConfBlock(tx, ty + 1, tz, 4)] - s_pop[idxConfBlock(tx, ty, tz, 4)]);
+    dCxydy = (Cxy_yp1 - CxyVar);
+    dCyydy = (Cyy_yp1 - CyyVar);
+    dCyzdy = (Cyz_yp1 - CyzVar);
 }
 if ((nodeType & 0b11001100) == 0b11001100) { // wall north
-    dCxydy = (s_pop[idxConfBlock(tx, ty, tz, 1)] - s_pop[idxConfBlock(tx, ty - 1, tz, 1)]);
-    dCyydy = (s_pop[idxConfBlock(tx, ty, tz, 3)] - s_pop[idxConfBlock(tx, ty - 1, tz, 3)]);
-    dCyzdy = (s_pop[idxConfBlock(tx, ty, tz, 4)] - s_pop[idxConfBlock(tx, ty - 1, tz, 4)]);
-}
-if ((nodeType & 0b11110000) == 0b11110000) { // wall front
-    dCxzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 2)] - s_pop[idxConfBlock(tx, ty, tz, 2)]);
-    dCyzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 4)] - s_pop[idxConfBlock(tx, ty, tz, 4)]);
-    dCzzdz = (s_pop[idxConfBlock(tx, ty, tz + 1, 5)] - s_pop[idxConfBlock(tx, ty, tz, 5)]);
+    dCxydy = (CxyVar - Cxy_ym1);
+    dCyydy = (CyyVar - Cyy_ym1);
+    dCyzdy = (CyzVar - Cyz_ym1);
 }
 if ((nodeType & 0b00001111) == 0b00001111) { // wall back
-    dCxzdz = (s_pop[idxConfBlock(tx, ty, tz, 2)] - s_pop[idxConfBlock(tx, ty, tz - 1, 2)]);
-    dCyzdz = (s_pop[idxConfBlock(tx, ty, tz, 4)] - s_pop[idxConfBlock(tx, ty, tz - 1, 4)]);
-    dCzzdz = (s_pop[idxConfBlock(tx, ty, tz, 5)] - s_pop[idxConfBlock(tx, ty, tz - 1, 5)]);
+    dCxzdz = (Cxz_zp1 - CxzVar);
+    dCyzdz = (Cyz_zp1 - CyzVar);
+    dCzzdz = (Czz_zp1 - CzzVar);
 }
-
-
-//if(x == 4 && y == 4 && z == 4 )
-//    printf("step %d dAxxdx %f \n",step,dAxxdx);
+if ((nodeType & 0b11110000) == 0b11110000) { // wall front
+    dCxzdz = (CxzVar - Cxz_zm1);
+    dCyzdz = (CyzVar - Cyz_zm1);
+    dCzzdz = (CzzVar - Czz_zm1);
+}
