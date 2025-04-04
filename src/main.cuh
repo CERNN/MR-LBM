@@ -53,7 +53,7 @@ void initializeCudaEvents(cudaEvent_t &start, cudaEvent_t &stop, cudaEvent_t &st
 }
 
 
-dfloat recordElapsedTime(cudaEvent_t &start_step, cudaEvent_t &stop_step, int step) {
+dfloat recordElapsedTime(cudaEvent_t &start_step, cudaEvent_t &stop_step, int step, int ini_step) {
     checkCudaErrors(cudaEventRecord(stop_step, 0));
     checkCudaErrors(cudaEventSynchronize(stop_step));
     
@@ -61,7 +61,7 @@ dfloat recordElapsedTime(cudaEvent_t &start_step, cudaEvent_t &stop_step, int st
     checkCudaErrors(cudaEventElapsedTime(&elapsedTime, start_step, stop_step));
     elapsedTime *= 0.001;
 
-    size_t nodesUpdatedSync = step * NUMBER_LBM_NODES;
+    size_t nodesUpdatedSync = (step - ini_step) * NUMBER_LBM_NODES;
     dfloat MLUPS = (nodesUpdatedSync / 1e6) / elapsedTime;
     return MLUPS;
 }
@@ -828,48 +828,52 @@ void initializeDomain(
         if(console_flush) fflush(stdout);
     #endif
 
+    int checkpoint_state = 0;
     // LBM Initialization
     if (LOAD_CHECKPOINT) {
+
         printf("Loading checkpoint\n");
-        step[0] = INI_STEP;
-        loadSimCheckpoint(h_fMom, ghostInterface, step);
-        checkCudaErrors(cudaMemcpy(d_fMom, h_fMom, sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS, cudaMemcpyHostToDevice));
-        interfaceCudaMemcpy(ghostInterface, ghostInterface.fGhost, ghostInterface.h_fGhost, cudaMemcpyHostToDevice, QF);
+        checkpoint_state = loadSimCheckpoint(h_fMom, ghostInterface, step);
 
-        #ifdef SECOND_DIST
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.g_fGhost, ghostInterface.g_h_fGhost, cudaMemcpyHostToDevice, GF);
-        #endif
+        if (checkpoint_state != 0){
+            checkCudaErrors(cudaMemcpy(d_fMom, h_fMom, sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS, cudaMemcpyHostToDevice));
+            interfaceCudaMemcpy(ghostInterface, ghostInterface.fGhost, ghostInterface.h_fGhost, cudaMemcpyHostToDevice, QF);
 
-        #ifdef A_XX_DIST
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.Axx_fGhost, ghostInterface.Axx_h_fGhost, cudaMemcpyHostToDevice, GF);
-        #endif
-        #ifdef A_XY_DIST
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.Axy_fGhost, ghostInterface.Axy_h_fGhost, cudaMemcpyHostToDevice, GF);
-        #endif
-        #ifdef A_XZ_DIST
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.Axz_fGhost, ghostInterface.Axz_h_fGhost, cudaMemcpyHostToDevice, GF);
-        #endif
-        #ifdef A_YY_DIST
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.Ayy_fGhost, ghostInterface.Ayy_h_fGhost, cudaMemcpyHostToDevice, GF);
-        #endif
-        #ifdef A_YZ_DIST
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.Ayz_fGhost, ghostInterface.Ayz_h_fGhost, cudaMemcpyHostToDevice, GF);
-        #endif
-        #ifdef A_ZZ_DIST
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.Azz_fGhost, ghostInterface.Azz_h_fGhost, cudaMemcpyHostToDevice, GF);
-        #endif
-        /*
-        #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.f_uGhost, ghostInterface.h_f_uGhost, cudaMemcpyHostToDevice, 3);
-        #endif
+            #ifdef SECOND_DIST
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.g_fGhost, ghostInterface.g_h_fGhost, cudaMemcpyHostToDevice, GF);
+            #endif
 
-        
-        #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
-            interfaceCudaMemcpy(ghostInterface, ghostInterface.conf_fGhost, ghostInterface.conf_h_fGhost, cudaMemcpyHostToDevice, 6);
-        #endif
-        */
-
-    } else {
+            #ifdef A_XX_DIST
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.Axx_fGhost, ghostInterface.Axx_h_fGhost, cudaMemcpyHostToDevice, GF);
+            #endif
+            #ifdef A_XY_DIST
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.Axy_fGhost, ghostInterface.Axy_h_fGhost, cudaMemcpyHostToDevice, GF);
+            #endif
+            #ifdef A_XZ_DIST
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.Axz_fGhost, ghostInterface.Axz_h_fGhost, cudaMemcpyHostToDevice, GF);
+            #endif
+            #ifdef A_YY_DIST
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.Ayy_fGhost, ghostInterface.Ayy_h_fGhost, cudaMemcpyHostToDevice, GF);
+            #endif
+            #ifdef A_YZ_DIST
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.Ayz_fGhost, ghostInterface.Ayz_h_fGhost, cudaMemcpyHostToDevice, GF);
+            #endif
+            #ifdef A_ZZ_DIST
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.Azz_fGhost, ghostInterface.Azz_h_fGhost, cudaMemcpyHostToDevice, GF);
+            #endif
+            /*
+            #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.f_uGhost, ghostInterface.h_f_uGhost, cudaMemcpyHostToDevice, 3);
+            #endif
+    
+            
+            #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+                interfaceCudaMemcpy(ghostInterface, ghostInterface.conf_fGhost, ghostInterface.conf_h_fGhost, cudaMemcpyHostToDevice, 6);
+            #endif
+            */
+        }
+    } 
+    if (!checkpoint_state) {
         if (LOAD_FIELD) {
             // Implement LOAD_FIELD logic if needed
         } else {
