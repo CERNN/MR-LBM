@@ -72,7 +72,7 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
-#define LOAD_CHECKPOINT true   // loads simulation checkpoint from folder 
+#define LOAD_CHECKPOINT false   // loads simulation checkpoint from folder 
                                 // (folder name defined below)
 
 
