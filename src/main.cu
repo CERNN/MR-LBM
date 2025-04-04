@@ -152,6 +152,8 @@ int main() {
                      PARTICLE_TRACER_PARAMS_PTR(d_)
                      &step, gridBlock, threadBlock);
 
+    int ini_step = step;
+
     printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
     
     /* ------------------------------ TIMER EVENTS  ------------------------------ */
@@ -296,7 +298,7 @@ int main() {
 
     //Calculate MLUPS
 
-    dfloat MLUPS = recordElapsedTime(start_step, stop_step, step);
+    dfloat MLUPS = recordElapsedTime(start_step, stop_step, step, ini_step);
     printf("MLUPS: %f\n",MLUPS);
     
     /* ------------------------------ POST ------------------------------ */
