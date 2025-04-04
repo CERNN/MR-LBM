@@ -153,12 +153,24 @@ void operateSimCheckpoint(
 
     // Load/save current step
     f_arr(step, f_filename("curr_step"), sizeof(int), tmp);
-    printf("Loaded checkpoint: step %d \n",step[0]);
+
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: step %d \n",step[0]);
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: step %d \n",step[0]);
+    }
+
 
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     // Load/save pop
     f_arr(fMom, f_filename("fMom"), MEM_SIZE_MOM, tmp);
-    printf("Loaded checkpoint: moments \n");
+    
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: moments \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: moments \n");
+    }
+
     // Load/save auxilary populations
     f_arr(ghostInterface.fGhost.X_0, f_filename("fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
     f_arr(ghostInterface.fGhost.X_1, f_filename("fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * QF, tmp);
@@ -166,7 +178,11 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.fGhost.Y_1, f_filename("fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * QF, tmp);
     f_arr(ghostInterface.fGhost.Z_0, f_filename("fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
     f_arr(ghostInterface.fGhost.Z_1, f_filename("fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * QF, tmp);
-    printf("Loaded checkpoint: f_pops \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: f_pops \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: f_pops \n");
+    }
 
     #ifdef SECOND_DIST 
     f_arr(ghostInterface.g_fGhost.X_0, f_filename("g_fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * GF, tmp);
@@ -175,7 +191,12 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.g_fGhost.Y_1, f_filename("g_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(ghostInterface.g_fGhost.Z_0, f_filename("g_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(ghostInterface.g_fGhost.Z_1, f_filename("g_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    printf("Loaded checkpoint: g_pop \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: g_pop \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: g_pop \n");
+    }
+
     #endif
 
     #ifdef A_XX_DIST 
@@ -185,7 +206,12 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.Axx_fGhost.Y_1, f_filename("Axx_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(ghostInterface.Axx_fGhost.Z_0, f_filename("Axx_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(ghostInterface.Axx_fGhost.Z_1, f_filename("Axx_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    printf("Loaded checkpoint: Axx_pop \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: Axx_pop \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: Axx_pop \n");
+    }
+
     #endif
 
     #ifdef A_XY_DIST 
@@ -195,7 +221,12 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.Axy_fGhost.Y_1, f_filename("Axy_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(ghostInterface.Axy_fGhost.Z_0, f_filename("Axy_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(ghostInterface.Axy_fGhost.Z_1, f_filename("Axy_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    printf("Loaded checkpoint: Axy_pop \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: Axy_pop \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: Axy_pop \n");
+    }
+
     #endif
 
     #ifdef A_XZ_DIST 
@@ -205,7 +236,12 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.Axz_fGhost.Y_1, f_filename("Axz_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(ghostInterface.Axz_fGhost.Z_0, f_filename("Axz_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(ghostInterface.Axz_fGhost.Z_1, f_filename("Axz_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    printf("Loaded checkpoint: Axz_pop \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: Axz_pop \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: Axz_pop \n");
+    }
+
     #endif
 
     #ifdef A_YY_DIST 
@@ -215,7 +251,12 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.Ayy_fGhost.Y_1, f_filename("Ayy_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(ghostInterface.Ayy_fGhost.Z_0, f_filename("Ayy_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(ghostInterface.Ayy_fGhost.Z_1, f_filename("Ayy_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    printf("Loaded checkpoint: Ayy_pop \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: Ayy_pop \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: Ayy_pop \n");
+    }
+
     #endif
 
     #ifdef A_YZ_DIST 
@@ -225,7 +266,12 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.Ayz_fGhost.Y_1, f_filename("Ayz_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(ghostInterface.Ayz_fGhost.Z_0, f_filename("Ayz_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(ghostInterface.Ayz_fGhost.Z_1, f_filename("Ayz_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    printf("Loaded checkpoint: Ayz_pop \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: Ayz_pop \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: Ayz_pop \n");
+    }
+
     #endif
 
     #ifdef A_ZZ_DIST 
@@ -235,7 +281,12 @@ void operateSimCheckpoint(
     f_arr(ghostInterface.Azz_fGhost.Y_1, f_filename("Ayz_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * GF, tmp);
     f_arr(ghostInterface.Azz_fGhost.Z_0, f_filename("Ayz_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
     f_arr(ghostInterface.Azz_fGhost.Z_1, f_filename("Ayz_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * GF, tmp);
-    printf("Loaded checkpoint: Azz_pop \n");
+    if(oper == __LOAD_CHECKPOINT){
+        printf("Loaded checkpoint: Azz_pop \n");
+    }else if(oper == __SAVE_CHECKPOINT){
+        printf("Saved checkpoint: Azz_pop \n");
+    }
+
     #endif
     /*
     #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
