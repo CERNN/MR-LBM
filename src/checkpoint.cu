@@ -298,13 +298,18 @@ int getStep(){
 }
 
 __host__
-void loadSimCheckpoint( 
+int loadSimCheckpoint( 
     dfloat* fMom,
     ghostInterfaceData ghostInterface,
     int *step
     ){
     step[0] = getStep();
+    if (step[0]==0){
+        std::cerr << "Starting from step " << step[0] << std::endl;
+        return 0;
+    }
     operateSimCheckpoint(__LOAD_CHECKPOINT, fMom, ghostInterface,step);
+    return 1;
 }
 
 __host__

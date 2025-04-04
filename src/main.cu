@@ -137,6 +137,7 @@ int main() {
     cudaStream_t streamsPart[1];
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
     #endif
+    step=INI_STEP;
 
     initializeDomain(ghostInterface,     
                      d_fMom, h_fMom, 
@@ -166,7 +167,7 @@ int main() {
     /* --------------------------------------------------------------------- */
     /* ---------------------------- BEGIN LOOP ----------------------------- */
     /* --------------------------------------------------------------------- */
-    for (step=INI_STEP; step<N_STEPS;step++){
+    for (;step<N_STEPS;step++){ // step is already initialized
 
         int aux = step-INI_STEP;
         bool checkpoint = false;
@@ -340,7 +341,7 @@ int main() {
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
         saveParticleInfo(h_particlePos,step);
     #endif
-    if(CHECKPOINT_SAVE){
+    /*if(CHECKPOINT_SAVE){
         printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             
         checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
@@ -367,7 +368,7 @@ int main() {
         interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
         #endif    
         saveSimCheckpoint(d_fMom,ghostInterface,&step);
-    }
+    }*/
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
             saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, OMEGA_FIELD_PARAMS
