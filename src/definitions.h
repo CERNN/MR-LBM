@@ -87,7 +87,7 @@ constexpr BlockDim optimalBlockDimArray = findOptimalBlockDimensions(MAX_ELEMENT
 //TODO: fix, is giving incopatibility issues with parallel reduction
 #define BLOCK_NX 8
 #define BLOCK_NY 8
-#define BLOCK_NZ 8
+#define BLOCK_NZ 4
 
 
 #define BLOCK_LBM_SIZE (BLOCK_NX * BLOCK_NY * BLOCK_NZ)
