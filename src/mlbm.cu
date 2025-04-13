@@ -31,16 +31,17 @@ __global__ void gpuMomCollisionStream(
     //rho'
     unsigned int nodeType = dNodeType[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)];
     if (nodeType == 0b11111111)  return;
-    dfloat rhoVar = RHO_0 + fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_RHO_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat ux_t30     = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat uy_t30     = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat uz_t30     = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat m_xx_t45   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat m_xy_t90   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat m_xz_t90   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat m_yy_t45   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat m_yz_t90   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat m_zz_t45   = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    const int baseIdxLoad = idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z);
+    dfloat rhoVar = RHO_0 + fMom[baseIdxLoad + M_RHO_INDEX];
+    dfloat ux_t30     = fMom[baseIdxLoad + M_UX_INDEX];
+    dfloat uy_t30     = fMom[baseIdxLoad + M_UY_INDEX];
+    dfloat uz_t30     = fMom[baseIdxLoad + M_UZ_INDEX];
+    dfloat m_xx_t45   = fMom[baseIdxLoad + M_MXX_INDEX];
+    dfloat m_xy_t90   = fMom[baseIdxLoad + M_MXY_INDEX];
+    dfloat m_xz_t90   = fMom[baseIdxLoad + M_MXZ_INDEX];
+    dfloat m_yy_t45   = fMom[baseIdxLoad + M_MYY_INDEX];
+    dfloat m_yz_t90   = fMom[baseIdxLoad + M_MYZ_INDEX];
+    dfloat m_zz_t45   = fMom[baseIdxLoad + M_MZZ_INDEX];
 
     #ifdef OMEGA_FIELD
         dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
@@ -565,18 +566,20 @@ __global__ void gpuMomCollisionStream(
     
     /* write to global mom */
 
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_RHO_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = rhoVar - RHO_0;
+    const int baseIdxWrite = idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z);
 
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = ux_t30;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = uy_t30;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_UZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = uz_t30;
+    fMom[baseIdxWrite + M_RHO_INDEX] = rhoVar - RHO_0;
 
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_xx_t45;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_xy_t90;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_xz_t90;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_yy_t45;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_yz_t90;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_zz_t45;
+    fMom[baseIdxWrite + M_UX_INDEX] = ux_t30;
+    fMom[baseIdxWrite + M_UY_INDEX] = uy_t30;
+    fMom[baseIdxWrite + M_UZ_INDEX] = uz_t30;
+
+    fMom[baseIdxWrite + M_MXX_INDEX] = m_xx_t45;
+    fMom[baseIdxWrite + M_MXY_INDEX] = m_xy_t90;
+    fMom[baseIdxWrite + M_MXZ_INDEX] = m_xz_t90;
+    fMom[baseIdxWrite + M_MYY_INDEX] = m_yy_t45;
+    fMom[baseIdxWrite + M_MYZ_INDEX] = m_yz_t90;
+    fMom[baseIdxWrite + M_MZZ_INDEX] = m_zz_t45;
     
     #ifdef OMEGA_FIELD
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
