@@ -72,6 +72,7 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
+constexpr int INI_STEP = 0;
 #define LOAD_CHECKPOINT false   // loads simulation checkpoint from folder 
                                 // (folder name defined below)
 
@@ -84,3 +85,4 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 #define CHECKPOINT_SAVE false // the frequency on which the simulation checkpoint is saved
 #define LOAD_FIELD false
 #define LOAD_FIELD_STEP 0
+#define VTK_SAVE true

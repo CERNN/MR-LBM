@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iostream>     // std::cout, std::fixed
 #include <iomanip>      // std::setprecision
+#include <vector>
 
 #include "globalFunctions.h"
 #include <cuda.h>
@@ -133,6 +134,24 @@ void saveVarBin(
     dfloat* var, 
     size_t memSize,
     bool append
+);
+
+void saveVarVTK(
+    std::string strFileVtk, 
+    dfloat* rho, 
+    dfloat* ux, 
+    dfloat* uy, 
+    dfloat* uz,
+    size_t memSize
+);
+
+void saveVarVTK_1(
+    std::string strFileVtk, 
+    dfloat* rho, 
+    dfloat* ux, 
+    dfloat* uy, 
+    dfloat* uz,
+    size_t memSize
 );
 
 /*

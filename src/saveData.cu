@@ -119,7 +119,7 @@ void saveMacr(
 
 
     // Names of files
-    std::string strFileRho, strFileUx, strFileUy, strFileUz;
+    std::string strFileRho, strFileUx, strFileUy, strFileUz, strFileVtk, strFileVtr;
     std::string strFileOmega;
     std::string strFileC;
     std::string strFileBc; 
@@ -130,6 +130,8 @@ void saveMacr(
     strFileUx = getVarFilename("ux", nSteps, ".bin");
     strFileUy = getVarFilename("uy", nSteps, ".bin");
     strFileUz = getVarFilename("uz", nSteps, ".bin");
+    strFileVtk = getVarFilename("vtk_2", nSteps, ".vtk");
+    strFileVtr = getVarFilename("vtr", nSteps, ".vtr");
     #ifdef OMEGA_FIELD
     strFileOmega = getVarFilename("omega", nSteps, ".bin");
     #endif
@@ -167,6 +169,11 @@ void saveMacr(
     saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
     saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+
+    if (VTK_SAVE){
+        printf("Inciando criar vtk");
+        saveVarVTK_1(strFileVtk, rho, ux, uy, uz, MEM_SIZE_SCALAR);
+    }
     #ifdef OMEGA_FIELD
     saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
     #endif
@@ -224,6 +231,84 @@ void saveVarBin(
     }
 }
 
+void saveVarVTK(
+    std::string strFileVtk, 
+    dfloat* rho, 
+    dfloat* ux, 
+    dfloat* uy, 
+    dfloat* uz,
+    size_t memSize)
+{
+    std::ofstream file(strFileVtk);
+    if (!file.is_open()) {
+        printf("Erro ao salvar \"%s\"\nProvavelmente caminho inválido!\n", strFileVtk.c_str());
+        return;
+    } 
+
+    file << "# vtk DataFile Version 3.0\n";
+    file << "LBM Output\n";
+    file << "ASCII\n";
+    file << "DATASET STRUCTURED_POINTS\n";
+    file << "DIMENSIONS " << NX << " " << NY << " " << NZ_TOTAL << "\n";
+    file << "ORIGIN 0 0 0\n";
+    file << "SPACING 1 1 1\n";
+    file << "POINT_DATA " << NUMBER_LBM_NODES << "\n";
+
+    file << "SCALARS density float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
+        file << rho[i] << "\n";
+
+    file << "VECTORS velocity float\n";
+    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
+        file << ux[i] << " " << uy[i] << " " << uz[i] << "\n";
+
+    file.close();
+}
+
+void saveVarVTK_1(
+    std::string strFileVtk, 
+    dfloat* rho, 
+    dfloat* ux, 
+    dfloat* uy, 
+    dfloat* uz,
+    size_t memSize)
+{
+
+    std::ofstream file(strFileVtk);
+    if (!file.is_open()) {
+        printf("Erro ao salvar \"%s\"\nProvavelmente caminho inválido!\n", strFileVtk.c_str());
+        return;
+    }
+
+    file << "# vtk DataFile Version 3.0\n";
+    file << "DIMENSIONS " << NX << " " << NY << " " << NZ_TOTAL << "\n";
+    file << "ORIGIN 0 0 0\n";
+    file << "SPACING 1 1 1\n";
+    file << "POINT_DATA " << NUMBER_LBM_NODES << "\n";
+
+    file << "SCALARS density float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
+        file << rho[i] << "\n";
+
+    file << "SCALARS velocity_x float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
+        file << ux[i] << "\n";
+
+    file << "SCALARS velocity_y float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
+        file << uy[i] << "\n";
+
+    file << "SCALARS velocity_z float 1\n";
+    file << "LOOKUP_TABLE default\n";
+    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
+        file << uz[i] << "\n";
+
+    file.close();
+}
 
 
 void folderSetup()
