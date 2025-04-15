@@ -119,94 +119,97 @@ void saveMacr(
 
 
     // Names of files
-    std::string strFileRho, strFileUx, strFileUy, strFileUz, strFileVtk, strFileVtr;
+    std::string strFileRho, strFileUx, strFileUy, strFileUz; 
     std::string strFileOmega;
     std::string strFileC;
     std::string strFileBc; 
     std::string strFileFx, strFileFy, strFileFz;
     std::string strFileAxx, strFileAxy, strFileAxz, strFileAyy, strFileAyz, strFileAzz;
 
-    strFileRho = getVarFilename("rho", nSteps, ".bin");
-    strFileUx = getVarFilename("ux", nSteps, ".bin");
-    strFileUy = getVarFilename("uy", nSteps, ".bin");
-    strFileUz = getVarFilename("uz", nSteps, ".bin");
-    strFileVtk = getVarFilename("vtk_2", nSteps, ".vtk");
-    strFileVtr = getVarFilename("vtr", nSteps, ".vtr");
-    #ifdef OMEGA_FIELD
-    strFileOmega = getVarFilename("omega", nSteps, ".bin");
-    #endif
-    #ifdef SECOND_DIST 
-    strFileC = getVarFilename("C", nSteps, ".bin");
-    #endif
-    #ifdef A_XX_DIST 
-    strFileAxx = getVarFilename("Axx", nSteps, ".bin");
-    #endif
-    #ifdef A_XY_DIST 
-    strFileAxy = getVarFilename("Axy", nSteps, ".bin");
-    #endif
-    #ifdef A_XZ_DIST 
-    strFileAxz = getVarFilename("Axz", nSteps, ".bin");
-    #endif
-    #ifdef A_YY_DIST 
-    strFileAyy = getVarFilename("Ayy", nSteps, ".bin");
-    #endif
-    #ifdef A_YZ_DIST 
-    strFileAyz = getVarFilename("Ayz", nSteps, ".bin");
-    #endif
-    #ifdef A_ZZ_DIST 
-    strFileAzz = getVarFilename("Azz", nSteps, ".bin");
-    #endif
-    #if NODE_TYPE_SAVE
-    strFileBc = getVarFilename("bc", nSteps, ".bin");
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    strFileFx = getVarFilename("fx", nSteps, ".bin");
-    strFileFy = getVarFilename("fy", nSteps, ".bin");
-    strFileFz = getVarFilename("fz", nSteps, ".bin");
-    #endif
-    // saving files
-    saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
 
     if (VTK_SAVE){
-        printf("Inciando criar vtk");
-        saveVarVTK_1(strFileVtk, rho, ux, uy, uz, MEM_SIZE_SCALAR);
+        std::string strFileVtk, strFileVtr;
+        strFileVtk = getVarFilename("vtk", nSteps, ".vtk");
+
+        saveVarVTK(strFileVtk, rho, ux, uy, uz);
     }
-    #ifdef OMEGA_FIELD
-    saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef SECOND_DIST
-    saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_XX_DIST 
-    saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_XY_DIST 
-    saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_XZ_DIST 
-    saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_YY_DIST 
-    saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_YZ_DIST 
-    saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_ZZ_DIST 
-    saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
-    #endif
-    
-    #if NODE_TYPE_SAVE
-    saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
-    #endif
+    if (BIN_SAVE){
+        strFileRho = getVarFilename("rho", nSteps, ".bin");
+        strFileUx = getVarFilename("ux", nSteps, ".bin");
+        strFileUy = getVarFilename("uy", nSteps, ".bin");
+        strFileUz = getVarFilename("uz", nSteps, ".bin");
+
+        #ifdef OMEGA_FIELD
+        strFileOmega = getVarFilename("omega", nSteps, ".bin");
+        #endif
+        #ifdef SECOND_DIST 
+        strFileC = getVarFilename("C", nSteps, ".bin");
+        #endif
+        #ifdef A_XX_DIST 
+        strFileAxx = getVarFilename("Axx", nSteps, ".bin");
+        #endif
+        #ifdef A_XY_DIST 
+        strFileAxy = getVarFilename("Axy", nSteps, ".bin");
+        #endif
+        #ifdef A_XZ_DIST 
+        strFileAxz = getVarFilename("Axz", nSteps, ".bin");
+        #endif
+        #ifdef A_YY_DIST 
+        strFileAyy = getVarFilename("Ayy", nSteps, ".bin");
+        #endif
+        #ifdef A_YZ_DIST 
+        strFileAyz = getVarFilename("Ayz", nSteps, ".bin");
+        #endif
+        #ifdef A_ZZ_DIST 
+        strFileAzz = getVarFilename("Azz", nSteps, ".bin");
+        #endif
+        #if NODE_TYPE_SAVE
+        strFileBc = getVarFilename("bc", nSteps, ".bin");
+        #endif
+        #if defined BC_FORCES && defined SAVE_BC_FORCES
+        strFileFx = getVarFilename("fx", nSteps, ".bin");
+        strFileFy = getVarFilename("fy", nSteps, ".bin");
+        strFileFz = getVarFilename("fz", nSteps, ".bin");
+        #endif
+        // saving files
+        saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+        #ifdef OMEGA_FIELD
+        saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef SECOND_DIST
+        saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_XX_DIST 
+        saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_XY_DIST 
+        saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_XZ_DIST 
+        saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_YY_DIST 
+        saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_YZ_DIST 
+        saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_ZZ_DIST 
+        saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
+        #endif
+        
+        #if NODE_TYPE_SAVE
+        saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
+        #endif
+        #if defined BC_FORCES && defined SAVE_BC_FORCES
+        saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
+        #endif
+    }
 }
 
 void saveVarBin(
@@ -231,83 +234,59 @@ void saveVarBin(
     }
 }
 
-void saveVarVTK(
-    std::string strFileVtk, 
-    dfloat* rho, 
-    dfloat* ux, 
-    dfloat* uy, 
-    dfloat* uz,
-    size_t memSize)
-{
-    std::ofstream file(strFileVtk);
-    if (!file.is_open()) {
-        printf("Erro ao salvar \"%s\"\nProvavelmente caminho inválido!\n", strFileVtk.c_str());
-        return;
-    } 
-
-    file << "# vtk DataFile Version 3.0\n";
-    file << "LBM Output\n";
-    file << "ASCII\n";
-    file << "DATASET STRUCTURED_POINTS\n";
-    file << "DIMENSIONS " << NX << " " << NY << " " << NZ_TOTAL << "\n";
-    file << "ORIGIN 0 0 0\n";
-    file << "SPACING 1 1 1\n";
-    file << "POINT_DATA " << NUMBER_LBM_NODES << "\n";
-
-    file << "SCALARS density float 1\n";
-    file << "LOOKUP_TABLE default\n";
-    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
-        file << rho[i] << "\n";
-
-    file << "VECTORS velocity float\n";
-    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
-        file << ux[i] << " " << uy[i] << " " << uz[i] << "\n";
-
-    file.close();
+// choose correct swap based on sizeof(dfloat)
+template<typename T>
+void writeBigEndian(std::ofstream& ofs, const T* data, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        if constexpr (sizeof(T) == 4) {
+            uint32_t tmp;
+            std::memcpy(&tmp, &data[i], 4);
+            tmp = swap32(tmp);
+            ofs.write(reinterpret_cast<char*>(&tmp), 4);
+        }
+        else if constexpr (sizeof(T) == 8) {
+            uint64_t tmp;
+            std::memcpy(&tmp, &data[i], 8);
+            tmp = swap64(tmp);
+            ofs.write(reinterpret_cast<char*>(&tmp), 8);
+        }
+    }
 }
 
-void saveVarVTK_1(
-    std::string strFileVtk, 
+void saveVarVTK(
+    std::string filename, 
     dfloat* rho, 
     dfloat* ux, 
     dfloat* uy, 
-    dfloat* uz,
-    size_t memSize)
+    dfloat* uz)
 {
 
-    std::ofstream file(strFileVtk);
-    if (!file.is_open()) {
-        printf("Erro ao salvar \"%s\"\nProvavelmente caminho inválido!\n", strFileVtk.c_str());
-        return;
+    const size_t N = NX*NY*NZ;
+    std::ofstream ofs(filename, std::ios::binary);
+    if (!ofs) throw std::runtime_error("Cannot open " + filename);
+
+    // — Header —
+    ofs << "# vtk DataFile Version 3.0\n"
+        << "LBM output (binary)\n"
+        << "BINARY\n"                               // ← here!
+        << "DATASET STRUCTURED_POINTS\n"
+        << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
+        << "ORIGIN 0 0 0\n"
+        << "SPACING 1 1 1\n"
+        << "POINT_DATA " << N << "\n";
+
+    // — Scalars —
+    ofs << "SCALARS rho float 1\n"
+        << "LOOKUP_TABLE default\n";
+    writeBigEndian(ofs, rho, N);
+
+    // — Vectors —
+    ofs << "VECTORS velocity float\n";
+    // interleave ux,uy,uz
+    for (size_t i = 0; i < N; ++i) {
+        dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
+        writeBigEndian(ofs, v, 3);
     }
-
-    file << "# vtk DataFile Version 3.0\n";
-    file << "DIMENSIONS " << NX << " " << NY << " " << NZ_TOTAL << "\n";
-    file << "ORIGIN 0 0 0\n";
-    file << "SPACING 1 1 1\n";
-    file << "POINT_DATA " << NUMBER_LBM_NODES << "\n";
-
-    file << "SCALARS density float 1\n";
-    file << "LOOKUP_TABLE default\n";
-    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
-        file << rho[i] << "\n";
-
-    file << "SCALARS velocity_x float 1\n";
-    file << "LOOKUP_TABLE default\n";
-    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
-        file << ux[i] << "\n";
-
-    file << "SCALARS velocity_y float 1\n";
-    file << "LOOKUP_TABLE default\n";
-    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
-        file << uy[i] << "\n";
-
-    file << "SCALARS velocity_z float 1\n";
-    file << "LOOKUP_TABLE default\n";
-    for (size_t i = 0; i < NUMBER_LBM_NODES; ++i)
-        file << uz[i] << "\n";
-
-    file.close();
 }
 
 

@@ -136,22 +136,19 @@ void saveVarBin(
     bool append
 );
 
+template<typename T>
+void writeBigEndian(std::ofstream& ofs, const T* data, size_t count);
+
+/*
+*   @brief Save field on vtk file
+*   @param var_name: name of the variable
+*/
 void saveVarVTK(
     std::string strFileVtk, 
     dfloat* rho, 
     dfloat* ux, 
     dfloat* uy, 
-    dfloat* uz,
-    size_t memSize
-);
-
-void saveVarVTK_1(
-    std::string strFileVtk, 
-    dfloat* rho, 
-    dfloat* ux, 
-    dfloat* uy, 
-    dfloat* uz,
-    size_t memSize
+    dfloat* uz
 );
 
 /*

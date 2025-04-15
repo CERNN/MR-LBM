@@ -85,4 +85,3 @@ constexpr int INI_STEP = 0;
 #define CHECKPOINT_SAVE false // the frequency on which the simulation checkpoint is saved
 #define LOAD_FIELD false
 #define LOAD_FIELD_STEP 0
-#define VTK_SAVE true
