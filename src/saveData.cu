@@ -131,7 +131,61 @@ void saveMacr(
         std::string strFileVtk, strFileVtr;
         strFileVtk = getVarFilename("vtk", nSteps, ".vtk");
 
-        saveVarVTK(strFileVtk, rho, ux, uy, uz);
+        saveVarVTK(
+                strFileVtk, 
+                rho, 
+                ux, uy, uz,
+                #ifdef OMEGA_FIELD
+                omega,
+                #else
+                nullptr,
+                #endif
+                #ifdef SECOND_DIST
+                C,
+                #else
+                nullptr,
+                #endif
+                #ifdef A_XX_DIST
+                Axx,
+                #else
+                nullptr,
+                #endif
+                #ifdef A_XY_DIST
+                Axy,
+                #else
+                nullptr,
+                #endif
+                #ifdef A_XZ_DIST
+                Axz,
+                #else
+                nullptr,
+                #endif
+                #ifdef A_YY_DIST
+                Ayy,
+                #else
+                nullptr,
+                #endif
+                #ifdef A_YZ_DIST
+                Ayz,
+                #else
+                nullptr,
+                #endif
+                #ifdef A_ZZ_DIST
+                Azz,
+                #else
+                nullptr,
+                #endif
+                #if defined BC_FORCES && defined SAVE_BC_FORCES
+                h_BC_Fx, h_BC_Fy, h_BC_Fz,
+                #else
+                nullptr, nullptr, nullptr,
+                #endif
+                #if NODE_TYPE_SAVE
+                nodeTypeSave
+                #else
+                nullptr
+                #endif      
+                );
     }
     if (BIN_SAVE){
         strFileRho = getVarFilename("rho", nSteps, ".bin");
@@ -258,7 +312,19 @@ void saveVarVTK(
     dfloat* rho, 
     dfloat* ux, 
     dfloat* uy, 
-    dfloat* uz)
+    dfloat* uz,
+    dfloat* omega,
+    dfloat* C,
+    dfloat* Axx,
+    dfloat* Axy,
+    dfloat* Axz,
+    dfloat* Ayy,
+    dfloat* Ayz,
+    dfloat* Azz,
+    dfloat* fx,
+    dfloat* fy,
+    dfloat* fz,
+    dfloat* bc)
 {
 
     const size_t N = NX*NY*NZ;
@@ -280,12 +346,55 @@ void saveVarVTK(
         << "LOOKUP_TABLE default\n";
     writeBigEndian(ofs, rho, N);
 
-    // — Vectors —
+    // — Vectors velocity —
     ofs << "VECTORS velocity float\n";
     // interleave ux,uy,uz
     for (size_t i = 0; i < N; ++i) {
         dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
         writeBigEndian(ofs, v, 3);
+    }
+
+    // — Omega —
+    if (omega) {
+        ofs << "SCALARS omega float 1\n"
+            << "LOOKUP_TABLE default\n";
+        writeBigEndian(ofs, omega, N);
+    }
+
+    // — C —
+    if (C) {
+        ofs << "SCALARS C float 1\n"
+            << "LOOKUP_TABLE default\n";
+        writeBigEndian(ofs, C, N);
+    }
+
+    // — Aij —
+    if (Axx && Axy && Axz && Ayy && Ayz && Azz) {
+        ofs << "TENSORS Aij float\n";
+        for (size_t i = 0; i < N; ++i) {
+            dfloat tensor[9] = {
+                Axx[i], Axy[i], Axz[i],
+                Axy[i], Ayy[i], Ayz[i],
+                Axz[i], Ayz[i], Azz[i]
+            };
+            writeBigEndian(ofs, tensor, 9);
+        }
+    }
+
+    // — forces —
+    if (fx && fy && fz) {
+        ofs << "VECTORS forces float\n";
+        for (size_t i = 0; i < N; ++i) {
+            dfloat f[3] = { fx[i], fy[i], fz[i] };
+            writeBigEndian(ofs, f, 3);
+        }
+    }
+
+    // — bc —
+    if (bc) {
+        ofs << "SCALARS bc float 1\n"
+            << "LOOKUP_TABLE default\n";
+        writeBigEndian(ofs, bc, N);
     }
 }
 

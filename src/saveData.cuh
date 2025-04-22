@@ -148,7 +148,19 @@ void saveVarVTK(
     dfloat* rho, 
     dfloat* ux, 
     dfloat* uy, 
-    dfloat* uz
+    dfloat* uz,
+    dfloat* omega,
+    dfloat* C,
+    dfloat* Axx,
+    dfloat* Axy,
+    dfloat* Axz,
+    dfloat* Ayy,
+    dfloat* Ayz,
+    dfloat* Azz,
+    dfloat* fx,
+    dfloat* fy,
+    dfloat* fz,
+    dfloat* bc
 );
 
 /*
