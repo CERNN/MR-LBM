@@ -133,58 +133,30 @@ void saveMacr(
 
         saveVarVTK(
                 strFileVtk, 
-                rho, 
-                ux, uy, uz,
-                #ifdef OMEGA_FIELD
-                omega,
-                #else
-                nullptr,
-                #endif
-                #ifdef SECOND_DIST
-                C,
-                #else
-                nullptr,
-                #endif
-                #ifdef A_XX_DIST
-                Axx,
-                #else
-                nullptr,
-                #endif
-                #ifdef A_XY_DIST
-                Axy,
-                #else
-                nullptr,
-                #endif
-                #ifdef A_XZ_DIST
-                Axz,
-                #else
-                nullptr,
-                #endif
-                #ifdef A_YY_DIST
-                Ayy,
-                #else
-                nullptr,
-                #endif
-                #ifdef A_YZ_DIST
-                Ayz,
-                #else
-                nullptr,
-                #endif
-                #ifdef A_ZZ_DIST
-                Azz,
-                #else
-                nullptr,
-                #endif
-                #if defined BC_FORCES && defined SAVE_BC_FORCES
-                h_BC_Fx, h_BC_Fy, h_BC_Fz,
-                #else
-                nullptr, nullptr, nullptr,
-                #endif
-                #if NODE_TYPE_SAVE
-                nodeTypeSave
-                #else
-                nullptr
-                #endif      
+                rho,ux,uy,uz, OMEGA_FIELD_PARAMS
+                    #ifdef SECOND_DIST 
+                    C,
+                    #endif 
+                    #ifdef A_XX_DIST 
+                    Axx,
+                    #endif 
+                    #ifdef A_XY_DIST 
+                    Axy,
+                    #endif
+                    #ifdef A_XZ_DIST 
+                    Axz,
+                    #endif
+                    #ifdef A_YY_DIST 
+                    Ayy,
+                    #endif
+                    #ifdef A_YZ_DIST 
+                    Ayz,
+                    #endif
+                    #ifdef A_ZZ_DIST 
+                    Azz,
+                    #endif
+                    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) 
+                    nSteps     
                 );
     }
     if (BIN_SAVE){
@@ -309,22 +281,32 @@ void writeBigEndian(std::ofstream& ofs, const T* data, size_t count) {
 
 void saveVarVTK(
     std::string filename, 
-    dfloat* rho, 
-    dfloat* ux, 
-    dfloat* uy, 
-    dfloat* uz,
-    dfloat* omega,
-    dfloat* C,
-    dfloat* Axx,
-    dfloat* Axy,
-    dfloat* Axz,
-    dfloat* Ayy,
-    dfloat* Ayz,
-    dfloat* Azz,
-    dfloat* fx,
-    dfloat* fy,
-    dfloat* fz,
-    dfloat* bc)
+    dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz,  OMEGA_FIELD_PARAMS_DECLARATION
+        #ifdef SECOND_DIST 
+        dfloat* C,
+        #endif 
+        #ifdef A_XX_DIST 
+        dfloat* Axx,
+        #endif
+        #ifdef A_XY_DIST 
+        dfloat* Axy,
+        #endif
+        #ifdef A_XZ_DIST 
+        dfloat* Axz,
+        #endif
+        #ifdef A_YY_DIST 
+        dfloat* Ayy,
+        #endif
+        #ifdef A_YZ_DIST 
+        dfloat* Ayz,
+        #endif
+        #ifdef A_ZZ_DIST 
+        dfloat* Azz,
+        #endif
+        NODE_TYPE_SAVE_PARAMS_DECLARATION
+        BC_FORCES_PARAMS_DECLARATION(h_) 
+        unsigned int nSteps 
+    )
 {
 
     const size_t N = NX*NY*NZ;
@@ -355,47 +337,47 @@ void saveVarVTK(
     }
 
     // — Omega —
-    if (omega) {
+    #ifdef OMEGA_FIELD
         ofs << "SCALARS omega float 1\n"
             << "LOOKUP_TABLE default\n";
         writeBigEndian(ofs, omega, N);
-    }
+    #endif
 
     // — C —
-    if (C) {
+    #ifdef SECOND_DIST
         ofs << "SCALARS C float 1\n"
             << "LOOKUP_TABLE default\n";
         writeBigEndian(ofs, C, N);
-    }
+    #endif
 
     // — Aij —
-    if (Axx && Axy && Axz && Ayy && Ayz && Azz) {
+    #ifdef CONFORMATION_TENSOR
         ofs << "TENSORS Aij float\n";
         for (size_t i = 0; i < N; ++i) {
-            dfloat tensor[9] = {
+            dfloat tensor[6] = {
                 Axx[i], Axy[i], Axz[i],
-                Axy[i], Ayy[i], Ayz[i],
-                Axz[i], Ayz[i], Azz[i]
+                Ayy[i], Ayz[i], Azz[i]
             };
             writeBigEndian(ofs, tensor, 9);
         }
-    }
+    #endif
 
     // — forces —
-    if (fx && fy && fz) {
+    #ifdef SAVE_BC_FORCES
         ofs << "VECTORS forces float\n";
         for (size_t i = 0; i < N; ++i) {
             dfloat f[3] = { fx[i], fy[i], fz[i] };
             writeBigEndian(ofs, f, 3);
         }
-    }
+    #endif
 
     // — bc —
-    if (bc) {
+    /*
+    if(NODE_TYPE_SAVE){
         ofs << "SCALARS bc float 1\n"
             << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, bc, N);
-    }
+        writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N); 
+    }*/
 }
 
 
