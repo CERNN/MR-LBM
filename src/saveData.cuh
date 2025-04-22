@@ -13,6 +13,7 @@
 #include <sstream>
 #include <iostream>     // std::cout, std::fixed
 #include <iomanip>      // std::setprecision
+#include <vector>
 
 #include "globalFunctions.h"
 #include <cuda.h>
@@ -133,6 +134,21 @@ void saveVarBin(
     dfloat* var, 
     size_t memSize,
     bool append
+);
+
+template<typename T>
+void writeBigEndian(std::ofstream& ofs, const T* data, size_t count);
+
+/*
+*   @brief Save field on vtk file
+*   @param var_name: name of the variable
+*/
+void saveVarVTK(
+    std::string strFileVtk, 
+    dfloat* rho, 
+    dfloat* ux, 
+    dfloat* uy, 
+    dfloat* uz
 );
 
 /*
