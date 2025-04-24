@@ -376,12 +376,12 @@ void saveVarVTK(
     #endif
 
     // — bc —
-    /*
-    if(NODE_TYPE_SAVE){
-        ofs << "SCALARS bc float 1\n"
+    
+    #if NODE_TYPE_SAVE
+        ofs << "SCALARS bc int 1\n"
             << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N); 
-    }*/
+        writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS, N);
+    #endif  
 }
 
 
