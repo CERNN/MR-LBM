@@ -58,8 +58,10 @@ __host__
 void totalKineticEnergy(dfloat *fMom, size_t step);
 
 #ifdef CONVECTION_DIFFUSION_TRANSPORT
+#ifdef CONFORMATION_TENSOR
 __host__ 
 void totalSpringEnergy(dfloat *fMom,size_t step);
+#endif
 #endif
 /*
 *   @brief Calculate the total drag caused by boudary conditions

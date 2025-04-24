@@ -10,7 +10,7 @@ constexpr int NY = N;        // size y of the grid
 constexpr int NZ = 8;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.0;  
+constexpr dfloat U_MAX = 0.1;  
 constexpr dfloat L = N;
 
 constexpr dfloat FX = 0.0;        // force in x
@@ -40,12 +40,13 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 #ifdef THERMAL_MODEL
     #define SECOND_DIST
+    #define CONVECTION_DIFFUSION_TRANSPORT
 
     #define D3G19
 
     constexpr bool T_BOUYANCY = true;
     constexpr dfloat T_PR_NUMBER = 0.71; //Prandtl Number
-    constexpr dfloat T_RA_NUMBER = 10000000.0; // Rayleigh Number
+    constexpr dfloat T_RA_NUMBER = 10000.0; // Rayleigh Number
     constexpr dfloat T_GR_NUMBER = T_RA_NUMBER/T_PR_NUMBER; //Grashof number
 
     constexpr dfloat T_DELTA_T = 0.1; //temperature difference
@@ -59,6 +60,8 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
     constexpr dfloat T_gravity_t_beta = 2*T_RA_NUMBER * T_DIFFUSIVITY*VISC/(T_DELTA_T*L*L*L);
     constexpr dfloat Ra_conf = T_gravity_t_beta * T_DELTA_T*L*L*L*T_PR_NUMBER/(VISC*VISC);
     constexpr dfloat T_Q_INTERNAL_D_Cp = 0.0;
+
+    __device__ const dfloat gravity_vector[3] =  {0.0, 0.0, 0.0};
 
     constexpr dfloat T_DIFF_REF = (1.0/6);
     constexpr dfloat G_TAU = T_DIFF_REF*3+0.5;
