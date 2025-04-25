@@ -211,7 +211,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 
 
 #if NODE_TYPE_SAVE
-    #define NODE_TYPE_SAVE_PARAMS_DECLARATION dfloat *nodeTypeSave,
+    #define NODE_TYPE_SAVE_PARAMS_DECLARATION unsigned int* nodeTypeSave,
     #define NODE_TYPE_SAVE_PARAMS nodeTypeSave,
 #else
     #define NODE_TYPE_SAVE_PARAMS_DECLARATION

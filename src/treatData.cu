@@ -165,6 +165,7 @@ void totalKineticEnergy(
 }
 
 #ifdef CONVECTION_DIFFUSION_TRANSPORT
+#ifdef CONFORMATION_TENSOR
 __host__ 
 void totalSpringEnergy(
     dfloat *fMom, 
@@ -228,6 +229,7 @@ void totalSpringEnergy(
     saveTreatData("_totalSpringEnergy",strDataInfo.str(),step);
     cudaFree(sumKE);
 }
+#endif
 #endif
 
 __host__ 

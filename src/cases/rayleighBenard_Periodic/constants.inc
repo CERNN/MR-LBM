@@ -41,6 +41,7 @@ constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 #ifdef THERMAL_MODEL
     #define SECOND_DIST
+    #define CONVECTION_DIFFUSION_TRANSPORT
 
     #define D3G19
 

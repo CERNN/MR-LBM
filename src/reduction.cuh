@@ -72,8 +72,10 @@ __global__
 void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata);
 
 #ifdef CONVECTION_DIFFUSION_TRANSPORT
+#ifdef CONFORMATION_TENSOR
 __global__ 
 void sumReductionThread_SE(dfloat* g_idata, dfloat* g_odata);
+#endif
 #endif
 
 /*
