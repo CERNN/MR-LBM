@@ -10,6 +10,7 @@ void saveMacr(
     dfloat* ux,
     dfloat* uy,
     dfloat* uz,
+    unsigned int* hNodeType,
     OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
@@ -228,7 +229,7 @@ void saveMacr(
         #endif
         
         #if NODE_TYPE_SAVE
-        saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileBc, (dfloat*)nodeTypeSave, MEM_SIZE_SCALAR, false);
         #endif
         #if defined BC_FORCES && defined SAVE_BC_FORCES
         saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
@@ -380,7 +381,7 @@ void saveVarVTK(
     #if NODE_TYPE_SAVE
         ofs << "SCALARS bc int 1\n"
             << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS, N);
+        writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N);
     #endif  
 }
 

@@ -719,6 +719,9 @@ void allocateHostMemory(
     PARTICLE_TRACER_PARAMS_DECLARATION_PTR(h_)
     MEAN_FLOW_PARAMS_DECLARATION_PTR
     MEAN_FLOW_SECOND_DIST_PARAMS_DECLARATION_PTR
+    #if NODE_TYPE_SAVE
+    ,unsigned int** nodeTypeSave
+    #endif
     BC_FORCES_PARAMS_DECLARATION_PTR(h_)
 ) {
     checkCudaErrors(cudaMallocHost((void**)h_fMom, MEM_SIZE_MOM));
@@ -776,6 +779,11 @@ void allocateHostMemory(
     checkCudaErrors(cudaMallocHost((void**)h_BC_Fz, MEM_SIZE_SCALAR));
     #endif
     #endif //_BC_FORCES
+
+    
+    #if NODE_TYPE_SAVE
+    checkCudaErrors(cudaMallocHost((void**)nodeTypeSave, sizeof(unsigned int) * NUMBER_LBM_NODES));
+    #endif
 }
 
 __host__
@@ -890,7 +898,7 @@ void initializeDomain(
     // Node type initialization
     checkCudaErrors(cudaMallocHost((void**)&hNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES));
     #if NODE_TYPE_SAVE
-        checkCudaErrors(cudaMallocHost((void**)&nodeTypeSave, sizeof(dfloat) * NUMBER_LBM_NODES));
+        checkCudaErrors(cudaMallocHost((void**)&dNodeType, sizeof(unsigned int) * NUMBER_LBM_NODES));
     #endif
 
     #ifndef VOXEL_FILENAME

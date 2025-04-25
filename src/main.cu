@@ -16,6 +16,10 @@ int main() {
     unsigned int* dNodeType;
     unsigned int* hNodeType;
 
+    #if NODE_TYPE_SAVE
+    unsigned int* nodeTypeSave;
+    #endif
+
     dfloat* h_fMom;
     dfloat* rho;
     dfloat* ux;
@@ -48,10 +52,6 @@ int main() {
     #endif
     #ifdef A_ZZ_DIST
     dfloat* Azz;
-    #endif
-
-    #if NODE_TYPE_SAVE
-    dfloat* nodeTypeSave;
     #endif
 
     #ifdef DENSITY_CORRECTION
@@ -111,6 +111,9 @@ int main() {
         PARTICLE_TRACER_PARAMS_PTR(h_)
         MEAN_FLOW_PARAMS_PTR
         MEAN_FLOW_SECOND_DIST_PARAMS_PTR
+        #if NODE_TYPE_SAVE
+        , &nodeTypeSave
+        #endif
         BC_FORCES_PARAMS_PTR(h_)
     );
     printf("Host Memory Allocated \n"); if(console_flush) fflush(stdout);
@@ -260,7 +263,7 @@ int main() {
                 if(console_flush){fflush(stdout);}
                 //if(step > N_STEPS - 14000){
                 if(!ONLY_FINAL_MACRO){
-                    saveMacr(h_fMom,rho,ux,uy,uz, OMEGA_FIELD_PARAMS
+                    saveMacr(h_fMom,rho,ux,uy,uz, hNodeType, OMEGA_FIELD_PARAMS
                     #ifdef SECOND_DIST 
                     C,
                     #endif 
@@ -317,7 +320,7 @@ int main() {
 
     if(console_flush){fflush(stdout);}
     
-    saveMacr(h_fMom,rho,ux,uy,uz, OMEGA_FIELD_PARAMS 
+    saveMacr(h_fMom,rho,ux,uy,uz, hNodeType, OMEGA_FIELD_PARAMS 
     #ifdef SECOND_DIST 
     C,
     #endif 
@@ -375,7 +378,7 @@ int main() {
     }*/
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
-            saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, OMEGA_FIELD_PARAMS
+            saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, hNodeType, OMEGA_FIELD_PARAMS
             #ifdef SECOND_DIST 
             m_c,
             #endif 
