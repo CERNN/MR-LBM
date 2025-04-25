@@ -24,7 +24,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM viscoelastic_FRM
+#define BC_PROBLEM benchmark
                                 
 constexpr bool console_flush = false;
 

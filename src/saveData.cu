@@ -377,13 +377,13 @@ void saveVarVTK(
 
     // — Aij —
     #ifdef CONFORMATION_TENSOR
-        ofs << "TENSORS Aij float\n";
+        ofs << "TENSORS6 Aij float\n";
         for (size_t i = 0; i < N; ++i) {
             dfloat tensor[6] = {
-                Axx[i], Axy[i], Axz[i],
-                Ayy[i], Ayz[i], Azz[i]
+                Axx[i], Ayy[i], Azz[i],
+                Axy[i], Ayz[i], Axz[i]
             };
-            writeBigEndian(ofs, tensor, 9);
+            writeBigEndian(ofs, tensor, 6);
         }
     #endif
 

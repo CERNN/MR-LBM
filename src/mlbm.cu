@@ -73,9 +73,9 @@ __global__ void gpuMomCollisionStream(
    // dfloat yy = 2.0 * M_PI * y / L;
    // dfloat zz = 2.0 * M_PI * z / L;
 
-    dfloat L_Fx =  F_0 * sin(K_const*x) * cos(K_const*y) ;
-    dfloat L_Fy = -F_0 * sin(K_const*y) * cos(K_const*x) ;
-    dfloat L_Fz = 0.00;
+   dfloat L_Fx = 0.00; // F_0 * sin(K_const*x) * cos(K_const*y) ;
+   dfloat L_Fy = 0.00; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
+   dfloat L_Fz = 0.00;
 
     #ifdef BC_FORCES
     dfloat L_BC_Fx = 0.0;
@@ -188,7 +188,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif
         #ifdef A_XX_DIST
-            dfloat GxxVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XX_C_INDEX]
+            dfloat GxxVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XX_C_INDEX];
             dfloat invAxx = 1/AxxVar;
             dfloat Axx_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XX_CX_INDEX];
             dfloat Axx_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XX_CY_INDEX];
@@ -220,7 +220,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XX_DIST
         #ifdef A_XY_DIST
-            dfloat GxyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XY_C_INDEX]
+            dfloat GxyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XY_C_INDEX];
             dfloat invAxy = 1/AxyVar;
             dfloat Axy_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XY_CX_INDEX];
             dfloat Axy_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XY_CY_INDEX];
@@ -252,7 +252,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XY_DIST
         #ifdef A_XZ_DIST
-            dfloat GxzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XZ_C_INDEX]
+            dfloat GxzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XZ_C_INDEX];
             dfloat invAxz = 1/AxzVar;
             dfloat Axz_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XZ_CX_INDEX];
             dfloat Axz_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XZ_CY_INDEX];
@@ -284,7 +284,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XZ_DIST
         #ifdef A_YY_DIST
-            dfloat GyyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_YY_C_INDEX]
+            dfloat GyyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_YY_C_INDEX];
             dfloat invAyy = 1/AyyVar;
             dfloat Ayy_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_YY_CX_INDEX];
             dfloat Ayy_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_YY_CY_INDEX];
