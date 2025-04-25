@@ -1,5 +1,50 @@
 #include "globalFunctions.h"
 
+
+__host__ __device__
+dfloat clamp01(dfloat value) {
+    if (value < 0.0) return 0.0;
+    if (value > 1.0) return 1.0;
+    return value;
+}
+
+__host__ __device__
+dfloat3 vector_lerp(dfloat3 v1, dfloat3 v2, dfloat t) {
+    return (dfloat3)(v1.x + t * (v2.x - v1.x), v1.y + t * (v2.y - v1.y), v1.z + t * (v2.z - v1.z));
+}
+
+__device__
+dfloat3 planeProjection(dfloat3 P, dfloat3 n, dfloat d) {
+    // Copy original coordinates
+    dfloat3 proj = P;
+    
+    const dfloat EPSILON = 1e-6;
+    // Update projection based on the direction of the normal vector
+    if (fabs(n.x - 1.0) < EPSILON) {
+        proj.x = 0.0;
+    } else if (fabs(n.x + 1.0) < EPSILON) {
+        proj.x = d;
+    }
+
+    if (fabs(n.y - 1.0) < EPSILON) {
+        proj.y = 0.0;
+    } else if (fabs(n.y + 1.0) < EPSILON) {
+        proj.y = d;
+    }
+
+    if (fabs(n.z - 1.0) < EPSILON) {
+        proj.z = 0.0;
+    } else if (fabs(n.z + 1.0) < EPSILON) {
+        proj.z = d;
+    }
+
+    return proj;
+}
+
+// ****************************************************************************
+// ************************   VECTOR OPERATIONS   *****************************
+// ****************************************************************************
+
 __host__ __device__
 dfloat dot_product(dfloat3 v1, dfloat3 v2) {
     return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
@@ -34,6 +79,10 @@ dfloat3 vector_normalize(dfloat3 v) {
     }
     return norm_v;
 }
+
+// ****************************************************************************
+// ************************   MATRIX OPERATIONS   *****************************
+// ****************************************************************************
 
 __host__ __device__
 void transpose_matrix_3x3(dfloat matrix[3][3], dfloat result[3][3]) {
@@ -117,6 +166,39 @@ void inverse_3x3(dfloat A[3][3], dfloat result[3][3]) {
     result[2][2] = adj[2][2] * inv_det;
 }
 
+
+
+// ****************************************************************************
+// **********************   QUARTENION OPERATIONS   ***************************
+// ****************************************************************************
+
+__host__ __device__
+dfloat4 quart_conjugate(dfloat4 q) {
+    dfloat4 q_conj;
+    q_conj.w = q.w;
+    q_conj.x = -q.x;
+    q_conj.y = -q.y;
+    q_conj.z = -q.z;
+    return q_conj;
+}
+
+__host__ __device__
+dfloat4 quart_multiplication(dfloat4 q1, dfloat4 q2){
+    dfloat4 q;
+    
+    q.w = q1.w * q2.w - q1.x * q2.x - q1.y * q2.y - q1.z * q2.z;
+    q.x = q1.w * q2.x + q1.x * q2.w + q1.y * q2.z - q1.z * q2.y;
+    q.y = q1.w * q2.y - q1.x * q2.z + q1.y * q2.w + q1.z * q2.x;
+    q.z = q1.w * q2.z + q1.x * q2.y - q1.y * q2.x + q1.z * q2.w;
+
+    return q;
+}
+
+
+// ****************************************************************************
+// **********************   CONVERSION OPERATIONS   ***************************
+// ****************************************************************************
+
 __host__ __device__
 void dfloat6_to_matrix(dfloat6 I, dfloat M[3][3]) {
     M[0][0] = I.xx;     M[1][0] = I.xy;     M[2][0] = I.xz; 
@@ -135,15 +217,6 @@ dfloat6 matrix_to_dfloat6(dfloat M[3][3]) {
     return I;
 }
 
-__host__ __device__
-dfloat4 quart_conjugate(dfloat4 q) {
-    dfloat4 q_conj;
-    q_conj.w = q.w;
-    q_conj.x = -q.x;
-    q_conj.y = -q.y;
-    q_conj.z = -q.z;
-    return q_conj;
-}
 
 __host__ __device__
 void quart_to_rotation_matrix(dfloat4 q, dfloat R[3][3]){
@@ -161,6 +234,63 @@ void quart_to_rotation_matrix(dfloat4 q, dfloat R[3][3]){
     R[0][1] = 2 * (qxqy + qwqz);    R[1][1] = 1 - 2 * (qx2 + qz2);  R[2][1] = 2 * (qyqz - qwqx);
     R[0][2] = 2 * (qxqz - qwqy);    R[1][2] = 2 * (qyqz + qwqx);    R[2][2] = 1 - 2 * (qx2 + qy2);
 }
+
+
+__host__ __device__
+dfloat4 euler_to_quart(dfloat roll, dfloat pitch, dfloat yaw){
+    dfloat cr = cos(roll * 0.5);
+    dfloat sr = sin(roll * 0.5);
+    dfloat cp = cos(pitch * 0.5);
+    dfloat sp = sin(pitch * 0.5);
+    dfloat cy = cos(yaw * 0.5);
+    dfloat sy = sin(yaw * 0.5);
+
+    dfloat4 q;
+    q.w = cr * cp * cy + sr * sp * sy;
+    q.x = sr * cp * cy - cr * sp * sy;
+    q.y = cr * sp * cy + sr * cp * sy;
+    q.z = cr * cp * sy - sr * sp * cy;
+
+    return q;
+}
+
+__host__ __device__
+dfloat3 quart_to_euler(dfloat4 q){
+    dfloat3 angles;
+
+    // roll (x-axis rotation)
+    dfloat sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+    dfloat cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+    angles.x = std::atan2(sinr_cosp, cosr_cosp);
+
+    // pitch (y-axis rotation)
+    dfloat sinp = std::sqrt(1 + 2 * (q.w * q.y - q.x * q.z));
+    dfloat cosp = std::sqrt(1 - 2 * (q.w * q.y - q.x * q.z));
+    angles.y = 2 * std::atan2(sinp, cosp) - M_PI / 2;
+
+    // yaw (z-axis rotation)
+    dfloat siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+    dfloat cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+    angles.z = std::atan2(siny_cosp, cosy_cosp);
+
+    return angles;
+}
+
+__device__
+void rotationMatrixFromVectors(dfloat3 v1, dfloat3 v2, dfloat R[3][3]){
+    dfloat3 v3 = cross_product(v1,v2);
+
+    R[0][0] = v1.x; R[1][0] = v2.x; R[2][0] = v3.x;
+    R[0][1] = v1.y; R[1][1] = v2.y; R[2][1] = v3.y;
+    R[0][2] = v1.z; R[1][2] = v2.z; R[2][2] = v3.z;
+
+}
+
+
+// ****************************************************************************
+// ***********************   ROTATION OPERATIONS   ****************************
+// ****************************************************************************
+
 
 __host__ __device__
 dfloat3 rotate_vector_by_matrix(dfloat R[3][3],dfloat3 v) {
