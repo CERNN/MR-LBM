@@ -139,87 +139,97 @@ void saveMacr(
 
 
     // Names of files
-    std::string strFileRho, strFileUx, strFileUy, strFileUz;
+    std::string strFileRho, strFileUx, strFileUy, strFileUz; 
     std::string strFileOmega;
     std::string strFileC;
     std::string strFileBc; 
     std::string strFileFx, strFileFy, strFileFz;
     std::string strFileAxx, strFileAxy, strFileAxz, strFileAyy, strFileAyz, strFileAzz;
 
-    strFileRho = getVarFilename("rho", nSteps, ".bin");
-    strFileUx = getVarFilename("ux", nSteps, ".bin");
-    strFileUy = getVarFilename("uy", nSteps, ".bin");
-    strFileUz = getVarFilename("uz", nSteps, ".bin");
-    #ifdef OMEGA_FIELD
-    strFileOmega = getVarFilename("omega", nSteps, ".bin");
-    #endif
-    #ifdef SECOND_DIST 
-    strFileC = getVarFilename("C", nSteps, ".bin");
-    #endif
-    #ifdef A_XX_DIST 
-    strFileAxx = getVarFilename("Axx", nSteps, ".bin");
-    #endif
-    #ifdef A_XY_DIST 
-    strFileAxy = getVarFilename("Axy", nSteps, ".bin");
-    #endif
-    #ifdef A_XZ_DIST 
-    strFileAxz = getVarFilename("Axz", nSteps, ".bin");
-    #endif
-    #ifdef A_YY_DIST 
-    strFileAyy = getVarFilename("Ayy", nSteps, ".bin");
-    #endif
-    #ifdef A_YZ_DIST 
-    strFileAyz = getVarFilename("Ayz", nSteps, ".bin");
-    #endif
-    #ifdef A_ZZ_DIST 
-    strFileAzz = getVarFilename("Azz", nSteps, ".bin");
-    #endif
-    #if NODE_TYPE_SAVE
-    strFileBc = getVarFilename("bc", nSteps, ".bin");
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    strFileFx = getVarFilename("fx", nSteps, ".bin");
-    strFileFy = getVarFilename("fy", nSteps, ".bin");
-    strFileFz = getVarFilename("fz", nSteps, ".bin");
-    #endif
-    // saving files
-    saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
-    #ifdef OMEGA_FIELD
-    saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef SECOND_DIST
-    saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_XX_DIST 
-    saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_XY_DIST 
-    saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_XZ_DIST 
-    saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_YY_DIST 
-    saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_YZ_DIST 
-    saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef A_ZZ_DIST 
-    saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
-    #endif
-    
-    #if NODE_TYPE_SAVE
-    saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
-    saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
-    #endif
+
+    if (VTK_SAVE){
+        std::string strFileVtk, strFileVtr;
+        strFileVtk = getVarFilename("vtk", nSteps, ".vtk");
+
+        saveVarVTK(strFileVtk, rho, ux, uy, uz);
+    }
+    if (BIN_SAVE){
+        strFileRho = getVarFilename("rho", nSteps, ".bin");
+        strFileUx = getVarFilename("ux", nSteps, ".bin");
+        strFileUy = getVarFilename("uy", nSteps, ".bin");
+        strFileUz = getVarFilename("uz", nSteps, ".bin");
+
+        #ifdef OMEGA_FIELD
+        strFileOmega = getVarFilename("omega", nSteps, ".bin");
+        #endif
+        #ifdef SECOND_DIST 
+        strFileC = getVarFilename("C", nSteps, ".bin");
+        #endif
+        #ifdef A_XX_DIST 
+        strFileAxx = getVarFilename("Axx", nSteps, ".bin");
+        #endif
+        #ifdef A_XY_DIST 
+        strFileAxy = getVarFilename("Axy", nSteps, ".bin");
+        #endif
+        #ifdef A_XZ_DIST 
+        strFileAxz = getVarFilename("Axz", nSteps, ".bin");
+        #endif
+        #ifdef A_YY_DIST 
+        strFileAyy = getVarFilename("Ayy", nSteps, ".bin");
+        #endif
+        #ifdef A_YZ_DIST 
+        strFileAyz = getVarFilename("Ayz", nSteps, ".bin");
+        #endif
+        #ifdef A_ZZ_DIST 
+        strFileAzz = getVarFilename("Azz", nSteps, ".bin");
+        #endif
+        #if NODE_TYPE_SAVE
+        strFileBc = getVarFilename("bc", nSteps, ".bin");
+        #endif
+        #if defined BC_FORCES && defined SAVE_BC_FORCES
+        strFileFx = getVarFilename("fx", nSteps, ".bin");
+        strFileFy = getVarFilename("fy", nSteps, ".bin");
+        strFileFz = getVarFilename("fz", nSteps, ".bin");
+        #endif
+        // saving files
+        saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+        #ifdef OMEGA_FIELD
+        saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef SECOND_DIST
+        saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_XX_DIST 
+        saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_XY_DIST 
+        saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_XZ_DIST 
+        saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_YY_DIST 
+        saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_YZ_DIST 
+        saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
+        #endif
+        #ifdef A_ZZ_DIST 
+        saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
+        #endif
+        
+        #if NODE_TYPE_SAVE
+        saveVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
+        #endif
+        #if defined BC_FORCES && defined SAVE_BC_FORCES
+        saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
+        saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
+        #endif
+    }
 }
 
 void saveVarBin(
@@ -244,6 +254,60 @@ void saveVarBin(
     }
 }
 
+// choose correct swap based on sizeof(dfloat)
+template<typename T>
+void writeBigEndian(std::ofstream& ofs, const T* data, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        if constexpr (sizeof(T) == 4) {
+            uint32_t tmp;
+            std::memcpy(&tmp, &data[i], 4);
+            tmp = swap32(tmp);
+            ofs.write(reinterpret_cast<char*>(&tmp), 4);
+        }
+        else if constexpr (sizeof(T) == 8) {
+            uint64_t tmp;
+            std::memcpy(&tmp, &data[i], 8);
+            tmp = swap64(tmp);
+            ofs.write(reinterpret_cast<char*>(&tmp), 8);
+        }
+    }
+}
+
+void saveVarVTK(
+    std::string filename, 
+    dfloat* rho, 
+    dfloat* ux, 
+    dfloat* uy, 
+    dfloat* uz)
+{
+
+    const size_t N = NX*NY*NZ;
+    std::ofstream ofs(filename, std::ios::binary);
+    if (!ofs) throw std::runtime_error("Cannot open " + filename);
+
+    // — Header —
+    ofs << "# vtk DataFile Version 3.0\n"
+        << "LBM output (binary)\n"
+        << "BINARY\n"                               // ← here!
+        << "DATASET STRUCTURED_POINTS\n"
+        << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
+        << "ORIGIN 0 0 0\n"
+        << "SPACING 1 1 1\n"
+        << "POINT_DATA " << N << "\n";
+
+    // — Scalars —
+    ofs << "SCALARS rho float 1\n"
+        << "LOOKUP_TABLE default\n";
+    writeBigEndian(ofs, rho, N);
+
+    // — Vectors —
+    ofs << "VECTORS velocity float\n";
+    // interleave ux,uy,uz
+    for (size_t i = 0; i < N; ++i) {
+        dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
+        writeBigEndian(ofs, v, 3);
+    }
+}
 
 
 void folderSetup()

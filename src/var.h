@@ -4,6 +4,7 @@
 
 #include <builtin_types.h>  // for devices variables
 #include <stdint.h>         // for uint32_t
+#include <cstdint>
 
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -12,9 +13,11 @@
 #define SINGLE_PRECISION 
 #ifdef SINGLE_PRECISION
     typedef float dfloat;      // single precision
+    #define VTK_DFLOAT_TYPE "float"
 #endif
 #ifdef DOUBLE_PRECISION
     typedef double dfloat;      // double precision
+    #define VTK_DFLOAT_TYPE "double"
 #endif
 
 
@@ -155,6 +158,26 @@ constexpr BlockDim findOptimalBlockDimensions(size_t maxElements) {
         }
     }
     return {bestX, bestY, bestZ};
+}
+
+// swap 32‐bit word
+static inline uint32_t swap32(uint32_t v) {
+    return  (v<<24) | 
+           ((v<<8)&0x00FF0000) |
+           ((v>>8)&0x0000FF00) |
+            (v>>24);
+}
+
+// swap 64‐bit word
+static inline uint64_t swap64(uint64_t v) {
+    return  (v<<56) |
+           ((v<<40)&0x00FF000000000000ULL) |
+           ((v<<24)&0x0000FF0000000000ULL) |
+           ((v<<8 )&0x000000FF00000000ULL) |
+           ((v>>8 )&0x00000000FF000000ULL) |
+           ((v>>24)&0x0000000000FF0000ULL) |
+           ((v>>40)&0x000000000000FF00ULL) |
+            (v>>56);
 }
 
 

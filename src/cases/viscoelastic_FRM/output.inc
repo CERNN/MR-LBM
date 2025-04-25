@@ -9,8 +9,11 @@
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define NODE_TYPE_SAVE (false) //save the bc conditions, usefull for drawing the surface
 #define ONLY_FINAL_MACRO (false) //save only the last time step macroscopic
-#define MACR_SAVE (false)
-#define REPORT_SAVE ((int)t_c/10)
+#define MACR_SAVE ((int)t_c/20)
+#define REPORT_SAVE (false)
+#define VTK_SAVE (true)
+#define BIN_SAVE (false)
+
 
 
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;

@@ -157,6 +157,7 @@ int main() {
     cudaStream_t streamsPart[1];
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
     #endif
+    step=INI_STEP;
 
     initializeDomain(ghostInterface,     
                      d_fMom, h_fMom, 
@@ -170,6 +171,8 @@ int main() {
                      PARTICLE_TRACER_PARAMS_PTR(h_)
                      PARTICLE_TRACER_PARAMS_PTR(d_)
                      &step, gridBlock, threadBlock);
+
+    int ini_step = step;
 
     printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
     
@@ -186,7 +189,7 @@ int main() {
     /* --------------------------------------------------------------------- */
     /* ---------------------------- BEGIN LOOP ----------------------------- */
     /* --------------------------------------------------------------------- */
-    for (step=INI_STEP; step<N_STEPS;step++){
+    for (;step<N_STEPS;step++){ // step is already initialized
 
         int aux = step-INI_STEP;
         bool checkpoint = false;
@@ -210,6 +213,10 @@ int main() {
 #pragma warning(pop)
        
         gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
+
+        //swap interface pointers
+        swapGhostInterfaces(ghostInterface);
+
         #ifdef PARTICLE_TRACER
             checkCudaErrors(cudaDeviceSynchronize());
             updateParticlePos(d_particlePos, h_particlePos, d_fMom, streamsPart[0],step);
@@ -219,7 +226,7 @@ int main() {
             printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             // throwing a warning for being used without being initialized. But does not matter since we are overwriting it;
             checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-            interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.gGhost,cudaMemcpyDeviceToHost,QF);       
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.fGhost,cudaMemcpyDeviceToHost,QF);       
             #ifdef SECOND_DIST 
             interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
             #endif    
@@ -241,11 +248,9 @@ int main() {
             #ifdef A_ZZ_DIST 
             interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
             #endif                 
-            saveSimCheckpoint(d_fMom, ghostInterface, &step);
+            saveSimCheckpoint(h_fMom, ghostInterface, &step);
         }
        
-        //swap interface pointers
-        swapGhostInterfaces(ghostInterface);
         
         //save macroscopics
 
@@ -335,7 +340,7 @@ int main() {
 
     //Calculate MLUPS
 
-    dfloat MLUPS = recordElapsedTime(start_step, stop_step, step);
+    dfloat MLUPS = recordElapsedTime(start_step, stop_step, step, ini_step);
     printf("MLUPS: %f\n",MLUPS);
     
     /* ------------------------------ POST ------------------------------ */
@@ -400,7 +405,7 @@ int main() {
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
         saveParticleInfo(h_particlePos,step);
     #endif
-    if(CHECKPOINT_SAVE){
+    /*if(CHECKPOINT_SAVE){
         printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             
         checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
@@ -427,7 +432,7 @@ int main() {
         interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
         #endif    
         saveSimCheckpoint(d_fMom,ghostInterface,&step);
-    }
+    }*/
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
             saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, OMEGA_FIELD_PARAMS
