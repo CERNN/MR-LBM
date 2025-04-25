@@ -24,7 +24,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM benchmark
+#define BC_PROBLEM flowSphereIBM_ParallelPlates
                                 
 constexpr bool console_flush = false;
 
