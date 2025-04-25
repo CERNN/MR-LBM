@@ -12,7 +12,7 @@
 //#define MODEL_CONST_SMAGORINSKY //https://doi.org/10.1016/j.jcp.2005.03.022
 
 /* --------------------------- OTHER DEFINITIONS ------------------------- */
-//#define DENSITY_CORRECTION
+//#define DENSITY_CORRECTION //WE ENABLE DUE TO FORCE COMPONENT IN THE DIRECTION OF THE WALL, MAKING IT LOSE MASS
 
 //#define RANDOM_NUMBERS true    // to generate random numbers 
                                // (useful for turbulence)

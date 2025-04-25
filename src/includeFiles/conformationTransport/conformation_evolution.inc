@@ -44,12 +44,15 @@ dfloat aa, bb;
     #endif
 #endif
 
+aa = 1.0;
+bb = 1.0;
+
 //compute source term for the conformation transport
 // G = (1/lambda)*(I-A) + (A . div U + div U^T . A) * 3.0
 //TODO: maybe eq36 is wrong here and it should have  been: G = (1/lambda)*(b*I-a*A) + (A . div U + div U^T . A) * 3.0
 dfloat G_xx = inv_lambda * (bb - aa*AxxVar) + ADU_DUTA_xx_t30/F_M_I_SCALE;
 dfloat G_yy = inv_lambda * (bb - aa*AyyVar) + ADU_DUTA_yy_t30/F_M_I_SCALE;
-dfloat G_zz = inv_lambda * (bb - aa*0) + 0/F_M_I_SCALE;
+dfloat G_zz = inv_lambda * (bb*0 - aa*0) + 0/F_M_I_SCALE;
 
 dfloat G_xy =  ADU_DUTA_xy_t30/F_M_I_SCALE - inv_lambda * aa * AxyVar;
 dfloat G_xz =  0/F_M_I_SCALE - inv_lambda * aa * 0;

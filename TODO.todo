@@ -2,6 +2,9 @@
 Projects:
   ☐ Organize source files into folders
   ☐ Remove the duplicate arrays used for interface between blocks
+    This can be done by storing the populations in the same location where it was retrived. 
+    This will lead to performance decrease since is not coaslesced write.
+     however it will reduce the memory ussage
   ☐ test perfomance Z-curve array pattern for indexing within the same block structure
   ✔ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ... @done(24-07-04 21:52)
     ✔ Use constant array in defintions.h instead of magic numbers @done(24-11-15 18:18)
