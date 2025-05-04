@@ -26,8 +26,8 @@ Projects:
   ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
   ☐ Fix parallel reduction for 2D cases bigger than 256x256
   ☐ Separate omega from non_newtonian
-  ☐ Change default checkpoit: make it so it always check if there is a checkpoint. If exist load from checkpoint.
-    ☐ Add flag to skip checkpoint, and restart simulation
+  ✔ Change default checkpoit: make it so it always check if there is a checkpoint. If exist load from checkpoint. @done(25-05-04 19:40)
+    ✔ Add flag to skip checkpoint, and restart simulation @done(25-05-04 19:40)
   ☐ Find a way to compile for linux machines on a windows machine
 
 
@@ -57,7 +57,7 @@ Projects:
     ✔ change nodeType from char to int @done(24-02-24 10:41)
     ✔ add new types of boundary conditions @done(24-03-24 10:58)
   ✔ higher shared memory size for cuda compute 8.0+ (requires dynamic shared memory which has worse performance 70% of original @done(24-01-19 22:27)
-  ☐ change all operations using fMom[idxMom()] to be float point operations (use index UX for first one them use a offset between each stored unit)
+  ✔ change all operations using fMom[idxMom()] to be float point operations (use index UX for first one them use a offset between each stored unit) @done(25-05-04 19:41)
 
   ✔ Push thermal model @done(24-05-17 22:52)
     ✔ First Implementation @done(24-04-13 23:55)
@@ -82,5 +82,6 @@ Projects:
         ✔ rewrite ghost values to be a struct @done(24-11-03 18:59)
     ✔ Source term for the advection-diffusion equation @done(24-11-05 01:03)
     ✔ Unify the transport equations in a single kernel @done(25-01-03 11:19)
-  ☐ Async call to python script to convert bin files into vtr files
+
 Archive:\
+Async call to python script to convert bin files into vtr files -- no need anymore, saves directly in vtk
