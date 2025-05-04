@@ -20,7 +20,7 @@ ux += pert*randomNumbers[l + x - Nt*((l + x) / Nt)];
 uy += pert*randomNumbers[l + y - Nt*((l + y) / Nt)];
 uz += 0*randomNumbers[l + z - Nt*((l + z) / Nt)];
 
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
 omega = OMEGA;
 #endif
 

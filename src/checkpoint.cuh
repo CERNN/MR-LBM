@@ -23,6 +23,9 @@
 #include "globalFunctions.h"
 #include "var.h"
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 
 
 #define __LOAD_CHECKPOINT 1
@@ -128,9 +131,10 @@ void operateSimCheckpoint(
 *   @param fMom Populations array
 *   @param ghostInterface interface block transfer information
 *   @param step Pointer to current step value in main
+*   @return 0 = fail to load checkpoint, 1 = load success;
 */
 __host__
-void loadSimCheckpoint( 
+int loadSimCheckpoint( 
     dfloat* fMom,
     ghostInterfaceData ghostInterface,
     int *step

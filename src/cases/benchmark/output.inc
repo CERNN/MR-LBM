@@ -11,7 +11,8 @@
 #define ONLY_FINAL_MACRO (true) //save only the last time step macroscopic
 #define MACR_SAVE (false)
 #define REPORT_SAVE (false)
-
+#define VTK_SAVE (true)
+#define BIN_SAVE (false)
 
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;
 //#define SAVE_BC_FORCES // define if it will export BC force field to bin

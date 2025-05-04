@@ -122,7 +122,8 @@ idxPopZ(
 
     return tx + BLOCK_NX * (ty + BLOCK_NY * (pop + QF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
-#ifdef SECOND_DIST
+#if defined(SECOND_DIST) || defined(A_XX_DIST) || defined(A_XY_DIST) || defined(A_XZ_DIST) || defined(A_YY_DIST) || defined(A_YZ_DIST) || defined(A_ZZ_DIST)
+
 __device__ int __forceinline__
 g_idxPopX(
     const int ty,
@@ -161,6 +162,88 @@ g_idxPopZ(
 }
 #endif
 
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+__device__ int __forceinline__
+g_idxUX(
+    const int ty,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return dir + 3*(ty + BLOCK_NY*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+    //return ty + BLOCK_NY * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxUY(
+    const int tx,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return dir + 3*(tx + BLOCK_NX*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+    //return tx + BLOCK_NX * (tz + BLOCK_NZ * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+
+__device__ int __forceinline__
+g_idxUZ(
+    const int tx,
+    const int ty,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return dir + 3*(tx + BLOCK_NX*(ty + BLOCK_NY*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+    //return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
+}
+#endif
+
+#ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+__device__ int __forceinline__
+g_idxConfX(
+    const int ty,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+
+    return dir + 6*(ty + BLOCK_NY*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+}
+
+__device__ int __forceinline__
+g_idxConfY(
+    const int tx,
+    const int tz,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return dir + 6*(tx + BLOCK_NX*(tz + BLOCK_NZ*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+}
+
+__device__ int __forceinline__
+g_idxConfZ(
+    const int tx,
+    const int ty,
+    const int dir,
+    const int bx,
+    const int by,
+    const int bz)
+{
+    return dir + 6*(tx + BLOCK_NX*(ty + BLOCK_NY*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
+}
+#endif
+
+
+
 __host__ __device__
     size_t __forceinline__
     idxPopBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int pop)
@@ -192,13 +275,32 @@ __host__ __device__
 }
 
 #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+//   @note: not unsigned because it uses negative values for thread index to pad from the halo
 __host__ __device__ __forceinline__ 
-size_t idxVelBlock(const unsigned int tx, const unsigned int ty, const unsigned int tz, const unsigned int uIndex)
+size_t idxVelBlock(const int tx, const int ty, const int tz, const int uIndex)
 {
-    return (tx + HALO_SIZE) + (BLOCK_NX + 2 * HALO_SIZE) * ((ty + HALO_SIZE) + (BLOCK_NY + 2 * HALO_SIZE) * ((tz + HALO_SIZE) + (BLOCK_NZ + 2 * HALO_SIZE) * uIndex));
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(uIndex)) );
 }
 #endif
 
+
+#ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+/**
+*   @brief Compute linear array index
+*   @param xx: 0
+*   @param xy: 1
+*   @param xz: 2
+*   @param yy: 3
+*   @param yz: 4
+*   @param zz: 5
+*   @note: not unsigned because it uses negative values for thread index to pad from the halo
+*/
+__host__ __device__ __forceinline__ 
+size_t idxConfBlock(const int tx, const int ty, const int tz, const int confIndex)
+{
+    return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(confIndex)) );
+}
+#endif
 
 /**
 *   @brief Compute the dot product of two vectors.
@@ -248,6 +350,38 @@ void transpose_matrix_3x3(dfloat matrix[3][3], dfloat result[3][3]);
 */
 __host__ __device__
 void multiply_matrices_3x3(dfloat A[3][3], dfloat B[3][3], dfloat result[3][3]);
+
+/**
+*   @brief Compute the determinant of a 3x3 matrix.
+*   @param A: The input 3x3 matrix whose determinant is to be computed.
+*   @return The determinant of the matrix A.
+*/
+__host__ __device__
+dfloat determinant_3x3(dfloat A[3][3]);
+/**
+*   @brief Compute the adjugate (or adjoint) of a 3x3 matrix.
+*   @param A: The input 3x3 matrix whose adjugate is to be computed.
+*   @param adj: The output 3x3 matrix that will contain the adjugate of matrix A.
+*/
+__host__ __device__
+void adjugate_3x3(dfloat A[3][3], dfloat adj[3][3]);
+/**
+*   @brief Compute the inverse of a 3x3 matrix.
+*   @param A: The input 3x3 matrix to be inverted.
+*   @param result: The output 3x3 matrix that will contain the inverse of matrix A.
+*/
+__host__ __device__
+void inverse_3x3(dfloat A[3][3], dfloat result[3][3]);
+
+/**
+*   @brief Result = scalar * A + B.
+*   @param scalar: the scalar that multiplies A before adding.
+*   @param A: The first 3x3 matrix to be multiplied.
+*   @param B: The second 3x3 matrix to be multiplied.
+*   @param result: The output 3x3 matrix that will contain the product of matrices A and B..
+*/
+__host__ __device__
+void add_matrices_3x3(dfloat scalar, dfloat A[3][3], dfloat B[3][3], dfloat result[3][3]);
 /**
 *   @brief Convert a dfloat6 structure to a 3x3 matrix.
 *   @param I: dfloat6 structure containing inertia tensor components.

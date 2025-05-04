@@ -16,6 +16,10 @@ int main() {
     unsigned int* dNodeType;
     unsigned int* hNodeType;
 
+    #if NODE_TYPE_SAVE
+    unsigned int* nodeTypeSave;
+    #endif
+
     dfloat* h_fMom;
     dfloat* rho;
     dfloat* ux;
@@ -23,7 +27,7 @@ int main() {
     dfloat* uz;
     
     
-    #ifdef NON_NEWTONIAN_FLUID
+    #ifdef OMEGA_FIELD
     dfloat* omega;
     #endif
 
@@ -31,9 +35,44 @@ int main() {
     dfloat* C;
     #endif 
 
-    #if NODE_TYPE_SAVE
-    dfloat* nodeTypeSave;
+    #ifdef A_XX_DIST
+    dfloat* Axx;
     #endif
+    #ifdef A_XY_DIST
+    dfloat* Axy;
+    #endif
+    #ifdef A_XZ_DIST
+    dfloat* Axz;
+    #endif
+    #ifdef A_YY_DIST
+    dfloat* Ayy;
+    #endif
+    #ifdef A_YZ_DIST
+    dfloat* Ayz;
+    #endif
+    #ifdef A_ZZ_DIST
+    dfloat* Azz;
+    #endif
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST
+        dfloat* Cxx;
+        #endif
+        #ifdef A_XY_DIST
+        dfloat* Cxy;
+        #endif
+        #ifdef A_XZ_DIST
+        dfloat* Cxz;
+        #endif
+        #ifdef A_YY_DIST
+        dfloat* Cyy;
+        #endif
+        #ifdef A_YZ_DIST
+        dfloat* Cyz;
+        #endif
+        #ifdef A_ZZ_DIST
+        dfloat* Czz;
+        #endif
+    #endif //LOG_CONFORMATION
 
     #ifdef DENSITY_CORRECTION
     dfloat* h_mean_rho;
@@ -76,16 +115,25 @@ int main() {
     /* ------------------------- ALLOCATION FOR CPU ------------------------- */
     int step = 0;
 
-    float** randomNumbers = nullptr; // useful for turbulence
-    randomNumbers = (float**)malloc(sizeof(float*));
+    dfloat** randomNumbers = nullptr; // useful for turbulence
+    randomNumbers = (dfloat**)malloc(sizeof(dfloat*));
 
     allocateHostMemory(
         &h_fMom, &rho, &ux, &uy, &uz
-        NON_NEWTONIAN_FLUID_PARAMS_PTR
+        OMEGA_FIELD_PARAMS_PTR
         SECOND_DIST_PARAMS_PTR
+        A_XX_DIST_PARAMS_PTR
+        A_XY_DIST_PARAMS_PTR
+        A_XZ_DIST_PARAMS_PTR
+        A_YY_DIST_PARAMS_PTR
+        A_YZ_DIST_PARAMS_PTR
+        A_ZZ_DIST_PARAMS_PTR
         PARTICLE_TRACER_PARAMS_PTR(h_)
         MEAN_FLOW_PARAMS_PTR
         MEAN_FLOW_SECOND_DIST_PARAMS_PTR
+        #if NODE_TYPE_SAVE
+        , &nodeTypeSave
+        #endif
         BC_FORCES_PARAMS_PTR(h_)
     );
     printf("Host Memory Allocated \n"); if(console_flush) fflush(stdout);
@@ -112,6 +160,7 @@ int main() {
     cudaStream_t streamsPart[1];
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
     #endif
+    step=INI_STEP;
 
     initializeDomain(ghostInterface,     
                      d_fMom, h_fMom, 
@@ -125,6 +174,8 @@ int main() {
                      PARTICLE_TRACER_PARAMS_PTR(h_)
                      PARTICLE_TRACER_PARAMS_PTR(d_)
                      &step, gridBlock, threadBlock);
+
+    int ini_step = step;
 
     printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
     
@@ -141,7 +192,7 @@ int main() {
     /* --------------------------------------------------------------------- */
     /* ---------------------------- BEGIN LOOP ----------------------------- */
     /* --------------------------------------------------------------------- */
-    for (step=INI_STEP; step<N_STEPS;step++){
+    for (;step<N_STEPS;step++){ // step is already initialized
 
         int aux = step-INI_STEP;
         bool checkpoint = false;
@@ -154,14 +205,20 @@ int main() {
         bool reportSave = false;
         bool macrSave = false;
 
+#pragma warning(push)
+#pragma warning(disable: 4804)
         if(aux != 0){
             if(REPORT_SAVE){ reportSave = !(step % REPORT_SAVE);}                
             if(MACR_SAVE){ macrSave   = !(step % MACR_SAVE);}
             if(MACR_SAVE || REPORT_SAVE){ save = (reportSave || macrSave);}
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
         }
+#pragma warning(pop)
        
         gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
+
+        //swap interface pointers
+        swapGhostInterfaces(ghostInterface);
 
         #ifdef PARTICLE_TRACER
             checkCudaErrors(cudaDeviceSynchronize());
@@ -172,15 +229,31 @@ int main() {
             printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             // throwing a warning for being used without being initialized. But does not matter since we are overwriting it;
             checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-            interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.gGhost,cudaMemcpyDeviceToHost,QF);       
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.fGhost,cudaMemcpyDeviceToHost,QF);       
             #ifdef SECOND_DIST 
             interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
-            #endif             
-            saveSimCheckpoint(d_fMom, ghostInterface, &step);
+            #endif    
+            #ifdef A_XX_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Axx_h_fGhost,ghostInterface.Axx_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif       
+            #ifdef A_XY_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Axy_h_fGhost,ghostInterface.Axy_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_XZ_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Axz_h_fGhost,ghostInterface.Axz_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_YY_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayy_h_fGhost,ghostInterface.Ayy_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_YZ_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayz_h_fGhost,ghostInterface.Ayz_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif           
+            #ifdef A_ZZ_DIST 
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
+            #endif                 
+            saveSimCheckpoint(h_fMom, ghostInterface, &step);
         }
        
-        //swap interface pointers
-        swapGhostInterfaces(ghostInterface);
         
         //save macroscopics
 
@@ -210,10 +283,48 @@ int main() {
                 if(console_flush){fflush(stdout);}
                 //if(step > N_STEPS - 14000){
                 if(!ONLY_FINAL_MACRO){
-                    saveMacr(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS
+                    saveMacr(h_fMom,rho,ux,uy,uz, hNodeType, OMEGA_FIELD_PARAMS
                     #ifdef SECOND_DIST 
                     C,
                     #endif 
+                    #ifdef A_XX_DIST 
+                    Axx,
+                    #endif 
+                    #ifdef A_XY_DIST 
+                    Axy,
+                    #endif
+                    #ifdef A_XZ_DIST 
+                    Axz,
+                    #endif
+                    #ifdef A_YY_DIST 
+                    Ayy,
+                    #endif
+                    #ifdef A_YZ_DIST 
+                    Ayz,
+                    #endif
+                    #ifdef A_ZZ_DIST 
+                    Azz,
+                    #endif
+                    #ifdef LOG_CONFORMATION
+                        #ifdef A_XX_DIST
+                        Cxx,
+                        #endif
+                        #ifdef A_XY_DIST
+                        Cxy,
+                        #endif
+                        #ifdef A_XZ_DIST
+                        Cxz,
+                        #endif
+                        #ifdef A_YY_DIST
+                        Cyy,
+                        #endif
+                        #ifdef A_YZ_DIST
+                        Cyz,
+                        #endif
+                        #ifdef A_ZZ_DIST
+                        Czz,
+                        #endif
+                    #endif //LOG_CONFORMATION
                     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
                 }
             //}
@@ -232,7 +343,7 @@ int main() {
 
     //Calculate MLUPS
 
-    dfloat MLUPS = recordElapsedTime(start_step, stop_step, step);
+    dfloat MLUPS = recordElapsedTime(start_step, stop_step, step, ini_step);
     printf("MLUPS: %f\n",MLUPS);
     
     /* ------------------------------ POST ------------------------------ */
@@ -249,29 +360,85 @@ int main() {
 
     if(console_flush){fflush(stdout);}
     
-    saveMacr(h_fMom,rho,ux,uy,uz, NON_NEWTONIAN_FLUID_PARAMS 
+    saveMacr(h_fMom,rho,ux,uy,uz, hNodeType, OMEGA_FIELD_PARAMS 
     #ifdef SECOND_DIST 
     C,
     #endif 
-    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(PREFIX) step);
+    #ifdef A_XX_DIST 
+    Axx,
+    #endif 
+    #ifdef A_XY_DIST 
+    Axy,
+    #endif
+    #ifdef A_XZ_DIST 
+    Axz,
+    #endif
+    #ifdef A_YY_DIST 
+    Ayy,
+    #endif
+    #ifdef A_YZ_DIST 
+    Ayz,
+    #endif
+    #ifdef A_ZZ_DIST 
+    Azz,
+    #endif
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST
+        Cxx,
+        #endif
+        #ifdef A_XY_DIST
+        Cxy,
+        #endif
+        #ifdef A_XZ_DIST
+        Cxz,
+        #endif
+        #ifdef A_YY_DIST
+        Cyy,
+        #endif
+        #ifdef A_YZ_DIST
+        Cyz,
+        #endif
+        #ifdef A_ZZ_DIST
+        Czz,
+        #endif
+    #endif //LOG_CONFORMATION
+    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
 
     #ifdef PARTICLE_TRACER
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
         saveParticleInfo(h_particlePos,step);
     #endif
-    if(CHECKPOINT_SAVE){
+    /*if(CHECKPOINT_SAVE){
         printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             
         checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
         interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.gGhost,cudaMemcpyDeviceToHost,QF);    
         #ifdef SECOND_DIST 
         interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
-        #endif      
+        #endif  
+        #ifdef A_XX_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Axx_h_fGhost,ghostInterface.Axx_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif 
+        #ifdef A_XY_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Axy_h_fGhost,ghostInterface.Axy_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_XZ_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Axz_h_fGhost,ghostInterface.Axz_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_YY_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayy_h_fGhost,ghostInterface.Ayy_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_YZ_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Ayz_h_fGhost,ghostInterface.Ayz_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif
+        #ifdef A_ZZ_DIST 
+        interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
+        #endif    
         saveSimCheckpoint(d_fMom,ghostInterface,&step);
-    }
+    }*/
     checkCudaErrors(cudaDeviceSynchronize());
     #if MEAN_FLOW
-            saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, NON_NEWTONIAN_FLUID_PARAMS
+            saveMacr(m_fMom,m_rho,m_ux,m_uy,m_uz, hNodeType, OMEGA_FIELD_PARAMS
             #ifdef SECOND_DIST 
             m_c,
             #endif 
@@ -298,6 +465,46 @@ int main() {
     #ifdef SECOND_DIST 
     cudaFree(C);
     #endif 
+    #ifdef A_XX_DIST 
+    cudaFree(Axx);
+    #endif 
+    #ifdef A_XY_DIST 
+    cudaFree(Axy);
+    #endif
+    #ifdef A_XZ_DIST 
+    cudaFree(Axz);
+    #endif
+    #ifdef A_YY_DIST 
+    cudaFree(Ayy);
+    #endif
+    #ifdef A_YZ_DIST 
+    cudaFree(Ayz);
+    #endif
+    #ifdef A_ZZ_DIST 
+    cudaFree(Azz);
+    #endif
+
+
+    #ifdef LOG_CONFORMATION
+        #ifdef A_XX_DIST 
+        cudaFree(Cxx);
+        #endif 
+        #ifdef A_XY_DIST 
+        cudaFree(Cxy);
+        #endif
+        #ifdef A_XZ_DIST 
+        cudaFree(Cxz);
+        #endif
+        #ifdef A_YY_DIST 
+        cudaFree(Cyy);
+        #endif
+        #ifdef A_YZ_DIST 
+        cudaFree(Cyz);
+        #endif
+        #ifdef A_ZZ_DIST 
+        cudaFree(Czz);
+        #endif
+    #endif
 
     interfaceFree(ghostInterface);
 

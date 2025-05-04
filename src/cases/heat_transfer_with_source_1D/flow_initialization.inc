@@ -3,7 +3,7 @@ ux = 0;
 uy = 0;
 uz = 0;
 
-#ifdef NON_NEWTONIAN_FLUID
+#ifdef OMEGA_FIELD
 omega = OMEGA;
 #endif
 

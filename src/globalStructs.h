@@ -161,7 +161,49 @@ typedef struct ghostInterfaceData  {
         ghostData g_gGhost;
         ghostData g_h_fGhost;
     #endif
+    #ifdef A_XX_DIST
+        ghostData Axx_fGhost;
+        ghostData Axx_gGhost;
+        ghostData Axx_h_fGhost;
+    #endif 
+    #ifdef A_XY_DIST
+        ghostData Axy_fGhost;
+        ghostData Axy_gGhost;
+        ghostData Axy_h_fGhost;
+    #endif 
+    #ifdef A_XZ_DIST
+        ghostData Axz_fGhost;
+        ghostData Axz_gGhost;
+        ghostData Axz_h_fGhost;
+    #endif
+    #ifdef A_YY_DIST
+        ghostData Ayy_fGhost;
+        ghostData Ayy_gGhost;
+        ghostData Ayy_h_fGhost;
+    #endif
+    #ifdef A_YZ_DIST
+        ghostData Ayz_fGhost;
+        ghostData Ayz_gGhost;
+        ghostData Ayz_h_fGhost;
+    #endif 
+    #ifdef A_ZZ_DIST
+        ghostData Azz_fGhost;
+        ghostData Azz_gGhost;
+        ghostData Azz_h_fGhost;
+    #endif
+    /*
+    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
+        ghostData f_uGhost;
+        ghostData g_uGhost;
+        ghostData h_f_uGhost;
+    #endif
 
+    #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
+        ghostData conf_fGhost;
+        ghostData conf_gGhost;
+        ghostData conf_h_fGhost;
+    #endif
+    */
 } GhostInterfaceData;
 
 #endif //__GLOBAL_STRUCTS_H

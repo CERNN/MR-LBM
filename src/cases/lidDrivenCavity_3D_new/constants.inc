@@ -1,14 +1,14 @@
-constexpr dfloat RE = 500;
+constexpr dfloat RE = 3200;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 10000;
-constexpr int N = 256 * SCALE;
+constexpr int N_STEPS = 200000;
+constexpr int N = 64 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.05;  
+constexpr dfloat U_MAX = 0.0256;  
 constexpr dfloat L = N;
 
 constexpr dfloat FX = 0.0;        // force in x

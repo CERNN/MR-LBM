@@ -12,33 +12,32 @@
 /* ------------------------------- POWER- LAW ------------------------------- */
 
 #ifdef POWERLAW
+#define OMEGA_FIELD
+// Inputs
 constexpr dfloat N_INDEX = 0.5;                         // Power index
 constexpr dfloat K_CONSISTENCY = RHO_0*(TAU-0.5)/3;      // Consistency factor
 constexpr dfloat GAMMA_0 = 0;       // Truncated Power-Law. 
                                     // Leave as 0 to no truncate
 #define OMEGA_LAST_STEP // Needs omega from last step
+// Calculated variables
 #endif
 /* --------------------------------BINGHAM---------------------------------- */
 #ifdef BINGHAM
+#define OMEGA_FIELD
 // Inputs
-constexpr dfloat S_YY = BN_NUMBER *VISC*invSqrtt(L/(T_gravity_t_beta*T_DELTA_T));
-constexpr dfloat S_Y= S_YY;
-constexpr dfloat Bn_turan = S_Y*sqrtt(L/(T_gravity_t_beta*T_DELTA_T))/VISC;
-constexpr dfloat Bn_Zhang = Bn_turan * sqrtt(T_PR_NUMBER/T_RA_NUMBER);
-constexpr dfloat Y_number = S_Y /(RHO_0*T_gravity_t_beta*L*T_DELTA_T);
-
-//constexpr dfloat Bn = 10;
-//constexpr dfloat S_Y = Bn * VISC * U_MAX / L;                // Yield stress 0.00579
+constexpr dfloat S_Y= 0.005;
 // Calculated variables
 constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
 #endif
 /* ------------------------------KEE_TURCOTEE-------------------------------- */
 #ifdef BI_VISCOSITY
-
+#define OMEGA_FIELD
+// Inputs
 constexpr dfloat Bn = 0.4;
 constexpr dfloat S_Y = Bn*VISC*invSqrtt(2*L/(T_gravity_t_beta*T_DELTA_T));
-
 constexpr dfloat VISC_RATIO = 1.0/1000.0; // MU/MU_Y
+
+// Calculated variables
 constexpr dfloat ETA_Y = VISC / VISC_RATIO ;
 constexpr dfloat TAU_Y = 3*ETA_Y + 0.5;
 constexpr dfloat OMEGA_Y = 1.0/TAU_Y;
@@ -50,18 +49,25 @@ constexpr dfloat GAMMA_C = S_Y / ETA_Y;
 
 /* ------------------------------KEE_TURCOTEE-------------------------------- */
 #ifdef KEE_TURCOTEE
-
+#define OMEGA_FIELD
+// Inputs
 constexpr dfloat S_Y = 0;
 constexpr dfloat t1 = 1e-3;
 constexpr dfloat eta_0 =  1e-3;
 
 #endif
-/* -------------------------------------------------------------------------- */
+/* ----------------------------- FENE_P ------------------------------------- */
+
+#ifdef FENE_P
 
 
 
 
-#ifdef NON_NEWTONIAN_FLUID
+
+#endif
+
+
+#ifdef OMEGA_FIELD
     #ifdef POWER_LAW
     __device__ 
     dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
@@ -138,7 +144,7 @@ constexpr dfloat eta_0 =  1e-3;
     #endif
 
 
-#endif // NON_NEWTONIAN_FLUID
+#endif // OMEGA_FIELD
 
 
 #endif // __NNF_H

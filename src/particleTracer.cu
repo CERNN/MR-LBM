@@ -60,10 +60,13 @@ void updateParticlePos(
     velocityInterpolation<<<gridNodes, threadsNodes, 0, streamParticles>>>(d_particlePos, fMom,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
+#pragma warning(push)
+#pragma warning(disable: 4804)
     if(!(step%PARTICLE_TRACER_SAVE)){
         checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
         saveParticleInfo(h_particlePos,step);
     }
+#pragma warning(pop)
 }
 
 __global__
