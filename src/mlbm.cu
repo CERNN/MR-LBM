@@ -156,7 +156,7 @@ __global__ void gpuMomCollisionStream(
 
     #ifdef CONVECTION_DIFFUSION_TRANSPORT
         #ifdef SECOND_DIST 
-            dfloat cVar = fMom[baseIdx + BLOCK_LBM_SIZE * M2_C_INDEX]
+            dfloat cVar = fMom[baseIdx + BLOCK_LBM_SIZE * M2_C_INDEX];
             dfloat invC = 1/cVar;
             dfloat qx_t30   = fMom[baseIdx + BLOCK_LBM_SIZE * M2_CX_INDEX];
             dfloat qy_t30   = fMom[baseIdx + BLOCK_LBM_SIZE * M2_CY_INDEX];
