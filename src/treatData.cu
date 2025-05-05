@@ -371,9 +371,9 @@ void totalBcDrag(
     strDataInfo <<"step,"<< step<< "," << temp_x<< "," << temp_y<< "," << temp_z;// << "," << mean_counter;
 
     saveTreatData("_totalBcDrag",strDataInfo.str(),step);
-    cudaFree(h_BC_Fx);
-    cudaFree(h_BC_Fy);
-    cudaFree(h_BC_Fz);
+    cudaFree(sum_BC_Fx);
+    cudaFree(sum_BC_Fy);
+    cudaFree(sum_BC_Fz);
    
 
 };
