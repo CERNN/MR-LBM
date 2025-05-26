@@ -1,3 +1,9 @@
+# To compile in linux:
+# dos2unix compile_linux.sh
+# chmod +x compile_linux.sh D3Q19 000
+# ../bin/000sim_D3Q19_sm80
+# edit where necessary
+
 # CC=86
 
 #!/bin/bash

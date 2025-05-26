@@ -629,7 +629,7 @@ __global__ void gpuMomCollisionStream(
 
             #include COLREC_AXX_RECONSTRUCTION
 
-            #include "includeFiles/conformationTransport\popSave_Axx.inc"
+            #include "includeFiles/conformationTransport/popSave_Axx.inc"
            
            fMom[baseIdx + BLOCK_LBM_SIZE * A_XX_C_INDEX] = AxxVar;
            fMom[baseIdx + BLOCK_LBM_SIZE * A_XX_CX_INDEX] = Axx_qx_t30;
@@ -643,7 +643,7 @@ __global__ void gpuMomCollisionStream(
 
             #include COLREC_AXY_RECONSTRUCTION
 
-            #include "includeFiles/conformationTransport\popSave_Axy.inc"
+            #include "includeFiles/conformationTransport/popSave_Axy.inc"
            
             fMom[baseIdx + BLOCK_LBM_SIZE * A_XY_C_INDEX] = AxyVar;
             fMom[baseIdx + BLOCK_LBM_SIZE * A_XY_CX_INDEX] = Axy_qx_t30;
@@ -657,7 +657,7 @@ __global__ void gpuMomCollisionStream(
 
             #include COLREC_AXZ_RECONSTRUCTION
 
-            #include "includeFiles/conformationTransport\popSave_Axz.inc"
+            #include "includeFiles/conformationTransport/popSave_Axz.inc"
            
             fMom[baseIdx + BLOCK_LBM_SIZE * A_XZ_C_INDEX] = AxzVar;
             fMom[baseIdx + BLOCK_LBM_SIZE * A_XZ_CX_INDEX] = Axz_qx_t30;
@@ -671,7 +671,7 @@ __global__ void gpuMomCollisionStream(
 
             #include COLREC_AYY_RECONSTRUCTION
 
-            #include "includeFiles/conformationTransport\popSave_Ayy.inc"
+            #include "includeFiles/conformationTransport/popSave_Ayy.inc"
            
             fMom[baseIdx + BLOCK_LBM_SIZE * A_YY_C_INDEX] = AyyVar;
             fMom[baseIdx + BLOCK_LBM_SIZE * A_YY_CX_INDEX] = Ayy_qx_t30;
@@ -685,7 +685,7 @@ __global__ void gpuMomCollisionStream(
 
             #include COLREC_AYZ_RECONSTRUCTION
 
-            #include "includeFiles/conformationTransport\popSave_Ayz.inc"
+            #include "includeFiles/conformationTransport/popSave_Ayz.inc"
            
             fMom[baseIdx + BLOCK_LBM_SIZE * A_YZ_C_INDEX] = AyzVar;
             fMom[baseIdx + BLOCK_LBM_SIZE * A_YZ_CX_INDEX] = Ayz_qx_t30;
@@ -699,7 +699,7 @@ __global__ void gpuMomCollisionStream(
 
             #include COLREC_AZZ_RECONSTRUCTION
 
-            #include "includeFiles/conformationTransport\popSave_Azz.inc"
+            #include "includeFiles/conformationTransport/popSave_Azz.inc"
 
             fMom[baseIdx + BLOCK_LBM_SIZE * A_ZZ_C_INDEX] = AzzVar;
             fMom[baseIdx + BLOCK_LBM_SIZE * A_ZZ_CX_INDEX] = Azz_qx_t30;
