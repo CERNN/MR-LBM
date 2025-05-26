@@ -305,9 +305,9 @@ void totalBcDrag(
     dfloat* sum_BC_Fy;
     dfloat* sum_BC_Fz;
 
-    dfloat* h_BC_Fx;
-    dfloat* h_BC_Fy;
-    dfloat* h_BC_Fz;
+    //dfloat* h_BC_Fx;
+    //dfloat* h_BC_Fy;
+    //dfloat* h_BC_Fz;
    
     cudaMalloc((void**)&sum_BC_Fx, NUM_BLOCK * sizeof(dfloat));
     cudaMalloc((void**)&sum_BC_Fy, NUM_BLOCK * sizeof(dfloat));
@@ -371,9 +371,9 @@ void totalBcDrag(
     strDataInfo <<"step,"<< step<< "," << temp_x<< "," << temp_y<< "," << temp_z;// << "," << mean_counter;
 
     saveTreatData("_totalBcDrag",strDataInfo.str(),step);
-    cudaFree(h_BC_Fx);
-    cudaFree(h_BC_Fy);
-    cudaFree(h_BC_Fz);
+    //cudaFree(h_BC_Fx);
+    //cudaFree(h_BC_Fy);
+    //cudaFree(h_BC_Fz);
    
 
 };
@@ -663,9 +663,7 @@ void computeTurbulentEnergies(
 
 
     //fluctuation values
-    dfloat f_ux = 0;
-    dfloat f_uy = 0;
-    dfloat f_uz = 0;
+    dfloat f_ux, f_uy, f_uz; //NO IDEA WHY IT GIVES A WARNING FOR USED
 
     dfloat f_Sxx = 0;
     dfloat f_Sxy = 0;
