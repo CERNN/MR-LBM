@@ -50,20 +50,20 @@ bb = 1.0;
 //compute source term for the conformation transport
 // G = (1/lambda)*(I-A) + (A . div U + div U^T . A) * 3.0
 //TODO: maybe eq36 is wrong here and it should have  been: G = (1/lambda)*(b*I-a*A) + (A . div U + div U^T . A) * 3.0
-dfloat G_xx = inv_lambda * (bb - aa*AxxVar) + ADU_DUTA_xx_t30/F_M_I_SCALE;
-dfloat G_yy = inv_lambda * (bb - aa*AyyVar) + ADU_DUTA_yy_t30/F_M_I_SCALE;
-dfloat G_zz = inv_lambda * (bb - aa*AzzVar) + ADU_DUTA_zz_t30/F_M_I_SCALE;
+dfloat Gxx = inv_lambda * (bb - aa*AxxVar) + ADU_DUTA_xx_t30/F_M_I_SCALE;
+dfloat Gyy = inv_lambda * (bb - aa*AyyVar) + ADU_DUTA_yy_t30/F_M_I_SCALE;
+dfloat Gzz = inv_lambda * (bb - aa*AzzVar) + ADU_DUTA_zz_t30/F_M_I_SCALE;
 
-dfloat G_xy =  ADU_DUTA_xy_t30/F_M_I_SCALE - inv_lambda * aa * AxyVar;
-dfloat G_xz =  ADU_DUTA_xz_t30/F_M_I_SCALE - inv_lambda * aa * AxzVar;
-dfloat G_yz =  ADU_DUTA_yz_t30/F_M_I_SCALE - inv_lambda * aa * AyzVar;
+dfloat Gxy =  ADU_DUTA_xy_t30/F_M_I_SCALE - inv_lambda * aa * AxyVar;
+dfloat Gxz =  ADU_DUTA_xz_t30/F_M_I_SCALE - inv_lambda * aa * AxzVar;
+dfloat Gyz =  ADU_DUTA_yz_t30/F_M_I_SCALE - inv_lambda * aa * AyzVar;
 
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xx;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xy;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xz;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_yy;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_yz;
-fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_zz;
+//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xx;
+//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xy;
+//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xz;
+//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_yy;
+//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_yz;
+//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_zz;
 
 //if(x == 60 && y == 60 && z == 60)
 //    printf("step %d xx %f \n", step,G_xx);

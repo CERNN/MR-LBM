@@ -188,7 +188,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif
         #ifdef A_XX_DIST
-            dfloat GxxVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XX_C_INDEX];
+            //dfloat GxxVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XX_C_INDEX];
             dfloat invAxx = 1/AxxVar;
             dfloat Axx_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XX_CX_INDEX];
             dfloat Axx_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XX_CY_INDEX];
@@ -211,7 +211,7 @@ __global__ void gpuMomCollisionStream(
                  #include CASE_AXX_BC_DEF
             }else{
                 AxxVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
-                AxxVar = AxxVar + GxxVar;
+                AxxVar = AxxVar + Gxx;
                 invAxx= 1.0/AxxVar;
 
                 Axx_qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
@@ -220,7 +220,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XX_DIST
         #ifdef A_XY_DIST
-            dfloat GxyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XY_C_INDEX];
+            //dfloat GxyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XY_C_INDEX];
             dfloat invAxy = 1/AxyVar;
             dfloat Axy_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XY_CX_INDEX];
             dfloat Axy_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XY_CY_INDEX];
@@ -243,7 +243,7 @@ __global__ void gpuMomCollisionStream(
                     #include CASE_AXY_BC_DEF
             }else{
                 AxyVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
-                AxyVar = AxyVar + GxyVar;
+                AxyVar = AxyVar + Gxy;
                 invAxy= 1.0/AxyVar;
 
                 Axy_qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
@@ -252,7 +252,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XY_DIST
         #ifdef A_XZ_DIST
-            dfloat GxzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XZ_C_INDEX];
+            //dfloat GxzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XZ_C_INDEX];
             dfloat invAxz = 1/AxzVar;
             dfloat Axz_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XZ_CX_INDEX];
             dfloat Axz_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_XZ_CY_INDEX];
@@ -275,7 +275,7 @@ __global__ void gpuMomCollisionStream(
                     #include CASE_AXZ_BC_DEF
             }else{
                 AxzVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
-                AxzVar = AxzVar + GxzVar;
+                AxzVar = AxzVar + Gxz;
                 invAxz= 1.0/AxzVar;
 
                 Axz_qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
@@ -284,7 +284,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_XZ_DIST
         #ifdef A_YY_DIST
-            dfloat GyyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_YY_C_INDEX];
+            //dfloat GyyVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_YY_C_INDEX];
             dfloat invAyy = 1/AyyVar;
             dfloat Ayy_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_YY_CX_INDEX];
             dfloat Ayy_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_YY_CY_INDEX];
@@ -307,7 +307,7 @@ __global__ void gpuMomCollisionStream(
                     #include CASE_AYY_BC_DEF
             }else{
                 AyyVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
-                AyyVar = AyyVar + GyyVar;
+                AyyVar = AyyVar + Gyy;
                 invAyy= 1.0/AyyVar;
 
                 Ayy_qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
@@ -316,7 +316,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_YY_DIST
         #ifdef A_YZ_DIST
-            dfloat GyzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_YZ_C_INDEX];
+            //dfloat GyzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_YZ_C_INDEX];
             dfloat invAyz = 1/AyzVar;
             dfloat Ayz_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_YZ_CX_INDEX];
             dfloat Ayz_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_YZ_CY_INDEX];
@@ -339,7 +339,7 @@ __global__ void gpuMomCollisionStream(
                     #include CASE_AYZ_BC_DEF
             }else{
                 AyzVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
-                AyzVar = AyzVar + GyzVar;
+                AyzVar = AyzVar + Gyz;
                 invAyz= 1.0/AyzVar;
 
                 Ayz_qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
@@ -348,7 +348,7 @@ __global__ void gpuMomCollisionStream(
             }
         #endif //A_YZ_DIST
         #ifdef A_ZZ_DIST
-            dfloat GzzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_ZZ_C_INDEX];
+            //dfloat GzzVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_ZZ_C_INDEX];
             dfloat invAzz = 1/AzzVar;
             dfloat Azz_qx_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_ZZ_CX_INDEX];
             dfloat Azz_qy_t30 = fMom[baseIdx + BLOCK_LBM_SIZE * A_ZZ_CY_INDEX];
@@ -371,7 +371,7 @@ __global__ void gpuMomCollisionStream(
                     #include CASE_AZZ_BC_DEF
             }else{
                 AzzVar = gNode[0] + gNode[1] + gNode[2] + gNode[3] + gNode[4] + gNode[5] + gNode[6] + gNode[7] + gNode[8] + gNode[9] + gNode[10] + gNode[11] + gNode[12] + gNode[13] + gNode[14] + gNode[15] + gNode[16] + gNode[17] + gNode[18];
-                AzzVar = AzzVar + GzzVar;
+                AzzVar = AzzVar + Gzz;
                 invAzz= 1.0/AzzVar;
 
                 Azz_qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
