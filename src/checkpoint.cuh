@@ -22,6 +22,7 @@
 #include "errorDef.h"
 #include "globalFunctions.h"
 #include "var.h"
+#include "../particles/class/Particle.hpp"
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -86,6 +87,23 @@ void writeFileIntoArray(
 );
 
 /**
+*   @brief Writes dfloat3SoA GPU arrays content into files
+*
+*   @param arr GPU arrays to read content from
+*   @param foldername Foldername to save files to
+*   @param arr_size_bytes Size in bytes to write for each file. If zero, reads whole file
+*   @param tmp Temporary array used to read from file (already allocated, 
+*                make sure that the file content fits in it)
+*/
+__host__ 
+void writeFilesIntoDfloat3SoA(
+    dfloat3SoA arr, 
+    const std::string foldername, 
+    const size_t arr_size_bytes, 
+    void* tmp
+);  
+
+/**
 *   @brief Get the checkpoint filename to read from
 *   
 *   @param name Field name (such as "rho", "u", etc.)
@@ -96,6 +114,23 @@ std::string getCheckpointFilenameRead(
     std::string name
 );
 
+/**
+*   @brief Reads files contents into dfloat3SoA GPU arrays
+*
+*   @param arr GPU arrays to write content to
+*   @param foldername Foldername to read files from
+*   @param arr_size_bytes Size in bytes to read for each file. 
+*   @param tmp Temporary array used to write to file (already allocated, 
+*                make sure that the file content fits in it)
+*/
+__host__
+void readFilesIntoDfloat3SoA(
+    dfloat3SoA arr, 
+    const std::string foldername, 
+    const size_t arr_size_bytes, 
+    void* tmp
+);
+  
 /**
 *   @brief Get the checkpoint filename to write to
 *   
@@ -124,6 +159,14 @@ void operateSimCheckpoint(
     int* step
 );
 
+__host__
+void operateSimCheckpoint( 
+    int oper,
+   // dfloat* fMom,
+   // ghostInterfaceData ghostInterface,
+   ParticlesSoA particlesSoA,
+    int* step
+);
 
 /**
 *   @brief Load simulation checkpoint
@@ -152,6 +195,32 @@ __host__
 void saveSimCheckpoint( 
     dfloat* fMom,
     ghostInterfaceData ghostInterface,
+    int *step
+);
+
+/**
+*   @brief Load simulation checkpoint IBM
+*
+*   @param particlesSoA Particles
+*   @param step Pointer to current step value in main
+*   @return 0 = fail to load checkpoint, 1 = load success;
+*/
+__host__
+int loadSimCheckpointIBM( 
+    ParticlesSoA particlesSoA,
+    int *step
+);
+
+
+/**
+*   @brief Save simulation checkpoint IMB
+*
+*   @param particlesSoA particle
+*   @param step Pointer to current step value in main
+*/
+__host__
+void saveSimCheckpointIMB( 
+    ParticlesSoA particlesSoA,
     int *step
 );
 

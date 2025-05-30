@@ -562,6 +562,19 @@ __host__ __device__
 dfloat6 rotate_inertia_by_quart(dfloat4 q, dfloat6 I6);
 
 
+/*
+*   @brief Evaluate the position of the element of a 3D matrix ([NX][NY][NZ+2*MACR_BORDER_NODES]) 
+*         in a 1D array
+*   @param x: x axis value
+*   @param y: y axis value
+*   @param z: z axis value (-MACR_BORDER_NODES <= z < NZ+MACR_BORDER_NODES)
+*   @return element index
+*/
+__host__ __device__
+size_t __forceinline__ idxScalarWBorder(unsigned int x, unsigned int y, unsigned int z)
+{
+    return NX * ((size_t)NY*(z+MACR_BORDER_NODES) + y) + x;
+}
 
 
 
