@@ -59,17 +59,17 @@ if(step%2 == 0){
 
 
 // Compute derivatives
-dfloat dCxxdx = (Cxx_xp1 - Cxx_xm1) / 2;
-dfloat dCxydy = (Cxy_yp1 - Cxy_ym1) / 2;
-dfloat dCxzdz = (Cxz_zp1 - Cxz_zm1) / 2;
+dfloat dCxxdx = (Cxx_xp1 - Cxx_xm1) *0.5;
+dfloat dCxydy = (Cxy_yp1 - Cxy_ym1) *0.5;
+dfloat dCxzdz = (Cxz_zp1 - Cxz_zm1) *0.5;
 
-dfloat dCxydx = (Cxy_xp1 - Cxy_xm1) / 2;
-dfloat dCyydy = (Cyy_yp1 - Cyy_ym1) / 2;
-dfloat dCyzdz = (Cyz_zp1 - Cyz_zm1) / 2;
+dfloat dCxydx = (Cxy_xp1 - Cxy_xm1) *0.5;
+dfloat dCyydy = (Cyy_yp1 - Cyy_ym1) *0.5;
+dfloat dCyzdz = (Cyz_zp1 - Cyz_zm1) *0.5;
 
-dfloat dCxzdx = (Cxz_xp1 - Cxz_xm1) / 2;
-dfloat dCyzdy = (Cyz_yp1 - Cyz_ym1) / 2;
-dfloat dCzzdz = (Czz_zp1 - Czz_zm1) / 2;
+dfloat dCxzdx = (Cxz_xp1 - Cxz_xm1) *0.5;
+dfloat dCyzdy = (Cyz_yp1 - Cyz_ym1) *0.5;
+dfloat dCzzdz = (Czz_zp1 - Czz_zm1) *0.5;
 
 if ((nodeType & 0b01010101) == 0b01010101) { // wall west
     dCxxdx = (Cxx_xp1 - CxxVar);

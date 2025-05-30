@@ -186,17 +186,17 @@ dfloat4 compute_rotation_quart(dfloat3 v1, dfloat3 v2) {
     dfloat dot = dot_product(v1, v2);
 
     // Calculate the angle of rotation
-    dfloat angle = acos(dot);
+    dfloat angle_d2 = acosf(dot)*0.5;
 
     // Calculate the axis of rotation
     dfloat3 axis = cross_product(v1, v2);
     axis = vector_normalize(axis);
 
     dfloat4 q;
-    q.w = cos(angle / 2.0);
-    q.x = axis.x * sin(angle / 2.0);
-    q.y = axis.y * sin(angle / 2.0);
-    q.z = axis.z * sin(angle / 2.0);
+    q.w = cosf(angle_d2 );
+    q.x = axis.x * sinf(angle_d2);
+    q.y = axis.y * sinf(angle_d2);
+    q.z = axis.z * sinf(angle_d2);
 
     return q;
 }
@@ -204,15 +204,15 @@ dfloat4 compute_rotation_quart(dfloat3 v1, dfloat3 v2) {
 __host__ __device__
 dfloat4 axis_angle_to_quart(dfloat3 axis, dfloat angle) {
     dfloat4 q;
-    
+    angle = angle*0.5;
     // Normalize the axis of rotation
     axis = vector_normalize(axis);
     
     // Compute the quaternion
-    q.w = cos(angle / 2.0);
-    q.x = axis.x * sin(angle / 2.0);
-    q.y = axis.y * sin(angle / 2.0);
-    q.z = axis.z * sin(angle / 2.0);
+    q.w = cosf(angle);
+    q.x = axis.x * sinf(angle);
+    q.y = axis.y * sinf(angle);
+    q.z = axis.z * sinf(angle);
     
     return q;
 }

@@ -49,15 +49,15 @@ __global__ void gpuMomCollisionStream(
         //dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat omegaVar = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
         dfloat t_omegaVar = 1 - omegaVar;
-        dfloat tt_omegaVar = 1 - omegaVar/2;
-        dfloat omegaVar_d2 = omegaVar / 2;
-        dfloat tt_omega_t3 = tt_omegaVar * 3;
+        dfloat tt_omegaVar = 1 - omegaVar*0.5;
+        dfloat omegaVar_d2 = omegaVar*0.5;
+        dfloat tt_omega_t3 = tt_omegaVar * 3.0;
     #else
         const dfloat omegaVar = OMEGA;
         const dfloat t_omegaVar = 1 - omegaVar;
-        const dfloat tt_omegaVar = 1 - omegaVar/2;
-        const dfloat omegaVar_d2 = omegaVar / 2;
-        const dfloat tt_omega_t3 = tt_omegaVar * 3;
+        const dfloat tt_omegaVar = 1 - omegaVar*0.5;
+        const dfloat omegaVar_d2 = omegaVar*0.5;
+        const dfloat tt_omega_t3 = tt_omegaVar * 3.0;
     #endif
     
     /*
@@ -561,8 +561,8 @@ __global__ void gpuMomCollisionStream(
                 omegaVar = 1.0/(TAU + tau_t);
             #endif
             t_omegaVar = 1 - omegaVar;
-            tt_omegaVar = 1 - 0.5*omegaVar;
-            omegaVar_d2 = omegaVar / 2.0;
+            tt_omegaVar = 1 - omegaVar*0.5;
+            omegaVar_d2 = omegaVar*0.5;
             tt_omega_t3 = tt_omegaVar * 3.0;
     #endif 
     
