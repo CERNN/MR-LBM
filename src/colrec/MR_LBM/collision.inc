@@ -1,7 +1,7 @@
 
-ux_t30 = ux_t30 + 3*invRho * L_Fx;
-uy_t30 = uy_t30 + 3*invRho * L_Fy;
-uz_t30 = uz_t30 + 3*invRho * L_Fz;
+ux_t30 = ux_t30 + 3.0*invRho * L_Fx;
+uy_t30 = uy_t30 + 3.0*invRho * L_Fy;
+uz_t30 = uz_t30 + 3.0*invRho * L_Fz;
 
 //equation 90
 dfloat invRho_mt15 = 3*invRho/2;

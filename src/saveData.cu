@@ -287,13 +287,13 @@ void writeBigEndian(std::ofstream& ofs, const T* data, size_t count) {
     for (size_t i = 0; i < count; ++i) {
         if constexpr (sizeof(T) == 4) {
             uint32_t tmp;
-            std::memcpy(&tmp, &data[i], 4);
+            memcpy(&tmp, &data[i], 4);
             tmp = swap32(tmp);
             ofs.write(reinterpret_cast<char*>(&tmp), 4);
         }
         else if constexpr (sizeof(T) == 8) {
             uint64_t tmp;
-            std::memcpy(&tmp, &data[i], 8);
+            memcpy(&tmp, &data[i], 8);
             tmp = swap64(tmp);
             ofs.write(reinterpret_cast<char*>(&tmp), 8);
         }
