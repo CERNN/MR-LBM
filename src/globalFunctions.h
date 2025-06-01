@@ -565,6 +565,4 @@ dfloat6 rotate_inertia_by_quart(dfloat4 q, dfloat6 I6);
 
 
 
-
-
 #endif // !__GLOBAL_FUNCTIONS_H

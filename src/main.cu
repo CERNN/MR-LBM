@@ -118,6 +118,9 @@ int main() {
     dfloat** randomNumbers = nullptr; // useful for turbulence
     randomNumbers = (dfloat**)malloc(sizeof(dfloat*));
 
+   // Populations* pop;
+   // Macroscopics* macr;
+
     allocateHostMemory(
         &h_fMom, &rho, &ux, &uy, &uz
         OMEGA_FIELD_PARAMS_PTR
@@ -179,6 +182,17 @@ int main() {
 
     printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
     
+    #ifdef PARTICLE_MODEL
+        //memory allocation for particles in host and device
+        ParticlesSoA particlesSoA;
+        Particle *particles;
+        particles = (Particle*) malloc(sizeof(Particle)*NUM_PARTICLES);
+        
+        // particle initialization with position, velocity, and solver method
+        initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
+
+    #endif
+
     /* ------------------------------ TIMER EVENTS  ------------------------------ */
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     cudaEvent_t start, stop, start_step, stop_step;
@@ -204,6 +218,7 @@ int main() {
         bool save =false;
         bool reportSave = false;
         bool macrSave = false;
+        bool particleSave = false;
 
 #pragma warning(push)
 #pragma warning(disable: 4804)
@@ -252,6 +267,12 @@ int main() {
             interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
             #endif                 
             saveSimCheckpoint(h_fMom, ghostInterface, &step);
+
+            #ifdef PARTICLE_MODEL
+            saveSimCheckpointParticle(particlesSoA, &step);
+            #endif
+            
+
         }
        
         
@@ -333,6 +354,12 @@ int main() {
                 totalBcDrag(d_BC_Fx, d_BC_Fy, d_BC_Fz, step);
             #endif
         }
+
+        #ifdef PARTICLE_MODEL
+        if (particleSave){
+            //saveParticlesInfo(particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+        }
+        #endif
 
     } 
     /* --------------------------------------------------------------------- */
@@ -461,6 +488,8 @@ int main() {
     cudaFree(ux);
     cudaFree(uy);
     cudaFree(uz);
+
+    // Free particle
 
     #ifdef SECOND_DIST 
     cudaFree(C);

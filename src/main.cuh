@@ -15,6 +15,13 @@
 #include "globalStructs.h"
 #include "auxFunctions.cuh"
 #include "treatData.cuh"
+
+#ifdef PARTICLE_MODEL
+    #include "./particles/class/Particle.cuh"
+    #include "./particles/utils/partiClesReport.cuh"
+    #include "./particles/particlesBoundaryCondition.h"
+#endif
+
 #ifdef OMEGA_FIELD
     #include "nnf.h"
 #endif
@@ -1000,5 +1007,40 @@ void initializeDomain(
     #endif
 }
 
+
+#ifdef PARTICLE_MODEL
+__host__
+void initializeParticle(ParticlesSoA particlesSoA, Particle *particles, int *step, dim3 gridBlock, dim3 threadBlock){
+
+    printf("Creating particles...\t"); fflush(stdout);
+    particlesSoA.createParticles(particles);
+    printf("Particles created!\n"); fflush(stdout);
+
+    particlesSoA.updateParticlesAsSoA(particles);
+
+    int checkpoint_state = 0;
+    // Checar se exite checkpoint
+    if(LOAD_CHECKPOINT)
+    {
+        checkpoint_state = loadSimCheckpointParticle(particlesSoA, step);
+       
+    }else{
+        if(checkpoint_state != 0){
+            step = INI_STEP;
+            dim3 gridInit = gridBlock;
+            // Initialize ghost nodes
+            gridInit.z += 1;
+            
+            checkCudaErrors(cudaSetDevice(GPU_INDEX));
+            // Initialize populations
+           // gpuInitialization<<<gridInit, threads>>>(pop[i], macr[i], randomNumbers[i]);
+            checkCudaErrors(cudaDeviceSynchronize());
+
+            getLastCudaError("Initialization error");
+        }
+    }
+
+}
+#endif // PARTICLE_MODEL
 
 #endif // MAIN_CUH

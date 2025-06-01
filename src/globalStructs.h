@@ -141,6 +141,149 @@ typedef struct dfloat6{
 } dfloat6;
 
 
+typedef struct dfloat3SoA {
+    int varLocation; // IN_VIRTUAL or IN_HOST
+    dfloat* x; // x array
+    dfloat* y; // y array
+    dfloat* z; // z array
+
+    __host__ __device__
+    dfloat3SoA()
+    {
+        varLocation = 0;
+        x = nullptr;
+        y = nullptr;
+        z = nullptr;
+    }
+
+    __host__ __device__
+    ~dfloat3SoA()
+    {
+        varLocation = 0;
+        x = nullptr;
+        y = nullptr;
+        z = nullptr;
+    }
+
+    /**
+    *   @brief Allocate memory for SoA
+    *   
+    *   @param arraySize: array size, in number of elements
+    *   @param location: array location, IN_VIRTUAL or IN_HOST
+    */
+    __host__
+    void allocateMemory(size_t arraySize, int location = IN_VIRTUAL){
+        size_t memSize = sizeof(dfloat) * arraySize;
+
+        this->varLocation = location;
+        switch(location){
+        case IN_VIRTUAL:
+            checkCudaErrors(cudaMallocManaged((void**)&(this->x), memSize));
+            checkCudaErrors(cudaMallocManaged((void**)&(this->y), memSize));
+            checkCudaErrors(cudaMallocManaged((void**)&(this->z), memSize));
+            break;
+        case IN_HOST:
+            checkCudaErrors(cudaMallocHost((void**)&(this->x), memSize));
+            checkCudaErrors(cudaMallocHost((void**)&(this->y), memSize));
+            checkCudaErrors(cudaMallocHost((void**)&(this->z), memSize));
+            break;
+        default:
+            break;
+        }
+    }
+
+    /**
+    *   @brief Free memory of SoA
+    */
+    __host__
+    void freeMemory(){
+        switch (this->varLocation)
+        {
+        case IN_VIRTUAL:
+            checkCudaErrors(cudaFree(this->x));
+            checkCudaErrors(cudaFree(this->y));
+            checkCudaErrors(cudaFree(this->z));
+            break;
+
+        case IN_HOST:
+            checkCudaErrors(cudaFreeHost(this->x));
+            checkCudaErrors(cudaFreeHost(this->y));
+            checkCudaErrors(cudaFreeHost(this->z));
+            break;
+        default:
+            break;
+        }
+    }
+
+   
+
+    /**
+    *   @brief Copy values from another dfloat3SoA array
+    *   
+    *   @param arrayRef: arrays to copy values
+    *   @param memSize: size of memory to copy, in bytes
+    *   @param baseIdx: base index for this
+    *   @param baseIdxRef: base index for arrayRef
+    */
+   __host__
+    void copyFromDfloat3SoA(dfloat3SoA arrayRef, size_t memSize, size_t baseIdx=0, size_t baseIdxRef=0){
+
+        cudaStream_t streamX, streamY, streamZ;
+        checkCudaErrors(cudaStreamCreate(&(streamX)));
+        checkCudaErrors(cudaStreamCreate(&(streamY)));
+        checkCudaErrors(cudaStreamCreate(&(streamZ)));
+
+        checkCudaErrors(cudaMemcpyAsync(this->x+baseIdx, arrayRef.x+baseIdxRef, 
+            memSize, cudaMemcpyDefault, streamX));
+        checkCudaErrors(cudaMemcpyAsync(this->y+baseIdx, arrayRef.y+baseIdxRef, 
+            memSize, cudaMemcpyDefault, streamY));
+        checkCudaErrors(cudaMemcpyAsync(this->z+baseIdx, arrayRef.z+baseIdxRef, 
+            memSize, cudaMemcpyDefault, streamZ));
+
+        checkCudaErrors(cudaStreamSynchronize(streamX));
+        checkCudaErrors(cudaStreamSynchronize(streamY));
+        checkCudaErrors(cudaStreamSynchronize(streamZ));
+
+        checkCudaErrors(cudaStreamDestroy(streamX));
+        checkCudaErrors(cudaStreamDestroy(streamY));
+        checkCudaErrors(cudaStreamDestroy(streamZ));
+    }
+
+    /**
+    *   @brief Copy value from dfloat3
+    *   
+    *   @param val: dfloat3 to copy values
+    *   @param idx: index to write values to
+    */
+    __host__ __device__
+    void copyValuesFromFloat3(dfloat3 val, size_t idx){
+        this->x[idx] = val.x;
+        this->y[idx] = val.y;
+        this->z[idx] = val.z;
+    }
+
+    /**
+    *   @brief Get the falues from given index
+    *   
+    *   @param idx: index to copy from
+    *   @return dfloat3: dfloat3 with values
+    */
+    __host__ __device__
+    dfloat3 getValuesFromIdx(size_t idx){
+        return dfloat3(this->x[idx], this->y[idx], this->z[idx]);
+    }
+
+    __host__ __device__
+    void leftShift(size_t idx, size_t left_shift){
+        this->x[idx-left_shift] = this->x[idx];
+        this->y[idx-left_shift] = this->y[idx];
+        this->z[idx-left_shift] = this->z[idx];
+    }
+
+} dfloat3SoA;
+
+
+
 typedef struct ghostData {
     dfloat* X_0;
     dfloat* X_1;
