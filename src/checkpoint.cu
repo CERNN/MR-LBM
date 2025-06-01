@@ -362,6 +362,7 @@ void operateSimCheckpoint(
     free(tmp);
 }
 
+#ifdef PARTICLE_MODEL
 /**
 *   @brief Operation over checkpoint, save or load 
 *   
@@ -372,7 +373,7 @@ void operateSimCheckpoint(
 *   @param step Pointer to current step value in main
 */
 __host__
-void operateSimCheckpointIBM( 
+void operateSimCheckpoint( 
     int oper,
     ParticlesSoA particlesSoA,
     int* step
@@ -449,6 +450,7 @@ void operateSimCheckpointIBM(
 
     free(tmp);
 }
+#endif //PARTICLE_MODEL
 
 __host__
 int getStep(){
@@ -503,6 +505,27 @@ int loadSimCheckpoint(
     return 1;
 }
 
+#ifdef PARTICLE_MODEL
+__host__
+int loadSimCheckpointParticle( 
+    ParticlesSoA particlesSoA,
+    int *step
+    ){
+    step[0] = getStep();
+
+    if(step[0] < INI_STEP)
+        step[0]=INI_STEP;
+
+    if (step[0]<=0){
+        std::cerr << "Starting from step " << step[0] << std::endl;
+        return 0;
+    }
+    operateSimCheckpoint(__LOAD_CHECKPOINT, particlesSoA, step);
+    return 1;
+}
+#endif
+
+
 __host__
 void saveSimCheckpoint( 
     dfloat* fMom,
@@ -517,47 +540,9 @@ void saveSimCheckpoint(
     operateSimCheckpoint(__SAVE_CHECKPOINT, fMom,ghostInterface, step);
 }
 
+#ifdef PARTICLE_MODEL
 __host__
-int loadSimCheckpointIBM( 
-    dfloat* fMom,
-    ghostInterfaceData ghostInterface,
-    int *step
-    ){
-    step[0] = getStep();
-
-    if(step[0] < INI_STEP)
-        step[0]=INI_STEP;
-
-    if (step[0]<=0){
-        std::cerr << "Starting from step " << step[0] << std::endl;
-        return 0;
-    }
-    operateSimCheckpoint(__LOAD_CHECKPOINT, fMom, ghostInterface,step);
-    return 1;
-    
-}
-
-__host__
-int operateSimCheckpointIBM( 
-    ParticlesSoA particlesSoA,
-    int *step
-    ){
-    //operateSimCheckpoint(__LOAD_CHECKPOINT, pop, macr, particlesSoA, step);
-    step[0] = getStep();
-
-    if(step[0] < INI_STEP)
-        step[0]=INI_STEP;
-
-    if (step[0]<=0){
-        std::cerr << "Starting from step " << step[0] << std::endl;
-        return 0;
-    }
-    operateSimCheckpoint(__LOAD_CHECKPOINT, particlesSoA, step);
-    return 1;
-}
-
-__host__
-void saveSimCheckpointIBM( 
+void saveSimCheckpointParticle( 
     ParticlesSoA particlesSoA,
     int *step
     ){
@@ -566,21 +551,6 @@ void saveSimCheckpointIBM(
     foldername += ID_SIM;
     foldername += "\\\\checkpoint";
     createFolder(foldername);
-    operateSimCheckpointIBM(__SAVE_CHECKPOINT, particlesSoA, step);
-}
-
-
-
-__host__
-void saveSimCheckpointIBM( 
-    ParticlesSoA particlesSoA,
-    int *step
-    ){
-    std::string foldername = PATH_FILES; 
-    foldername += "\\\\";
-    foldername += ID_SIM;
-    foldername += "\\\\checkpoint";
-    createFolder(foldername);
-    //operateSimCheckpoint(__SAVE_CHECKPOINT, pop, macr, particlesSoA, step);
     operateSimCheckpoint(__SAVE_CHECKPOINT, particlesSoA, step);
 }
+#endif

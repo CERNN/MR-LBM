@@ -1,20 +1,14 @@
 #ifndef __PARTICLE_H
 #define __PARTICLE_H
 
-//#include "../models/ibm/ibmVar.h"
-//#include "../../globalStructs.h"
-#include "ParticleCenter.hpp"
-//#include "../../var.h"
-//#include "ParticleNode.hpp"
-//#include "IbmMacrsAux.hpp"
 
-// After use_math_defines in "var.h"
+#include "ParticleCenter.cuh"
 #include <math.h>
 
 /*
 *   Struct for particle representation
 */
-enum ParticleMethod { PIBM, IBM };
+enum ParticleMethod {none,PIBM, IBM };
 
 class Particle {
     public:

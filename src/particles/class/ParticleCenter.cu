@@ -1,4 +1,4 @@
-#include "ParticleCenter.hpp"
+#include "ParticleCenter.cuh"
 #include <iostream>
 
 // Class TangentialCollisionTracker

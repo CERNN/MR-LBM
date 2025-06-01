@@ -183,13 +183,13 @@ int main() {
     printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
     
     #ifdef PARTICLE_MODEL
-    // alocação de memória na gpu e host e device
-    ParticlesSoA particlesSoA;
-    Particle *particles;
-    particles = (Particle*) malloc(sizeof(Particle)*NUM_PARTICLES);
-    
-    // inicialização das particulas, posição e velocidade chamar particle iclude do caso
-    initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
+        //memory allocation for particles in host and device
+        ParticlesSoA particlesSoA;
+        Particle *particles;
+        particles = (Particle*) malloc(sizeof(Particle)*NUM_PARTICLES);
+        
+        // particle initialization with position, velocity, and solver method
+        initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
 
     #endif
 
@@ -269,7 +269,7 @@ int main() {
             saveSimCheckpoint(h_fMom, ghostInterface, &step);
 
             #ifdef PARTICLE_MODEL
-            saveSimCheckpointIMB(particlesSoA, &step);
+            saveSimCheckpointParticle(particlesSoA, &step);
             #endif
             
 
@@ -357,7 +357,7 @@ int main() {
 
         #ifdef PARTICLE_MODEL
         if (particleSave){
-            saveParticlesInfo(particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+            //saveParticlesInfo(particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
         }
         #endif
 

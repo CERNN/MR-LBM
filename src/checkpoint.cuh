@@ -22,8 +22,9 @@
 #include "errorDef.h"
 #include "globalFunctions.h"
 #include "var.h"
-#include "../particles/class/Particle.hpp"
-
+#ifdef PARTICLE_MODEL
+    #include "particles/class/Particle.cuh"
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -159,14 +160,15 @@ void operateSimCheckpoint(
     int* step
 );
 
+#ifdef PARTICLE_MODEL
 __host__
-void operateSimCheckpoint( 
+void operateSimCheckpoinT( 
     int oper,
-   // dfloat* fMom,
-   // ghostInterfaceData ghostInterface,
-   ParticlesSoA particlesSoA,
+    ParticlesSoA particlesSoA,
     int* step
 );
+#endif
+
 
 /**
 *   @brief Load simulation checkpoint
@@ -182,6 +184,20 @@ int loadSimCheckpoint(
     ghostInterfaceData ghostInterface,
     int *step
 );
+#ifdef PARTICLE_MODEL
+/**
+*   @brief Load simulation checkpoint IBM
+*
+*   @param particlesSoA Particles
+*   @param step Pointer to current step value in main
+*   @return 0 = fail to load checkpoint, 1 = load success;
+*/
+__host__
+int loadSimCheckpointParticle( 
+    ParticlesSoA particlesSoA,
+    int *step
+);
+#endif
 
 
 /**
@@ -198,19 +214,7 @@ void saveSimCheckpoint(
     int *step
 );
 
-/**
-*   @brief Load simulation checkpoint IBM
-*
-*   @param particlesSoA Particles
-*   @param step Pointer to current step value in main
-*   @return 0 = fail to load checkpoint, 1 = load success;
-*/
-__host__
-int loadSimCheckpointIBM( 
-    ParticlesSoA particlesSoA,
-    int *step
-);
-
+#ifdef PARTICLE_MODEL
 
 /**
 *   @brief Save simulation checkpoint IMB
@@ -219,26 +223,11 @@ int loadSimCheckpointIBM(
 *   @param step Pointer to current step value in main
 */
 __host__
-void saveSimCheckpointIMB( 
+void saveSimCheckpointParticle( 
     ParticlesSoA particlesSoA,
     int *step
 );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#endif
 
 
 

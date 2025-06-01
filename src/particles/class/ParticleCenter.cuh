@@ -2,9 +2,9 @@
 #define __PARTICLE_CENTER_H
 
 #include "../../globalStructs.h"
-#include "../models/ibm/ibmVar.h"
-#include "../models/dem/collisionVar.h"
 #include "../../var.h"
+//#include "../models/ibm/ibmVar.h"
+#include "../models/dem/collisionVar.h"
 
 
 typedef struct collisionData {

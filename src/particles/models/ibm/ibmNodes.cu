@@ -1,8 +1,44 @@
-#include "particleNode.h"
-#include "particle.h"
+/*
+*   @file particleCenter.h
+*   @author Marco Aurelio Ferrari. (marcoferrari@alunos.utfpr.edu.br)
+*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
+*   @author Ricardo de Souza (rsouza.1996@alunos.utfpr.edu.br)
+*   @brief Class for IBM particle center
+*   @version 0.3.0
+*   @date 16/05/2025
+*/
+
+#include "ibmNodes.cuh"
+#include "../../class/Particle.cuh"
+#include "../../class/ParticleCenter.cuh"
+
+// Definitions class ParticleNode
+
+ParticleNode::ParticleNode()
+    : pos(), vel(), vel_old(), f(), deltaF(), S() {}
+
+dfloat3 ParticleNode::getPos() const { return this->pos; }
+void ParticleNode::setPos(const dfloat3& Pos) { this->pos = Pos; }
+
+dfloat3 ParticleNode::getVel() const { return this->vel; }
+void ParticleNode::setVel(const dfloat3& vel) { this->vel = vel; }
+
+dfloat3 ParticleNode::getVelOld() const { return this->vel_old; }
+void ParticleNode::setVelOld(const dfloat3& vel_old) { this->vel_old = vel_old; }
+
+dfloat3 ParticleNode::getF() const { return this->f; }
+void ParticleNode::setF(const dfloat3& f) { this->f = f; }
+
+dfloat3 ParticleNode::getDeltaF() const { return this->deltaF; }
+void ParticleNode::setDeltaF(const dfloat3& deltaF) { this->deltaF = deltaF; }
+
+float ParticleNode::getS() const { return this->S; }
+void ParticleNode::setS(const dfloat& S) { this->S = S; }
+
+// Definitions class ParticleNodeSoA
 
 __host__ __device__
-ParticleNodeSoA::particleNodeSoA()
+ParticleNodeSoA::ParticleNodeSoA(/* args */)
 {
     this->S = nullptr;
     this->particleCenterIdx = nullptr;
@@ -10,14 +46,39 @@ ParticleNodeSoA::particleNodeSoA()
 }
 
 __host__ __device__
-ParticleNodeSoA::~particleNodeSoA()
+ParticleNodeSoA::~ParticleNodeSoA()
 {
     this->S = nullptr;
     this->particleCenterIdx = nullptr;
     this->numNodes = 0;
 }
 
-#ifdef IBM
+unsigned int ParticleNodeSoA::getNumNodes() const { return  this->numNodes; }
+void ParticleNodeSoA::setNumNodes(const int numNodes) { this->numNodes = numNodes; }
+
+const unsigned int* ParticleNodeSoA::getParticleCenterIdx() const { return this->particleCenterIdx; }
+void ParticleNodeSoA::setParticleCenterIdx(unsigned int* particleCenterIdx) { this->particleCenterIdx = particleCenterIdx; }
+
+dfloat3SoA ParticleNodeSoA::getPos() const { return this->pos; }
+void ParticleNodeSoA::setPos(const dfloat3SoA& pos) { this->pos = pos; }
+
+dfloat3SoA ParticleNodeSoA::getVel() const { return this->vel; }
+void ParticleNodeSoA::setVel(const dfloat3SoA& vel) { this->vel = vel; }
+
+dfloat3SoA ParticleNodeSoA::getVelOld() const { return this->vel_old; }
+void ParticleNodeSoA::setVelOld(const dfloat3SoA& vel_old) { this->vel_old = vel_old; }
+
+dfloat3SoA ParticleNodeSoA::getF() const { return this->f; }
+void ParticleNodeSoA::setF(const dfloat3SoA& f) { this->f = f; }
+
+dfloat3SoA ParticleNodeSoA::getDeltaF() const { return this->deltaF; }
+void ParticleNodeSoA::setDeltaF(const dfloat3SoA& deltaF) { this->deltaF = deltaF; }
+
+dfloat* ParticleNodeSoA::getS() const { return this->S; }
+void ParticleNodeSoA::setS(dfloat* S) { this->S = S; }
+
+
+
 void ParticleNodeSoA::allocateMemory(unsigned int numMaxNodes)
 {
     this->pos.allocateMemory((size_t) numMaxNodes);
@@ -46,10 +107,12 @@ void ParticleNodeSoA::freeMemory()
     cudaFree(this->particleCenterIdx);
 }
 
+
 bool is_inside_gpu(dfloat3 pos, unsigned int n_gpu){
     return pos.z >= n_gpu*NZ && pos.z < (n_gpu+1)*NZ;
 }
 
+/*
 void ParticleNodeSoA::copyNodesFromParticle(Particle p, unsigned int pCenterIdx, unsigned int n_gpu)
 {
     const int baseIdx = this->numNodes;
@@ -72,6 +135,7 @@ void ParticleNodeSoA::copyNodesFromParticle(Particle p, unsigned int pCenterIdx,
 
     this->numNodes += nodesAdded;
 }
+*/
 
 void ParticleNodeSoA::leftShiftNodesSoA(int idx, int left_shift){
     this->particleCenterIdx[idx-left_shift] = this->particleCenterIdx[idx];
@@ -83,4 +147,6 @@ void ParticleNodeSoA::leftShiftNodesSoA(int idx, int left_shift){
     this->deltaF.leftShift(idx, left_shift);
 }
 
-#endif // !IBM
+
+
+

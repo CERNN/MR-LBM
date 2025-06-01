@@ -11,18 +11,13 @@
 #define __IBM_VAR_H
 
 #include "../../../var.h"
-#include "../../ibmBoundaryCondition.h"
 #include <stdio.h>
 #include <math.h>
 
 
 /* -------------------------- IBM GENERAL DEFINES --------------------------- */
-// Total number of IB particles in the system
-#define NUM_PARTICLES 1
 // Number of IBM inner iterations
 #define IBM_MAX_ITERATION 1
-// Particles diameters
-#define PARTICLE_DIAMETER (20)
 // Change to location of nodes http://dx.doi.org/10.1016/j.jcp.2012.02.026
 #define BREUGEM_PARAMETER (0.0)
 // Mesh scale for IBM, minimum distance between nodes (lower, more nodes in particle)

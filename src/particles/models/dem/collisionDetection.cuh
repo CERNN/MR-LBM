@@ -1,0 +1,5 @@
+#ifndef __IBM_COLLISION_DETECTION_H
+#define __IBM_COLLISION_DETECTION_H
+
+
+#endif // !__IBM_COLLISION_H

@@ -10,7 +10,7 @@ dfloat clamp01(dfloat value) {
 
 __host__ __device__
 dfloat3 vector_lerp(dfloat3 v1, dfloat3 v2, dfloat t) {
-    return (dfloat3)(v1.x + t * (v2.x - v1.x), v1.y + t * (v2.y - v1.y), v1.z + t * (v2.z - v1.z));
+    return dfloat3(v1.x + t * (v2.x - v1.x), v1.y + t * (v2.y - v1.y), v1.z + t * (v2.z - v1.z));
 }
 
 __device__

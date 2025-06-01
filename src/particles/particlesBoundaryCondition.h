@@ -9,8 +9,8 @@
 #ifndef __IBM_BC_H
 #define __IBM_BC_H
 
-#include "../../var.h"
-#include "ibmVar.h"
+#include "../var.h"
+
 #include <stdio.h>
 #include <math.h>
 

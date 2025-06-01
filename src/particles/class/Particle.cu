@@ -1,8 +1,8 @@
-#include "Particle.hpp"
+#include "Particle.cuh"
 #include <cstdlib>
 
 Particle::Particle(){
-    method = PIBM; // Initialize method
+    method = none; // Initialize method
 }
 
 ParticleMethod Particle::getMethod() const {return this->method;}

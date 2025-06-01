@@ -11,7 +11,7 @@
 #include <random>
 
 
-#define NUM_PARTICLES 512
+#define T_NUM_PARTICLES 512
 
 #define STENCIL_4 // Peskin Stencil
 

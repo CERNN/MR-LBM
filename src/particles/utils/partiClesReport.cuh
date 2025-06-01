@@ -14,7 +14,7 @@
 #include <string>
 #include <sstream>
 //#include "../lbmReport.h"
-#include "../class/Particle.hpp"
+#include "../class/Particle.cuh"
 #include "../../saveData.cuh"
 
 /**

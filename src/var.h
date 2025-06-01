@@ -99,8 +99,6 @@ constexpr bool console_flush = false;
 
 #define CASE_PARTICLE_CREATE STR(CASE_DIRECTORY/BC_PROBLEM/particleCreation.inc)
 
-#define CASE_PARTICLE_CREATE STR(CASE_DIRECTORY/BC_PROBLEM/particleCreation.inc)
-
 // Some compiler timer functions and auxiliaty compute macros
 
 #ifndef myMax

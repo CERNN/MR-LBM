@@ -72,28 +72,41 @@ constexpr dfloat GY = 0.0;
 constexpr dfloat GZ = -5e-5; //-1.179430e-03/SCALE/SCALE/SCALE;
 
 
-#ifdef DEM_METHOD
-constexpr dfloat PP_FRICTION_COEF = 0.1; // friction coeficient particle particle -- case
-constexpr dfloat PW_FRICTION_COEF = 0.1; // friction coeficient particle wall -- case
-constexpr dfloat PP_REST_COEF = 0.9; // restitution coeficient particle particle -- case
-constexpr dfloat PW_REST_COEF = 0.9; // restitution coeficient particle wall-- case
-//#define REST_COEF_CORRECTION
+
+#ifdef PARTICLE_MODEL
+
+//number of particles
+#define NUM_PARTICLES 1
+// Particles diameters
+#define PARTICLE_DIAMETER (20)
 
 
-//material properties
-constexpr dfloat PARTICLE_YOUNG_MODULUS = 0.5; //-- case
-constexpr dfloat PARTICLE_POISSON_RATIO = 0.3; //-- case
+#define DEM_METHOD
+
+    #ifdef DEM_METHOD
+    constexpr dfloat PP_FRICTION_COEF = 0.1; // friction coeficient particle particle -- case
+    constexpr dfloat PW_FRICTION_COEF = 0.1; // friction coeficient particle wall -- case
+    constexpr dfloat PP_REST_COEF = 0.9; // restitution coeficient particle particle -- case
+    constexpr dfloat PW_REST_COEF = 0.9; // restitution coeficient particle wall-- case
+    //#define REST_COEF_CORRECTION
 
 
-constexpr dfloat WALL_YOUNG_MODULUS = 100.0; //-- case
-constexpr dfloat WALL_POISSON_RATIO = 0.3; //-- case
-
-//#define LUBRICATION_FORCE
-#if defined LUBRICATION_FORCE
-    constexpr dfloat MAX_LUBRICATION_DISTANCE = 2;
-    constexpr dfloat MIN_LUBRICATION_DISTANCE = 0.001;
-#endif
+    //material properties
+    constexpr dfloat PARTICLE_YOUNG_MODULUS = 0.5; //-- case
+    constexpr dfloat PARTICLE_POISSON_RATIO = 0.3; //-- case
 
 
+    constexpr dfloat WALL_YOUNG_MODULUS = 100.0; //-- case
+    constexpr dfloat WALL_POISSON_RATIO = 0.3; //-- case
 
-#endif
+    //#define LUBRICATION_FORCE
+    #if defined LUBRICATION_FORCE
+        constexpr dfloat MAX_LUBRICATION_DISTANCE = 2;
+        constexpr dfloat MIN_LUBRICATION_DISTANCE = 0.001;
+    #endif //LUBRICATION_FORCE
+
+
+
+    #endif //DEM_METHOD
+
+#endif //PARTICLE_MODEL

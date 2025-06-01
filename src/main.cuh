@@ -15,8 +15,13 @@
 #include "globalStructs.h"
 #include "auxFunctions.cuh"
 #include "treatData.cuh"
-#include "../particles/class/Particle.hpp"
-#include "../particles/utils/partiClesReport.hpp"
+
+#ifdef PARTICLE_MODEL
+    #include "./particles/class/Particle.cuh"
+    #include "./particles/utils/partiClesReport.cuh"
+    #include "./particles/particlesBoundaryCondition.h"
+#endif
+
 #ifdef OMEGA_FIELD
     #include "nnf.h"
 #endif
@@ -1002,6 +1007,8 @@ void initializeDomain(
     #endif
 }
 
+
+#ifdef PARTICLE_MODEL
 __host__
 void initializeParticle(ParticlesSoA particlesSoA, Particle *particles, int *step, dim3 gridBlock, dim3 threadBlock){
 
@@ -1015,7 +1022,7 @@ void initializeParticle(ParticlesSoA particlesSoA, Particle *particles, int *ste
     // Checar se exite checkpoint
     if(LOAD_CHECKPOINT)
     {
-        checkpoint_state = loadSimCheckpointIBM(particlesSoA, step);
+        checkpoint_state = loadSimCheckpointParticle(particlesSoA, step);
        
     }else{
         if(checkpoint_state != 0){
@@ -1034,6 +1041,6 @@ void initializeParticle(ParticlesSoA particlesSoA, Particle *particles, int *ste
     }
 
 }
-
+#endif // PARTICLE_MODEL
 
 #endif // MAIN_CUH
