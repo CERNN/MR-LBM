@@ -69,6 +69,10 @@ class ParticlesSoA{
         ParticleCenter* pCenterArray;
         dfloat3* pCenterLastPos;    // Last particle position
         dfloat3* pCenterLastWPos;   // Last angular particle position
+        ParticleShape* pShape;
+        ParticleMethod* pMethod;
+        bool* pCollideWall;
+        bool* pCollideParticle;
 };
 
 #endif

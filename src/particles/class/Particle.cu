@@ -113,6 +113,10 @@ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
         this->pCenterArray[p] = particles[p].getPCenter();
         this->pCenterLastPos[p] = particles[p].getPCenter().getPos();
         this->pCenterLastWPos[p] = particles[p].getPCenter().getW_old();
+        this->pShape[p] = particles[p].getShape();
+        this->pMethod[p] = particles[p].getMethod();
+        this->pCollideWall[p] = particles[p].getCollideWall();
+        this->pCollideParticle[p] = particles[p].getCollideParticle();
     }
     checkCudaErrors(cudaSetDevice(0));
 

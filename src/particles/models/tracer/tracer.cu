@@ -17,7 +17,7 @@ void updateParticlePos(
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     velocityInterpolation<<<gridNodes, threadsNodes, 0, streamParticles>>>(d_particlePos, fMom,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
-
+/*
     bool PARTICLE_TRACER_SAVE = false; //quick fix for now
 #pragma warning(push)
 #pragma warning(disable: 4804)
@@ -26,6 +26,8 @@ void updateParticlePos(
         saveParticleInfo(h_particlePos,step);
     }
 #pragma warning(pop)
+*/
+
 }
 
 __global__
