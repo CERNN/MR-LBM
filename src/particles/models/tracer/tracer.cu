@@ -1,46 +1,4 @@
-#include "particleTracer.cuh"
-
-
-
-__host__
-void initializeParticles(    
-    dfloat3 *h_particlePos,
-    dfloat3 *d_particlePos
-){
-
-    //h_particlePos[0].x = 1*NX/4;  h_particlePos[0].y = 1*NY/4;  h_particlePos[0].z = 1*NZ/4;
-    //h_particlePos[1].x = 1*NX/4;  h_particlePos[1].y = 1*NY/4;  h_particlePos[1].z = 3*NZ/4;
-    //h_particlePos[2].x = 1*NX/4;  h_particlePos[2].y = 3*NY/4;  h_particlePos[2].z = 1*NZ/4;
-    //h_particlePos[3].x = 1*NX/4;  h_particlePos[3].y = 3*NY/4;  h_particlePos[3].z = 3*NZ/4;
-    //h_particlePos[4].x = 3*NX/4;  h_particlePos[4].y = 1*NY/4;  h_particlePos[4].z = 1*NZ/4;
-    //h_particlePos[5].x = 3*NX/4;  h_particlePos[5].y = 1*NY/4;  h_particlePos[5].z = 3*NZ/4;
-    //h_particlePos[6].x = 3*NX/4;  h_particlePos[6].y = 3*NY/4;  h_particlePos[6].z = 1*NZ/4;
-    //h_particlePos[7].x = 3*NX/4;  h_particlePos[7].y = 3*NY/4;  h_particlePos[7].z = 3*NZ/4;
-
-    std::random_device rand_dev;
-    std::minstd_rand generator(rand_dev());
-    std::uniform_int_distribution<int>  distr(0, RAND_MAX);
-
-    dfloat x_limit_B = 0 + 5 / 2.0;
-    dfloat x_limit_E = NX - 5 / 2.0;
-    dfloat y_limit_B = 0 + 5 / 2.0;
-    dfloat y_limit_E = NY - 5 / 2.0;
-    dfloat z_limit_B = 0 + 5 / 2.0;
-    dfloat z_limit_E = NZ - 5 / 2.0;
-
-
-    for ( int i = 0; i < T_NUM_PARTICLES; i++) {
-        h_particlePos[i].x = x_limit_B + (x_limit_E - x_limit_B) * distr(generator) / RAND_MAX;
-        h_particlePos[i].y = y_limit_B + (y_limit_E - y_limit_B) * distr(generator) / RAND_MAX;
-        h_particlePos[i].z = z_limit_B + (z_limit_E - z_limit_B) * distr(generator) / RAND_MAX;
-    }
-
-
-
-    checkCudaErrors(cudaMemcpy(d_particlePos, h_particlePos, sizeof(dfloat3)*T_NUM_PARTICLES, cudaMemcpyHostToDevice)); 
-
-}
-
+#include "tracer.cuh"
 
 __host__
 void updateParticlePos(
@@ -54,16 +12,17 @@ void updateParticlePos(
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     
     const unsigned int threadsNodes = 64;
-    const unsigned int gridNodes = T_NUM_PARTICLES % threadsNodes ? T_NUM_PARTICLES / threadsNodes + 1 : T_NUM_PARTICLES / threadsNodes;
+    const unsigned int gridNodes = NUM_PARTICLES % threadsNodes ? NUM_PARTICLES / threadsNodes + 1 : NUM_PARTICLES / threadsNodes;
 
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     velocityInterpolation<<<gridNodes, threadsNodes, 0, streamParticles>>>(d_particlePos, fMom,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
+    bool PARTICLE_TRACER_SAVE = false; //quick fix for now
 #pragma warning(push)
 #pragma warning(disable: 4804)
     if(!(step%PARTICLE_TRACER_SAVE)){
-        checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*T_NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
+        checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
         saveParticleInfo(h_particlePos,step);
     }
 #pragma warning(pop)
@@ -77,7 +36,7 @@ void velocityInterpolation(
 ){
     unsigned int i = threadIdx.x + blockDim.x * blockIdx.x;
 
-    if (i >= T_NUM_PARTICLES)
+    if (i >= NUM_PARTICLES)
         return;
 
     dfloat aux, aux1;
@@ -245,7 +204,6 @@ void velocityInterpolation(
 
 }
 
-
 __host__
 void saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
     // Names of file to save particle info
@@ -265,7 +223,7 @@ void saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
     strColumnNames += "pos_x" + sep  + "pos_y" + sep  + "pos_z";
     strColumnNames += "\n";
 
-    for(int p = 0; p < T_NUM_PARTICLES; p++){
+    for(int p = 0; p < NUM_PARTICLES; p++){
         strValuesParticles << p << sep;
         strValuesParticles << step << sep;
         strValuesParticles << h_particlePos[p].x << sep << h_particlePos[p].y << sep << h_particlePos[p].z;

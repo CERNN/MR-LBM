@@ -17,9 +17,6 @@
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;
 //#define SAVE_BC_FORCES // define if it will export BC force field to bin
 
-//#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
-#define PARTICLE_TRACER_SAVE false
-
 
 /* ------------------------- TIME AND SAVE DEFINES ------------------------- */
 

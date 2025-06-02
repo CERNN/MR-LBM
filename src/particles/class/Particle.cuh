@@ -8,7 +8,7 @@
 /*
 *   Struct for particle representation
 */
-enum ParticleMethod {none,PIBM, IBM };
+enum ParticleMethod {none, PIBM, IBM, TRACER};
 
 class Particle {
     public:

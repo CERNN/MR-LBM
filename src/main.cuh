@@ -25,9 +25,7 @@
 #ifdef OMEGA_FIELD
     #include "nnf.h"
 #endif
-#ifdef PARTICLE_TRACER
-    #include "particleTracer.cuh"
-#endif
+
 #include "errorDef.h"
 //#include "structs.h"
 //#include "globalFunctions.h"
@@ -723,7 +721,6 @@ void allocateHostMemory(
     A_YY_DIST_PARAMS_DECLARATION_PTR
     A_YZ_DIST_PARAMS_DECLARATION_PTR
     A_ZZ_DIST_PARAMS_DECLARATION_PTR
-    PARTICLE_TRACER_PARAMS_DECLARATION_PTR(h_)
     MEAN_FLOW_PARAMS_DECLARATION_PTR
     MEAN_FLOW_SECOND_DIST_PARAMS_DECLARATION_PTR
     #if NODE_TYPE_SAVE
@@ -787,9 +784,6 @@ void allocateHostMemory(
 
 
 
-    #ifdef PARTICLE_TRACER
-    checkCudaErrors(cudaMallocHost((void**)h_particlePos, sizeof(dfloat3) * NUM_PARTICLES));
-    #endif
 
     #if MEAN_FLOW
     checkCudaErrors(cudaMallocHost((void**)m_fMom, MEM_SIZE_MOM));
@@ -819,16 +813,11 @@ void allocateHostMemory(
 __host__
 void allocateDeviceMemory(
     dfloat** d_fMom, unsigned int** dNodeType, GhostInterfaceData* ghostInterface
-    PARTICLE_TRACER_PARAMS_DECLARATION_PTR(d_)
     BC_FORCES_PARAMS_DECLARATION_PTR(d_)
 ) {
     cudaMalloc((void**)d_fMom, MEM_SIZE_MOM);
     cudaMalloc((void**)dNodeType, sizeof(int) * NUMBER_LBM_NODES);
     interfaceMalloc(*ghostInterface);
-
-    #ifdef PARTICLE_TRACER
-    checkCudaErrors(cudaMalloc((void**)d_particlePos, sizeof(dfloat3) * NUM_PARTICLES));
-    #endif
 
     #ifdef BC_FORCES
     cudaMalloc((void**)d_BC_Fx, MEM_SIZE_SCALAR);
@@ -849,8 +838,6 @@ void initializeDomain(
     BC_FORCES_PARAMS_DECLARATION(&d_)
     DENSITY_CORRECTION_PARAMS_DECLARATION(&h_)
     DENSITY_CORRECTION_PARAMS_DECLARATION(&d_)
-    PARTICLE_TRACER_PARAMS_DECLARATION(&h_)
-    PARTICLE_TRACER_PARAMS_DECLARATION(&d_)
     int *step, dim3 gridBlock, dim3 threadBlock
     ){
     
@@ -987,10 +974,6 @@ void initializeDomain(
     // Synchronize after all initializations
     checkCudaErrors(cudaDeviceSynchronize());
 
-    // Particle tracer initialization
-    #ifdef PARTICLE_TRACER
-        initializeParticles(h_particlePos, d_particlePos);
-    #endif
 
     // Synchronize and transfer data back to host if needed
     checkCudaErrors(cudaDeviceSynchronize());
