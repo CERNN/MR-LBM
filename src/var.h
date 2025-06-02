@@ -97,7 +97,7 @@ constexpr bool console_flush = false;
 #define COLREC_AZZ_RECONSTRUCTION STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_zz.inc)
 #define COLREC_AZZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
 
-#define CASE_PARTICLE_CREATE STR(CASE_DIRECTORY/BC_PROBLEM/particleCreation.inc)
+#define CASE_PARTICLE_CREATE STR(./../../CASE_DIRECTORY/BC_PROBLEM/particleCreation.inc)
 
 // Some compiler timer functions and auxiliaty compute macros
 

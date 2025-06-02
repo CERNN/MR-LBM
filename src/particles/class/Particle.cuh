@@ -4,6 +4,8 @@
 
 #include "ParticleCenter.cuh"
 #include <math.h>
+#include <random>
+#include "./../../var.h"
 
 /*
 *   Struct for particle representation

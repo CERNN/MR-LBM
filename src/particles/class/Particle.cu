@@ -1,6 +1,7 @@
 #include "Particle.cuh"
 #include <cstdlib>
 
+
 Particle::Particle(){
     method = none; // Initialize method
 }
@@ -64,7 +65,7 @@ void ParticlesSoA::setPCenterLastWPos(dfloat3* pLastWPos) {
 
 void ParticlesSoA::createParticles(Particle *particles){
    
-    CASE_PARTICLE_CREATE;
+    #include CASE_PARTICLE_CREATE
 
     for(int i = 0; i <NUM_PARTICLES ; i++){
 
@@ -77,6 +78,8 @@ void ParticlesSoA::createParticles(Particle *particles){
             //particles[i].makeSpherePolar(PARTICLE_DIAMETER, center[i], MESH_COULOMB, true, PARTICLE_DENSITY, vel, w);
           //  particles[i].makeEllipsoid(dfloat3(40.0,20.0,10.0), center[i], dfloat3(0.5,1.0,0.6), 0.3*M_PI/4,true, PARTICLE_DENSITY, vel, w);
             //particles[i].makeCapsule(PARTICLE_DIAMETER, center1, center2, true,PARTICLE_DENSITY, vel, w);
+            break;
+        case TRACER:
             break;
         default:
             break;
