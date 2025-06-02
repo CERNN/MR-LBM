@@ -11,6 +11,7 @@
 *   Struct for particle representation
 */
 enum ParticleMethod {none, PIBM, IBM, TRACER};
+enum ParticleShape { SPHERE = 0 , CAPSULE = 1, ELLIPSOID = 2};
 
 class Particle {
     public:
@@ -28,12 +29,16 @@ class Particle {
         const bool& getCollideWall() const;
         void setCollideWall(const bool& collideWall);
 
+        ParticleShape getShape() const;
+        void setShape(ParticleShape shape);
+
 
     private:
         ParticleMethod method;
         ParticleCenter pCenter; // Particle center
         bool collideParticle; //false if particle collide with other Particles
         bool collideWall; //false if particle collide with walls
+        ParticleShape shape;
 
 };
 

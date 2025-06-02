@@ -18,6 +18,9 @@ void Particle::setCollideParticle(const bool& value) { this->collideParticle = v
 const bool& Particle::getCollideWall() const { return this->collideWall; }
 void Particle::setCollideWall(const bool& value) { this->collideWall = value; }
 
+ParticleShape Particle::getShape() const {return this->shape;}
+void Particle::setShape(ParticleShape shape) { this->shape = shape;}
+
 
 // ParticlesSoA class implementation
 ParticlesSoA::ParticlesSoA() {
