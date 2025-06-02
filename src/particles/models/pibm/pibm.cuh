@@ -1,5 +1,5 @@
-#ifndef __PARTICLE_MODEL_IBM_CUH
-#define __PARTICLE_MODEL_IBM_CUH
+#ifndef __PARTICLE_MODEL_PIBM_CUH
+#define __PARTICLE_MODEL_PIBM_CUH
 
 #include "../../../globalStructs.h"
 #include "../../../globalFunctions.h"
@@ -10,9 +10,9 @@
 #include "./../../class/Particle.cuh"
 
 
-void ibmSimulation();
 
 
+void pibmSimulation();
 
 
 
@@ -23,6 +23,3 @@ void ibmSimulation();
 
 
 #endif
-
-
-

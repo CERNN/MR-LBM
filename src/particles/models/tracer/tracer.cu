@@ -1,6 +1,13 @@
 #include "tracer.cuh"
 
 __host__
+void tracerSimulation(
+    ParticlesSoA particles
+){
+
+}
+
+__host__
 void updateParticlePos(
     dfloat3 *d_particlePos, 
     dfloat3 *h_particlePos, 

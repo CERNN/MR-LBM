@@ -223,6 +223,10 @@ int main() {
         //swap interface pointers
         swapGhostInterfaces(ghostInterface);
 
+        #ifdef PARTICLE_MODEL
+            particleSimulation(particlesSoA);
+        #endif
+
 
         if(checkpoint){
             printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);

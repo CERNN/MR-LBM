@@ -20,6 +20,7 @@
     #include "./particles/class/Particle.cuh"
     #include "./particles/utils/partiClesReport.cuh"
     #include "./particles/particlesBoundaryCondition.h"
+    #include "./particles/models/particleSim.cuh"
 #endif
 
 #ifdef OMEGA_FIELD

@@ -9,7 +9,13 @@
 #include "../../../includeFiles/interface.h"
 #include "../../../errorDef.h"
 #include "../../../saveData.cuh"
+#include "./../../class/Particle.cuh"
 
+
+__host__
+void tracerSimulation(
+    ParticlesSoA particles
+)
 
 
 /*
