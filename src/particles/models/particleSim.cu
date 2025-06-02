@@ -2,7 +2,8 @@
 
 void particleSimulation(
     ParticlesSoA particles,
-    cudaStream_t streamParticles,
+    dfloat *fMom,
+    cudaStream_t *streamParticles,
     unsigned int step
 ){
 
@@ -17,7 +18,7 @@ void particleSimulation(
         /*code*/
     }
     if(numTRACER>0){
-        /*code*/
+        tracerSimulation(particles,fMom,streamParticles[0],step);
     }
 
 

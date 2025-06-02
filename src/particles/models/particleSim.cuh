@@ -10,7 +10,8 @@
 
 void particleSimulation(
     ParticlesSoA particles,
-    cudaStream_t streamParticles,
+    dfloat *fMom,
+    cudaStream_t *streamParticles,
     unsigned int step
 );
 

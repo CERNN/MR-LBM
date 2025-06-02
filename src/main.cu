@@ -228,7 +228,7 @@ int main() {
         swapGhostInterfaces(ghostInterface);
 
         #ifdef PARTICLE_MODEL
-            particleSimulation(particlesSoA,streamsPart[0],step);
+            particleSimulation(particlesSoA,d_fMom,streamsPart,step);
         #endif
 
 

@@ -25,14 +25,14 @@ class TangentialCollisionTracker
     __host__ __device__
     TangentialCollisionTracker();
 
-    int getCollisionIndex() const;
-    void setCollisonIndex(const unsigned int collisionIndex);
+    __host__ __device__  int getCollisionIndex() const;
+    __host__ __device__  void setCollisonIndex(const unsigned int collisionIndex);
 
-    dfloat3 getTangLength() const;
-    void setTangLength(const dfloat3& tang_length);
+    __host__ __device__  dfloat3 getTangLength() const;
+    __host__ __device__  void setTangLength(const dfloat3& tang_length);
 
-    int getLastCollisionStep() const;
-    void setLastCollisonStep(const unsigned int lastCollisionStep);
+    __host__ __device__  int getLastCollisionStep() const;
+    __host__ __device__  void setLastCollisonStep(const unsigned int lastCollisionStep);
 
     protected:
             /*
@@ -57,76 +57,207 @@ class TangentialCollisionTracker
 class ParticleCenter
 {
 public:
+    __host__ __device__
     ParticleCenter();
 
-    dfloat3 getPos() const;
-    void setPos(const dfloat3& pos);
+    // Position
+    __host__ __device__ dfloat3 getPos() const;
+    __host__ __device__ dfloat getPosX() const;
+    __host__ __device__ dfloat getPosY() const;
+    __host__ __device__ dfloat getPosZ() const;
+    __host__ __device__ void setPos(const dfloat3& pos);
+    __host__ __device__ void setPosX(dfloat x);
+    __host__ __device__ void setPosY(dfloat y);
+    __host__ __device__ void setPosZ(dfloat z);
 
-    dfloat3 getPos_old() const;
-    void setPos_old(const dfloat3& pos_old);
+    // Old Position
+    __host__ __device__ dfloat3 getPos_old() const;
+    __host__ __device__ dfloat getPosOldX() const;
+    __host__ __device__ dfloat getPosOldY() const;
+    __host__ __device__ dfloat getPosOldZ() const;
+    __host__ __device__ void setPos_old(const dfloat3& pos_old);
+    __host__ __device__ void setPosOldX(dfloat x);
+    __host__ __device__ void setPosOldY(dfloat y);
+    __host__ __device__ void setPosOldZ(dfloat z);
 
-    dfloat3 getVel() const;
-    void setVel(const dfloat3& vel);
+    // Velocity
+    __host__ __device__ dfloat3 getVel() const;
+    __host__ __device__ dfloat getVelX() const;
+    __host__ __device__ dfloat getVelY() const;
+    __host__ __device__ dfloat getVelZ() const;
+    __host__ __device__ void setVel(const dfloat3& vel);
+    __host__ __device__ void setVelX(dfloat x);
+    __host__ __device__ void setVelY(dfloat y);
+    __host__ __device__ void setVelZ(dfloat z);
 
-    dfloat3 getVel_old() const;
-    void setVel_old(const dfloat3& vel_old);
+    // Old Velocity
+    __host__ __device__ dfloat3 getVel_old() const;
+    __host__ __device__ dfloat getVelOldX() const;
+    __host__ __device__ dfloat getVelOldY() const;
+    __host__ __device__ dfloat getVelOldZ() const;
+    __host__ __device__ void setVel_old(const dfloat3& vel_old);
+    __host__ __device__ void setVelOldX(dfloat x);
+    __host__ __device__ void setVelOldY(dfloat y);
+    __host__ __device__ void setVelOldZ(dfloat z);
 
-    dfloat3 getW() const;
-    void setW(const dfloat3& w);
+    // Angular velocity
+    __host__ __device__ dfloat3 getW() const;
+    __host__ __device__ dfloat getWX() const;
+    __host__ __device__ dfloat getWY() const;
+    __host__ __device__ dfloat getWZ() const;
+    __host__ __device__ void setW(const dfloat3& w);
+    __host__ __device__ void setWX(dfloat x);
+    __host__ __device__ void setWY(dfloat y);
+    __host__ __device__ void setWZ(dfloat z);
 
-    dfloat3 getW_avg() const;
-    void setW_avg(const dfloat3& w_avg);
+    // Average angular velocity
+    __host__ __device__ dfloat3 getW_avg() const;
+    __host__ __device__ dfloat getWAvgX() const;
+    __host__ __device__ dfloat getWAvgY() const;
+    __host__ __device__ dfloat getWAvgZ() const;
+    __host__ __device__ void setW_avg(const dfloat3& w_avg);
+    __host__ __device__ void setWAvgX(dfloat x);
+    __host__ __device__ void setWAvgY(dfloat y);
+    __host__ __device__ void setWAvgZ(dfloat z);
 
-    dfloat3 getW_old() const;
-    void setW_old(const dfloat3& w_old);
+    // Old angular velocity
+    __host__ __device__ dfloat3 getW_old() const;
+    __host__ __device__ dfloat getWOldX() const;
+    __host__ __device__ dfloat getWOldY() const;
+    __host__ __device__ dfloat getWOldZ() const;
+    __host__ __device__ void setW_old(const dfloat3& w_old);
+    __host__ __device__ void setWOldX(dfloat x);
+    __host__ __device__ void setWOldY(dfloat y);
+    __host__ __device__ void setWOldZ(dfloat z);
 
-    dfloat3 getW_pos() const;
-    void setW_pos(const dfloat3& w_pos);
+    // Angular position vector
+    __host__ __device__ dfloat3 getW_pos() const;
+    __host__ __device__ dfloat getWPosX() const;
+    __host__ __device__ dfloat getWPosY() const;
+    __host__ __device__ dfloat getWPosZ() const;
+    __host__ __device__ void setW_pos(const dfloat3& w_pos);
+    __host__ __device__ void setWPosX(dfloat x);
+    __host__ __device__ void setWPosY(dfloat y);
+    __host__ __device__ void setWPosZ(dfloat z);
 
-    dfloat4 getQ_pos() const;
-    void setQ_pos(const dfloat4& q_pos);
+    // Quaternion orientation
+    __host__ __device__ dfloat4 getQ_pos() const;
+    __host__ __device__ dfloat getQPosX() const;
+    __host__ __device__ dfloat getQPosY() const;
+    __host__ __device__ dfloat getQPosZ() const;
+    __host__ __device__ dfloat getQPosW() const;
+    __host__ __device__ void setQ_pos(const dfloat4& q_pos);
+    __host__ __device__ void setQPosX(dfloat x);
+    __host__ __device__ void setQPosY(dfloat y);
+    __host__ __device__ void setQPosZ(dfloat z);
+    __host__ __device__ void setQPosW(dfloat w);
 
-    dfloat4 getQ_pos_old() const;
-    void setQ_pos_old(const dfloat4& q_pos_old);
+    // Old quaternion orientation
+    __host__ __device__ dfloat4 getQ_pos_old() const;
+    __host__ __device__ dfloat getQPosOldX() const;
+    __host__ __device__ dfloat getQPosOldY() const;
+    __host__ __device__ dfloat getQPosOldZ() const;
+    __host__ __device__ dfloat getQPosOldW() const;
+    __host__ __device__ void setQ_pos_old(const dfloat4& q_pos_old);
+    __host__ __device__ void setQPosOldX(dfloat x);
+    __host__ __device__ void setQPosOldY(dfloat y);
+    __host__ __device__ void setQPosOldZ(dfloat z);
+    __host__ __device__ void setQPosOldW(dfloat w);
 
-    dfloat3 getF() const;
-    void setF(const dfloat3& f);
+    // Force
+    __host__ __device__ dfloat3 getF() const;
+    __host__ __device__ dfloat getFX() const;
+    __host__ __device__ dfloat getFY() const;
+    __host__ __device__ dfloat getFZ() const;
+    __host__ __device__ void setF(const dfloat3& f);
+    __host__ __device__ void setFX(dfloat x);
+    __host__ __device__ void setFY(dfloat y);
+    __host__ __device__ void setFZ(dfloat z);
 
-    dfloat3 getF_old() const;
-    void setF_old(const dfloat3& f_old);
+    // Old force
+    __host__ __device__ dfloat3 getF_old() const;
+    __host__ __device__ dfloat getFOldX() const;
+    __host__ __device__ dfloat getFOldY() const;
+    __host__ __device__ dfloat getFOldZ() const;
+    __host__ __device__ void setF_old(const dfloat3& f_old);
+    __host__ __device__ void setFOldX(dfloat x);
+    __host__ __device__ void setFOldY(dfloat y);
+    __host__ __device__ void setFOldZ(dfloat z);
 
-    dfloat3 getM() const;
-    void setM(const dfloat3& M);
+    // Moment
+    __host__ __device__ dfloat3 getM() const;
+    __host__ __device__ dfloat getMX() const;
+    __host__ __device__ dfloat getMY() const;
+    __host__ __device__ dfloat getMZ() const;
+    __host__ __device__ void setM(const dfloat3& M);
+    __host__ __device__ void setMX(dfloat x);
+    __host__ __device__ void setMY(dfloat y);
+    __host__ __device__ void setMZ(dfloat z);
 
-    dfloat3 getM_old() const;
-    void setM_old(const dfloat3& M_old);
+    // Old moment
+    __host__ __device__ dfloat3 getM_old() const;
+    __host__ __device__ dfloat getMOldX() const;
+    __host__ __device__ dfloat getMOldY() const;
+    __host__ __device__ dfloat getMOldZ() const;
+    __host__ __device__ void setM_old(const dfloat3& M_old);
+    __host__ __device__ void setMOldX(dfloat x);
+    __host__ __device__ void setMOldY(dfloat y);
+    __host__ __device__ void setMOldZ(dfloat z);
 
-    dfloat6 getI() const;
-    void setI(const dfloat6& I);
+    // Inertia tensor
+    __host__ __device__ dfloat6 getI() const;
+    __host__ __device__ dfloat getIXX() const;
+    __host__ __device__ dfloat getIYY() const;
+    __host__ __device__ dfloat getIZZ() const;
+    __host__ __device__ dfloat getIXY() const;
+    __host__ __device__ dfloat getIXZ() const;
+    __host__ __device__ dfloat getIYZ() const;
+    __host__ __device__ void setI(const dfloat6& I);
+    __host__ __device__ void setIXX(dfloat val);
+    __host__ __device__ void setIYY(dfloat val);
+    __host__ __device__ void setIZZ(dfloat val);
+    __host__ __device__ void setIXY(dfloat val);
+    __host__ __device__ void setIXZ(dfloat val);
+    __host__ __device__ void setIYZ(dfloat val);
 
-    dfloat3 getDP_internal() const;
-    void setDP_internal(const dfloat3& dP_internal);
+    // Internal momentum change
+    __host__ __device__ dfloat3 getDP_internal() const;
+    __host__ __device__ dfloat getDPInternalX() const;
+    __host__ __device__ dfloat getDPInternalY() const;
+    __host__ __device__ dfloat getDPInternalZ() const;
+    __host__ __device__ void setDP_internal(const dfloat3& dP_internal);
+    __host__ __device__ void setDPInternalX(dfloat x);
+    __host__ __device__ void setDPInternalY(dfloat y);
+    __host__ __device__ void setDPInternalZ(dfloat z);
 
-    dfloat3 getDL_internal() const;
-    void setDL_internal(const dfloat3& dL_internal);
+    // Internal angular momentum change
+    __host__ __device__ dfloat3 getDL_internal() const;
+    __host__ __device__ dfloat getDLInternalX() const;
+    __host__ __device__ dfloat getDLInternalY() const;
+    __host__ __device__ dfloat getDLInternalZ() const;
+    __host__ __device__ void setDL_internal(const dfloat3& dL_internal);
+    __host__ __device__ void setDLInternalX(dfloat x);
+    __host__ __device__ void setDLInternalY(dfloat y);
+    __host__ __device__ void setDLInternalZ(dfloat z);
 
-    dfloat getS() const;
-    void setS(dfloat S);
+
+    __host__ __device__ dfloat getS() const;
+    __host__ __device__ void setS(dfloat S);
     
-    dfloat getRadius() const;
-    void setRadius(dfloat radius);
+    __host__ __device__ dfloat getRadius() const;
+    __host__ __device__ void setRadius(dfloat radius);
 
-    dfloat getVolume() const;
-    void setVolume(dfloat volume);
+    __host__ __device__ dfloat getVolume() const;
+    __host__ __device__ void setVolume(dfloat volume);
     
-    dfloat getDensity() const;
-    void setDensity(dfloat density);
+    __host__ __device__ dfloat getDensity() const;
+    __host__ __device__ void setDensity(dfloat density);
     
-    bool getMovable() const;
-    void setMovable(bool movable);
+    __host__ __device__ bool getMovable() const;
+    __host__ __device__ void setMovable(bool movable);
 
-    CollisionData getCollision() const;
-    void setCollision(const CollisionData& collision);
+    __host__ __device__ CollisionData getCollision() const;
+    __host__ __device__ void setCollision(const CollisionData& collision);
 
 protected:
     dfloat3 pos;        // Particle center position

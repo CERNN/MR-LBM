@@ -6,20 +6,20 @@ Particle::Particle(){
     method = none; // Initialize method
 }
 
-ParticleMethod Particle::getMethod() const {return this->method;}
-void Particle::setMethod(ParticleMethod method) { this->method = method;}
+__host__ __device__ ParticleMethod Particle::getMethod() const {return this->method;}
+__host__ __device__ void Particle::setMethod(ParticleMethod method) { this->method = method;}
 
-const ParticleCenter& Particle::getPCenter() const {return this->pCenter;}
-void Particle::setPCenter(const ParticleCenter& pCenter) { this->pCenter = pCenter;}
+__host__ __device__ const ParticleCenter& Particle::getPCenter() const {return this->pCenter;}
+__host__ __device__ void Particle::setPCenter(const ParticleCenter& pCenter) { this->pCenter = pCenter;}
 
-const bool& Particle::getCollideParticle() const { return this->collideParticle; }
-void Particle::setCollideParticle(const bool& value) { this->collideParticle = value; }
+__host__ __device__ const bool& Particle::getCollideParticle() const { return this->collideParticle; }
+__host__ __device__ void Particle::setCollideParticle(const bool& value) { this->collideParticle = value; }
 
-const bool& Particle::getCollideWall() const { return this->collideWall; }
-void Particle::setCollideWall(const bool& value) { this->collideWall = value; }
+__host__ __device__ const bool& Particle::getCollideWall() const { return this->collideWall; }
+__host__ __device__ void Particle::setCollideWall(const bool& value) { this->collideWall = value; }
 
-ParticleShape Particle::getShape() const {return this->shape;}
-void Particle::setShape(ParticleShape shape) { this->shape = shape;}
+__host__ __device__ ParticleShape Particle::getShape() const {return this->shape;}
+__host__ __device__ void Particle::setShape(ParticleShape shape) { this->shape = shape;}
 
 
 // ParticlesSoA class implementation
@@ -45,35 +45,40 @@ ParticlesSoA::~ParticlesSoA() {
     }
 }
 
-ParticleCenter* ParticlesSoA::getPCenterArray() const {return this->pCenterArray;}
-void ParticlesSoA::setPCenterArray(ParticleCenter* pArray) {this->pCenterArray = pArray;}
+__host__ __device__ ParticleCenter* ParticlesSoA::getPCenterArray() const {return this->pCenterArray;}
+__host__ __device__ void ParticlesSoA::setPCenterArray(ParticleCenter* pArray) {this->pCenterArray = pArray;}
 
-dfloat3* ParticlesSoA::getPCenterLastPos() const {return this->pCenterLastPos;}
-void ParticlesSoA::setPCenterLastPos(dfloat3* pLastPos) {this->pCenterLastPos = pLastPos;}
+__host__ __device__ dfloat3* ParticlesSoA::getPCenterLastPos() const {return this->pCenterLastPos;}
+__host__ __device__ void ParticlesSoA::setPCenterLastPos(dfloat3* pLastPos) {this->pCenterLastPos = pLastPos;}
 
-dfloat3* ParticlesSoA::getPCenterLastWPos() const {return this->pCenterLastWPos;}
-void ParticlesSoA::setPCenterLastWPos(dfloat3* pLastWPos) {this->pCenterLastWPos = pLastWPos;}
+__host__ __device__ dfloat3* ParticlesSoA::getPCenterLastWPos() const {return this->pCenterLastWPos;}
+__host__ __device__ void ParticlesSoA::setPCenterLastWPos(dfloat3* pLastWPos) {this->pCenterLastWPos = pLastWPos;}
 
-ParticleShape* ParticlesSoA::getPShape() const {return this->pShape;}
-void ParticlesSoA::setPShape(ParticleShape* pShape) {this->pShape = pShape;}
+__host__ __device__ ParticleShape* ParticlesSoA::getPShape() const {return this->pShape;}
+__host__ __device__ void ParticlesSoA::setPShape(ParticleShape* pShape) {this->pShape = pShape;}
 
-ParticleMethod* ParticlesSoA::getPMethod() const {return this->pMethod;}
-void ParticlesSoA::setPMethod(ParticleMethod* pMethod) {this->pMethod = pMethod;}
+__host__ __device__ ParticleMethod* ParticlesSoA::getPMethod() const {return this->pMethod;}
+__host__ __device__ void ParticlesSoA::setPMethod(ParticleMethod* pMethod) {this->pMethod = pMethod;}
 
-bool* ParticlesSoA::getPCollideWall() const {return this->pCollideWall;}
-void ParticlesSoA::setPCollideWall(bool* pMethod) {this->pCollideWall = pCollideWall;}
+__host__ __device__ bool* ParticlesSoA::getPCollideWall() const {return this->pCollideWall;}
+__host__ __device__ void ParticlesSoA::setPCollideWall(bool* pMethod) {this->pCollideWall = pCollideWall;}
 
-bool* ParticlesSoA::getPCollideParticle() const {return this->pCollideParticle;}
-void ParticlesSoA::setPCollideParticle(bool* pMethod) {this->pCollideParticle = pCollideParticle;}
+__host__ __device__ bool* ParticlesSoA::getPCollideParticle() const {return this->pCollideParticle;}
+__host__ __device__ void ParticlesSoA::setPCollideParticle(bool* pMethod) {this->pCollideParticle = pCollideParticle;}
 
+__host__
 const MethodRange& ParticlesSoA::getMethodRange(ParticleMethod method) const {
     static const MethodRange empty{-1, -1};
     auto it = methodRanges.find(method);
     return (it != methodRanges.end()) ? it->second : empty;
 }
+
+__host__
 void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last) {
     methodRanges[method] = {first, last};
 }
+
+__host__
 int ParticlesSoA::getMethodCount(ParticleMethod method) const {
     MethodRange range = getMethodRange(method);
     if (range.first == -1 || range.last == -1 || range.last < range.first)
