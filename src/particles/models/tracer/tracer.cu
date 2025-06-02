@@ -2,7 +2,9 @@
 
 __host__
 void tracerSimulation(
-    ParticlesSoA particles
+    ParticlesSoA particles,
+    cudaStream_t streamParticles,
+    unsigned int step
 ){
 
 }

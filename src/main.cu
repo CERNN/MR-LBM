@@ -152,6 +152,10 @@ int main() {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
+    #ifdef PARTICLE_MODEL
+    cudaStream_t streamsPart[1];
+    checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
+    #endif
 
     step=INI_STEP;
 
@@ -224,7 +228,7 @@ int main() {
         swapGhostInterfaces(ghostInterface);
 
         #ifdef PARTICLE_MODEL
-            particleSimulation(particlesSoA);
+            particleSimulation(particlesSoA,streamsPart[0],step);
         #endif
 
 

@@ -10,7 +10,11 @@
 #include "./../../class/Particle.cuh"
 
 
-void ibmSimulation();
+void ibmSimulation(
+    ParticlesSoA particles,
+    cudaStream_t streamParticles,
+    unsigned int step
+);
 
 
 

@@ -9,7 +9,9 @@
 #include "tracer/tracer.cuh"
 
 void particleSimulation(
-        ParticlesSoA particles
+    ParticlesSoA particles,
+    cudaStream_t streamParticles,
+    unsigned int step
 );
 
 #endif //__PARTICLE_SIM_CUH

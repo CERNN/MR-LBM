@@ -6,4 +6,8 @@
 //gpuParticleNodeMovement
 
 
-void ibmSimulation(){}
+void ibmSimulation(
+    ParticlesSoA particles,
+    cudaStream_t streamParticles,
+    unsigned int step
+){}
