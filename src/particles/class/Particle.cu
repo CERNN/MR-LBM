@@ -7,12 +7,17 @@ Particle::Particle(){
 }
 
 ParticleMethod Particle::getMethod() const {return this->method;}
-
 void Particle::setMethod(ParticleMethod method) { this->method = method;}
 
 const ParticleCenter& Particle::getPCenter() const {return this->pCenter;}
-
 void Particle::setPCenter(const ParticleCenter& pCenter) { this->pCenter = pCenter;}
+
+const bool& Particle::getCollideParticle() const { return this->collideParticle; }
+void Particle::setCollideParticle(const bool& value) { this->collideParticle = value; }
+
+const bool& Particle::getCollideWall() const { return this->collideWall; }
+void Particle::setCollideWall(const bool& value) { this->collideWall = value; }
+
 
 // ParticlesSoA class implementation
 ParticlesSoA::ParticlesSoA() {
@@ -60,6 +65,7 @@ dfloat3* ParticlesSoA::getPCenterLastWPos() const {
 void ParticlesSoA::setPCenterLastWPos(dfloat3* pLastWPos) {
     pCenterLastWPos = pLastWPos;
 }
+
 
 
 

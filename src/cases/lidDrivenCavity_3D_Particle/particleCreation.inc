@@ -33,8 +33,8 @@ for (int i = 0; i<NUM_PARTICLES;i++){
 
     particles[i].setMethod(TRACER);
     particles[i].setPCenter(pc_i);
-
-
+    particles[i].setCollideParticle(false);
+    particles[i].setCollideWall(true);
 
 
 

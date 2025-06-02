@@ -22,9 +22,18 @@ class Particle {
         const ParticleCenter& getPCenter() const;
         void setPCenter(const ParticleCenter& pCenter);
 
+        const bool& getCollideParticle() const;
+        void setCollideParticle(const bool& collideParticle);
+
+        const bool& getCollideWall() const;
+        void setCollideWall(const bool& collideWall);
+
+
     private:
         ParticleMethod method;
         ParticleCenter pCenter; // Particle center
+        bool collideParticle; //false if particle collide with other Particles
+        bool collideWall; //false if particle collide with walls
 
 };
 
