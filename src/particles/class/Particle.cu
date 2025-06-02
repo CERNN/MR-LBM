@@ -66,7 +66,20 @@ void ParticlesSoA::setPCollideWall(bool* pMethod) {this->pCollideWall = pCollide
 bool* ParticlesSoA::getPCollideParticle() const {return this->pCollideParticle;}
 void ParticlesSoA::setPCollideParticle(bool* pMethod) {this->pCollideParticle = pCollideParticle;}
 
-
+const MethodRange& ParticlesSoA::getMethodRange(ParticleMethod method) const {
+    static const MethodRange empty{-1, -1};
+    auto it = methodRanges.find(method);
+    return (it != methodRanges.end()) ? it->second : empty;
+}
+void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last) {
+    methodRanges[method] = {first, last};
+}
+int ParticlesSoA::getMethodCount(ParticleMethod method) const {
+    MethodRange range = getMethodRange(method);
+    if (range.first == -1 || range.last == -1 || range.last < range.first)
+        return 0;  // No particles of this method
+    return range.last - range.first + 1;
+}
 
 
 void ParticlesSoA::createParticles(Particle *particles){
@@ -105,16 +118,40 @@ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
 
     checkCudaErrors(cudaSetDevice(0));
 
-    for (int p = 0; p < NUM_PARTICLES; p++)
-    {
-        this->pCenterArray[p] = particles[p].getPCenter();
-        this->pCenterLastPos[p] = particles[p].getPCenter().getPos();
-        this->pCenterLastWPos[p] = particles[p].getPCenter().getW_old();
-        this->pShape[p] = particles[p].getShape();
-        this->pMethod[p] = particles[p].getMethod();
-        this->pCollideWall[p] = particles[p].getCollideWall();
-        this->pCollideParticle[p] = particles[p].getCollideParticle();
-    }
+    int particleCount = 0;
+    std::map<ParticleMethod, bool> methodSeen;
+    
+    //LAMBDA FUNCTION
+    auto insertByMethod = [&](ParticleMethod method) {
+        int firstIndex = particleCount;
+        for (int p = 0; p < NUM_PARTICLES; ++p) {
+            if (particles[p].getMethod() == method) {
+                // Insert particle data into SoA arrays
+                this->pCenterArray[particleCount]       = particles[p].getPCenter();
+                this->pCenterLastPos[particleCount]     = particles[p].getPCenter().getPos();
+                this->pCenterLastWPos[particleCount]    = particles[p].getPCenter().getW_old();
+                this->pShape[particleCount]             = particles[p].getShape();
+                this->pMethod[particleCount]            = particles[p].getMethod();
+                this->pCollideWall[particleCount]       = particles[p].getCollideWall();
+                this->pCollideParticle[particleCount]   = particles[p].getCollideParticle();
+
+                ++particleCount;
+            }
+        }
+        if (particleCount > firstIndex) {  // Only set if any particles of this type were found
+            int lastIndex = particleCount - 1;
+            this->setMethodRange(method, firstIndex, lastIndex);
+        }
+    };
+
+    insertByMethod(IBM);
+    insertByMethod(PIBM);
+    insertByMethod(TRACER);
+
+
+  
+
+
     checkCudaErrors(cudaSetDevice(0));
 
 }

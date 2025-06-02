@@ -6,11 +6,18 @@
 #include <math.h>
 #include <random>
 #include "./../../var.h"
+#include <map>
 
 /*
 *   Struct for particle representation
 */
 enum ParticleMethod {none, PIBM, IBM, TRACER};
+struct MethodRange {
+    int first = -1;
+    int last = -1;
+};
+
+
 enum ParticleShape { SPHERE = 0 , CAPSULE = 1, ELLIPSOID = 2};
 
 class Particle {
@@ -74,6 +81,10 @@ class ParticlesSoA{
         bool* getPCollideParticle() const;
         void setPCollideParticle(bool* pCollideParticle);
 
+        const MethodRange& ParticlesSoA::getMethodRange(ParticleMethod method) const;
+        void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last);
+        int ParticlesSoA::getMethodCount(ParticleMethod method) const;
+
 
 
 
@@ -88,6 +99,7 @@ class ParticlesSoA{
         ParticleMethod* pMethod;
         bool* pCollideWall;
         bool* pCollideParticle;
+        std::map<ParticleMethod, MethodRange> methodRanges;
 };
 
 #endif
