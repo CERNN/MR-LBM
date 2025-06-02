@@ -11,48 +11,37 @@
 #include "../../../saveData.cuh"
 #include "./../../class/Particle.cuh"
 
-
-__host__
-void tracerSimulation(
-    ParticlesSoA particles,
-    cudaStream_t streamParticles,
-    unsigned int step
-)
-
-
 /*
-*   @brief Update position of the tracer particles
+*   @brief Handle all simulation process of the tracer particles
 *
-*   @param d_particlePos: device particle position
-*   @param h_particlePos: host particle position
+*   @param particles: particle informaiton
 *   @param fMom: macroscopics moments
 *   @param streamParticles: CUDA streams for GPUs
 *   @param step: current time step
 */
 __host__
-void updateParticlePos(
-    dfloat3 *d_particlePos, 
-    dfloat3 *h_particlePos, 
+void tracerSimulation(
+    ParticlesSoA particles,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
 );
 
-
 /*
-*   @brief Perform the fluid velocity interpolation at the particle location
+*   @brief Update position of the tracer particles
 *
-*   @param d_particlePos: device particle position
+*   @param particles: particle informaiton
 *   @param fMom: macroscopics moments
 *   @param step: current time step
 */
 __global__
-void velocityInterpolation(
-    dfloat3 *d_particlePos, 
+void tracer_positionUpdate(
+    ParticlesSoA particles,
     dfloat *fMom,
+    int firstIndex,
+    int lastIndex,
     unsigned int step
 );
-
 
 /*
 *   @brief Save the particles position for each time step
@@ -61,7 +50,7 @@ void velocityInterpolation(
 *   @param step: current time step
 */
 __host__
-void saveParticleInfo(
+void tracer_saveParticleInfo(
     dfloat3 *h_particlePos, 
     unsigned int step
 );

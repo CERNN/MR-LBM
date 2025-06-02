@@ -3,16 +3,6 @@
 __host__
 void tracerSimulation(
     ParticlesSoA particles,
-    cudaStream_t streamParticles,
-    unsigned int step
-){
-
-}
-
-__host__
-void updateParticlePos(
-    dfloat3 *d_particlePos, 
-    dfloat3 *h_particlePos, 
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
@@ -24,10 +14,13 @@ void updateParticlePos(
     const unsigned int gridNodes = NUM_PARTICLES % threadsNodes ? NUM_PARTICLES / threadsNodes + 1 : NUM_PARTICLES / threadsNodes;
 
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
-    velocityInterpolation<<<gridNodes, threadsNodes, 0, streamParticles>>>(d_particlePos, fMom,step);
+
+    MethodRange range = particles.getMethodRange(TRACER);
+
+    tracer_positionUpdate<<<gridNodes, threadsNodes, 0, streamParticles>>>(particles, fMom,range.first,range.last,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
-/*
-    bool PARTICLE_TRACER_SAVE = false; //quick fix for now
+
+    #ifdef PARTICLE_TRACER_SAVE
 #pragma warning(push)
 #pragma warning(disable: 4804)
     if(!(step%PARTICLE_TRACER_SAVE)){
@@ -35,37 +28,42 @@ void updateParticlePos(
         saveParticleInfo(h_particlePos,step);
     }
 #pragma warning(pop)
-*/
+    #endif
+
 
 }
 
 __global__
-void velocityInterpolation(
-    dfloat3 *d_particlePos, 
+void tracer_positionUpdate(
+    ParticlesSoA particles,
     dfloat *fMom,
+    int firstIndex,
+    int lastIndex,
     unsigned int step
 ){
     unsigned int i = threadIdx.x + blockDim.x * blockIdx.x;
-
-    if (i >= NUM_PARTICLES)
+   
+    if (firstIndex < 0 || i>= NUM_PARTICLES)  //check if there is trace particles, and check if index is higher than the number of particles
+        return;
+    
+    if(i<firstIndex || i> lastIndex) //eliminate all index that are not trace particles.
         return;
 
     dfloat aux, aux1;
-    
     // Calculate stencils to use and the valid interval [xyz][idx]
     dfloat stencilVal[3][P_DIST*2];
 
-    dfloat xPos = d_particlePos[i].x;
-    dfloat yPos = d_particlePos[i].y;
-    dfloat zPos = d_particlePos[i].z;
-    dfloat pos[3] = {xPos, yPos, zPos};
+    ParticleCenter pc_i;
+    //pc_i = particles[i].getPCenterArray();  << need fix how to get the position
+    dfloat3 pc_pos = pc_i.getPos();
+
+    dfloat pos[3] = {pc_pos.x,pc_pos.y,pc_pos.z};
 
     const int posBase[3] = { 
-        int(xPos) - (P_DIST) + 1, 
-        int(yPos) - (P_DIST) + 1, 
-        int(zPos) - (P_DIST) + 1
+        int(pos[0]) - (P_DIST) + 1, 
+        int(pos[1]) - (P_DIST) + 1, 
+        int(pos[2]) - (P_DIST) + 1
     };
-
 
     const int maxIdx[3] = {
         #ifdef BC_X_WALL
@@ -113,7 +111,7 @@ void velocityInterpolation(
         #endif //BC_Z_PERIODIC
     };
 
-    // Particle stencil out of the domain
+     // Particle stencil out of the domain
     if(maxIdx[0] <= 0 || maxIdx[1] <= 0 || maxIdx[2] <= 0)
         return;
     // Particle stencil out of the domain
@@ -132,7 +130,6 @@ void velocityInterpolation(
     dfloat uzVar = 0;
 
     int posX, posY,posZ;
-
     // Interpolation 
     for (int zk = minIdx[2]; zk <= maxIdx[2]; zk++) // z
     {
@@ -179,44 +176,42 @@ void velocityInterpolation(
         }
     }
 
-
+    dfloat3 dVel = dfloat3(uxVar,uyVar,uzVar);
     //Update particle position
-    d_particlePos[i].x += uxVar;
-    d_particlePos[i].y += uyVar;
-    d_particlePos[i].z += uzVar;
+    pc_i.setPos(pc_i.getPos() + dVel);
 
-    //AVOID THAT THE PARTICLES GO OUTSIDE OF THE DOMAIN
+      //AVOID THAT THE PARTICLES GO OUTSIDE OF THE DOMAIN
     #ifdef BC_X_WALL
-    if(d_particlePos[i].x < 0){
-        d_particlePos[i].x = 0.01;
+    if (pc_i.getPosX() < 0) {
+        pc_i.setPosX(0.01);
     }
-    if(d_particlePos[i].x > NX-1){
-        d_particlePos[i].x = NX-1.01;
+    if (pc_i.getPosX() > NX - 1) {
+        pc_i.setPosX(NX - 1.01);
     }
     #endif
 
     #ifdef BC_Y_WALL
-    if(d_particlePos[i].y < 0){
-        d_particlePos[i].y = 0.01;
+    if (pc_i.getPosY() < 0) {
+        pc_i.setPosY(0.01);
     }
-    if(d_particlePos[i].y > NY-1){
-        d_particlePos[i].y = NY-1.01;
+    if (pc_i.getPosY() > NY - 1) {
+        pc_i.setPosY(NY - 1.01);
     }
     #endif
 
     #ifdef BC_Z_WALL
-    if(d_particlePos[i].z < 0){
-        d_particlePos[i].z = 0.01;
+    if (pc_i.getPosZ() < 0) {
+        pc_i.setPosZ(0.01);
     }
-    if(d_particlePos[i].z > NZ-1){
-        d_particlePos[i].z = NZ-1.01;
+    if (pc_i.getPosZ() > NZ - 1) {
+        pc_i.setPosZ(NZ - 1.01);
     }
     #endif
 
 }
 
 __host__
-void saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
+void tracer_saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
     // Names of file to save particle info
     std::string strFileParticleData = getVarFilename("particleData", step, ".csv");
 
