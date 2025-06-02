@@ -45,29 +45,26 @@ ParticlesSoA::~ParticlesSoA() {
     }
 }
 
-ParticleCenter* ParticlesSoA::getPCenterArray() const {
-    return this->pCenterArray;
-}
+ParticleCenter* ParticlesSoA::getPCenterArray() const {return this->pCenterArray;}
+void ParticlesSoA::setPCenterArray(ParticleCenter* pArray) {this->pCenterArray = pArray;}
 
-void ParticlesSoA::setPCenterArray(ParticleCenter* pArray) {
-    pCenterArray = pArray;
-}
+dfloat3* ParticlesSoA::getPCenterLastPos() const {return this->pCenterLastPos;}
+void ParticlesSoA::setPCenterLastPos(dfloat3* pLastPos) {this->pCenterLastPos = pLastPos;}
 
-dfloat3* ParticlesSoA::getPCenterLastPos() const {
-    return pCenterLastPos;
-}
+dfloat3* ParticlesSoA::getPCenterLastWPos() const {return this->pCenterLastWPos;}
+void ParticlesSoA::setPCenterLastWPos(dfloat3* pLastWPos) {this->pCenterLastWPos = pLastWPos;}
 
-void ParticlesSoA::setPCenterLastPos(dfloat3* pLastPos) {
-    pCenterLastPos = pLastPos;
-}
+ParticleShape* ParticlesSoA::getPShape() const {return this->pShape;}
+void ParticlesSoA::setPShape(ParticleShape* pShape) {this->pShape = pShape;}
 
-dfloat3* ParticlesSoA::getPCenterLastWPos() const {
-    return pCenterLastWPos;
-}
+ParticleMethod* ParticlesSoA::getPMethod() const {return this->pMethod;}
+void ParticlesSoA::setPMethod(ParticleMethod* pMethod) {this->pMethod = pMethod;}
 
-void ParticlesSoA::setPCenterLastWPos(dfloat3* pLastWPos) {
-    pCenterLastWPos = pLastWPos;
-}
+bool* ParticlesSoA::getPCollideWall() const {return this->pCollideWall;}
+void ParticlesSoA::setPCollideWall(bool* pMethod) {this->pCollideWall = pCollideWall;}
+
+bool* ParticlesSoA::getPCollideParticle() const {return this->pCollideParticle;}
+void ParticlesSoA::setPCollideParticle(bool* pMethod) {this->pCollideParticle = pCollideParticle;}
 
 
 
@@ -113,6 +110,10 @@ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
         this->pCenterArray[p] = particles[p].getPCenter();
         this->pCenterLastPos[p] = particles[p].getPCenter().getPos();
         this->pCenterLastWPos[p] = particles[p].getPCenter().getW_old();
+        this->pShape[p] = particles[p].getShape();
+        this->pMethod[p] = particles[p].getMethod();
+        this->pCollideWall[p] = particles[p].getCollideWall();
+        this->pCollideParticle[p] = particles[p].getCollideParticle();
     }
     checkCudaErrors(cudaSetDevice(0));
 

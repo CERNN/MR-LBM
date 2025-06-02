@@ -62,6 +62,21 @@ class ParticlesSoA{
         dfloat3* getPCenterLastWPos() const;
         void setPCenterLastWPos(dfloat3* pLastWPos);
 
+        ParticleShape* getPShape() const;
+        void setPShape(ParticleShape* pShape);
+
+        ParticleMethod* getPMethod() const;
+        void setPMethod(ParticleMethod* pMethod);
+
+        bool* getPCollideWall() const;
+        void setPCollideWall(bool* pCollideWall);
+
+        bool* getPCollideParticle() const;
+        void setPCollideParticle(bool* pCollideParticle);
+
+
+
+
         //void updateNodesGPUs();
         //void freeNodesAndCenters();
     private:
@@ -69,6 +84,10 @@ class ParticlesSoA{
         ParticleCenter* pCenterArray;
         dfloat3* pCenterLastPos;    // Last particle position
         dfloat3* pCenterLastWPos;   // Last angular particle position
+        ParticleShape* pShape;
+        ParticleMethod* pMethod;
+        bool* pCollideWall;
+        bool* pCollideParticle;
 };
 
 #endif
