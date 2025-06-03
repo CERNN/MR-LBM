@@ -1,3 +1,5 @@
+#ifdef PARTICLE_MODEL
+
 #include "particleSim.cuh"
 
 void particleSimulation(
@@ -23,3 +25,6 @@ void particleSimulation(
 
 
 }
+
+
+#endif //PARTICLE_MODEL

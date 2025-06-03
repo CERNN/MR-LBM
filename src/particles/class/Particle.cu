@@ -1,3 +1,5 @@
+#ifdef PARTICLE_MODEL
+
 #include "Particle.cuh"
 #include <cstdlib>
 
@@ -164,6 +166,7 @@ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
 
 
 #ifdef IBM
-
-
 #endif // !IBM
+
+
+#endif //PARTICLE_MODEL

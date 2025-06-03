@@ -8,6 +8,8 @@
 *   @date 16/05/2025
 */
 
+#ifdef PARTICLE_MODEL
+
 #include "ibmNodes.cuh"
 #include "../../class/Particle.cuh"
 #include "../../class/ParticleCenter.cuh"
@@ -150,3 +152,4 @@ void ParticleNodeSoA::leftShiftNodesSoA(int idx, int left_shift){
 
 
 
+#endif //PARTICLE_MODEL

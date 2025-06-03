@@ -1,3 +1,5 @@
+#ifdef PARTICLE_MODEL
+
 #include "pibm.cuh"
 
 void pibmSimulation(
@@ -5,3 +7,6 @@ void pibmSimulation(
     cudaStream_t streamParticles,
     unsigned int step
 ){}
+
+
+#endif //PARTICLE_MODEL

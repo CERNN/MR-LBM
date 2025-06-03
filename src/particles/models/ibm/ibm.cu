@@ -1,3 +1,5 @@
+#ifdef PARTICLE_MODEL
+
 #include "ibm.cuh"
 
 // Functions for the immersed boundary method
@@ -11,3 +13,6 @@ void ibmSimulation(
     cudaStream_t streamParticles,
     unsigned int step
 ){}
+
+
+#endif //PARTICLE_MODEL

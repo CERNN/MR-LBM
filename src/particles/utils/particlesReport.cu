@@ -1,3 +1,5 @@
+#ifdef PARTICLE_MODEL
+
 #include "partiClesReport.cuh"
 
 std::string getStrDfloat3(dfloat3 val, std::string sep){
@@ -102,3 +104,5 @@ void saveParticlesInfo(ParticlesSoA particles, unsigned int step, bool saveNodes
     } */
 }
 
+
+#endif //PARTICLE_MODEL
