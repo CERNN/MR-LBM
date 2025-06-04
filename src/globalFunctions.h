@@ -14,18 +14,7 @@ __host__ __device__
     // f_eq = rho_w * (1 - uu * 1.5 + uc * 3 * ( 1 + uc * 1.5)) ->
     return (rhow * (p1_muu + uc3 * (1.0 + uc3 * 0.5)));
 }   
-/*
-* rhoVar 0
-* uxVar  1
-* uyVar  2
-* uzVar  3
-* pixx   4
-* pixy   5
-* pixz   6
-* piyy   7
-* piyz   8
-* pizz   9
-*/
+
 __host__ __device__
     size_t __forceinline__
     idxMom(
@@ -39,6 +28,29 @@ __host__ __device__
 {
 
     return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ * (mom + NUMBER_MOMENTS * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * (bz))))));
+}
+
+
+__host__ __device__
+    dfloat __forceinline__
+    getMom(
+        const int x,
+        const int y,
+        const int z,
+        const int mom,
+        dfloat *fMom)
+{
+
+    const int tx = x%BLOCK_NX;
+    const int ty = y%BLOCK_NY;
+    const int tz = z%BLOCK_NZ;
+    const int bx = x/BLOCK_NX; 
+    const int by = y/BLOCK_NY; 
+    const int bz = z/BLOCK_NZ; 
+
+
+
+    return fMom[idxMom(tx, ty, tz, mom, bx, by, bz)];
 }
 
 __device__ int __forceinline__
@@ -461,7 +473,103 @@ dfloat6 rotate_inertia_by_quart(dfloat4 q, dfloat6 I6);
 
 
 
+dfloat mom_trilinear_interp(dfloat x, dfloat y, dfloat z, const int mom , dfloat *fMom) {
+    int i = (int)floor(x);
+    int j = (int)floor(y);
+    int k = (int)floor(z);
 
+
+    dfloat xi = x - i;
+    dfloat eta = y - j;
+    dfloat zeta = z - k;
+
+    // Direct value (no interpolation needed)
+    if (xi == 0.0 && eta == 0.0 && zeta == 0.0) {
+        return getMom(i, j, k, mom, fMom);
+    }
+
+    // Linear in x direction
+    if (eta == 0.0 && zeta == 0.0) {
+        dfloat c0 = getMom(i,     j, k, mom, fMom);
+        dfloat c1 = getMom(i + 1, j, k, mom, fMom);
+        return (1 - xi) * c0 + xi * c1;
+    }
+
+    // Linear in y direction
+    if (xi == 0.0 && zeta == 0.0) {
+        dfloat c0 = getMom(i, j,     k, mom, fMom);
+        dfloat c1 = getMom(i, j + 1, k, mom, fMom);
+        return (1 - eta) * c0 + eta * c1;
+    }
+
+    // Linear in z direction
+    if (xi == 0.0 && eta == 0.0) {
+        dfloat c0 = getMom(i, j, k,     mom, fMom);
+        dfloat c1 = getMom(i, j, k + 1, mom, fMom);
+        return (1 - zeta) * c0 + zeta * c1;
+    }
+
+    // Bilinear in xy plane (z fixed)
+    if (zeta == 0.0) {
+        dfloat c00 = getMom(i,     j,     k, mom, fMom);
+        dfloat c10 = getMom(i + 1, j,     k, mom, fMom);
+        dfloat c01 = getMom(i,     j + 1, k, mom, fMom);
+        dfloat c11 = getMom(i + 1, j + 1, k, mom, fMom);
+        return (1 - xi) * (1 - eta) * c00 +
+                xi      * (1 - eta) * c10 +
+               (1 - xi) * eta       * c01 +
+                xi      * eta       * c11;
+    }
+
+    // Bilinear in xz plane (y fixed)
+    if (eta == 0.0) {
+        dfloat c00 = getMom(i,     j, k,     mom, fMom);
+        dfloat c10 = getMom(i + 1, j, k,     mom, fMom);
+        dfloat c01 = getMom(i,     j, k + 1, mom, fMom);
+        dfloat c11 = getMom(i + 1, j, k + 1, mom, fMom);
+        return (1 - xi) * (1 - zeta) * c00 +
+                xi      * (1 - zeta) * c10 +
+               (1 - xi) * zeta       * c01 +
+                xi      * zeta       * c11;
+    }
+
+    // Bilinear in yz plane (x fixed)
+    if (xi == 0.0) {
+        dfloat c00 = getMom(i, j,     k,     mom, fMom);
+        dfloat c10 = getMom(i, j + 1, k,     mom, fMom);
+        dfloat c01 = getMom(i, j,     k + 1, mom, fMom);
+        dfloat c11 = getMom(i, j + 1, k + 1, mom, fMom);
+        return (1 - eta) * (1 - zeta) * c00 +
+                eta      * (1 - zeta) * c10 +
+               (1 - eta) * zeta       * c01 +
+                eta      * zeta       * c11;
+    }
+
+    // Full trilinear
+    dfloat c000 = getMom(i,     j,     k,     mom, fMom);
+    dfloat c100 = getMom(i + 1, j,     k,     mom, fMom);
+    dfloat c010 = getMom(i,     j + 1, k,     mom, fMom);
+    dfloat c110 = getMom(i + 1, j + 1, k,     mom, fMom);
+    dfloat c001 = getMom(i,     j,     k + 1, mom, fMom);
+    dfloat c101 = getMom(i + 1, j,     k + 1, mom, fMom);
+    dfloat c011 = getMom(i,     j + 1, k + 1, mom, fMom);
+    dfloat c111 = getMom(i + 1, j + 1, k + 1, mom, fMom);
+
+    return
+        (1 - xi) * (1 - eta) * (1 - zeta) * c000 +
+         xi      * (1 - eta) * (1 - zeta) * c100 +
+        (1 - xi) * eta       * (1 - zeta) * c010 +
+         xi      * eta       * (1 - zeta) * c110 +
+        (1 - xi) * (1 - eta) * zeta       * c001 +
+         xi      * (1 - eta) * zeta       * c101 +
+        (1 - xi) * eta       * zeta       * c011 +
+         xi      * eta       * zeta       * c111;
+}
+
+__host__ inline uint32_t set_top12_bits_host(uint32_t base, dfloat x) {return (base & 0x000FFFFF) | (static_cast<uint32_t>(x * 4095.0f + 0.5f) << 20);}
+__host__ inline dfloat get_from_top12_bits_host(uint32_t value) {return static_cast<dfloat>(value >> 20) * 0.0002442002f;}
+__device__ inline uint32_t set_top12_bits_device(uint32_t base, dfloat x) {return (base & 0x000FFFFF) | (__float2uint_rn(x * 4095.0f) << 20);}
+__device__ inline dfloat get_from_top12_bits_device(uint32_t value) {return __uint2float_rn(value >> 20) * 0.0002442002f;}
 
 
 
