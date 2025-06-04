@@ -472,7 +472,7 @@ __host__ __device__
 dfloat6 rotate_inertia_by_quart(dfloat4 q, dfloat6 I6);
 
 
-
+__host__ __device__
 dfloat mom_trilinear_interp(dfloat x, dfloat y, dfloat z, const int mom , dfloat *fMom) {
     int i = (int)floor(x);
     int j = (int)floor(y);
@@ -564,6 +564,57 @@ dfloat mom_trilinear_interp(dfloat x, dfloat y, dfloat z, const int mom , dfloat
          xi      * (1 - eta) * zeta       * c101 +
         (1 - xi) * eta       * zeta       * c011 +
          xi      * eta       * zeta       * c111;
+}
+
+
+__host__ __device__
+dfloat cubic_interp(dfloat p0, dfloat p1, dfloat p2, dfloat p3, dfloat t) {
+    dfloat a = -0.5*p0 + 1.5*p1 - 1.5*p2 + 0.5*p3;
+    dfloat b = p0 - 2.5*p1 + 2.0*p2 - 0.5*p3;
+    dfloat c = -0.5*p0 + 0.5*p2;
+    dfloat d = p1;
+    return ((a*t + b)*t + c)*t + d;
+}
+
+__host__ __device__
+dfloat mom_tricubic_interp(dfloat x, dfloat y, dfloat z,
+                       const int mom, dfloat *fMom) {
+    int i = (int)floor(x);
+    int j = (int)floor(y);
+    int k = (int)floor(z);
+
+    dfloat xi   = x - i;
+    dfloat eta  = y - j;
+    dfloat zeta = z - k;
+
+    dfloat F[4][4][4];
+
+    // collect 64 neighbors
+    for (int kk = 0; kk < 4; kk++) {
+        for (int jj = 0; jj < 4; jj++) {
+            for (int ii = 0; ii < 4; ii++) {
+                F[ii][jj][kk] = getMom(i + ii - 1, j + jj - 1, k + kk - 1, mom, fMom);
+            }
+        }
+    }
+
+    dfloat C[4][4];  // after x interpolation
+    dfloat D[4];     // after y interpolation
+
+    // interpolate in x for each row
+    for (int jj = 0; jj < 4; jj++) {
+        for (int kk = 0; kk < 4; kk++) {
+            C[jj][kk] = cubic_interp(F[0][jj][kk], F[1][jj][kk], F[2][jj][kk], F[3][jj][kk], xi);
+        }
+    }
+
+    // interpolate in y for each z
+    for (int kk = 0; kk < 4; kk++) {
+        D[kk] = cubic_interp(C[0][kk], C[1][kk], C[2][kk], C[3][kk], eta);
+    }
+
+    // interpolate in z
+    return cubic_interp(D[0], D[1], D[2], D[3], zeta);
 }
 
 __host__ inline uint32_t set_top12_bits_host(uint32_t base, dfloat x) {return (base & 0x000FFFFF) | (static_cast<uint32_t>(x * 4095.0f + 0.5f) << 20);}
