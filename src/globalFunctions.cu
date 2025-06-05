@@ -243,3 +243,149 @@ dfloat6 rotate_inertia_by_quart(dfloat4 q, dfloat6 I6) {
     return I6;
 
 }
+
+__host__ __device__
+dfloat mom_trilinear_interp(dfloat x, dfloat y, dfloat z, const int mom , dfloat *fMom) {
+    int i = (int)floor(x);
+    int j = (int)floor(y);
+    int k = (int)floor(z);
+
+
+    dfloat xi = x - i;
+    dfloat eta = y - j;
+    dfloat zeta = z - k;
+
+    // Direct value (no interpolation needed)
+    if (xi == 0.0 && eta == 0.0 && zeta == 0.0) {
+        return getMom(i, j, k, mom, fMom);
+    }
+
+    // Linear in x direction
+    if (eta == 0.0 && zeta == 0.0) {
+        dfloat c0 = getMom(i,     j, k, mom, fMom);
+        dfloat c1 = getMom(i + 1, j, k, mom, fMom);
+        return (1 - xi) * c0 + xi * c1;
+    }
+
+    // Linear in y direction
+    if (xi == 0.0 && zeta == 0.0) {
+        dfloat c0 = getMom(i, j,     k, mom, fMom);
+        dfloat c1 = getMom(i, j + 1, k, mom, fMom);
+        return (1 - eta) * c0 + eta * c1;
+    }
+
+    // Linear in z direction
+    if (xi == 0.0 && eta == 0.0) {
+        dfloat c0 = getMom(i, j, k,     mom, fMom);
+        dfloat c1 = getMom(i, j, k + 1, mom, fMom);
+        return (1 - zeta) * c0 + zeta * c1;
+    }
+
+    // Bilinear in xy plane (z fixed)
+    if (zeta == 0.0) {
+        dfloat c00 = getMom(i,     j,     k, mom, fMom);
+        dfloat c10 = getMom(i + 1, j,     k, mom, fMom);
+        dfloat c01 = getMom(i,     j + 1, k, mom, fMom);
+        dfloat c11 = getMom(i + 1, j + 1, k, mom, fMom);
+        return (1 - xi) * (1 - eta) * c00 +
+                xi      * (1 - eta) * c10 +
+               (1 - xi) * eta       * c01 +
+                xi      * eta       * c11;
+    }
+
+    // Bilinear in xz plane (y fixed)
+    if (eta == 0.0) {
+        dfloat c00 = getMom(i,     j, k,     mom, fMom);
+        dfloat c10 = getMom(i + 1, j, k,     mom, fMom);
+        dfloat c01 = getMom(i,     j, k + 1, mom, fMom);
+        dfloat c11 = getMom(i + 1, j, k + 1, mom, fMom);
+        return (1 - xi) * (1 - zeta) * c00 +
+                xi      * (1 - zeta) * c10 +
+               (1 - xi) * zeta       * c01 +
+                xi      * zeta       * c11;
+    }
+
+    // Bilinear in yz plane (x fixed)
+    if (xi == 0.0) {
+        dfloat c00 = getMom(i, j,     k,     mom, fMom);
+        dfloat c10 = getMom(i, j + 1, k,     mom, fMom);
+        dfloat c01 = getMom(i, j,     k + 1, mom, fMom);
+        dfloat c11 = getMom(i, j + 1, k + 1, mom, fMom);
+        return (1 - eta) * (1 - zeta) * c00 +
+                eta      * (1 - zeta) * c10 +
+               (1 - eta) * zeta       * c01 +
+                eta      * zeta       * c11;
+    }
+
+    // Full trilinear
+    dfloat c000 = getMom(i,     j,     k,     mom, fMom);
+    dfloat c100 = getMom(i + 1, j,     k,     mom, fMom);
+    dfloat c010 = getMom(i,     j + 1, k,     mom, fMom);
+    dfloat c110 = getMom(i + 1, j + 1, k,     mom, fMom);
+    dfloat c001 = getMom(i,     j,     k + 1, mom, fMom);
+    dfloat c101 = getMom(i + 1, j,     k + 1, mom, fMom);
+    dfloat c011 = getMom(i,     j + 1, k + 1, mom, fMom);
+    dfloat c111 = getMom(i + 1, j + 1, k + 1, mom, fMom);
+
+    return
+        (1 - xi) * (1 - eta) * (1 - zeta) * c000 +
+         xi      * (1 - eta) * (1 - zeta) * c100 +
+        (1 - xi) * eta       * (1 - zeta) * c010 +
+         xi      * eta       * (1 - zeta) * c110 +
+        (1 - xi) * (1 - eta) * zeta       * c001 +
+         xi      * (1 - eta) * zeta       * c101 +
+        (1 - xi) * eta       * zeta       * c011 +
+         xi      * eta       * zeta       * c111;
+}
+
+
+
+__host__ __device__
+dfloat cubic_interp(dfloat p0, dfloat p1, dfloat p2, dfloat p3, dfloat t) {
+    dfloat a = -0.5*p0 + 1.5*p1 - 1.5*p2 + 0.5*p3;
+    dfloat b = p0 - 2.5*p1 + 2.0*p2 - 0.5*p3;
+    dfloat c = -0.5*p0 + 0.5*p2;
+    dfloat d = p1;
+    return ((a*t + b)*t + c)*t + d;
+}
+
+__host__ __device__
+dfloat mom_tricubic_interp(dfloat x, dfloat y, dfloat z,
+                       const int mom, dfloat *fMom) {
+    int i = (int)floor(x);
+    int j = (int)floor(y);
+    int k = (int)floor(z);
+
+    dfloat xi   = x - i;
+    dfloat eta  = y - j;
+    dfloat zeta = z - k;
+
+    dfloat F[4][4][4];
+
+    // collect 64 neighbors
+    for (int kk = 0; kk < 4; kk++) {
+        for (int jj = 0; jj < 4; jj++) {
+            for (int ii = 0; ii < 4; ii++) {
+                F[ii][jj][kk] = getMom(i + ii - 1, j + jj - 1, k + kk - 1, mom, fMom);
+            }
+        }
+    }
+
+    dfloat C[4][4];  // after x interpolation
+    dfloat D[4];     // after y interpolation
+
+    // interpolate in x for each row
+    for (int jj = 0; jj < 4; jj++) {
+        for (int kk = 0; kk < 4; kk++) {
+            C[jj][kk] = cubic_interp(F[0][jj][kk], F[1][jj][kk], F[2][jj][kk], F[3][jj][kk], xi);
+        }
+    }
+
+    // interpolate in y for each z
+    for (int kk = 0; kk < 4; kk++) {
+        D[kk] = cubic_interp(C[0][kk], C[1][kk], C[2][kk], C[3][kk], eta);
+    }
+
+    // interpolate in z
+    return cubic_interp(D[0], D[1], D[2], D[3], zeta);
+}
