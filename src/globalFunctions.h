@@ -567,6 +567,7 @@ dfloat mom_trilinear_interp(dfloat x, dfloat y, dfloat z, const int mom , dfloat
 }
 
 
+
 __host__ __device__
 dfloat cubic_interp(dfloat p0, dfloat p1, dfloat p2, dfloat p3, dfloat t) {
     dfloat a = -0.5*p0 + 1.5*p1 - 1.5*p2 + 0.5*p3;
