@@ -1,10 +1,10 @@
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 
 #include "tracer.cuh"
 
-__host__
+__host__ __device__
 void tracerSimulation(
-    ParticlesSoA particles,
+    ParticlesSoA& particles,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
@@ -37,7 +37,7 @@ void tracerSimulation(
 
 __global__
 void tracer_positionUpdate(
-    ParticlesSoA particles,
+    ParticlesSoA& particles,
     dfloat *fMom,
     int firstIndex,
     int lastIndex,
@@ -56,7 +56,7 @@ void tracer_positionUpdate(
     dfloat stencilVal[3][P_DIST*2];
 
     ParticleCenter pc_i;
-    //pc_i = particles[i].getPCenterArray();  << need fix how to get the position
+    pc_i = particles.getPCenterArray()[i];  //<< need fix how to get the position
     dfloat3 pc_pos = pc_i.getPos();
 
     dfloat pos[3] = {pc_pos.x,pc_pos.y,pc_pos.z};
@@ -241,4 +241,4 @@ void tracer_saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
     outFileParticleData << strColumnNames << strValuesParticles.str();
 }
 
-#endif //PARTICLE_MODEL
+//#endif //PARTICLE_MODEL

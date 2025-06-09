@@ -1,10 +1,10 @@
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 
-#include "Particle.cuh"
+#include "particle.cuh"
 #include <cstdlib>
 
 
-Particle::Particle(){
+__host__ __device__ Particle::Particle(){
     method = none; // Initialize method
 }
 
@@ -25,25 +25,46 @@ __host__ __device__ void Particle::setShape(ParticleShape shape) { this->shape =
 
 
 // ParticlesSoA class implementation
+__host__ __device__
 ParticlesSoA::ParticlesSoA() {
     pCenterArray = nullptr;
     pCenterLastPos = nullptr;
     pCenterLastWPos = nullptr;
+    pShape = nullptr;
+    pMethod = nullptr;
+    pCollideWall = nullptr;
+    pCollideParticle = nullptr;
 }
 
+__host__ __device__
 ParticlesSoA::~ParticlesSoA() {
-    // Free allocated memory
-    if (pCenterArray != nullptr) {
+    if (pCenterArray) {
         cudaFree(pCenterArray);
         pCenterArray = nullptr;
     }
-    if (pCenterLastPos != nullptr) {
+    if (pCenterLastPos) {
         free(pCenterLastPos);
         pCenterLastPos = nullptr;
     }
-    if (pCenterLastWPos != nullptr) {
+    if (pCenterLastWPos) {
         free(pCenterLastWPos);
         pCenterLastWPos = nullptr;
+    }
+    if (pShape) {
+        free(pShape);
+        pShape = nullptr;
+    }
+    if (pMethod) {
+        free(pMethod);
+        pMethod = nullptr;
+    }
+    if (pCollideWall) {
+        free(pCollideWall);
+        pCollideWall = nullptr;
+    }
+    if (pCollideParticle) {
+        free(pCollideParticle);
+        pCollideParticle = nullptr;
     }
 }
 
@@ -68,19 +89,19 @@ __host__ __device__ void ParticlesSoA::setPCollideWall(bool* pMethod) {this->pCo
 __host__ __device__ bool* ParticlesSoA::getPCollideParticle() const {return this->pCollideParticle;}
 __host__ __device__ void ParticlesSoA::setPCollideParticle(bool* pMethod) {this->pCollideParticle = pCollideParticle;}
 
-__host__
+__device__ __host__
 const MethodRange& ParticlesSoA::getMethodRange(ParticleMethod method) const {
     static const MethodRange empty{-1, -1};
     auto it = methodRanges.find(method);
     return (it != methodRanges.end()) ? it->second : empty;
 }
 
-__host__
+__device__ __host__
 void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last) {
     methodRanges[method] = {first, last};
 }
 
-__host__
+__device__ __host__
 int ParticlesSoA::getMethodCount(ParticleMethod method) const {
     MethodRange range = getMethodRange(method);
     if (range.first == -1 || range.last == -1 || range.last < range.first)
@@ -89,7 +110,7 @@ int ParticlesSoA::getMethodCount(ParticleMethod method) const {
 }
 
 
-void ParticlesSoA::createParticles(Particle *particles){
+__host__ __device__ void ParticlesSoA::createParticles(Particle *particles){
    
     #include CASE_PARTICLE_CREATE
 
@@ -114,13 +135,13 @@ void ParticlesSoA::createParticles(Particle *particles){
     }
 }
 
-void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
+__host__ __device__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
     // Allocate particle center array
     checkCudaErrors(cudaSetDevice(0));
     checkCudaErrors(
         cudaMallocManaged((void**)&(this->pCenterArray), sizeof(ParticleCenter) * NUM_PARTICLES));
     // Allocate array of last positions for Particles
-    this->pCenterLastPos = (dfloat3*)malloc(sizeof(dfloat3)*NUM_PARTICLES);
+    this->pCenterLastPos = (dfloat3*)malloc(sizeof(dfloat3) * NUM_PARTICLES);
     this->pCenterLastWPos = (dfloat3*)malloc(sizeof(dfloat3) * NUM_PARTICLES);
 
     checkCudaErrors(cudaSetDevice(0));
@@ -169,4 +190,4 @@ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
 #endif // !IBM
 
 
-#endif //PARTICLE_MODEL
+//#endif //PARTICLE_MODEL

@@ -1,9 +1,9 @@
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 
 #include "particleSim.cuh"
 
 void particleSimulation(
-    ParticlesSoA particles,
+    ParticlesSoA& particles,
     dfloat *fMom,
     cudaStream_t *streamParticles,
     unsigned int step
@@ -27,4 +27,4 @@ void particleSimulation(
 }
 
 
-#endif //PARTICLE_MODEL
+//#endif //PARTICLE_MODEL

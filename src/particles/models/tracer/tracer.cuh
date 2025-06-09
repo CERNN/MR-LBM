@@ -9,7 +9,7 @@
 #include "../../../includeFiles/interface.h"
 #include "../../../errorDef.h"
 #include "../../../saveData.cuh"
-#include "./../../class/Particle.cuh"
+#include "./../../class/particle.cuh"
 
 /*
 *   @brief Handle all simulation process of the tracer particles
@@ -19,9 +19,9 @@
 *   @param streamParticles: CUDA streams for GPUs
 *   @param step: current time step
 */
-__host__
+__host__ __device__
 void tracerSimulation(
-    ParticlesSoA particles,
+    ParticlesSoA& particles,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
@@ -36,7 +36,7 @@ void tracerSimulation(
 */
 __global__
 void tracer_positionUpdate(
-    ParticlesSoA particles,
+    ParticlesSoA& particles,
     dfloat *fMom,
     int firstIndex,
     int lastIndex,

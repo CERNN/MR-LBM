@@ -1,3 +1,4 @@
+//#ifdef PARTICLE_MODEL
 #ifndef __PARTICLE_CENTER_H
 #define __PARTICLE_CENTER_H
 
@@ -285,3 +286,5 @@ protected:
     CollisionData collision;
 }; 
 #endif
+
+//#endif

@@ -1,4 +1,4 @@
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 
 #include "partiClesReport.cuh"
 
@@ -105,4 +105,4 @@ void saveParticlesInfo(ParticlesSoA particles, unsigned int step, bool saveNodes
 }
 
 
-#endif //PARTICLE_MODEL
+//#endif //PARTICLE_MODEL

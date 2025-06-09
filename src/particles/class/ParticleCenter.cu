@@ -1,6 +1,6 @@
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 
-#include "ParticleCenter.cuh"
+#include "particleCenter.cuh"
 #include <iostream>
 
 // Class TangentialCollisionTracker
@@ -239,5 +239,4 @@ __host__ __device__ void ParticleCenter::setMovable(bool movable) { this->movabl
 __host__ __device__ CollisionData ParticleCenter::getCollision() const { return this->collision; }
 __host__ __device__ void ParticleCenter::setCollision(const CollisionData& collision) { this->collision = collision; }
 
-
-#endif //PARTICLE_MODEL
+//#endif //PARTICLE_MODEL

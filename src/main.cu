@@ -152,10 +152,10 @@ int main() {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
-    #ifdef PARTICLE_MODEL
+    //#ifdef PARTICLE_MODEL
     cudaStream_t streamsPart[1];
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
-    #endif
+    //#endif
 
     step=INI_STEP;
 
@@ -174,7 +174,7 @@ int main() {
 
     printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
     
-    #ifdef PARTICLE_MODEL
+   // #ifdef PARTICLE_MODEL
         //memory allocation for particles in host and device
         ParticlesSoA particlesSoA;
         Particle *particles;
@@ -183,7 +183,7 @@ int main() {
         // particle initialization with position, velocity, and solver method
         initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
 
-    #endif
+//    #endif
 
     /* ------------------------------ TIMER EVENTS  ------------------------------ */
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
@@ -227,9 +227,9 @@ int main() {
         //swap interface pointers
         swapGhostInterfaces(ghostInterface);
 
-        #ifdef PARTICLE_MODEL
+       // #ifdef PARTICLE_MODEL
             particleSimulation(particlesSoA,d_fMom,streamsPart,step);
-        #endif
+       // #endif
 
 
         if(checkpoint){
@@ -260,9 +260,9 @@ int main() {
             #endif                 
             saveSimCheckpoint(h_fMom, ghostInterface, &step);
 
-            #ifdef PARTICLE_MODEL
+            //#ifdef PARTICLE_MODEL
             saveSimCheckpointParticle(particlesSoA, &step);
-            #endif
+            //#endif
             
 
         }

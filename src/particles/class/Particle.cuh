@@ -1,8 +1,9 @@
+//#ifdef PARTICLE_MODEL
 #ifndef __PARTICLE_H
 #define __PARTICLE_H
 
 
-#include "ParticleCenter.cuh"
+#include "particleCenter.cuh"
 #include <math.h>
 #include <random>
 #include "./../../var.h"
@@ -22,7 +23,7 @@ enum ParticleShape { SPHERE = 0 , CAPSULE = 1, ELLIPSOID = 2};
 
 class Particle {
     public:
-        Particle();
+        __host__ __device__ Particle();
 
         __host__ __device__ ParticleMethod getMethod() const;
         __host__ __device__ void setMethod(ParticleMethod method);
@@ -55,10 +56,11 @@ class Particle {
 */
 class ParticlesSoA{
     public:
-        ParticlesSoA(); // Constructor
-        ~ParticlesSoA(); // Destructor
-        void createParticles(Particle particles[NUM_PARTICLES]);
-        void updateParticlesAsSoA(Particle* particles);
+        __host__ __device__ ParticlesSoA(); // Constructor
+        __host__ __device__ ~ParticlesSoA(); // Destructor
+
+        __host__ __device__ void createParticles(Particle *particles);
+        __host__ __device__ void updateParticlesAsSoA(Particle *particles);
 
         __host__ __device__ ParticleCenter* getPCenterArray() const;
         __host__ __device__ void setPCenterArray(ParticleCenter* pArray);
@@ -81,9 +83,9 @@ class ParticlesSoA{
         __host__ __device__ bool* getPCollideParticle() const;
         __host__ __device__ void setPCollideParticle(bool* pCollideParticle);
 
-        __host__ const MethodRange& ParticlesSoA::getMethodRange(ParticleMethod method) const;
-        __host__ void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last);
-        __host__ int ParticlesSoA::getMethodCount(ParticleMethod method) const;
+        __host__ __device__ const MethodRange& ParticlesSoA::getMethodRange(ParticleMethod method) const;
+        __host__ __device__ void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last);
+        __host__ __device__ int ParticlesSoA::getMethodCount(ParticleMethod method) const;
 
 
 
@@ -103,3 +105,5 @@ class ParticlesSoA{
 };
 
 #endif
+
+//#endif
