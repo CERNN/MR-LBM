@@ -6,7 +6,7 @@ constexpr int SCALE = 1;
 constexpr int N = 64 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = N;        // size z of the grid in one GPU
+constexpr int NZ = 4;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 #define DUCT_CENTER_X (((NX-1)/2.0))
@@ -16,18 +16,18 @@ constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
 constexpr dfloat FZ = 1e-6;        // force in z (flow direction in most cases)
 
-constexpr dfloat RE = 100;
+constexpr dfloat RE = 10;
 constexpr dfloat U_MAX = 0.0;  
 constexpr dfloat L = N;
 constexpr dfloat U_C = 0.01;
 constexpr dfloat SUM_VISC = (U_C*L)/RE;
-constexpr dfloat BETA = 0.1; //R_v
+constexpr dfloat BETA = 1; //R_v
 constexpr dfloat VISC = BETA * SUM_VISC;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat t_c = L/U_C;
 constexpr int CONFORMATION_SWITCH = 0;
 
-constexpr int N_STEPS = 50;
+constexpr int N_STEPS = 5;
 
 // value for the velocity initial condition in the domain
 constexpr dfloat U_0_X = 0.0;
@@ -83,7 +83,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
     constexpr dfloat CONF_ZERO = (dfloat)(10.0);
 
     constexpr dfloat nu_p = SUM_VISC - VISC;
-    constexpr dfloat Weissenberg_number = 1.0;
+    constexpr dfloat Weissenberg_number = 0.0;
 
     constexpr dfloat LAMBDA = Weissenberg_number*t_c;
     constexpr dfloat inv_lambda = 1.0/LAMBDA;
@@ -91,7 +91,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 
     //ADVECTION-DIFFUSIONS CONSTANTS
     constexpr dfloat CONF_DIFFUSIVITY_RATIO = 100; //OR Pr in malaspinas
-    constexpr dfloat CONF_DIFFUSIVITY = VISC/CONF_DIFFUSIVITY_RATIO; // a0lpha
+    constexpr dfloat CONF_DIFFUSIVITY = \VISC/CONF_DIFFUSIVITY_RATIO; // a0lpha
 
     constexpr dfloat CONF_DIFF_REF = (1.0/6);
     constexpr dfloat CONF_TAU = CONF_DIFF_REF*3+0.5;

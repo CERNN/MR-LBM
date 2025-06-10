@@ -6,8 +6,7 @@ switch (nodeType) {
     default:
         dfloat3 unkNode = dfloat3(x,y,z);
         dfloat3 cCenter = dfloat3(DUCT_CENTER_X,DUCT_CENTER_Y,z);
-        dfloat3 normal_vector = cCenter - unkNode;
-        normal_vector = normal_vector / vector_normalize(normal_vector);
+        dfloat3 normal_vector = vector_normalize(cCenter - unkNode);
 
         dfloat3 node1 = unkNode + 1.0*normal_vector;
         dfloat3 node2 = unkNode + 2.0*normal_vector;
