@@ -4,14 +4,14 @@ constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
 constexpr dfloat RE = 500;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 1000;
+constexpr int N_STEPS = 10000;
 constexpr int N = 128 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
 constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.01;  
+constexpr dfloat U_MAX = 0.1;  
 constexpr dfloat L = N;
 
 constexpr dfloat FX = 0.0;        // force in x

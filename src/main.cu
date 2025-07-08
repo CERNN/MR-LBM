@@ -354,6 +354,7 @@ int main() {
         #ifdef PARTICLE_MODEL
             if (particleSave){
                 printf("\n------------------------- Saving particles %06d -------------------------\n", step);
+                if(console_flush){fflush(stdout);}
                 saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
             }
         #endif

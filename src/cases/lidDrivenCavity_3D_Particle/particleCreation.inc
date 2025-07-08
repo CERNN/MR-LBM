@@ -20,14 +20,14 @@ for (int i = 0; i<NUM_PARTICLES;i++){
     ParticleCenter& center = centerStorage[i];
     
 
-    x_center = 10; // x_limit_B + (x_limit_E - x_limit_B) * distr(generator) / RAND_MAX;
-    y_center = 10; //y_limit_B + (y_limit_E - y_limit_B) * distr(generator) / RAND_MAX;
-    z_center = 10; //z_limit_B + (z_limit_E - z_limit_B) * distr(generator) / RAND_MAX;
+    x_center = 64; // x_limit_B + (x_limit_E - x_limit_B) * distr(generator) / RAND_MAX;
+    y_center = 120; //y_limit_B + (y_limit_E - y_limit_B) * distr(generator) / RAND_MAX;
+    z_center = 64; //z_limit_B + (z_limit_E - z_limit_B) * distr(generator) / RAND_MAX;
 
     dfloat3 pos = {x_center, y_center, z_center};
     dfloat3 vel = {0.0, 0.0, 0.0};
 
-    this->pShape[i] = CAPSULE;
+    this->pShape[i] = SPHERE;
     center.setPos(pos);
     center.setPos_old(pos);
     center.setVel(vel);
