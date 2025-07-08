@@ -16,6 +16,9 @@
 #define PARTICLE_MODEL true
 //#define RANDOM_NUMBERS true    // to generate random numbers 
 // (useful for turbulence)
+
+#define STENCIL_4 
+
 #ifdef IBM_METHOD
 
 // Change to location of nodes http://dx.doi.org/10.1016/j.jcp.2012.02.026

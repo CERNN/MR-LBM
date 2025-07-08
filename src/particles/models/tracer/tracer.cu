@@ -84,9 +84,9 @@ void tracer_positionUpdate(
     // Calculate stencils to use and the valid interval [xyz][idx]
     dfloat stencilVal[3][P_DIST*2];
 
-    ParticleCenter pc_i = pArray[globalIdx];
+    ParticleCenter* pc_i = &pArray[globalIdx];
 
-    dfloat3 pc_pos = pc_i.getPos();
+    dfloat3 pc_pos = pc_i->getPos();
 
     dfloat pos[3] = {pc_pos.x,pc_pos.y,pc_pos.z};
     
@@ -210,33 +210,33 @@ void tracer_positionUpdate(
 
     dfloat3 dVel = dfloat3(uxVar,uyVar,uzVar);// 0.01
     //Update particle position
-    pc_i.setPos(pc_i.getPos() + dVel);
+    pc_i->setPos(pc_i->getPos() + dVel);
 
       //AVOID THAT THE PARTICLES GO OUTSIDE OF THE DOMAIN
     #ifdef BC_X_WALL
-    if (pc_i.getPosX() < 0) {
-        pc_i.setPosX(0.01);
+    if (pc_i->getPosX() < 0) {
+        pc_i->setPosX(0.01);
     }
-    if (pc_i.getPosX() > NX - 1) {
-        pc_i.setPosX(NX - 1.01);
+    if (pc_i->getPosX() > NX - 1) {
+        pc_i->setPosX(NX - 1.01);
     }
     #endif
 
     #ifdef BC_Y_WALL
-    if (pc_i.getPosY() < 0) {
-        pc_i.setPosY(0.01);
+    if (pc_i->getPosY() < 0) {
+        pc_i->setPosY(0.01);
     }
-    if (pc_i.getPosY() > NY - 1) {
-        pc_i.setPosY(NY - 1.01);
+    if (pc_i->getPosY() > NY - 1) {
+        pc_i->setPosY(NY - 1.01);
     }
     #endif
 
     #ifdef BC_Z_WALL
-    if (pc_i.getPosZ() < 0) {
-        pc_i.setPosZ(0.01);
+    if (pc_i->getPosZ() < 0) {
+        pc_i->setPosZ(0.01);
     }
-    if (pc_i.getPosZ() > NZ - 1) {
-        pc_i.setPosZ(NZ - 1.01);
+    if (pc_i->getPosZ() > NZ - 1) {
+        pc_i->setPosZ(NZ - 1.01);
     }
     #endif 
 

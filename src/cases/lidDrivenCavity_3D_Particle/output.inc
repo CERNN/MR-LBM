@@ -20,8 +20,8 @@
 
 /* ------------------------- TIME AND SAVE DEFINES ------------------------- */
 
-#define PARTICLES_SAVE (10)               // Save particles info every given steps (0 not report)
-#define PARTICLES_DATA_REPORT (10)                   // Report IBM treated data every given steps (0 not report)
+#define PARTICLES_SAVE (false)               // Save particles info every given steps (0 not report)
+#define PARTICLES_DATA_REPORT (false)                   // Report IBM treated data every given steps (0 not report)
 
 
 #define IBM_PARTICLES_NODES_SAVE false      // Saves particles nodes data
