@@ -1,3 +1,4 @@
+//#ifdef PARTICLE_MODEL
 #ifndef __PARTICLE_CENTER_H
 #define __PARTICLE_CENTER_H
 
@@ -65,7 +66,7 @@ public:
     __host__ __device__ dfloat getPosX() const;
     __host__ __device__ dfloat getPosY() const;
     __host__ __device__ dfloat getPosZ() const;
-    __host__ __device__ void setPos(const dfloat3& pos);
+    __host__ __device__ void setPos(const dfloat3 pos);
     __host__ __device__ void setPosX(dfloat x);
     __host__ __device__ void setPosY(dfloat y);
     __host__ __device__ void setPosZ(dfloat z);
@@ -75,7 +76,7 @@ public:
     __host__ __device__ dfloat getPosOldX() const;
     __host__ __device__ dfloat getPosOldY() const;
     __host__ __device__ dfloat getPosOldZ() const;
-    __host__ __device__ void setPos_old(const dfloat3& pos_old);
+    __host__ __device__ void setPos_old(const dfloat3 pos_old);
     __host__ __device__ void setPosOldX(dfloat x);
     __host__ __device__ void setPosOldY(dfloat y);
     __host__ __device__ void setPosOldZ(dfloat z);
@@ -285,3 +286,5 @@ protected:
     CollisionData collision;
 }; 
 #endif
+
+//#endif

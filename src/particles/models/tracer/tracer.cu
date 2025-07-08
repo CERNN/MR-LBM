@@ -1,25 +1,46 @@
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 
 #include "tracer.cuh"
 
-__host__
+__host__ 
 void tracerSimulation(
-    ParticlesSoA particles,
+    ParticlesSoA *particles,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
 ){
 
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
-    
+    MethodRange range = particles->getMethodRange(TRACER);
+
+    int numTracerParticles = range.last - range.first + 1;
     const unsigned int threadsNodes = 64;
-    const unsigned int gridNodes = NUM_PARTICLES % threadsNodes ? NUM_PARTICLES / threadsNodes + 1 : NUM_PARTICLES / threadsNodes;
+    const unsigned int gridNodes = (numTracerParticles + threadsNodes - 1) / threadsNodes;
+
+    if (particles == nullptr) {
+        printf("Error: particles is nullptr\n");
+        return;
+    }
 
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
-    MethodRange range = particles.getMethodRange(TRACER);
+    if (range.first < 0 || range.last >= NUM_PARTICLES || range.first > range.last) {
+        printf("Error: Invalid range - first: %d, last: %d, NUM_PARTICLES: %d\n", 
+               range.first, range.last, NUM_PARTICLES);
+        return;
+    }
 
-    tracer_positionUpdate<<<gridNodes, threadsNodes, 0, streamParticles>>>(particles, fMom,range.first,range.last,step);
+    ParticleCenter* pArray = particles->getPCenterArray();
+
+    tracer_positionUpdate<<<gridNodes, threadsNodes, 0, streamParticles>>>(
+        pArray, fMom,range.first,range.last,step
+    );
+    
+    cudaError_t kernelError = cudaGetLastError();
+    if (kernelError != cudaSuccess) {
+        printf("Error in kernel tracer_positionUpdate: %s\n", cudaGetErrorString(kernelError));
+    }
+
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
     #ifdef PARTICLE_TRACER_SAVE
@@ -37,30 +58,38 @@ void tracerSimulation(
 
 __global__
 void tracer_positionUpdate(
-    ParticlesSoA particles,
+    ParticleCenter *pArray,
     dfloat *fMom,
     int firstIndex,
     int lastIndex,
     unsigned int step
 ){
-    unsigned int i = threadIdx.x + blockDim.x * blockIdx.x;
-   
-    if (firstIndex < 0 || i>= NUM_PARTICLES)  //check if there is trace particles, and check if index is higher than the number of particles
-        return;
-    
-    if(i<firstIndex || i> lastIndex) //eliminate all index that are not trace particles.
-        return;
+    unsigned int localIdx = threadIdx.x + blockDim.x * blockIdx.x;
+    int globalIdx = firstIndex + localIdx;
 
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
+        return;
+    }
+
+    if (pArray == nullptr) {
+        printf("ERROR: particles is nullptr\n");
+        return;
+    }
+
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
+        return;
+    }
+    
     dfloat aux, aux1;
     // Calculate stencils to use and the valid interval [xyz][idx]
     dfloat stencilVal[3][P_DIST*2];
 
-    ParticleCenter pc_i;
-    //pc_i = particles[i].getPCenterArray();  << need fix how to get the position
+    ParticleCenter pc_i = pArray[globalIdx];
+
     dfloat3 pc_pos = pc_i.getPos();
 
     dfloat pos[3] = {pc_pos.x,pc_pos.y,pc_pos.z};
-
+    
     const int posBase[3] = { 
         int(pos[0]) - (P_DIST) + 1, 
         int(pos[1]) - (P_DIST) + 1, 
@@ -133,6 +162,7 @@ void tracer_positionUpdate(
 
     int posX, posY,posZ;
     // Interpolation 
+    
     for (int zk = minIdx[2]; zk <= maxIdx[2]; zk++) // z
     {
         for (int yj = minIdx[1]; yj <= maxIdx[1]; yj++) // y
@@ -178,7 +208,7 @@ void tracer_positionUpdate(
         }
     }
 
-    dfloat3 dVel = dfloat3(uxVar,uyVar,uzVar);
+    dfloat3 dVel = dfloat3(uxVar,uyVar,uzVar);// 0.01
     //Update particle position
     pc_i.setPos(pc_i.getPos() + dVel);
 
@@ -208,7 +238,7 @@ void tracer_positionUpdate(
     if (pc_i.getPosZ() > NZ - 1) {
         pc_i.setPosZ(NZ - 1.01);
     }
-    #endif
+    #endif 
 
 }
 
@@ -241,4 +271,4 @@ void tracer_saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
     outFileParticleData << strColumnNames << strValuesParticles.str();
 }
 
-#endif //PARTICLE_MODEL
+//#endif //PARTICLE_MODEL

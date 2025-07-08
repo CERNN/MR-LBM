@@ -152,10 +152,10 @@ int main() {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
-    #ifdef PARTICLE_MODEL
+    //#ifdef PARTICLE_MODEL
     cudaStream_t streamsPart[1];
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
-    #endif
+    //#endif
 
     step=INI_STEP;
 
@@ -182,6 +182,8 @@ int main() {
         
         // particle initialization with position, velocity, and solver method
         initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
+
+        saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
 
     #endif
 
@@ -218,6 +220,7 @@ int main() {
             if(REPORT_SAVE){ reportSave = !(step % REPORT_SAVE);}                
             if(MACR_SAVE){ macrSave   = !(step % MACR_SAVE);}
             if(MACR_SAVE || REPORT_SAVE){ save = (reportSave || macrSave);}
+            if(PARTICLES_SAVE){ particleSave = !(aux % PARTICLES_SAVE);}
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
         }
 #pragma warning(pop)
@@ -228,7 +231,7 @@ int main() {
         swapGhostInterfaces(ghostInterface);
 
         #ifdef PARTICLE_MODEL
-            particleSimulation(particlesSoA,d_fMom,streamsPart,step);
+            particleSimulation(&particlesSoA,d_fMom,streamsPart,step);
         #endif
 
 
@@ -261,7 +264,8 @@ int main() {
             saveSimCheckpoint(h_fMom, ghostInterface, &step);
 
             #ifdef PARTICLE_MODEL
-            saveSimCheckpointParticle(particlesSoA, &step);
+                printf("Starting saveSimCheckpointParticle...\t"); fflush(stdout);
+                saveSimCheckpointParticle(particlesSoA, &step);
             #endif
             
 
@@ -348,9 +352,10 @@ int main() {
         }
 
         #ifdef PARTICLE_MODEL
-        if (particleSave){
-            //saveParticlesInfo(particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
-        }
+            if (particleSave){
+                printf("\n------------------------- Saving particles %06d -------------------------\n", step);
+                saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+            }
         #endif
 
     } 

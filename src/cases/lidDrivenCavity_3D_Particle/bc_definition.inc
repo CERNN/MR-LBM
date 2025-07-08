@@ -9,7 +9,7 @@ dfloat m_yz_I;
 dfloat m_zz_I;
 
 dfloat rho;
-dfloat inv_rho;
+//dfloat inv_rho;
 
 switch (nodeType)
 {

@@ -16,12 +16,12 @@
 #include "auxFunctions.cuh"
 #include "treatData.cuh"
 
-#ifdef PARTICLE_MODEL
-    #include "./particles/class/Particle.cuh"
+//#ifdef PARTICLE_MODEL
+    #include "./particles/class/particle.cuh"
     #include "./particles/utils/partiClesReport.cuh"
     #include "./particles/particlesBoundaryCondition.h"
     #include "./particles/models/particleSim.cuh"
-#endif
+//#endif
 
 #ifdef OMEGA_FIELD
     #include "nnf.h"
@@ -992,15 +992,16 @@ void initializeDomain(
 }
 
 
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 __host__
-void initializeParticle(ParticlesSoA particlesSoA, Particle *particles, int *step, dim3 gridBlock, dim3 threadBlock){
+void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, int *step, dim3 gridBlock, dim3 threadBlock){
 
     printf("Creating particles...\t"); fflush(stdout);
     particlesSoA.createParticles(particles);
     printf("Particles created!\n"); fflush(stdout);
 
     particlesSoA.updateParticlesAsSoA(particles);
+    printf("Update ParticlesAsSoA!\n"); fflush(stdout);
 
     int checkpoint_state = 0;
     // Checar se exite checkpoint
@@ -1017,7 +1018,7 @@ void initializeParticle(ParticlesSoA particlesSoA, Particle *particles, int *ste
             
             checkCudaErrors(cudaSetDevice(GPU_INDEX));
             // Initialize populations
-           // gpuInitialization<<<gridInit, threads>>>(pop[i], macr[i], randomNumbers[i]);
+            //gpuInitialization<<<gridInit, threads>>>(pop[i], macr[i], randomNumbers[i]);
             checkCudaErrors(cudaDeviceSynchronize());
 
             getLastCudaError("Initialization error");
@@ -1025,6 +1026,6 @@ void initializeParticle(ParticlesSoA particlesSoA, Particle *particles, int *ste
     }
 
 }
-#endif // PARTICLE_MODEL
+//#endif // PARTICLE_MODEL
 
 #endif // MAIN_CUH
