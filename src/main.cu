@@ -212,7 +212,7 @@ int main() {
         bool save =false;
         bool reportSave = false;
         bool macrSave = false;
-        bool particleSave = true;
+        bool particleSave = false;
 
 #pragma warning(push)
 #pragma warning(disable: 4804)
@@ -220,6 +220,7 @@ int main() {
             if(REPORT_SAVE){ reportSave = !(step % REPORT_SAVE);}                
             if(MACR_SAVE){ macrSave   = !(step % MACR_SAVE);}
             if(MACR_SAVE || REPORT_SAVE){ save = (reportSave || macrSave);}
+            if(PARTICLES_SAVE){ particleSave = !(aux % PARTICLES_SAVE);}
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
         }
 #pragma warning(pop)
@@ -230,7 +231,6 @@ int main() {
         swapGhostInterfaces(ghostInterface);
 
         #ifdef PARTICLE_MODEL
-            printf("Starting particleSimulation...\t\n"); fflush(stdout);
             particleSimulation(&particlesSoA,d_fMom,streamsPart,step);
         #endif
 
@@ -353,6 +353,7 @@ int main() {
 
         #ifdef PARTICLE_MODEL
             if (particleSave){
+                printf("\n------------------------- Saving particles %06d -------------------------\n", step);
                 saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
             }
         #endif
