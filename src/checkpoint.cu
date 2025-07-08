@@ -373,7 +373,7 @@ void operateSimCheckpoint(
 *   @param step Pointer to current step value in main
 */
 __host__
-void operateSimCheckpoinT( 
+void operateSimCheckpointParticle( 
     int oper,
     ParticlesSoA& particlesSoA,
     int* step
@@ -401,7 +401,7 @@ void operateSimCheckpoinT(
     dfloat* tmp = (dfloat*)malloc(MEM_SIZE_POP);
 
     // Load/save current step
-    f_arr(step, f_filename("curr_step"), sizeof(int), tmp);
+    f_arr(step, f_filename("curr_step_particle"), sizeof(int), tmp);
 
     #ifdef IBM
     // Load particles centers positions
@@ -520,7 +520,7 @@ int loadSimCheckpointParticle(
         std::cerr << "Starting from step " << step[0] << std::endl;
         return 0;
     }
-    operateSimCheckpoinT(__LOAD_CHECKPOINT, particlesSoA, step);
+    operateSimCheckpointParticle(__LOAD_CHECKPOINT, particlesSoA, step);
     return 1;
 }
 //#endif
@@ -551,6 +551,6 @@ void saveSimCheckpointParticle(
     foldername += ID_SIM;
     foldername += "\\\\checkpoint";
     createFolder(foldername);
-    operateSimCheckpoinT(__SAVE_CHECKPOINT, particlesSoA, step);
+    operateSimCheckpointParticle(__SAVE_CHECKPOINT, particlesSoA, step);
 }
 //#endif

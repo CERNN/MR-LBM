@@ -28,8 +28,8 @@ class Particle {
         __host__ __device__ ParticleMethod getMethod() const;
         __host__ __device__ void setMethod(ParticleMethod method);
 
-        __host__ __device__ const ParticleCenter& getPCenter() const;
-        __host__ __device__ void setPCenter(const ParticleCenter& pCenter);
+        __host__ __device__ ParticleCenter* getPCenter() const;
+        __host__ __device__ void setPCenter(ParticleCenter* pCenter);
 
         __host__ __device__ const bool& getCollideParticle() const;
         __host__ __device__ void setCollideParticle(const bool& collideParticle);
@@ -37,16 +37,15 @@ class Particle {
         __host__ __device__ const bool& getCollideWall() const;
         __host__ __device__ void setCollideWall(const bool& collideWall);
 
-        __host__ __device__ ParticleShape getShape() const;
-        __host__ __device__ void setShape(ParticleShape shape);
-
+        __host__ __device__ ParticleShape* getShape() const;
+        __host__ __device__ void setShape(ParticleShape* shape);
 
     private:
         ParticleMethod method;
-        ParticleCenter pCenter; // Particle center
+        ParticleCenter *pCenter; // Particle center
         bool collideParticle; //false if particle collide with other Particles
         bool collideWall; //false if particle collide with walls
-        ParticleShape shape;
+        ParticleShape *shape;
 
 };
 
@@ -56,10 +55,10 @@ class Particle {
 */
 class ParticlesSoA{
     public:
-        __host__ __device__ ParticlesSoA(); // Constructor
-        __host__ __device__ ~ParticlesSoA(); // Destructor
+        __host__  ParticlesSoA(); // Constructor
+        __host__  ~ParticlesSoA(); // Destructor
 
-        __host__ __device__ void createParticles(Particle *particles);
+        __host__ void createParticles(Particle *particles);
         __host__ __device__ void updateParticlesAsSoA(Particle *particles);
 
         __host__ __device__ ParticleCenter* getPCenterArray() const;
@@ -87,9 +86,6 @@ class ParticlesSoA{
         __host__ __device__ void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last);
         __host__ __device__ int ParticlesSoA::getMethodCount(ParticleMethod method) const;
 
-
-
-
         //void updateNodesGPUs();
         //void freeNodesAndCenters();
     private:
@@ -102,6 +98,8 @@ class ParticlesSoA{
         bool* pCollideWall;
         bool* pCollideParticle;
         std::map<ParticleMethod, MethodRange> methodRanges;
+
+        std::vector<ParticleCenter> centerStorage;
 };
 
 #endif

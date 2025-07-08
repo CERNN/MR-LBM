@@ -59,7 +59,7 @@ __host__ __device__  dfloat3 ParticleCenter::getPos() const { return this->pos; 
 __host__ __device__  dfloat ParticleCenter::getPosX() const { return this->pos.x; }
 __host__ __device__  dfloat ParticleCenter::getPosY() const { return this->pos.y; }
 __host__ __device__  dfloat ParticleCenter::getPosZ() const { return this->pos.z; }
-__host__ __device__  void ParticleCenter::setPos(const dfloat3& pos) { this->pos = pos; }
+__host__ __device__  void ParticleCenter::setPos(const dfloat3 pos) { this->pos = pos; }
 __host__ __device__  void ParticleCenter::setPosX(dfloat x) { this->pos.x = x; }
 __host__ __device__  void ParticleCenter::setPosY(dfloat y) { this->pos.y = y; }
 __host__ __device__  void ParticleCenter::setPosZ(dfloat z) { this->pos.z = z; }
@@ -68,7 +68,7 @@ __host__ __device__ dfloat3 ParticleCenter::getPos_old() const { return this->po
 __host__ __device__ dfloat ParticleCenter::getPosOldX() const { return this->pos_old.x; }
 __host__ __device__ dfloat ParticleCenter::getPosOldY() const { return this->pos_old.y; }
 __host__ __device__ dfloat ParticleCenter::getPosOldZ() const { return this->pos_old.z; }
-__host__ __device__ void ParticleCenter::setPos_old(const dfloat3& pos_old) { this->pos_old = pos_old; }
+__host__ __device__ void ParticleCenter::setPos_old(const dfloat3 pos_old) { this->pos_old = pos_old; }
 __host__ __device__ void ParticleCenter::setPosOldX(dfloat x) { this->pos_old.x = x; }
 __host__ __device__ void ParticleCenter::setPosOldY(dfloat y) { this->pos_old.y = y; }
 __host__ __device__ void ParticleCenter::setPosOldZ(dfloat z) { this->pos_old.z = z; }

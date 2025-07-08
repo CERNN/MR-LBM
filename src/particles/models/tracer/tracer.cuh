@@ -21,7 +21,7 @@
 */
 __host__ __device__
 void tracerSimulation(
-    ParticlesSoA& particles,
+    ParticlesSoA *pArray,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
@@ -36,7 +36,7 @@ void tracerSimulation(
 */
 __global__
 void tracer_positionUpdate(
-    ParticlesSoA& particles,
+    ParticleCenter *particles,
     dfloat *fMom,
     int firstIndex,
     int lastIndex,

@@ -1018,7 +1018,7 @@ void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, int *st
             
             checkCudaErrors(cudaSetDevice(GPU_INDEX));
             // Initialize populations
-           // gpuInitialization<<<gridInit, threads>>>(pop[i], macr[i], randomNumbers[i]);
+            //gpuInitialization<<<gridInit, threads>>>(pop[i], macr[i], randomNumbers[i]);
             checkCudaErrors(cudaDeviceSynchronize());
 
             getLastCudaError("Initialization error");

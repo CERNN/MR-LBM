@@ -2,6 +2,7 @@
 
 #include "particle.cuh"
 #include <cstdlib>
+#include <iostream>
 
 
 __host__ __device__ Particle::Particle(){
@@ -11,8 +12,8 @@ __host__ __device__ Particle::Particle(){
 __host__ __device__ ParticleMethod Particle::getMethod() const {return this->method;}
 __host__ __device__ void Particle::setMethod(ParticleMethod method) { this->method = method;}
 
-__host__ __device__ const ParticleCenter& Particle::getPCenter() const {return this->pCenter;}
-__host__ __device__ void Particle::setPCenter(const ParticleCenter& pCenter) { this->pCenter = pCenter;}
+__host__ __device__ ParticleCenter* Particle::getPCenter() const {return this->pCenter;}
+__host__ __device__ void Particle::setPCenter(ParticleCenter* pCenter) { this->pCenter = pCenter;}
 
 __host__ __device__ const bool& Particle::getCollideParticle() const { return this->collideParticle; }
 __host__ __device__ void Particle::setCollideParticle(const bool& value) { this->collideParticle = value; }
@@ -20,12 +21,11 @@ __host__ __device__ void Particle::setCollideParticle(const bool& value) { this-
 __host__ __device__ const bool& Particle::getCollideWall() const { return this->collideWall; }
 __host__ __device__ void Particle::setCollideWall(const bool& value) { this->collideWall = value; }
 
-__host__ __device__ ParticleShape Particle::getShape() const {return this->shape;}
-__host__ __device__ void Particle::setShape(ParticleShape shape) { this->shape = shape;}
-
+__host__ __device__ ParticleShape* Particle::getShape() const {return this->shape;}
+__host__ __device__ void Particle::setShape(ParticleShape* shape) { this->shape = shape;}
 
 // ParticlesSoA class implementation
-__host__ __device__
+__host__ 
 ParticlesSoA::ParticlesSoA() {
     pCenterArray = nullptr;
     pCenterLastPos = nullptr;
@@ -36,7 +36,7 @@ ParticlesSoA::ParticlesSoA() {
     pCollideParticle = nullptr;
 }
 
-__host__ __device__
+__host__ 
 ParticlesSoA::~ParticlesSoA() {
     if (pCenterArray) {
         cudaFree(pCenterArray);
@@ -109,10 +109,16 @@ int ParticlesSoA::getMethodCount(ParticleMethod method) const {
     return range.last - range.first + 1;
 }
 
-
-__host__ __device__ void ParticlesSoA::createParticles(Particle *particles){
+__host__ void ParticlesSoA::createParticles(Particle *particles){
    
     #include CASE_PARTICLE_CREATE
+    if (pShape == nullptr) {
+        pShape = new ParticleShape[NUM_PARTICLES]; 
+        for (int i = 0; i < NUM_PARTICLES; i++) {
+            pShape[i] = SPHERE;
+            particles[i].setShape(&pShape[i]);
+        }
+    }
 
     for(int i = 0; i <NUM_PARTICLES ; i++){
 
@@ -136,54 +142,66 @@ __host__ __device__ void ParticlesSoA::createParticles(Particle *particles){
 }
 
 __host__ __device__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
-    // Allocate particle center array
-    checkCudaErrors(cudaSetDevice(0));
-    checkCudaErrors(
-        cudaMallocManaged((void**)&(this->pCenterArray), sizeof(ParticleCenter) * NUM_PARTICLES));
-    // Allocate array of last positions for Particles
-    this->pCenterLastPos = (dfloat3*)malloc(sizeof(dfloat3) * NUM_PARTICLES);
-    this->pCenterLastWPos = (dfloat3*)malloc(sizeof(dfloat3) * NUM_PARTICLES);
+    if (particles == nullptr) {
+        printf("ERROR: particles is nullptr!\n\n"); fflush(stdout);
+        return;
+    }
+    if (NUM_PARTICLES <= 0) {
+        printf("ERROR: Invalid NUM_PARTICLES!\n\n"); fflush(stdout);
+        return;
+    }
 
     checkCudaErrors(cudaSetDevice(0));
+    checkCudaErrors(cudaMallocManaged((void**)&this->pCenterArray,       sizeof(ParticleCenter) * NUM_PARTICLES));
+    checkCudaErrors(cudaMallocManaged((void**)&this->pCenterLastPos,     sizeof(dfloat3)        * NUM_PARTICLES));
+    checkCudaErrors(cudaMallocManaged((void**)&this->pCenterLastWPos,    sizeof(dfloat3)        * NUM_PARTICLES));
+    checkCudaErrors(cudaMallocManaged((void**)&this->pShape,             sizeof(ParticleShape)  * NUM_PARTICLES));
+    checkCudaErrors(cudaMallocManaged((void**)&this->pMethod,            sizeof(ParticleMethod) * NUM_PARTICLES));
+    checkCudaErrors(cudaMallocManaged((void**)&this->pCollideWall,       sizeof(bool)           * NUM_PARTICLES));
+    checkCudaErrors(cudaMallocManaged((void**)&this->pCollideParticle,   sizeof(bool)           * NUM_PARTICLES));
 
-    int particleCount = 0;
-    std::map<ParticleMethod, bool> methodSeen;
-    
-    //LAMBDA FUNCTION
+    if (!this->pCenterArray || !pCenterLastPos || !pCenterLastWPos ||
+        !this->pShape || !this->pMethod || !this->pCollideWall || !this->pCollideParticle) {
+        printf("ERRO: Memory allocation failed!!\n"); fflush(stdout);
+        return;
+    }
+
     auto insertByMethod = [&](ParticleMethod method) {
-        int firstIndex = particleCount;
-        for (int p = 0; p < NUM_PARTICLES; ++p) {
-            if (particles[p].getMethod() == method) {
-                // Insert particle data into SoA arrays
-                this->pCenterArray[particleCount]       = particles[p].getPCenter();
-                this->pCenterLastPos[particleCount]     = particles[p].getPCenter().getPos();
-                this->pCenterLastWPos[particleCount]    = particles[p].getPCenter().getW_old();
-                this->pShape[particleCount]             = particles[p].getShape();
-                this->pMethod[particleCount]            = particles[p].getMethod();
-                this->pCollideWall[particleCount]       = particles[p].getCollideWall();
-                this->pCollideParticle[particleCount]   = particles[p].getCollideParticle();
+        int firstIndex = -1;
+        int lastIndex = -1;
 
-                ++particleCount;
+        for (int p = 0; p < NUM_PARTICLES; ++p) {     
+            if (particles[p].getMethod() != method)
+                continue; // <- Adicionado: só copia se for do tipo correto
+            ParticleCenter* pc = particles[p].getPCenter();
+
+            if (!pc) {
+                printf("NOTICE: Particle %d com pc == nullptr\n", p); fflush(stdout);
+                continue;
             }
+
+            this->pCenterArray[p]       = *pc;
+            this->pCenterLastPos[p]     = pc->getPos_old();
+            this->pCenterLastWPos[p]    = pc->getW_old();
+            this->pShape[p]             = *(particles[p].getShape());
+            this->pMethod[p]            = particles[p].getMethod();
+            this->pCollideWall[p]       = particles[p].getCollideWall();
+            this->pCollideParticle[p]   = particles[p].getCollideParticle();
+
+            if (firstIndex == -1) firstIndex = p;
+            lastIndex = p;
         }
-        if (particleCount > firstIndex) {  // Only set if any particles of this type were found
-            int lastIndex = particleCount - 1;
-            this->setMethodRange(method, firstIndex, lastIndex);
+       if (firstIndex != -1) {
+              this->setMethodRange(method, firstIndex, lastIndex);
         }
-    };
+     };
 
     insertByMethod(IBM);
     insertByMethod(PIBM);
     insertByMethod(TRACER);
-
-
-  
-
-
     checkCudaErrors(cudaSetDevice(0));
 
 }
-
 
 
 #ifdef IBM

@@ -13,7 +13,7 @@
 
 /* --------------------------- OTHER DEFINITIONS ------------------------- */
 //#define DENSITY_CORRECTION
-#define PARTICLE_MODEL
+#define PARTICLE_MODEL true
 //#define RANDOM_NUMBERS true    // to generate random numbers 
 // (useful for turbulence)
 #ifdef IBM_METHOD

@@ -23,7 +23,7 @@
 #include "globalFunctions.h"
 #include "var.h"
 #ifdef PARTICLE_MODEL
-    #include "particles\class\particle.cuh"
+    #include "particles/class/particle.cuh"
 #endif
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -162,7 +162,7 @@ void operateSimCheckpoint(
 
 #ifdef PARTICLE_MODEL
 __host__
-void operateSimCheckpoinT( 
+void operateSimCheckpointParticle( 
     int oper,
     ParticlesSoA& particlesSoA,
     int* step

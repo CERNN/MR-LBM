@@ -24,8 +24,7 @@ std::string getStrDfloat6(dfloat6 val, std::string sep){
     return strValues.str();
 }
 
-
-void saveParticlesInfo(ParticlesSoA particles, unsigned int step, bool saveNodes){
+void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNodes){
     // Names of file to save particle info
     std::string strFilePCenters = getVarFilename("pCenters", step, ".csv");
 
@@ -55,11 +54,17 @@ void saveParticlesInfo(ParticlesSoA particles, unsigned int step, bool saveNodes
     strColumnNames += "semi3x" + sep  + "semi3y" + sep  + "semi3z\n";
 
     for(int p = 0; p < NUM_PARTICLES; p++){
-        ParticleCenter pc = particles.getPCenterArray()[p];
+        ParticleCenter pc = particles->getPCenterArray()[p];
+
+        dfloat3 pos = pc.getPos();
+        dfloat3 pos_old = pc.getPos_old();
+        dfloat3 vel = pc.getVel();
+        dfloat3 vel_old = pc.getVel_old();
+
         strValuesParticles << p << sep;
         strValuesParticles << step << sep;
-        strValuesParticles << getStrDfloat3(pc.getPos(), sep) << sep;
-        strValuesParticles << getStrDfloat3(pc.getVel(), sep) << sep;
+        strValuesParticles << getStrDfloat3(pos, sep) << sep;
+        strValuesParticles << getStrDfloat3(vel, sep) << sep;
         strValuesParticles << getStrDfloat3(pc.getW(), sep) << sep;
         strValuesParticles << getStrDfloat3(pc.getF(), sep) << sep;
         strValuesParticles << getStrDfloat3(pc.getM(), sep) << sep;
@@ -102,7 +107,7 @@ void saveParticlesInfo(ParticlesSoA particles, unsigned int step, bool saveNodes
 
         outFilePNodes << strColumnNames << strValuesMesh.str();
     } */
+   
 }
-
 
 //#endif //PARTICLE_MODEL
