@@ -18,7 +18,7 @@
 
 #ifdef PARTICLE_MODEL
     #include "./particles/class/Particle.cuh"
-    #include "./particles/utils/partiClesReport.cuh"
+    #include "./particles/utils/particlesReport.cuh"
     #include "./particles/particlesBoundaryCondition.h"
 #endif
 

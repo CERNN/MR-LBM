@@ -1,4 +1,4 @@
-#include "partiClesReport.cuh"
+#include "particlesReport.cuh"
 
 std::string getStrDfloat3(dfloat3 val, std::string sep){
     std::ostringstream strValues("");
