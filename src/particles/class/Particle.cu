@@ -64,7 +64,7 @@ void ParticlesSoA::setPCenterLastWPos(dfloat3* pLastWPos) {
 
 void ParticlesSoA::createParticles(Particle *particles){
    
-    CASE_PARTICLE_CREATE;
+    #include CASE_PARTICLE_CREATE
 
     for(int i = 0; i <NUM_PARTICLES ; i++){
 
