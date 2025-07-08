@@ -89,19 +89,19 @@ __host__ __device__ void ParticlesSoA::setPCollideWall(bool* pMethod) {this->pCo
 __host__ __device__ bool* ParticlesSoA::getPCollideParticle() const {return this->pCollideParticle;}
 __host__ __device__ void ParticlesSoA::setPCollideParticle(bool* pMethod) {this->pCollideParticle = pCollideParticle;}
 
-__device__ __host__
+__host__
 const MethodRange& ParticlesSoA::getMethodRange(ParticleMethod method) const {
     static const MethodRange empty{-1, -1};
     auto it = methodRanges.find(method);
     return (it != methodRanges.end()) ? it->second : empty;
 }
 
-__device__ __host__
+__host__
 void ParticlesSoA::setMethodRange(ParticleMethod method, int first, int last) {
     methodRanges[method] = {first, last};
 }
 
-__device__ __host__
+__host__
 int ParticlesSoA::getMethodCount(ParticleMethod method) const {
     MethodRange range = getMethodRange(method);
     if (range.first == -1 || range.last == -1 || range.last < range.first)
@@ -141,7 +141,7 @@ __host__ void ParticlesSoA::createParticles(Particle *particles){
     }
 }
 
-__host__ __device__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
+__host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
     if (particles == nullptr) {
         printf("ERROR: particles is nullptr!\n\n"); fflush(stdout);
         return;

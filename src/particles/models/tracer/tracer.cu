@@ -2,7 +2,7 @@
 
 #include "tracer.cuh"
 
-__host__ __device__
+__host__ 
 void tracerSimulation(
     ParticlesSoA *particles,
     dfloat *fMom,

@@ -5,12 +5,12 @@ std::random_device rand_dev;
 std::minstd_rand generator(rand_dev());
 std::uniform_int_distribution<int>  distr(0, RAND_MAX);
 
-dfloat x_limit_B = 0 + 5 / 2.0;
-dfloat x_limit_E = NX - 5 / 2.0;
-dfloat y_limit_B = 0 + 5 / 2.0;
-dfloat y_limit_E = NY - 5 / 2.0;
-dfloat z_limit_B = 0 + 5 / 2.0;
-dfloat z_limit_E = NZ - 5 / 2.0;
+//dfloat x_limit_B = 0 + 5 / 2.0;
+//dfloat x_limit_E = NX - 5 / 2.0;
+//dfloat y_limit_B = 0 + 5 / 2.0;
+//dfloat y_limit_E = NY - 5 / 2.0;
+//dfloat z_limit_B = 0 + 5 / 2.0;
+//dfloat z_limit_E = NZ - 5 / 2.0;
 
 dfloat x_center;
 dfloat y_center;

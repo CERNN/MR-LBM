@@ -19,7 +19,7 @@
 *   @param streamParticles: CUDA streams for GPUs
 *   @param step: current time step
 */
-__host__ __device__
+__host__
 void tracerSimulation(
     ParticlesSoA *pArray,
     dfloat *fMom,
