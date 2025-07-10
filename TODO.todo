@@ -1,16 +1,11 @@
 
 Projects:
-  ☐ Organize source files into folders
+
   ☐ Remove the duplicate arrays used for interface between blocks
     This can be done by storing the populations in the same location where it was retrived. 
     This will lead to performance decrease since is not coaslesced write.
      however it will reduce the memory ussage
   ☐ test perfomance Z-curve array pattern for indexing within the same block structure
-  ✔ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ... @done(24-07-04 21:52)
-    ✔ Use constant array in defintions.h instead of magic numbers @done(24-11-15 18:18)
-  ✔ auxFunctions that are actually treat data shouldnt be there @done(24-11-05 21:24)
-  ✔ Rename include files to be .inc @done(24-11-03 21:02)
-  ✔ Make the compile sm based directly on the avaiable machine @done(24-11-03 18:59)
   ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
     ☐ Edit local force field to moment array
     ☐ change the name moment array to something more descreptive
@@ -19,18 +14,31 @@ Projects:
   ✔ allocatate the correct ammount of shared memory based on the blockSize @done(24-11-07 16:23)
     ✔ need to find a way to compile depending on the architure @done(24-11-15 18:14)
   ☐ Change macro condition from (non_newtonian || les model to local viscosity)
-  ✘ Eliminate the necessity of two arrays to save the boundary conditions @cancelled(24-11-15 18:16)
-    ✘ Also it need edit the post processing files to allow different data types (unsigned char for example) @cancelled(24-11-15 18:16)
-    ✘ Edit the saveVarBin fuction to allow differnt data types @cancelled(24-11-15 18:16)
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
   ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
   ☐ Fix parallel reduction for 2D cases bigger than 256x256
   ☐ Separate omega from non_newtonian
-  ✔ Change default checkpoit: make it so it always check if there is a checkpoint. If exist load from checkpoint. @done(25-05-04 19:40)
-    ✔ Add flag to skip checkpoint, and restart simulation @done(25-05-04 19:40)
+  ☐ Incorporate LES
   ☐ Find a way to compile for linux machines on a windows machine
+  ☐ Test the performance if instead of storing the populations in the shared memory, store the moments, which can be pulled and used to reconstructed the populations
+      %it will increase the number of arithmetic operations, however the shared memory array will use 10 scalars per lattice instead of the 18 populations
+      %allowing to use a higher block size than orginally planned. The performance might be benefical when using a D3Q27 velocity set since the reduced from to 26 to 10 scalars per lattice.
+  ☐ validate/verify the other collision methods.
+  ✔ Verify D3Q27 again @done(24-11-15 18:17)
+    ☐ Find a way to define the link between bc and the velocity set between the cases.
+  ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
+  ☐ Incorporate IBM
+  ☐ Curved boundary conditions
+  ☐ Moving boudnary conditions (e.g. moving particles using voxels)
+  ☐ Implementation of DDF-Shift (density is done)
 
 
+Archive:\
+Async call to python script to convert bin files into vtr files -- no need anymore, saves directly in vtk
+
+
+Completed:\
+  ✔ Organize source files into folders @done(25-07-10 17:04) @done(25-07-10 17:04)
   ✔ Particle Tracer @done(14-03-04 12:53)
   ✔ Create a checkpoint save file @done(23-03-16 18:47)
   ✔ Add option for voxel based boundary condition @done(23-05-04 23:22)
@@ -44,44 +52,36 @@ Projects:
     ✔ Bugfix: Figure out why the force field is equal to zero when using LOCAL_FORCES @done(24-03-02 17:54)
     ✔ computation of force field over selected lattices. @done(24-03-02 17:54)
     ✔ fix the calculation of forces using the moment exchange method for the voxels @done(24-03-24 10:58)
-  ☐ Test the performance if instead of storing the populations in the shared memory, store the moments, which can be pulled and used to reconstructed the populations
-      %it will increase the number of arithmetic operations, however the shared memory array will use 10 scalars per lattice instead of the 18 populations
-      %allowing to use a higher block size than orginally planned. The performance might be benefical when using a D3Q27 velocity set since the reduced from to 26 to 10 scalars per lattice.
+  ✔ eliminate the necessity of multipling the moments when reading and writing from the global memory, need proper treatment when initializing the domain, exporting the values, ... @done(24-07-04 21:52)
+    ✔ Use constant array in defintions.h instead of magic numbers @done(24-11-15 18:18)
+  ✔ auxFunctions that are actually treat data shouldnt be there @done(24-11-05 21:24)
+  ✔ Rename include files to be .inc @done(24-11-03 21:02)
+  ✔ Make the compile sm based directly on the avaiable machine @done(24-11-03 18:59)
+  ✘ Eliminate the necessity of two arrays to save the boundary conditions @cancelled(24-11-15 18:16)
+    ✘ Also it need edit the post processing files to allow different data types (unsigned char for example) @cancelled(24-11-15 18:16)
+    ✘ Edit the saveVarBin fuction to allow differnt data types @cancelled(24-11-15 18:16)
+  ✔ Change default checkpoit: make it so it always check if there is a checkpoint. If exist load from checkpoint. @done(25-05-04 19:40)
+    ✔ Add flag to skip checkpoint, and restart simulation @done(25-05-04 19:40)
   ✔ move problem variables to another folder/file system similar to boundary conditions @done(24-06-04 21:17)
     ✔ create a folder system for each case, where it has initializatation / variables / boundary conditions / ... @done(24-06-04 20:41)
   ✔ move collision/reconstruction operators to another folder/file system @done(24-06-04 21:17)
     ✔ clean up mlbm.cu @done(24-06-04 21:11)
     ✔ create include structure @done(24-06-04 21:11)
-  ☐ validate/verify the other collision methods.
   ✔ Figure out a way to add non-zero velocity boundary conditions to the voxels (probably will be necessary to move out from unsigned char) @done(24-03-24 10:58)
     ✔ change nodeType from char to int @done(24-02-24 10:41)
     ✔ add new types of boundary conditions @done(24-03-24 10:58)
   ✔ higher shared memory size for cuda compute 8.0+ (requires dynamic shared memory which has worse performance 70% of original @done(24-01-19 22:27)
   ✔ change all operations using fMom[idxMom()] to be float point operations (use index UX for first one them use a offset between each stored unit) @done(25-05-04 19:41)
-
   ✔ Push thermal model @done(24-05-17 22:52)
     ✔ First Implementation @done(24-04-13 23:55)
     ✔ Correct mirror error that occur on the interface between blocks C~1e-4 @done(24-05-19 13:03)
     ✔ Transform equations to moment-based @done(24-05-19 13:03)
     ✔ Increase Performance @done(24-07-05 17:11)
-  ✔ Incorporate LES 
-  ✔ Eliminate linearMacr function @done(24-11-06 23:18)
-
-  ✔ Verify D3Q27 again @done(24-11-15 18:17)
-    ☐ Find a way to define the link between bc and the velocity set between the cases.
   ✔ detach mean-flow stats from treatData @done(24-11-05 21:25)
-
-  ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
-  ☐ Incorporate IBM
-  ☐ Curved boundary conditions
-  ☐ Moving boudnary conditions (e.g. moving particles using voxels)
-  ☐ Implementation of DDF-Shift (density is done)
+  ✔ Eliminate linearMacr function @done(24-11-06 23:18)
   ✔ Implement viscoelastic model @done(25-01-03 16:02)
     ✔ Method to compute the velocity gradient @done(25-01-03 16:02)
       ✔ Need method to store velocity in the halo similar to populations @done(25-01-03 11:19)
         ✔ rewrite ghost values to be a struct @done(24-11-03 18:59)
     ✔ Source term for the advection-diffusion equation @done(24-11-05 01:03)
     ✔ Unify the transport equations in a single kernel @done(25-01-03 11:19)
-
-Archive:\
-Async call to python script to convert bin files into vtr files -- no need anymore, saves directly in vtk
