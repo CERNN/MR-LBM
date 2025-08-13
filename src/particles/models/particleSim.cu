@@ -14,7 +14,7 @@ void particleSimulation(
     int numTRACER = particles->getMethodCount(TRACER);
 
     if(numIBM>0){
-        /*code*/
+       // ibmSimulation(particles,fMom,streamParticles,step);
     }
     if(numPIBM>0){
         /*code*/

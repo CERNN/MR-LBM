@@ -7,11 +7,11 @@
 #include "../../../includeFiles/interface.h"
 #include "../../../errorDef.h"
 #include "../../../saveData.cuh"
-#include "./../../class/Particle.cuh"
-
+#include "../../class/Particle.cuh"
 
 void ibmSimulation(
     ParticlesSoA particles,
+    dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
 );

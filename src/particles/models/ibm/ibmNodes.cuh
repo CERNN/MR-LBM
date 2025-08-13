@@ -1,27 +1,24 @@
-/*
-*   @file particleCenter.h
-*   @author Marco Aurelio Ferrari. (marcoferrari@alunos.utfpr.edu.br)
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @author Ricardo de Souza (rsouza.1996@alunos.utfpr.edu.br)
-*   @brief Class for IBM particle center
-*   @version 0.3.0
-*   @date 16/05/2025
-*/
+//#ifdef PARTICLE_MODEL
 
-#ifndef __PARTICLE_NODE_H
-#define __PARTICLE_NODE_H
+#ifndef __IBM_NODES_H
+#define __IBM_NODES_H
 
 #include "../../../globalStructs.h"
-#include "ibmVar.h"
+#include "../../models/ibm/ibmVar.h"
+// #include "../../class/Particle.cuh"
+//#include "../../class/ParticleCenter.cuh"
+#pragma once
+
+class Particle;
 
 /*
 *   Class describe the IBM node properties
 */
-class ParticleNode
+class IbmNodes
 {
 
 public:
-    ParticleNode();
+    IbmNodes();
 
     dfloat3 getPos() const;
     void setPos(const dfloat3& pos);
@@ -54,7 +51,7 @@ protected:
 *   Class to represent the particle nodes as a Structure of Arrays, 
 *   instead of a Array of Structures
 */
-class ParticleNodeSoA
+class IbmNodesSoA
 {
 protected:
     unsigned int numNodes; // number of nodes
@@ -68,9 +65,9 @@ protected:
 
 public:
     __host__ __device__
-    ParticleNodeSoA();
+    IbmNodesSoA();
     __host__ __device__
-    ~ParticleNodeSoA();
+    ~IbmNodesSoA();
 
     /**
     *   @brief Allocate memory for given maximum number of nodes
@@ -91,7 +88,10 @@ public:
     *   @param pCenterIdx: index of particle center for given particle nodes
     *   @param baseIdx: base index to use while copying
     */
-    void copyNodesFromParticle(struct particle p, unsigned int pCenterIdx, unsigned int n_gpu);
+    void copyNodesFromParticle(Particle *particle, unsigned int pCenterIdx, unsigned int n_gpu);
+
+    void updateNodesGPUs();
+    void freeNodesAndCenters();
 
     void leftShiftNodesSoA(int idx, int left_shit);
 
@@ -99,6 +99,7 @@ public:
     void setNumNodes(const int numNodes); 
     
     const unsigned int* getParticleCenterIdx() const;
+    unsigned int* getParticleCenterIdx();
     void setParticleCenterIdx(unsigned int* particleCenterIdx);
     
     dfloat3SoA getPos() const;
@@ -122,3 +123,5 @@ public:
 
 
 #endif
+
+//#endif

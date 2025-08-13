@@ -8,16 +8,27 @@
 #include "../models/dem/collisionVar.h"
 
 
-typedef struct collisionData {
-    dfloat3 semiAxis;
-    dfloat3 semiAxis2;
-    dfloat3 semiAxis3;
+class CollisionData {
+    public:
+        __host__ __device__ CollisionData();  // Construtor
 
-    // Arrays to store active collisions and their displacements
-    int collisionPartnerIDs[MAX_ACTIVE_COLLISIONS];
-    dfloat3 tangentialDisplacements[MAX_ACTIVE_COLLISIONS];
-    int lastCollisionStep[MAX_ACTIVE_COLLISIONS];// last time step of collision
-}CollisionData;
+        // Reset
+        __host__ __device__ void reset();
+
+        __host__ __device__ int getCollisionPartnerID(int idx) const;
+        __host__ __device__ void setCollisionPartnerID(int idx, int id);
+
+        __host__ __device__ dfloat3 getTangentialDisplacement(int idx) const;
+        __host__ __device__ void setTangentialDisplacement(int idx, dfloat3 disp);
+
+        __host__ __device__ int getLastCollisionStep(int idx) const;
+        __host__ __device__ void setLastCollisionStep(int idx, int step);
+
+    protected:
+        int collisionPartnerIDs[MAX_ACTIVE_COLLISIONS];
+        dfloat3 tangentialDisplacements[MAX_ACTIVE_COLLISIONS];
+        int lastCollisionStep[MAX_ACTIVE_COLLISIONS];
+};
 
 class TangentialCollisionTracker 
 {    
@@ -253,12 +264,34 @@ public:
     
     __host__ __device__ dfloat getDensity() const;
     __host__ __device__ void setDensity(dfloat density);
+
+    __host__ __device__ dfloat getDiameter() const;
+    __host__ __device__ void setDiameter(dfloat diameter);
     
     __host__ __device__ bool getMovable() const;
     __host__ __device__ void setMovable(bool movable);
 
     __host__ __device__ CollisionData getCollision() const;
     __host__ __device__ void setCollision(const CollisionData& collision);
+
+    __host__ __device__ dfloat3 getSemiAxis1() const;
+    __host__ __device__ void setSemiAxis1(const dfloat3& semiAxis1);
+
+    __host__ __device__ dfloat3 getSemiAxis2() const;
+    __host__ __device__ void setSemiAxis2(const dfloat3& semiAxis2);
+
+    __host__ __device__ dfloat3 getSemiAxis3() const;
+    __host__ __device__ void setSemiAxis3(const dfloat3& semiAxis3);
+
+    // __host__ __device__ dfloat3 getPos() const;
+    // __host__ __device__ dfloat getPosX() const;
+    // __host__ __device__ dfloat getPosY() const;
+    // __host__ __device__ dfloat getPosZ() const;
+    // __host__ __device__ void setPos(const dfloat3 pos);
+    __host__ __device__ dfloat3 getCenter1() const;
+    __host__ __device__ void setCenter1(const dfloat3 center1);
+    __host__ __device__ dfloat3 getCenter2() const;
+    __host__ __device__ void setCenter2(const dfloat3 center2);
 
 protected:
     dfloat3 pos;        // Particle center position
@@ -282,7 +315,13 @@ protected:
     dfloat radius;      // Sphere radius
     dfloat volume;      // Particle volume
     dfloat density;     // Particle density
+    dfloat diameter;    // Particle diameter
+    dfloat3 center1;
+    dfloat3 center2;
     bool movable;       // If the particle can move
+    dfloat3 semiAxis1;
+    dfloat3 semiAxis2;
+    dfloat3 semiAxis3;
     CollisionData collision;
 }; 
 #endif

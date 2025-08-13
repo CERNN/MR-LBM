@@ -4,10 +4,12 @@
 
 
 #include "particleCenter.cuh"
+#include "../models/ibm/ibmNodes.cuh"
 #include <math.h>
 #include <random>
 #include "./../../var.h"
 #include <map>
+#include "./../../globalFunctions.h"
 
 /*
 *   Struct for particle representation
@@ -25,6 +27,12 @@ class Particle {
     public:
         __host__ __device__ Particle();
 
+        __host__ __device__ unsigned int getNumNodes() const;
+        __host__ __device__ void setNumNodes(unsigned int numNodes);
+
+        __host__ __device__ IbmNodes* getNode() const;
+        __host__ __device__ void setNode(IbmNodes* node);
+
         __host__ __device__ ParticleMethod getMethod() const;
         __host__ __device__ void setMethod(ParticleMethod method);
 
@@ -40,12 +48,44 @@ class Particle {
         __host__ __device__ ParticleShape* getShape() const;
         __host__ __device__ void setShape(ParticleShape* shape);
 
+         /*
+        *   @brief Create the particle in the shape of a sphere with given diameter and center
+        *   @param part: particle object to override values
+        *   @param diameter: sphere diameter in dfloat
+        *   @param center : sphere center position
+        *   @param coloumb: number of interations for coloumb optimization
+        *   @param move: particle is movable or not
+        *   @param density: particle density
+        *   @param vel: particle velocity
+        *   @param w: particle rotation velocity
+        */
+        // dfloat diameter, dfloat3 center, unsigned int coulomb, bool move,dfloat density = PARTICLE_DENSITY, dfloat3 vel = dfloat3(0, 0, 0), dfloat3 w = dfloat3(0, 0, 0)
+        __host__
+        void makeSpherePolar(ParticleCenter *praticleCenter);
+
+        __host__
+        void makeCapsule(ParticleCenter *praticleCenter);
+
+        __host__
+        void makeEllipsoid(ParticleCenter *praticleCenter);
+
+
+        // __host__
+        // void makeCapsule(dfloat diameter, dfloat3 point1, dfloat3 point2, bool move,
+        //     dfloat density = PARTICLE_DENSITY, dfloat3 vel = dfloat3(0, 0, 0), dfloat3 w = dfloat3(0, 0, 0));
+
+
+
     private:
+        unsigned int numNodes;
         ParticleMethod method;
         ParticleCenter *pCenter; // Particle center
         bool collideParticle; //false if particle collide with other Particles
         bool collideWall; //false if particle collide with walls
         ParticleShape *shape;
+        IbmNodes *nodes;
+
+        std::vector<IbmNodes> nodeStorage;
 
 };
 
@@ -60,6 +100,12 @@ class ParticlesSoA{
 
         __host__ void createParticles(Particle *particles);
         __host__ void updateParticlesAsSoA(Particle *particles);
+
+        void updateNodesGPUs();
+        void freeNodesAndCenters();
+
+        __host__ __device__ IbmNodesSoA* getNodesSoA();
+        __host__ __device__ void setNodesSoA(const IbmNodesSoA* nodes);
 
         __host__ __device__ ParticleCenter* getPCenterArray() const;
         __host__ __device__ void setPCenterArray(ParticleCenter* pArray);
@@ -89,7 +135,7 @@ class ParticlesSoA{
         //void updateNodesGPUs();
         //void freeNodesAndCenters();
     private:
-        // ParticleNodeSoA* nodesSoA;
+        IbmNodesSoA nodesSoA[N_GPUS];
         ParticleCenter* pCenterArray;
         dfloat3* pCenterLastPos;    // Last particle position
         dfloat3* pCenterLastWPos;   // Last angular particle position
