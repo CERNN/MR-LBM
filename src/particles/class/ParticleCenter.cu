@@ -1,8 +1,57 @@
 //#ifdef PARTICLE_MODEL
 
-#include "particleCenter.cuh"
+#include "ParticleCenter.cuh"
 #include <iostream>
 
+__host__ __device__
+CollisionData::CollisionData() {
+    reset();
+}
+// Função reset usando os setters
+__host__ __device__
+void CollisionData::reset() {
+    for (int i = 0; i < MAX_ACTIVE_COLLISIONS; ++i) {
+        setCollisionPartnerID(i, -1);
+        setTangentialDisplacement(i, dfloat3(0, 0, 0));
+        setLastCollisionStep(i, -1);
+    }
+}
+// Getters
+// Getter e setter para collisionPartnerIDs
+__host__ __device__
+int CollisionData::getCollisionPartnerID(int idx) const {
+    return (idx >= 0 && idx < MAX_ACTIVE_COLLISIONS) ? collisionPartnerIDs[idx] : -1;
+}
+
+__host__ __device__
+void CollisionData::setCollisionPartnerID(int idx, int id) {
+    if (idx >= 0 && idx < MAX_ACTIVE_COLLISIONS)
+        collisionPartnerIDs[idx] = id;
+}
+
+// Getter e setter para tangentialDisplacements
+__host__ __device__
+dfloat3 CollisionData::getTangentialDisplacement(int idx) const {
+    return (idx >= 0 && idx < MAX_ACTIVE_COLLISIONS) ? tangentialDisplacements[idx] : dfloat3();
+}
+
+__host__ __device__
+void CollisionData::setTangentialDisplacement(int idx, dfloat3 disp) {
+    if (idx >= 0 && idx < MAX_ACTIVE_COLLISIONS)
+        tangentialDisplacements[idx] = disp;
+}
+
+// Getter e setter para lastCollisionStep
+__host__ __device__
+int CollisionData::getLastCollisionStep(int idx) const {
+    return (idx >= 0 && idx < MAX_ACTIVE_COLLISIONS) ? lastCollisionStep[idx] : -1;
+}
+
+__host__ __device__
+void CollisionData::setLastCollisionStep(int idx, int step) {
+    if (idx >= 0 && idx < MAX_ACTIVE_COLLISIONS)
+        lastCollisionStep[idx] = step;
+}
 // Class TangentialCollisionTracker
 
 /* Constructor */
@@ -233,10 +282,27 @@ __host__ __device__ void ParticleCenter::setVolume(dfloat volume) { this->volume
 __host__ __device__ dfloat ParticleCenter::getDensity() const { return this->density; }
 __host__ __device__ void ParticleCenter::setDensity(dfloat density) { this->density = density; }
 
+__host__ __device__ dfloat ParticleCenter::getDiameter() const { return this->diameter; }
+__host__ __device__ void ParticleCenter::setDiameter(dfloat diameter) { this->diameter = diameter; }
+
 __host__ __device__ bool ParticleCenter::getMovable() const { return this->movable; }
 __host__ __device__ void ParticleCenter::setMovable(bool movable) { this->movable = movable; }
 
 __host__ __device__ CollisionData ParticleCenter::getCollision() const { return this->collision; }
 __host__ __device__ void ParticleCenter::setCollision(const CollisionData& collision) { this->collision = collision; }
+
+__host__ __device__ dfloat3 ParticleCenter::getSemiAxis1() const { return this->semiAxis1; }
+__host__ __device__ void ParticleCenter::setSemiAxis1(const dfloat3& semiAxis1) { this->semiAxis1 = semiAxis1; }
+
+__host__ __device__ dfloat3 ParticleCenter::getSemiAxis2() const { return this->semiAxis2; }
+__host__ __device__ void ParticleCenter::setSemiAxis2(const dfloat3& semiAxis2) { this->semiAxis2 = semiAxis2; }
+
+__host__ __device__ dfloat3 ParticleCenter::getSemiAxis3() const { return this->semiAxis3; }
+__host__ __device__ void ParticleCenter::setSemiAxis3(const dfloat3& semiAxis3) { this->semiAxis3 = semiAxis3; }
+
+__host__ __device__ dfloat3 ParticleCenter::getCenter1() const { return this->center1; }
+__host__ __device__ void ParticleCenter::setCenter1(const dfloat3 center1) { this->center1 = center1; }
+__host__ __device__ dfloat3 ParticleCenter::getCenter2() const { return this->center2; }
+__host__ __device__ void ParticleCenter::setCenter2(const dfloat3 center2) { this->center2 = center2; }
 
 //#endif //PARTICLE_MODEL

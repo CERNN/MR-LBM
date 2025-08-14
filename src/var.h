@@ -20,6 +20,12 @@
     #define VTK_DFLOAT_TYPE "double"
 #endif
 
+// Pow function to use
+#ifdef SINGLE_PRECISION
+    #define POW_FUNCTION powf 
+#else
+    #define POW_FUNCTION pow
+#endif
 
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */

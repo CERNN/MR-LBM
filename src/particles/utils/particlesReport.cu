@@ -49,9 +49,9 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
     strColumnNames += "radius" + sep;
     strColumnNames += "volume" + sep;
     strColumnNames += "movable" + sep;
-    strColumnNames += "semi1x" + sep  + "semi1y" + sep  + "semi1z" + sep;
-    strColumnNames += "semi2x" + sep  + "semi2y" + sep  + "semi2z" + sep;
-    strColumnNames += "semi3x" + sep  + "semi3y" + sep  + "semi3z\n";
+    // strColumnNames += "semi1x" + sep  + "semi1y" + sep  + "semi1z" + sep;
+    // strColumnNames += "semi2x" + sep  + "semi2y" + sep  + "semi2z" + sep;
+    // strColumnNames += "semi3x" + sep  + "semi3y" + sep  + "semi3z\n";
 
     for(int p = 0; p < NUM_PARTICLES; p++){
         ParticleCenter pc = particles->getPCenterArray()[p];
@@ -73,14 +73,14 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
         strValuesParticles << pc.getRadius() << sep;
         strValuesParticles << pc.getVolume() << sep;
         strValuesParticles << pc.getMovable() << sep;
-        strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis, sep) << sep;
-        strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis2, sep) << sep;
-        strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis3, sep) << "\n";
+        // strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis1, sep) << sep;
+        // strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis2, sep) << sep;
+        // strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis3, sep) << "\n";
     }
 
     outFilePCenter << strColumnNames << strValuesParticles.str();
 
-    /*
+    /* Também verificar se a partícula é ibm 
     if(saveNodes){
         strColumnNames = "particle_index" + sep + "pos_x" + sep + "pos_y" + sep + "pos_z" + sep + "S\n";
 
