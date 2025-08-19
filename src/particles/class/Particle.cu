@@ -170,7 +170,7 @@ __host__ void ParticlesSoA::createParticles(Particle *particles){
         dfloat3 vel = {0.0, 0.0, 0.0};
         dfloat3 sa = {10, 20, 30};
 
-        this->pShape[i] = CAPSULE;
+        this->pShape[i] = SPHERE;
         center.setPos(pos);
         center.setPos_old(pos);
         center.setVel(vel);
@@ -195,7 +195,7 @@ __host__ void ParticlesSoA::createParticles(Particle *particles){
     if (pShape == nullptr) {
         pShape = new ParticleShape[NUM_PARTICLES]; 
         for (int i = 0; i < NUM_PARTICLES; i++) {
-            pShape[i] = CAPSULE;
+            pShape[i] = SPHERE;
             particles[i].setShape(&pShape[i]);
         }
     }

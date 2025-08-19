@@ -49,9 +49,9 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
     strColumnNames += "radius" + sep;
     strColumnNames += "volume" + sep;
     strColumnNames += "movable" + sep;
-    // strColumnNames += "semi1x" + sep  + "semi1y" + sep  + "semi1z" + sep;
-    // strColumnNames += "semi2x" + sep  + "semi2y" + sep  + "semi2z" + sep;
-    // strColumnNames += "semi3x" + sep  + "semi3y" + sep  + "semi3z\n";
+    strColumnNames += "semi1x" + sep  + "semi1y" + sep  + "semi1z" + sep;
+    strColumnNames += "semi2x" + sep  + "semi2y" + sep  + "semi2z" + sep;
+    strColumnNames += "semi3x" + sep  + "semi3y" + sep  + "semi3z\n";
 
     for(int p = 0; p < NUM_PARTICLES; p++){
         ParticleCenter pc = particles->getPCenterArray()[p];
@@ -73,15 +73,14 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
         strValuesParticles << pc.getRadius() << sep;
         strValuesParticles << pc.getVolume() << sep;
         strValuesParticles << pc.getMovable() << sep;
-        // strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis1, sep) << sep;
-        // strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis2, sep) << sep;
-        // strValuesParticles << getStrDfloat3(pc.getCollision().semiAxis3, sep) << "\n";
+        strValuesParticles << getStrDfloat3(pc.getSemiAxis1(), sep) << sep;
+        strValuesParticles << getStrDfloat3(pc.getSemiAxis2(), sep) << sep;
+        strValuesParticles << getStrDfloat3(pc.getSemiAxis3(), sep) << "\n";
     }
 
     outFilePCenter << strColumnNames << strValuesParticles.str();
 
-    /* Também verificar se a partícula é ibm 
-    if(saveNodes){
+    if(saveNodes && (*particles->getPMethod() == IBM)){
         strColumnNames = "particle_index" + sep + "pos_x" + sep + "pos_y" + sep + "pos_z" + sep + "S\n";
 
         std::ostringstream strValuesMesh("");
@@ -89,13 +88,13 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
         // TODO: fix it
         for(int n_gpu = 0; n_gpu < N_GPUS; n_gpu++){
             checkCudaErrors(cudaSetDevice(GPUS_TO_USE[n_gpu]));
-            ParticleNodeSoA pnSoA = particles.nodesSoA[n_gpu];
+            IbmNodesSoA pnSoA = particles->getNodesSoA()[n_gpu];
 
-            for(int i = 0; i < pnSoA.numNodes; i++){
-                dfloat3 pos = pnSoA.pos.getValuesFromIdx(i);
-                strValuesMesh << pnSoA.particleCenterIdx[i] << sep;
+            for(int i = 0; i < pnSoA.getNumNodes(); i++){
+                dfloat3 pos = pnSoA.getPos().getValuesFromIdx(i);
+                strValuesMesh << pnSoA.getParticleCenterIdx()[i] << sep;
                 strValuesMesh << getStrDfloat3(pos, sep) << sep;
-                strValuesMesh << pnSoA.S[i] << "\n";
+                strValuesMesh << pnSoA.getS()[i] << "\n";
             }
         }
 
@@ -106,7 +105,7 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
         std::ofstream outFilePNodes(strFilePNodes);
 
         outFilePNodes << strColumnNames << strValuesMesh.str();
-    } */
+    } 
    
 }
 
