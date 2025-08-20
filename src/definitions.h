@@ -48,14 +48,16 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 
 #if defined(POWERLAW) || defined(BINGHAM) || defined(BI_VISCOSITY)
     #define OMEGA_FIELD
+    #define NON_NEWTONIAN_FLUID
+    #define COMPUTE_SHEAR
+#endif
+
+#if defined(LES_MODEL)
+    #define OMEGA_FIELD
+    #define COMPUTE_SHEAR
 #endif
 
 
-#ifdef MODEL_CONST_SMAGORINSKY
-constexpr dfloat CONST_SMAGORINSKY = 0.1;
-constexpr dfloat INIT_VISC_TURB = 0.0;
-constexpr dfloat Implicit_const = 2.0*SQRT_2*3*3/(RHO_0)*CONST_SMAGORINSKY*CONST_SMAGORINSKY;
-#endif
 
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */
