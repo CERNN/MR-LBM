@@ -136,20 +136,18 @@ int main() {
         #endif
         BC_FORCES_PARAMS_PTR(h_)
     );
-    printf("Host Memory Allocated \n"); if(console_flush) fflush(stdout);
+
     /* -------------- ALLOCATION FOR GPU ------------- */
     allocateDeviceMemory(
         &d_fMom, &dNodeType, &ghostInterface
         PARTICLE_TRACER_PARAMS_PTR(d_)
         BC_FORCES_PARAMS_PTR(d_)
     );
-    printf("Device Memory Allocated \n"); if(console_flush) fflush(stdout);
     #ifdef DENSITY_CORRECTION
         checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
         cudaMalloc((void**)&d_mean_rho, sizeof(dfloat));  
-        printf("Density Correction Memory Allocated \n"); if(console_flush) fflush(stdout);
     #endif
-    //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
+
 
     // Setup Streams
     cudaStream_t streamsLBM[1];
@@ -177,7 +175,7 @@ int main() {
 
     int ini_step = step;
 
-    printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
+    printf("Domain Initialized. Starting simulation\n"); if(console_flush) fflush(stdout);
     
     /* ------------------------------ TIMER EVENTS  ------------------------------ */
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
