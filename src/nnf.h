@@ -25,9 +25,9 @@ constexpr dfloat GAMMA_0 = 0;       // Truncated Power-Law.
 #ifdef BINGHAM
 #define OMEGA_FIELD
 // Inputs
-constexpr dfloat S_Y= 0.005;
+//constexpr dfloat S_Y= 0.005;
 // Calculated variables
-constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
+constexpr dfloat OMEGA_P = (dfloat)(1.0) / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
 #endif
 /* ------------------------------KEE_TURCOTEE-------------------------------- */
 #ifdef BI_VISCOSITY

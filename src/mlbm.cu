@@ -551,7 +551,7 @@ __global__ void gpuMomCollisionStream(
                 eta = VISC + S_Y/gamma_dot;
                 omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
                 */
-            omegaVar = calcOmega(omegaVar, auxStressMag,step);
+                omegaVar = calcOmega(omegaVar, auxStressMag,step);
 
 
             #endif//  OMEGA_FIELD
