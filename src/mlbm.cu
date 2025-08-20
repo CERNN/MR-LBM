@@ -551,9 +551,7 @@ __global__ void gpuMomCollisionStream(
             #endif//  OMEGA_FIELD
 
             #ifdef LES_MODEL
-                dfloat tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
-                dfloat visc_turb_var = tau_t/3.0;
-
+                dfloat tau_t = calcTau_les(omegaVar, auxStressMag,step);
                 omegaVar = 1.0/(TAU + tau_t);
             #endif
 
