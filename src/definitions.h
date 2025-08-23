@@ -89,7 +89,7 @@ constexpr BlockDim optimalBlockDimArray = findOptimalBlockDimensions(MAX_ELEMENT
 //TODO: fix, is giving incopatibility issues with parallel reduction
 #define BLOCK_NX 8
 #define BLOCK_NY 8
-#define BLOCK_NZ 4
+#define BLOCK_NZ 8
 
 
 #define BLOCK_LBM_SIZE (BLOCK_NX * BLOCK_NY * BLOCK_NZ)
@@ -172,11 +172,11 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
     const size_t CONFORMATION_GRAD_BLOCK_SIZE = 0;
 #endif
 
-constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_BLOCK_SIZE, CONFORMATION_GRAD_BLOCK_SIZE));
+constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_BLOCK_SIZE, CONFORMATION_GRAD_BLOCK_SIZE))*sizeof(dfloat);
 
 //FUNCTION DECLARATION MACROS
 #ifdef DYNAMIC_SHARED_MEMORY
-    #define DYNAMIC_SHARED_MEMORY_PARAMS ,SHARED_MEMORY_SIZE
+    #define DYNAMIC_SHARED_MEMORY_PARAMS ,MAX_SHARED_MEMORY_SIZE
 #else
     #define DYNAMIC_SHARED_MEMORY_PARAMS
 #endif
