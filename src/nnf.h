@@ -12,7 +12,6 @@
 /* ------------------------------- POWER- LAW ------------------------------- */
 
 #ifdef POWERLAW
-#define OMEGA_FIELD
 // Inputs
 constexpr dfloat N_INDEX = 0.5;                         // Power index
 constexpr dfloat K_CONSISTENCY = RHO_0*(TAU-0.5)/3;      // Consistency factor
@@ -23,15 +22,13 @@ constexpr dfloat GAMMA_0 = 0;       // Truncated Power-Law.
 #endif
 /* --------------------------------BINGHAM---------------------------------- */
 #ifdef BINGHAM
-#define OMEGA_FIELD
 // Inputs
-constexpr dfloat S_Y= 0.005;
+//constexpr dfloat S_Y= 0.005;
 // Calculated variables
-constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
+constexpr dfloat OMEGA_P = (dfloat)(1.0) / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
 #endif
 /* ------------------------------KEE_TURCOTEE-------------------------------- */
 #ifdef BI_VISCOSITY
-#define OMEGA_FIELD
 // Inputs
 constexpr dfloat Bn = 0.4;
 constexpr dfloat S_Y = Bn*VISC*invSqrtt(2*L/(T_gravity_t_beta*T_DELTA_T));
@@ -56,21 +53,15 @@ constexpr dfloat t1 = 1e-3;
 constexpr dfloat eta_0 =  1e-3;
 
 #endif
-/* ----------------------------- FENE_P ------------------------------------- */
-
-#ifdef FENE_P
 
 
 
-
-
-#endif
 
 
 #ifdef OMEGA_FIELD
     #ifdef POWER_LAW
     __device__ 
-    dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
+    dfloat calcOmega_nnf(dfloat omegaOld, dfloat const auxStressMag, const int step){
         omega = omegaOld; //initial guess
 
         dfloat fx, fx_dx;
@@ -101,7 +92,7 @@ constexpr dfloat eta_0 =  1e-3;
 
     #ifdef BINGHAM
     __device__ 
-    dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
+    dfloat __forceinline__ calcOmega_nnf(dfloat omegaOld, dfloat const auxStressMag, const int step){
         return OMEGA_P * myMax(0.0, (1 - S_Y / auxStressMag));
         //return OMEGA_P * myMax(0.0, (1 - S_Y * ((dfloat)(step - NNF_TRIGGER_STEP)/(NNF_TRIGGER_STEP_SIZE)) / auxStressMag));
     }
@@ -118,7 +109,7 @@ constexpr dfloat eta_0 =  1e-3;
     // NOT TESTE/VALIDATED https://arxiv.org/abs/2401.02942 has analythical solution
     #ifdef KEE_TURCOTEE
     __device__ 
-    dfloat calcOmega(dfloat omegaOld, dfloat const auxStressMag, const int step){
+    dfloat calcOmega_nnf(dfloat omegaOld, dfloat const auxStressMag, const int step){
         const dfloat A = auxStressMag/2;
         const dfloat B = auxStressMag/(RHO_0*cs2);
         const dfloat C = B*eta_0;

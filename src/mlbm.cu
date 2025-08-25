@@ -22,7 +22,7 @@ __global__ void gpuMomCollisionStream(
     #ifdef DYNAMIC_SHARED_MEMORY
     extern __shared__ dfloat s_pop[]; 
     #else
-    __shared__ dfloat s_pop[MAX_SHARED_MEMORY_SIZE];
+    __shared__ dfloat s_pop[MAX_SHARED_MEMORY_SIZE/sizeof(dfloat)];
     #endif
     
     const int baseIdx = idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z);
@@ -524,10 +524,8 @@ __global__ void gpuMomCollisionStream(
             
     #endif
     
-
-    // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
-    #if defined(OMEGA_FIELD) || defined(LES_MODEL)
-        //TODO change to fix perfomance
+    #ifdef COMPUTE_SHEAR
+            //TODO change to fix perfomance
         const dfloat S_XX = rhoVar * (m_xx_t45/F_M_II_SCALE - ux_t30*ux_t30/(F_M_I_SCALE*F_M_I_SCALE));
         const dfloat S_YY = rhoVar * (m_yy_t45/F_M_II_SCALE - uy_t30*uy_t30/(F_M_I_SCALE*F_M_I_SCALE));
         const dfloat S_ZZ = rhoVar * (m_zz_t45/F_M_II_SCALE - uz_t30*uz_t30/(F_M_I_SCALE*F_M_I_SCALE));
@@ -545,24 +543,20 @@ __global__ void gpuMomCollisionStream(
         const dfloat auxStressMag = sqrt(0.5 * (
             (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
             2 * ((S_XY + uFxyd2) * (S_XY + uFxyd2) + (S_XZ + uFxzd2) * (S_XZ + uFxzd2) + (S_YZ + uFyzd2) * (S_YZ + uFyzd2))));
-            #ifdef OMEGA_FIELD
-                /*
-                dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
-                dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
-                eta = VISC + S_Y/gamma_dot;
-                omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
-                */
-            omegaVar = calcOmega(omegaVar, auxStressMag,step);
 
-
+    #endif
+    // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
+    #if defined(OMEGA_FIELD)
+            #ifdef NON_NEWTONIAN_FLUID 
+                omegaVar = calcOmega_nnf(omegaVar, auxStressMag,step);
             #endif//  OMEGA_FIELD
 
             #ifdef LES_MODEL
-                dfloat tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
-                dfloat visc_turb_var = tau_t/3.0;
-
+                dfloat tau_t = calcTau_les(omegaVar, auxStressMag,step);
                 omegaVar = 1.0/(TAU + tau_t);
             #endif
+
+            //Compute new auxiliary variables
             t_omegaVar = 1 - omegaVar;
             tt_omegaVar = 1 - omegaVar*0.5;
             omegaVar_d2 = omegaVar*0.5;

@@ -1,15 +1,15 @@
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
-#define ID_SIM "000"            // prefix for simulation's files
-#define PATH_FILES "Turbulent_Bingham"  // path to save simulation's files
+#define ID_SIM "001"            // prefix for simulation's files
+#define PATH_FILES "TEST"  // path to save simulation's files
 #define TREATFIELD (false) //treat data over the entire field
 #define TREATPOINT (false) //treat data in a single or several points
 #define TREATLINE (false) //save the macro in a line
 #define SAVEDATA (false) //save treat data
 #define CONSOLEPRINT (false) // print the console the data is being saved
-#define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
+#define MEAN_FLOW (true) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define NODE_TYPE_SAVE (false) //save the bc conditions, usefull for drawing the surface
 #define ONLY_FINAL_MACRO (false) //save only the last time step macroscopic
-#define MACR_SAVE (false)
+#define MACR_SAVE (5000)
 #define REPORT_SAVE (false)
 #define VTK_SAVE (true)
 #define BIN_SAVE (false)

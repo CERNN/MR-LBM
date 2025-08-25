@@ -971,7 +971,7 @@ __host__ void hostInitialization_nodeType(
         }
     }
 
-    printf("boundary condition done\n");
+    printf("Setting boundary condition completed\n");
 }
 
 

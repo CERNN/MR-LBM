@@ -185,7 +185,8 @@ static inline uint64_t swap64(uint64_t v) {
 #include CASE_CONSTANTS
 #include CASE_OUTPUTS
 
-#include "nnf.h"
+
 #include "definitions.h"
+#include "nnf.h"
 
 #endif //__VAR_H
