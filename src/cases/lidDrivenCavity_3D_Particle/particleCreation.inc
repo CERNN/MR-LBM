@@ -1,3 +1,4 @@
+/*
 centerStorage.resize(NUM_PARTICLES);
 pShape = new ParticleShape[NUM_PARTICLES];
 
@@ -40,3 +41,4 @@ for (int i = 0; i<NUM_PARTICLES;i++){
     particles[i].setCollideWall(true);
 
 }
+*/
