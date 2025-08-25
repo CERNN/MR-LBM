@@ -24,7 +24,7 @@
 *   @param step: current time step
 *   @param saveNodes: save particles node values or not
 */
-void saveParticlesInfo(ParticlesSoA particles, unsigned int step, bool saveNodes);
+void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNodes);
 
 /**
 *   @brief Print particles information

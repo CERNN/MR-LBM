@@ -20,6 +20,12 @@
     #define VTK_DFLOAT_TYPE "double"
 #endif
 
+// Pow function to use
+#ifdef SINGLE_PRECISION
+    #define POW_FUNCTION powf 
+#else
+    #define POW_FUNCTION pow
+#endif
 
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
@@ -96,6 +102,7 @@ constexpr bool console_flush = false;
 #define CASE_AZZ_BC_DEF STR(CASE_DIRECTORY/BC_PROBLEM/azz_bc_definition.inc)
 #define COLREC_AZZ_RECONSTRUCTION STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_zz.inc)
 #define COLREC_AZZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
+
 
 #define CASE_PARTICLE_CREATE STR(../../CASE_DIRECTORY/BC_PROBLEM/particleCreation.inc)
 

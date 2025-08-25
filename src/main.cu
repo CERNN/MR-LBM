@@ -79,11 +79,6 @@ int main() {
     dfloat* d_mean_rho;
     #endif
 
-    #ifdef PARTICLE_TRACER
-    dfloat3* h_particlePos;
-    dfloat3* d_particlePos;
-    #endif
-
     #if MEAN_FLOW
         dfloat* m_fMom;
         dfloat* m_rho;
@@ -131,7 +126,6 @@ int main() {
         A_YY_DIST_PARAMS_PTR
         A_YZ_DIST_PARAMS_PTR
         A_ZZ_DIST_PARAMS_PTR
-        PARTICLE_TRACER_PARAMS_PTR(h_)
         MEAN_FLOW_PARAMS_PTR
         MEAN_FLOW_SECOND_DIST_PARAMS_PTR
         #if NODE_TYPE_SAVE
@@ -143,7 +137,6 @@ int main() {
     /* -------------- ALLOCATION FOR GPU ------------- */
     allocateDeviceMemory(
         &d_fMom, &dNodeType, &ghostInterface
-        PARTICLE_TRACER_PARAMS_PTR(d_)
         BC_FORCES_PARAMS_PTR(d_)
     );
     printf("Device Memory Allocated \n"); if(console_flush) fflush(stdout);
@@ -159,10 +152,11 @@ int main() {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
-    #ifdef PARTICLE_TRACER
+    //#ifdef PARTICLE_MODEL
     cudaStream_t streamsPart[1];
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
-    #endif
+    //#endif
+
     step=INI_STEP;
 
     initializeDomain(ghostInterface,     
@@ -174,8 +168,6 @@ int main() {
                      BC_FORCES_PARAMS(d_)
                      DENSITY_CORRECTION_PARAMS(h_)
                      DENSITY_CORRECTION_PARAMS(d_)
-                     PARTICLE_TRACER_PARAMS_PTR(h_)
-                     PARTICLE_TRACER_PARAMS_PTR(d_)
                      &step, gridBlock, threadBlock);
 
     int ini_step = step;
@@ -190,6 +182,8 @@ int main() {
         
         // particle initialization with position, velocity, and solver method
         initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
+
+        saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
 
     #endif
 
@@ -226,6 +220,7 @@ int main() {
             if(REPORT_SAVE){ reportSave = !(step % REPORT_SAVE);}                
             if(MACR_SAVE){ macrSave   = !(step % MACR_SAVE);}
             if(MACR_SAVE || REPORT_SAVE){ save = (reportSave || macrSave);}
+            if(PARTICLES_SAVE){ particleSave = !(aux % PARTICLES_SAVE);}
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
         }
 #pragma warning(pop)
@@ -235,10 +230,10 @@ int main() {
         //swap interface pointers
         swapGhostInterfaces(ghostInterface);
 
-        #ifdef PARTICLE_TRACER
-            checkCudaErrors(cudaDeviceSynchronize());
-            updateParticlePos(d_particlePos, h_particlePos, d_fMom, streamsPart[0],step);
+        #ifdef PARTICLE_MODEL
+            particleSimulation(&particlesSoA,d_fMom,streamsPart,step);
         #endif
+
 
         if(checkpoint){
             printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
@@ -269,7 +264,8 @@ int main() {
             saveSimCheckpoint(h_fMom, ghostInterface, &step);
 
             #ifdef PARTICLE_MODEL
-            saveSimCheckpointParticle(particlesSoA, &step);
+                printf("Starting saveSimCheckpointParticle...\t"); fflush(stdout);
+                saveSimCheckpointParticle(particlesSoA, &step);
             #endif
             
 
@@ -356,9 +352,11 @@ int main() {
         }
 
         #ifdef PARTICLE_MODEL
-        if (particleSave){
-            //saveParticlesInfo(particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
-        }
+            if (particleSave){
+                printf("\n------------------------- Saving particles %06d -------------------------\n", step);
+                if(console_flush){fflush(stdout);}
+                saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+            }
         #endif
 
     } 
@@ -431,10 +429,7 @@ int main() {
     #endif //LOG_CONFORMATION
     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
 
-    #ifdef PARTICLE_TRACER
-        checkCudaErrors(cudaMemcpy(h_particlePos, d_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyDeviceToHost)); 
-        saveParticleInfo(h_particlePos,step);
-    #endif
+
     /*if(CHECKPOINT_SAVE){
         printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             
@@ -554,10 +549,7 @@ int main() {
         cudaFree(d_mean_rho);
         free(h_mean_rho);
     #endif
-    #ifdef PARTICLE_TRACER
-    cudaFree(h_particlePos);
-    cudaFree(d_particlePos);
-    #endif
+
 
     #if NODE_TYPE_SAVE
     cudaFree(nodeTypeSave);

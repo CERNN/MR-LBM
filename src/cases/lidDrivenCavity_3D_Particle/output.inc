@@ -17,18 +17,12 @@
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;
 //#define SAVE_BC_FORCES // define if it will export BC force field to bin
 
-//#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
-#define PARTICLE_TRACER_SAVE false
-
 
 /* ------------------------- TIME AND SAVE DEFINES ------------------------- */
 
-#define IBM_PARTICLES_SAVE (100)               // Save particles info every given steps (0 not report)
-#define IBM_DATA_REPORT (100)                   // Report IBM treated data every given steps (0 not report)
+#define PARTICLES_SAVE (false)               // Save particles info every given steps (0 not report)
+#define PARTICLES_DATA_REPORT (false)                   // Report IBM treated data every given steps (0 not report)
 
- 
-#define IBM_DATA_STOP false                 // stop condition by IBM treated data
-#define IBM_DATA_SAVE false                 // save reported IBM data to file
 
-#define IBM_PARTICLES_NODES_SAVE true      // Saves particles nodes data
+#define IBM_PARTICLES_NODES_SAVE false      // Saves particles nodes data
 /* ------------------------------------------------------------------------- */

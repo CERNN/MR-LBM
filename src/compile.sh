@@ -10,7 +10,7 @@ if [ -z "$CC" ]; then
 fi
 
 if [[ "$1" = "D3Q19" || "$1" = "D3Q27" ]]; then
-    nvcc -gencode arch=compute_${CC},code=sm_${CC} -rdc=true -O3 --restrict -DSM_${CC}  \
+    nvcc --std=c++17 -gencode arch=compute_${CC},code=sm_${CC} -rdc=true -O3 --restrict -DSM_${CC}  \
         $(find . -name '*.cu') \
         -diag-suppress 39 \
         -diag-suppress 179 \

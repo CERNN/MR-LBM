@@ -11,7 +11,7 @@ constexpr int NY = N;        // size y of the grid
 constexpr int NZ = N;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.01;  
+constexpr dfloat U_MAX = 0.1;  
 constexpr dfloat L = N;
 
 constexpr dfloat FX = 0.0;        // force in x
