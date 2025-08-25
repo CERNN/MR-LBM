@@ -23,7 +23,7 @@ std::string getStrDfloat6(dfloat6 val, std::string sep){
     return strValues.str();
 }
 
-void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNodes){
+void saveParticlesInfo(ParticlesSoA *particles, unsigned int step){
     // Names of file to save particle info
     std::string strFilePCenters = getVarFilename("pCenters", step, ".csv");
 
@@ -79,7 +79,8 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
 
     outFilePCenter << strColumnNames << strValuesParticles.str();
 
-    if(saveNodes && (*particles->getPMethod() == IBM)){
+    #ifdef IBM_PARTICLES_NODES_SAVE
+    if((*particles->getPMethod() == IBM)){
         strColumnNames = "particle_index" + sep + "pos_x" + sep + "pos_y" + sep + "pos_z" + sep + "S\n";
 
         std::ostringstream strValuesMesh("");
@@ -105,6 +106,7 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, bool saveNode
 
         outFilePNodes << strColumnNames << strValuesMesh.str();
     } 
+    #endif //IBM_PARTICLES_NODES_SAVE
    
 }
 

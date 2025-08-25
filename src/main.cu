@@ -183,7 +183,7 @@ int main() {
         // particle initialization with position, velocity, and solver method
         initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
 
-        saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+        saveParticlesInfo(&particlesSoA, step);
 
     #endif
 
@@ -355,7 +355,7 @@ int main() {
             if (particleSave){
                 printf("\n------------------------- Saving particles %06d -------------------------\n", step);
                 if(console_flush){fflush(stdout);}
-                saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+                saveParticlesInfo(&particlesSoA, step);
             }
         #endif
 
