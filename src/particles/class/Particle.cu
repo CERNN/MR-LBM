@@ -139,6 +139,7 @@ __host__ void ParticlesSoA::createParticles(Particle *particles){
         }
     }
 
+
     for(int i = 0; i <NUM_PARTICLES ; i++){
 
         switch (particles[i].getMethod())
