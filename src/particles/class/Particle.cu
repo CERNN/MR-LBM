@@ -129,25 +129,16 @@ int ParticlesSoA::getMethodCount(ParticleMethod method) const {
 
 __host__ void ParticlesSoA::createParticles(Particle *particles){
    
-    //#include CASE_PARTICLE_CREATE
-    centerStorage.resize(NUM_PARTICLES);
-    pShape = new ParticleShape[NUM_PARTICLES];
-
-    std::random_device rand_dev;
-    std::minstd_rand generator(rand_dev());
-    std::uniform_int_distribution<int>  distr(0, RAND_MAX);
-
-    //dfloat x_limit_B = 0 + 5 / 2.0;
-    //dfloat x_limit_E = NX - 5 / 2.0;
-    //dfloat y_limit_B = 0 + 5 / 2.0;
-    //dfloat y_limit_E = NY - 5 / 2.0;
-    //dfloat z_limit_B = 0 + 5 / 2.0;
-    //dfloat z_limit_E = NZ - 5 / 2.0;
-
-__host__
-void ParticlesSoA::createParticles(Particle *particles){
-   
     #include CASE_PARTICLE_CREATE
+
+    if (pShape == nullptr) {
+        pShape = new ParticleShape[NUM_PARTICLES]; 
+        for (int i = 0; i < NUM_PARTICLES; i++) {
+            pShape[i] = SPHERE;
+            particles[i].setShape(&pShape[i]);
+        }
+    }
+
 
     for(int i = 0; i <NUM_PARTICLES ; i++){
 
@@ -170,9 +161,6 @@ void ParticlesSoA::createParticles(Particle *particles){
             default:
                 break;
             }
-            //particles[i].makeSpherePolar(particles[i].getPCenter());
-           //particles[i].makeEllipsoid(dfloat3(40.0,20.0,10.0), center[i], dfloat3(0.5,1.0,0.6), 0.3*M_PI/4,true, PARTICLE_DENSITY, vel, w);
-            //particles[i].makeCapsule(PARTICLE_DIAMETER, center1, center2, true,PARTICLE_DENSITY, vel, w);
             break;
         case TRACER:
             break;

@@ -6,27 +6,27 @@
 // #include "../../class/ParticleCenter.cuh"
 
 // Definitions class IbmNodes
-
+__host__ __device__
 IbmNodes::IbmNodes()
     : pos(), vel(), vel_old(), f(), deltaF(), S() {}
 
-dfloat3 IbmNodes::getPos() const { return this->pos; }
-void IbmNodes::setPos(const dfloat3& Pos) { this->pos = Pos; }
+__host__ __device__ dfloat3 IbmNodes::getPos() const { return this->pos; }
+__host__ __device__ void IbmNodes::setPos(const dfloat3& Pos) { this->pos = Pos; }
 
-dfloat3 IbmNodes::getVel() const { return this->vel; }
-void IbmNodes::setVel(const dfloat3& vel) { this->vel = vel; }
+__host__ __device__ dfloat3 IbmNodes::getVel() const { return this->vel; }
+__host__ __device__ void IbmNodes::setVel(const dfloat3& vel) { this->vel = vel; }
 
-dfloat3 IbmNodes::getVelOld() const { return this->vel_old; }
-void IbmNodes::setVelOld(const dfloat3& vel_old) { this->vel_old = vel_old; }
+__host__ __device__ dfloat3 IbmNodes::getVelOld() const { return this->vel_old; }
+__host__ __device__ void IbmNodes::setVelOld(const dfloat3& vel_old) { this->vel_old = vel_old; }
 
-dfloat3 IbmNodes::getF() const { return this->f; }
-void IbmNodes::setF(const dfloat3& f) { this->f = f; }
+__host__ __device__ dfloat3 IbmNodes::getF() const { return this->f; }
+__host__ __device__ void IbmNodes::setF(const dfloat3& f) { this->f = f; }
 
-dfloat3 IbmNodes::getDeltaF() const { return this->deltaF; }
-void IbmNodes::setDeltaF(const dfloat3& deltaF) { this->deltaF = deltaF; }
+__host__ __device__ dfloat3 IbmNodes::getDeltaF() const { return this->deltaF; }
+__host__ __device__ void IbmNodes::setDeltaF(const dfloat3& deltaF) { this->deltaF = deltaF; }
 
-float IbmNodes::getS() const { return this->S; }
-void IbmNodes::setS(const dfloat& S) { this->S = S; }
+__host__ __device__ float IbmNodes::getS() const { return this->S; }
+__host__ __device__ void IbmNodes::setS(const dfloat& S) { this->S = S; }
 
 // Definitions class IbmNodesSoA
 
@@ -46,33 +46,33 @@ IbmNodesSoA::~IbmNodesSoA()
     this->numNodes = 0;
 }
 
-unsigned int IbmNodesSoA::getNumNodes() const { return  this->numNodes; }
-void IbmNodesSoA::setNumNodes(const int numNodes) { this->numNodes = numNodes; }
+__host__ __device__ unsigned int IbmNodesSoA::getNumNodes() const { return  this->numNodes; }
+__host__ __device__ void IbmNodesSoA::setNumNodes(const int numNodes) { this->numNodes = numNodes; }
 
-const unsigned int* IbmNodesSoA::getParticleCenterIdx() const { return this->particleCenterIdx; }
-unsigned int* IbmNodesSoA::getParticleCenterIdx() {return this->particleCenterIdx;}
-void IbmNodesSoA::setParticleCenterIdx(unsigned int* particleCenterIdx) { this->particleCenterIdx = particleCenterIdx; }
+__host__ __device__ const unsigned int* IbmNodesSoA::getParticleCenterIdx() const { return this->particleCenterIdx; }
+__host__ __device__ unsigned int* IbmNodesSoA::getParticleCenterIdx() {return this->particleCenterIdx;}
+__host__ __device__ void IbmNodesSoA::setParticleCenterIdx(unsigned int* particleCenterIdx) { this->particleCenterIdx = particleCenterIdx; }
 
-dfloat3SoA IbmNodesSoA::getPos() const { return this->pos; }
-void IbmNodesSoA::setPos(const dfloat3SoA& pos) { this->pos = pos; }
+__host__ __device__ dfloat3SoA IbmNodesSoA::getPos() const { return this->pos; }
+__host__ __device__ void IbmNodesSoA::setPos(const dfloat3SoA& pos) { this->pos = pos; }
 
-dfloat3SoA IbmNodesSoA::getVel() const { return this->vel; }
-void IbmNodesSoA::setVel(const dfloat3SoA& vel) { this->vel = vel; }
+__host__ __device__ dfloat3SoA IbmNodesSoA::getVel() const { return this->vel; }
+__host__ __device__ void IbmNodesSoA::setVel(const dfloat3SoA& vel) { this->vel = vel; }
 
-dfloat3SoA IbmNodesSoA::getVelOld() const { return this->vel_old; }
-void IbmNodesSoA::setVelOld(const dfloat3SoA& vel_old) { this->vel_old = vel_old; }
+__host__ __device__ dfloat3SoA IbmNodesSoA::getVelOld() const { return this->vel_old; }
+__host__ __device__ void IbmNodesSoA::setVelOld(const dfloat3SoA& vel_old) { this->vel_old = vel_old; }
 
-dfloat3SoA IbmNodesSoA::getF() const { return this->f; }
-void IbmNodesSoA::setF(const dfloat3SoA& f) { this->f = f; }
+__host__ __device__ dfloat3SoA IbmNodesSoA::getF() const { return this->f; }
+__host__ __device__ void IbmNodesSoA::setF(const dfloat3SoA& f) { this->f = f; }
 
-dfloat3SoA IbmNodesSoA::getDeltaF() const { return this->deltaF; }
-void IbmNodesSoA::setDeltaF(const dfloat3SoA& deltaF) { this->deltaF = deltaF; }
+__host__ __device__ dfloat3SoA IbmNodesSoA::getDeltaF() const { return this->deltaF; }
+__host__ __device__ void IbmNodesSoA::setDeltaF(const dfloat3SoA& deltaF) { this->deltaF = deltaF; }
 
-dfloat* IbmNodesSoA::getS() const { return this->S; }
-void IbmNodesSoA::setS(dfloat* S) { this->S = S; }
+__host__ __device__ dfloat* IbmNodesSoA::getS() const { return this->S; }
+__host__ __device__ void IbmNodesSoA::setS(dfloat* S) { this->S = S; }
 
 
-
+__host__ __device__
 void IbmNodesSoA::allocateMemory(unsigned int numMaxNodes)
 {
     this->pos.allocateMemory((size_t) numMaxNodes);
@@ -87,6 +87,7 @@ void IbmNodesSoA::allocateMemory(unsigned int numMaxNodes)
         cudaMallocManaged((void**)&(this->particleCenterIdx), sizeof(unsigned int) * numMaxNodes));
 }
 
+__host__ __device__
 void IbmNodesSoA::freeMemory()
 {
     this->numNodes = 0;
@@ -101,11 +102,12 @@ void IbmNodesSoA::freeMemory()
     cudaFree(this->particleCenterIdx);
 }
 
-
+__host__ __device__
 bool is_inside_gpu(dfloat3 pos, unsigned int n_gpu){
     return pos.z >= n_gpu*NZ && pos.z < (n_gpu+1)*NZ;
 }
 
+__host__ __device__
 void IbmNodesSoA::copyNodesFromParticle(Particle *p, unsigned int pCenterIdx, unsigned int n_gpu)
 {
     const int baseIdx = this->numNodes;
@@ -134,7 +136,7 @@ void IbmNodesSoA::copyNodesFromParticle(Particle *p, unsigned int pCenterIdx, un
     this->numNodes += nodesAdded;
 }
 
-
+__host__ __device__
 void IbmNodesSoA::leftShiftNodesSoA(int idx, int left_shift){
     this->particleCenterIdx[idx-left_shift] = this->particleCenterIdx[idx];
     this->S[idx-left_shift] = this->S[idx];

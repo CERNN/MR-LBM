@@ -8,6 +8,7 @@
 #include "../../../errorDef.h"
 #include "../../../saveData.cuh"
 #include "../../class/Particle.cuh"
+#include "../../particlesBoundaryCondition.h"
 
 void ibmSimulation(
     ParticlesSoA particles,
@@ -15,6 +16,7 @@ void ibmSimulation(
     cudaStream_t streamParticles,
     unsigned int step
 );
+
 
 
 

@@ -292,13 +292,31 @@ __host__ __device__ CollisionData ParticleCenter::getCollision() const { return 
 __host__ __device__ void ParticleCenter::setCollision(const CollisionData& collision) { this->collision = collision; }
 
 __host__ __device__ dfloat3 ParticleCenter::getSemiAxis1() const { return this->semiAxis1; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis1X() const { return this->semiAxis1.x; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis1Y() const { return this->semiAxis1.y; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis1Z() const { return this->semiAxis1.z; }
 __host__ __device__ void ParticleCenter::setSemiAxis1(const dfloat3& semiAxis1) { this->semiAxis1 = semiAxis1; }
+__host__ __device__ void ParticleCenter::setSemiAxis1X(dfloat x) { this->semiAxis1.x = x; }
+__host__ __device__ void ParticleCenter::setSemiAxis1Y(dfloat y) { this->semiAxis1.y = y; }
+__host__ __device__ void ParticleCenter::setSemiAxis1Z(dfloat z) { this->semiAxis1.z = z; }
 
 __host__ __device__ dfloat3 ParticleCenter::getSemiAxis2() const { return this->semiAxis2; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis2X() const { return this->semiAxis2.x; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis2Y() const { return this->semiAxis2.y; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis2Z() const { return this->semiAxis2.z; }
 __host__ __device__ void ParticleCenter::setSemiAxis2(const dfloat3& semiAxis2) { this->semiAxis2 = semiAxis2; }
+__host__ __device__ void ParticleCenter::setSemiAxis2X(dfloat x) { this->semiAxis2.x = x; }
+__host__ __device__ void ParticleCenter::setSemiAxis2Y(dfloat y) { this->semiAxis2.y = y; }
+__host__ __device__ void ParticleCenter::setSemiAxis2Z(dfloat z) { this->semiAxis2.z = z; }
 
 __host__ __device__ dfloat3 ParticleCenter::getSemiAxis3() const { return this->semiAxis3; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis3X() const { return this->semiAxis3.x; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis3Y() const { return this->semiAxis3.y; }
+__host__ __device__ dfloat ParticleCenter::getSemiAxis3Z() const { return this->semiAxis3.z; }
 __host__ __device__ void ParticleCenter::setSemiAxis3(const dfloat3& semiAxis3) { this->semiAxis3 = semiAxis3; }
+__host__ __device__ void ParticleCenter::setSemiAxis3X(dfloat x) { this->semiAxis3.x = x; }
+__host__ __device__ void ParticleCenter::setSemiAxis3Y(dfloat y) { this->semiAxis3.y = y; }
+__host__ __device__ void ParticleCenter::setSemiAxis3Z(dfloat z) { this->semiAxis3.z = z; }
 
 __host__ __device__ dfloat3 ParticleCenter::getCenter1() const { return this->center1; }
 __host__ __device__ void ParticleCenter::setCenter1(const dfloat3 center1) { this->center1 = center1; }
