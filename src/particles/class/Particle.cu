@@ -144,61 +144,10 @@ __host__ void ParticlesSoA::createParticles(Particle *particles){
     //dfloat z_limit_B = 0 + 5 / 2.0;
     //dfloat z_limit_E = NZ - 5 / 2.0;
 
-    dfloat x_center;
-    dfloat y_center;
-    dfloat z_center;
-    dfloat3 vel, w;
-
-    // printf("Antes get center1... \t"); fflush(stdout);
-    // center1[0].x = (N-1)/2.0; center1[0].y = (N-1)/2.0; center1[0].z = NZ - (N-1)/2.0;
-    // printf("Após get center1... \t"); fflush(stdout);
-
-    for (int i = 0; i<NUM_PARTICLES;i++){
-        ParticleCenter& center = centerStorage[i];
-        
-
-        // dfloat3 center1 = {0, 0, 0};
-        // dfloat3 center2 = {20, 0, 0};
-
-
-
-        x_center = 64; // x_limit_B + (x_limit_E - x_limit_B) * distr(generator) / RAND_MAX;
-        y_center = 120; //y_limit_B + (y_limit_E - y_limit_B) * distr(generator) / RAND_MAX;
-        z_center = 64; //z_limit_B + (z_limit_E - z_limit_B) * distr(generator) / RAND_MAX;
-
-        dfloat3 pos = {x_center, y_center, z_center};
-        dfloat3 vel = {0.0, 0.0, 0.0};
-        dfloat3 sa = {10, 20, 30};
-
-        this->pShape[i] = SPHERE;
-        center.setPos(pos);
-        center.setPos_old(pos);
-        center.setVel(vel);
-        center.setVel_old(vel);
-        center.setDensity(1.2);
-        center.setDiameter(20);
-        center.setSemiAxis1(sa);
-        center.setMovable(true);
-        center.setQ_pos(dfloat4(1,0,0,0));
-
-        
-        particles[i].setMethod(IBM);
-        particles[i].setShape(&pShape[i]);
-        particles[i].setPCenter(&center);
-        particles[i].setCollideParticle(false);
-        particles[i].setCollideWall(true);
-
-    }
-
-
-
-    if (pShape == nullptr) {
-        pShape = new ParticleShape[NUM_PARTICLES]; 
-        for (int i = 0; i < NUM_PARTICLES; i++) {
-            pShape[i] = SPHERE;
-            particles[i].setShape(&pShape[i]);
-        }
-    }
+__host__
+void ParticlesSoA::createParticles(Particle *particles){
+   
+    #include CASE_PARTICLE_CREATE
 
     for(int i = 0; i <NUM_PARTICLES ; i++){
 
