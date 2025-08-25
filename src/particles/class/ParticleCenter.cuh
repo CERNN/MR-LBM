@@ -275,13 +275,31 @@ public:
     __host__ __device__ void setCollision(const CollisionData& collision);
 
     __host__ __device__ dfloat3 getSemiAxis1() const;
+    __host__ __device__ dfloat getSemiAxis1X() const;
+    __host__ __device__ dfloat getSemiAxis1Y() const;
+    __host__ __device__ dfloat getSemiAxis1Z() const;
     __host__ __device__ void setSemiAxis1(const dfloat3& semiAxis1);
+    __host__ __device__ void setSemiAxis1X(dfloat x);
+    __host__ __device__ void setSemiAxis1Y(dfloat y);
+    __host__ __device__ void setSemiAxis1Z(dfloat z);
 
     __host__ __device__ dfloat3 getSemiAxis2() const;
+    __host__ __device__ dfloat getSemiAxis2X() const;
+    __host__ __device__ dfloat getSemiAxis2Y() const;
+    __host__ __device__ dfloat getSemiAxis2Z() const;
     __host__ __device__ void setSemiAxis2(const dfloat3& semiAxis2);
+    __host__ __device__ void setSemiAxis2X(dfloat x);
+    __host__ __device__ void setSemiAxis2Y(dfloat y);
+    __host__ __device__ void setSemiAxis2Z(dfloat z);
 
     __host__ __device__ dfloat3 getSemiAxis3() const;
+    __host__ __device__ dfloat getSemiAxis3X() const;
+    __host__ __device__ dfloat getSemiAxis3Y() const;
+    __host__ __device__ dfloat getSemiAxis3Z() const;
     __host__ __device__ void setSemiAxis3(const dfloat3& semiAxis3);
+    __host__ __device__ void setSemiAxis3X(dfloat x);
+    __host__ __device__ void setSemiAxis3Y(dfloat y);
+    __host__ __device__ void setSemiAxis3Z(dfloat z);
 
     // __host__ __device__ dfloat3 getPos() const;
     // __host__ __device__ dfloat getPosX() const;

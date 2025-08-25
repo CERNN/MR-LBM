@@ -18,25 +18,25 @@ class IbmNodes
 {
 
 public:
-    IbmNodes();
+    __host__ __device__ IbmNodes();
 
-    dfloat3 getPos() const;
-    void setPos(const dfloat3& pos);
+    __host__ __device__ dfloat3 getPos() const;
+    __host__ __device__ void setPos(const dfloat3& pos);
    
-    dfloat3 getVel() const;
-    void setVel(const dfloat3& vel);
+    __host__ __device__ dfloat3 getVel() const;
+    __host__ __device__ void setVel(const dfloat3& vel);
     
-    dfloat3 getVelOld() const;
-    void setVelOld(const dfloat3& vel_old);
+    __host__ __device__ dfloat3 getVelOld() const;
+    __host__ __device__ void setVelOld(const dfloat3& vel_old);
    
-    dfloat3 getF() const;
-    void setF(const dfloat3& f);
+    __host__ __device__ dfloat3 getF() const;
+    __host__ __device__ void setF(const dfloat3& f);
     
-    dfloat3 getDeltaF() const;
-    void setDeltaF(const dfloat3& deltaF);
+    __host__ __device__ dfloat3 getDeltaF() const;
+    __host__ __device__ void setDeltaF(const dfloat3& deltaF);
     
-    float getS() const;
-    void setS(const dfloat& S);  
+    __host__ __device__ float getS() const;
+    __host__ __device__ void setS(const dfloat& S);  
 
 protected:
     dfloat3 pos; // node coordinate
@@ -74,12 +74,12 @@ public:
     *   
     *   @param numMaxNodes: maximum number of nodes
     */
-    void allocateMemory(unsigned int numMaxNodes);
+   __host__ __device__ void allocateMemory(unsigned int numMaxNodes);
 
     /**
     *   @brief Free allocated memory
     */
-    void freeMemory();
+   __host__ __device__ void freeMemory();
 
     /**
     *   @brief Copy nodes values from particle
@@ -88,37 +88,37 @@ public:
     *   @param pCenterIdx: index of particle center for given particle nodes
     *   @param baseIdx: base index to use while copying
     */
-    void copyNodesFromParticle(Particle *particle, unsigned int pCenterIdx, unsigned int n_gpu);
+    __host__ __device__ void copyNodesFromParticle(Particle *particle, unsigned int pCenterIdx, unsigned int n_gpu);
+ 
+    __host__ __device__ void updateNodesGPUs();
+    __host__ __device__ void freeNodesAndCenters();
 
-    void updateNodesGPUs();
-    void freeNodesAndCenters();
+    __host__ __device__ void leftShiftNodesSoA(int idx, int left_shit);
 
-    void leftShiftNodesSoA(int idx, int left_shit);
-
-    unsigned int getNumNodes() const;
-    void setNumNodes(const int numNodes); 
+    __host__ __device__  unsigned int getNumNodes() const;
+    __host__ __device__ void setNumNodes(const int numNodes); 
     
-    const unsigned int* getParticleCenterIdx() const;
-    unsigned int* getParticleCenterIdx();
-    void setParticleCenterIdx(unsigned int* particleCenterIdx);
+    __host__ __device__ const unsigned int* getParticleCenterIdx() const;
+    __host__ __device__ unsigned int* getParticleCenterIdx();
+    __host__ __device__ void setParticleCenterIdx(unsigned int* particleCenterIdx);
     
-    dfloat3SoA getPos() const;
-    void setPos(const dfloat3SoA& pos);
+    __host__ __device__ dfloat3SoA getPos() const;
+    __host__ __device__ void setPos(const dfloat3SoA& pos);
     
-    dfloat3SoA getVel() const;
-    void setVel(const dfloat3SoA& vel);
+    __host__ __device__ dfloat3SoA getVel() const;
+    __host__ __device__ void setVel(const dfloat3SoA& vel);
     
-    dfloat3SoA getVelOld() const;
-    void setVelOld(const dfloat3SoA& vel_old);
+    __host__ __device__ dfloat3SoA getVelOld() const;
+    __host__ __device__ void setVelOld(const dfloat3SoA& vel_old);
    
-    dfloat3SoA getF() const;
-    void setF(const dfloat3SoA& f);
+    __host__ __device__ dfloat3SoA getF() const;
+    __host__ __device__ void setF(const dfloat3SoA& f);
     
-    dfloat3SoA getDeltaF() const;
-    void setDeltaF(const dfloat3SoA& deltaF);
+    __host__ __device__ dfloat3SoA getDeltaF() const;
+    __host__ __device__ void setDeltaF(const dfloat3SoA& deltaF);
    
-    dfloat* getS() const;
-    void setS(dfloat* S);
+    __host__ __device__ dfloat* getS() const;
+    __host__ __device__ void setS(dfloat* S);
 };
 
 
