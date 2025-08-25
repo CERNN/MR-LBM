@@ -128,7 +128,7 @@ void gpuUpdateParticleCenterVelocityAndRotation(
     wAux.y = w_old.y;
     wAux.z = w_old.z;
 
-    dfloat I_det_neg = (I.zz*I.xy*I.xy + I.yy*I.xz*I.xz + I.xx*I.yz*I.yz - I.xx*I.yy*I.zz - 2*I.xy*I.xz*I.yz);
+    //dfloat I_det_neg = (I.zz*I.xy*I.xy + I.yy*I.xz*I.xz + I.xx*I.yz*I.yz - I.xx*I.yy*I.zz - 2*I.xy*I.xz*I.yz);
     dfloat inv_I_det_neg = 1.0/(I.zz*I.xy*I.xy + I.yy*I.xz*I.xz + I.xx*I.yz*I.yz - I.xx*I.yy*I.zz - 2*I.xy*I.xz*I.yz);
     dfloat3 wAvg, LM_avg, M_avg;
 
@@ -349,9 +349,9 @@ void ibmSimulation(
 
     for(int i = 0; i < N_GPUS; i++){
         checkCudaErrors(cudaSetDevice(GPUS_TO_USE[i]));
-        int nxt = (i+1) % N_GPUS;
-        // Copy macroscopics
-       // gpuCopyBorderMacr<<<copyMacrGrid, threadsLBM, 0, streamLBM[i]>>>(macr[i], macr[nxt]); Verificar se é necessário
+        //int nxt = (i+1) % N_GPUS;
+        //Copy macroscopics
+        //gpuCopyBorderMacr<<<copyMacrGrid, threadsLBM, 0, streamLBM[i]>>>(macr[i], macr[nxt]); Verificar se é necessário
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Copy macroscopics border error\n");
         // If GPU has nodes in it

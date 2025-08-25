@@ -260,7 +260,7 @@ void ParticlesSoA::updateNodesGPUs(){
     // No need to update for 1 GPU
     if(N_GPUS == 1)
         return;
-
+    /* TODO: MULTI-GPU
     for(int i = 0; i < NUM_PARTICLES; i++){
         checkCudaErrors(cudaSetDevice(GPUS_TO_USE[0]));
         if(!this->pCenterArray[i].getMovable())
@@ -369,6 +369,7 @@ void ParticlesSoA::updateNodesGPUs(){
             // this->nodesSoA[real_gpu].numNodes -= left_shift;
         }
     }
+    */  
     // int sum = 0;
     // for(int nnn = 0; nnn < N_GPUS; nnn++){
     //     sum += this->nodesSoA[nnn].numNodes;
@@ -1007,7 +1008,7 @@ void Particle::makeEllipsoid(ParticleCenter *particleCenter)
     
     dfloat a, b, c;  // principal radius
 
-    unsigned int i, j;
+    unsigned int i;
 
     a = particleCenter->getSemiAxis1().x;
     b = particleCenter->getSemiAxis1().y;

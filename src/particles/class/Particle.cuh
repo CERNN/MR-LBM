@@ -85,7 +85,7 @@ class Particle {
         ParticleShape *shape;
         IbmNodes *nodes;
 
-        std::vector<IbmNodes> nodeStorage;
+        std::vector<IbmNodes> nodeStorage; //FIX cannot use vector
 
 };
 

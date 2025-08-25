@@ -74,12 +74,12 @@ public:
     *   
     *   @param numMaxNodes: maximum number of nodes
     */
-   __host__ __device__ void allocateMemory(unsigned int numMaxNodes);
+   __host__ void allocateMemory(unsigned int numMaxNodes);
 
     /**
     *   @brief Free allocated memory
     */
-   __host__ __device__ void freeMemory();
+   __host__ void freeMemory();
 
     /**
     *   @brief Copy nodes values from particle
@@ -88,12 +88,12 @@ public:
     *   @param pCenterIdx: index of particle center for given particle nodes
     *   @param baseIdx: base index to use while copying
     */
-    __host__ __device__ void copyNodesFromParticle(Particle *particle, unsigned int pCenterIdx, unsigned int n_gpu);
+    __host__ void copyNodesFromParticle(Particle *particle, unsigned int pCenterIdx, unsigned int n_gpu);
  
-    __host__ __device__ void updateNodesGPUs();
-    __host__ __device__ void freeNodesAndCenters();
+    __host__ void updateNodesGPUs();
+    __host__ void freeNodesAndCenters();
 
-    __host__ __device__ void leftShiftNodesSoA(int idx, int left_shit);
+    __host__ void leftShiftNodesSoA(int idx, int left_shit);
 
     __host__ __device__  unsigned int getNumNodes() const;
     __host__ __device__ void setNumNodes(const int numNodes); 
