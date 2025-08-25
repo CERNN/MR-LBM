@@ -22,6 +22,8 @@
     #include "./particles/utils/particlesReport.cuh"
     #include "./particles/particlesBoundaryCondition.h"
     #include "./particles/models/particleSim.cuh"
+    #include "./particles/models/dem/collisionDetection.cuh"
+    #include "./particles/models/dem/particleMovement.cuh"
 #endif
 
 #ifdef OMEGA_FIELD
