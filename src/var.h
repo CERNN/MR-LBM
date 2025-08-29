@@ -30,7 +30,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM lidDrivenCavity_3D_Particle
+#define BC_PROBLEM singleParticleSetting
                                 
 constexpr bool console_flush = false;
 

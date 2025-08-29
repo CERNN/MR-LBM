@@ -1,6 +1,3 @@
-constexpr unsigned int N_GPUS = 1;    // Number of GPUS to use
-constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
-
 constexpr dfloat RE = 500;
 
 constexpr int SCALE = 1;

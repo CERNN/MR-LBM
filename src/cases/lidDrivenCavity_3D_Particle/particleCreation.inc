@@ -50,4 +50,3 @@ for (int i = 0; i<NUM_PARTICLES;i++){
     particles[i].setCollideWall(true);
 
 }
-*/

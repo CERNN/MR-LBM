@@ -51,6 +51,10 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 #define LOAD_FIELD false
 #define LOAD_FIELD_STEP 0
 
+#define IBM_BC_X_PERIODIC
+#define IBM_BC_Y_WALL
+#define IBM_BC_Z_PERIODIC
+
 #ifdef PARTICLE_MODEL
     #define DEM_METHOD
     //number of particles

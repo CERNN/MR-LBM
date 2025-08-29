@@ -19,6 +19,6 @@ void gpuParticleMovement(ParticleCenter particleCenters[NUM_PARTICLES]);
 
 __global__
 void gpuUpdateParticleOldValues(ParticleCenter particleCenters[NUM_PARTICLES]);
-
+#endif //PARTICLE_MODEL
 
 #endif // !__PARTICLE_MOVEMENT_H
