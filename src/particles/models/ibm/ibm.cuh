@@ -22,6 +22,25 @@ void ibmSimulation(
     unsigned int step
 );
 
+__global__ 
+void gpuResetNodesForces(IbmNodesSoA* particlesNodes);
+
+
+__global__
+void gpuForceInterpolationSpread(
+    IbmNodesSoA particlesNodes,
+    ParticleCenter particleCenters[NUM_PARTICLES],
+    dfloat *fMom,
+    IbmMacrsAux ibmMacrsAux,
+    const int n_gpu
+);
+
+__global__
+void gpuParticleNodeMovement(
+    IbmNodesSoA const particlesNodes,
+    ParticleCenter particleCenters[NUM_PARTICLES]
+);
+
 
 #endif
 

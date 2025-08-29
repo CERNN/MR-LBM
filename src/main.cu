@@ -225,9 +225,13 @@ int main() {
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
         }
 #pragma warning(pop)
-       
-        gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
+        
+        //
+        #ifdef LOCAL_FORCES
+        gpuResetMacroForces<<<gridBlock, threadBlock>>>(d_fMom);
+        #endif
 
+        gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
         //swap interface pointers
         swapGhostInterfaces(ghostInterface);
 

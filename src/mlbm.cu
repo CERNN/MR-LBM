@@ -73,9 +73,17 @@ __global__ void gpuMomCollisionStream(
    // dfloat yy = 2.0 * M_PI * y / L;
    // dfloat zz = 2.0 * M_PI * z / L;
 
-   dfloat L_Fx = 0.00; // F_0 * sin(K_const*x) * cos(K_const*y) ;
-   dfloat L_Fy = 0.00; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
-   dfloat L_Fz = 0.00;
+    #ifdef LOCAL_FORCES
+    dfloat L_Fx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    #elif
+    dfloat L_Fx = FX; // F_0 * sin(K_const*x) * cos(K_const*y) ;
+    dfloat L_Fy = FY; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
+    dfloat L_Fz = FZ;
+    #endif
+
+   
 
 
     #ifdef BC_FORCES
@@ -718,4 +726,18 @@ __global__ void gpuMomCollisionStream(
     //#include "includeFIles/conformationTransport/confSave.inc"
     #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
+}
+
+
+__global__
+void gpuResetMacroForces(dfloat *fMom){
+    const int x = threadIdx.x + blockDim.x * blockIdx.x;
+    const int y = threadIdx.y + blockDim.y * blockIdx.y;
+    const int z = threadIdx.z + blockDim.z * blockIdx.z;
+    if (x >= NX || y >= NY || z >= NZ)
+        return;
+
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
 }

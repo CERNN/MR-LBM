@@ -57,6 +57,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 
 #ifdef PARTICLE_MODEL
     #define DEM_METHOD
+    #define LOCAL_FORCES
     //number of particles
     #define NUM_PARTICLES 1
 

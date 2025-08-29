@@ -4,6 +4,56 @@
 
 #include "particleMovement.cuh"
 
+__global__
+void gpuUpdateParticleOldValues(
+    ParticleCenter particleCenters[NUM_PARTICLES])
+{
+    unsigned int p = threadIdx.x + blockDim.x * blockIdx.x;
+
+    if(p >= NUM_PARTICLES)
+        return;
+
+    ParticleCenter *pc = &(particleCenters[p]);
+
+    // Internal linear momentum delta = rho*volume*delta(v)/delta(t)
+    // https://doi.org/10.1016/j.compfluid.2011.05.011
+    pc->setDPInternalX(0.0); //RHO_0 * pc->getVolume() * (pc->getVelX() - pc->getVelOldX());
+    pc->setDPInternalY(0.0); //RHO_0 * pc->getVolume() * (pc->getVelY() - pc->getVelOldY());
+    pc->setDPInternalY(0.0); //RHO_0 * pc->getVolume() * (pc->getVelZ() - pc->getVelOldZ());
+
+    // Internal angular momentum delta = (rho_f/rho_p)*I*delta(omega)/delta(t)
+    // https://doi.org/10.1016/j.compfluid.2011.05.011
+    
+    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIXX() * (pc->getWX() - pc->getWOldX());
+    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIYY() * (pc->getWY() - pc->getWOldY());
+    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIZZ() * (pc->getWZ() - pc->getWOldZ());
+
+    pc->setPosOldX(pc->getPosX());
+    pc->setPosOldY(pc->getPosY());
+    pc->setPosOldZ(pc->getPosZ());
+
+    pc->setVelOldX(pc->getVelX());
+    pc->setVelOldY(pc->getVelY());
+    pc->setVelOldZ(pc->getVelZ());
+
+    pc->setWOldX(pc->getWX());
+    pc->setWOldY(pc->getWY());
+    pc->setWOldZ(pc->getWZ());
+
+    pc->setFOldX(pc->getFX());
+    pc->setFOldY(pc->getFY());
+    pc->setFOldZ(pc->getFZ());
+
+    // Reset force, because kernel is always added
+    pc->setFX(0);
+    pc->setFY(0);
+    pc->setFZ(0);
+
+    pc->setMX(0);
+    pc->setMY(0);
+    pc->setMZ(0);
+}
+
 __global__ 
 void gpuUpdateParticleCenterVelocityAndRotation(
     ParticleCenter particleCenters[NUM_PARTICLES])
@@ -244,58 +294,5 @@ void gpuParticleMovement(
     pc->setSemiAxis3X(pc->getPosZ() +  2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1  + (qk*qk))*z_vec));
 
 }
-
-
-__global__
-void gpuUpdateParticleOldValues(
-    ParticleCenter particleCenters[NUM_PARTICLES])
-{
-    unsigned int p = threadIdx.x + blockDim.x * blockIdx.x;
-
-    if(p >= NUM_PARTICLES)
-        return;
-
-    ParticleCenter *pc = &(particleCenters[p]);
-
-    // Internal linear momentum delta = rho*volume*delta(v)/delta(t)
-    // https://doi.org/10.1016/j.compfluid.2011.05.011
-    pc->setDPInternalX(0.0); //RHO_0 * pc->getVolume() * (pc->getVelX() - pc->getVelOldX());
-    pc->setDPInternalY(0.0); //RHO_0 * pc->getVolume() * (pc->getVelY() - pc->getVelOldY());
-    pc->setDPInternalY(0.0); //RHO_0 * pc->getVolume() * (pc->getVelZ() - pc->getVelOldZ());
-
-    // Internal angular momentum delta = (rho_f/rho_p)*I*delta(omega)/delta(t)
-    // https://doi.org/10.1016/j.compfluid.2011.05.011
-    
-    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIXX() * (pc->getWX() - pc->getWOldX());
-    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIYY() * (pc->getWY() - pc->getWOldY());
-    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIZZ() * (pc->getWZ() - pc->getWOldZ());
-
-    pc->setPosOldX(pc->getPosX());
-    pc->setPosOldY(pc->getPosY());
-    pc->setPosOldZ(pc->getPosZ());
-
-    pc->setVelOldX(pc->getVelX());
-    pc->setVelOldY(pc->getVelY());
-    pc->setVelOldZ(pc->getVelZ());
-
-    pc->setWOldX(pc->getWX());
-    pc->setWOldY(pc->getWY());
-    pc->setWOldZ(pc->getWZ());
-
-    pc->setFOldX(pc->getFX());
-    pc->setFOldY(pc->getFY());
-    pc->setFOldZ(pc->getFZ());
-
-    // Reset force, because kernel is always added
-    pc->setFX(0);
-    pc->setFY(0);
-    pc->setFZ(0);
-
-    pc->setMX(0);
-    pc->setMY(0);
-    pc->setMZ(0);
-}
-
-
 
 //#endif //PARTICLE_MODEL
