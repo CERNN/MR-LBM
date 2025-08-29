@@ -66,14 +66,16 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
 constexpr dfloat PARTICLE_DENSITY = 2.0;
 constexpr dfloat FLUID_DENSITY = 1.0;
 
+
+
+
+#ifdef PARTICLE_MODEL
+
 // Gravity accelaration on particle (Lattice units)
 constexpr dfloat GX = 0.0;
 constexpr dfloat GY = 0.0;
 constexpr dfloat GZ = -5e-5; //-1.179430e-03/SCALE/SCALE/SCALE;
 
-
-
-#ifdef PARTICLE_MODEL
 
 //number of particles
 #define NUM_PARTICLES 1

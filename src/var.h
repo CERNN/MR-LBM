@@ -39,8 +39,8 @@ constexpr bool console_flush = false;
 /* ========== Verifcar se não faz parte dsa declarações do caso -> ========== */
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
-//constexpr unsigned int N_GPUS = 1;    // Number of GPUS to use
-//constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
+constexpr unsigned int N_GPUS = 1;    // Number of GPUS to use
+constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */ 
 // There are ghosts nodes in z for IBM macroscopics (velocity, density, force)
@@ -187,7 +187,7 @@ constexpr BlockDim findOptimalBlockDimensions(size_t maxElements) {
     return {bestX, bestY, bestZ};
 }
 
-// swap 32‐bit word
+// swap 32-bit word
 static inline uint32_t swap32(uint32_t v) {
     return  (v<<24) | 
            ((v<<8)&0x00FF0000) |
@@ -195,7 +195,7 @@ static inline uint32_t swap32(uint32_t v) {
             (v>>24);
 }
 
-// swap 64‐bit word
+// swap 64-bit word
 static inline uint64_t swap64(uint64_t v) {
     return  (v<<56) |
            ((v<<40)&0x00FF000000000000ULL) |

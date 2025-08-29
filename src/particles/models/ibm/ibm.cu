@@ -26,6 +26,7 @@ void gpuResetNodesForces(IbmNodesSoA* particlesNodes)
     delta_force.z[idx] = 0;
 }
 
+
 __global__
 void gpuParticleNodeMovement(
     IbmNodesSoA const particlesNodes,
@@ -532,6 +533,7 @@ void gpuForceInterpolationSpread(
 }
 
 
+
 void ibmSimulation(
     ParticlesSoA particles,
     IbmMacrsAux ibmMacrsAux,
@@ -564,9 +566,12 @@ void ibmSimulation(
 
     for(int i = 0; i < N_GPUS; i++){
         checkCudaErrors(cudaSetDevice(GPUS_TO_USE[i]));
-       // int nxt = (i+1) % N_GPUS;
-        // Copy macroscopics
-       // gpuCopyBorderMacr<<<copyMacrGrid, threadsLBM, 0, streamLBM[i]>>>(macr[i], macr[nxt]); Verificar se é necessário
+
+
+        //int nxt = (i+1) % N_GPUS;
+        //Copy macroscopics
+        //gpuCopyBorderMacr<<<copyMacrGrid, threadsLBM, 0, streamLBM[i]>>>(macr[i], macr[nxt]); Verificar se é necessário
+
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Copy macroscopics border error\n");
         // If GPU has nodes in it

@@ -1,5 +1,7 @@
+
 // centerStorage.resize(NUM_PARTICLES);
 // pShape = new ParticleShape[NUM_PARTICLES];
+
 
 std::random_device rand_dev;
 std::minstd_rand generator(rand_dev());
@@ -48,3 +50,4 @@ for (int i = 0; i<NUM_PARTICLES;i++){
     particles[i].setCollideWall(true);
 
 }
+*/

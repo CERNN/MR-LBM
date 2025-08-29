@@ -136,7 +136,7 @@ void IbmNodesSoA::copyNodesFromParticle(Particle *p, unsigned int pCenterIdx, un
     this->numNodes += nodesAdded;
 }
 
-__host__ __device__
+__host__ 
 void IbmNodesSoA::leftShiftNodesSoA(int idx, int left_shift){
     this->particleCenterIdx[idx-left_shift] = this->particleCenterIdx[idx];
     this->S[idx-left_shift] = this->S[idx];

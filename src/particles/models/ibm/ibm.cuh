@@ -9,8 +9,11 @@
 #include "../../../saveData.cuh"
 #include "../../class/Particle.cuh"
 #include "../../particlesBoundaryCondition.h"
+
 #include "ibmMacrsAux.cuh"
 #include "../dem/particleMovement.cuh"
+#include "../dem/collisionDetection.cuh"
+
 
 void ibmSimulation(
     ParticlesSoA particles,
@@ -18,16 +21,6 @@ void ibmSimulation(
     cudaStream_t streamParticles,
     unsigned int step
 );
-
-
-
-
-
-
-
-
-
-
 
 
 #endif

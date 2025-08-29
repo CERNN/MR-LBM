@@ -90,10 +90,10 @@ public:
     */
     __host__ void copyNodesFromParticle(Particle *particle, unsigned int pCenterIdx, unsigned int n_gpu);
  
-    __host__ __device__ void updateNodesGPUs();
-    __host__ __device__ void freeNodesAndCenters();
+    __host__ void updateNodesGPUs();
+    __host__ void freeNodesAndCenters();
 
-    __host__ __device__ void leftShiftNodesSoA(int idx, int left_shit);
+    __host__ void leftShiftNodesSoA(int idx, int left_shit);
 
     __host__ __device__  unsigned int getNumNodes() const;
     __host__ __device__ void setNumNodes(const int numNodes); 
