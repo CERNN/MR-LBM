@@ -1,4 +1,4 @@
-#ifdef PARTICLE_MODEL
+//#ifdef PARTICLE_MODEL
 #include "particlesReport.cuh"
 
 std::string getStrDfloat3(dfloat3 val, std::string sep){
@@ -78,6 +78,7 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step){
     }
 
     outFilePCenter << strColumnNames << strValuesParticles.str();
+
     #ifdef IBM_PARTICLES_NODES_SAVE
     if((*particles->getPMethod() == IBM)){
         strColumnNames = "particle_index" + sep + "pos_x" + sep + "pos_y" + sep + "pos_z" + sep + "S\n";
@@ -109,4 +110,4 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step){
    
 }
 
-#endif //PARTICLE_MODEL
+//#endif //PARTICLE_MODEL
