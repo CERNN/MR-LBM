@@ -44,7 +44,7 @@ constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
 
 /* ------------------------------ MEMORY SIZE ------------------------------ */ 
 // There are ghosts nodes in z for IBM macroscopics (velocity, density, force)
-//#define NUMBER_LBM_IB_MACR_NODES (size_t)(NX*NY*(NZ+MACR_BORDER_NODES*2))
+#define NUMBER_LBM_IB_MACR_NODES (size_t)(NX*NY*(NZ+MACR_BORDER_NODES*2))
 
 // Values for all GPUs
 //#define TOTAL_NUMBER_LBM_IB_MACR_NODES (size_t)(NUMBER_LBM_IB_MACR_NODES * N_GPUS)

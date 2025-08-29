@@ -17,6 +17,7 @@
 
 void particleSimulation(
     ParticlesSoA *particles,
+    IbmMacrsAux ibmMacrsAux,
     dfloat *fMom,
     cudaStream_t *streamParticles,
     unsigned int step

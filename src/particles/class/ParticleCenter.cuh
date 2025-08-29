@@ -186,6 +186,10 @@ public:
     __host__ __device__ void setFY(dfloat y);
     __host__ __device__ void setFZ(dfloat z);
 
+    __host__ __device__ dfloat& getFXatomic();
+    __host__ __device__ dfloat& getFYatomic();
+    __host__ __device__ dfloat& getFZatomic();
+
     // Old force
     __host__ __device__ dfloat3 getF_old() const;
     __host__ __device__ dfloat getFOldX() const;
@@ -205,6 +209,10 @@ public:
     __host__ __device__ void setMX(dfloat x);
     __host__ __device__ void setMY(dfloat y);
     __host__ __device__ void setMZ(dfloat z);
+
+    __host__ __device__ dfloat& getMXatomic();
+    __host__ __device__ dfloat& getMYatomic();
+    __host__ __device__ dfloat& getMZatomic();
 
     // Old moment
     __host__ __device__ dfloat3 getM_old() const;

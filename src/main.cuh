@@ -997,7 +997,7 @@ void initializeDomain(
 
 //#ifdef PARTICLE_MODEL
 __host__
-void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, int *step, dim3 gridBlock, dim3 threadBlock){
+void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, IbmMacrsAux ibmMacrsAux, int *step, dim3 gridBlock, dim3 threadBlock){
 
     printf("Creating particles...\t"); fflush(stdout);
     particlesSoA.createParticles(particles);
@@ -1005,6 +1005,8 @@ void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, int *st
 
     particlesSoA.updateParticlesAsSoA(particles);
     printf("Update ParticlesAsSoA!\n"); fflush(stdout);
+
+    ibmMacrsAux.ibmMacrsAuxAllocate();
 
     int checkpoint_state = 0;
     // Checar se exite checkpoint
