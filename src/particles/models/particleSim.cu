@@ -4,6 +4,7 @@
 
 void particleSimulation(
     ParticlesSoA *particles,
+    IbmMacrsAux ibmMacrsAux,
     dfloat *fMom,
     cudaStream_t *streamParticles,
     unsigned int step
@@ -14,7 +15,7 @@ void particleSimulation(
     int numTRACER = particles->getMethodCount(TRACER);
 
     if(numIBM>0){
-       // ibmSimulation(particles,fMom,streamParticles,step);
+       // ibmSimulation(particles,ibmMacrsAux,fMom,streamParticles,step);
     }
     if(numPIBM>0){
         /*code*/

@@ -72,7 +72,7 @@ __host__ __device__ dfloat* IbmNodesSoA::getS() const { return this->S; }
 __host__ __device__ void IbmNodesSoA::setS(dfloat* S) { this->S = S; }
 
 
-__host__ __device__
+__host__
 void IbmNodesSoA::allocateMemory(unsigned int numMaxNodes)
 {
     this->pos.allocateMemory((size_t) numMaxNodes);
@@ -87,7 +87,7 @@ void IbmNodesSoA::allocateMemory(unsigned int numMaxNodes)
         cudaMallocManaged((void**)&(this->particleCenterIdx), sizeof(unsigned int) * numMaxNodes));
 }
 
-__host__ __device__
+__host__
 void IbmNodesSoA::freeMemory()
 {
     this->numNodes = 0;
@@ -107,7 +107,7 @@ bool is_inside_gpu(dfloat3 pos, unsigned int n_gpu){
     return pos.z >= n_gpu*NZ && pos.z < (n_gpu+1)*NZ;
 }
 
-__host__ __device__
+__host__
 void IbmNodesSoA::copyNodesFromParticle(Particle *p, unsigned int pCenterIdx, unsigned int n_gpu)
 {
     const int baseIdx = this->numNodes;

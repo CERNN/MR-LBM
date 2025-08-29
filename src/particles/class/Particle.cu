@@ -129,6 +129,9 @@ int ParticlesSoA::getMethodCount(ParticleMethod method) const {
 
 __host__ void ParticlesSoA::createParticles(Particle *particles){
    
+    centerStorage.resize(NUM_PARTICLES);
+    pShape = new ParticleShape[NUM_PARTICLES];
+
     #include CASE_PARTICLE_CREATE
 
     if (pShape == nullptr) {

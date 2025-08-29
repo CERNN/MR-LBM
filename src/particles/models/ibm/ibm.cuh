@@ -9,6 +9,8 @@
 #include "../../../saveData.cuh"
 #include "../../class/Particle.cuh"
 #include "../../particlesBoundaryCondition.h"
+#include "ibmMacrsAux.cuh"
+#include "../dem/particleMovement.cuh"
 
 void ibmSimulation(
     ParticlesSoA particles,

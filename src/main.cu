@@ -178,12 +178,13 @@ int main() {
         //memory allocation for particles in host and device
         ParticlesSoA particlesSoA;
         Particle *particles;
+        IbmMacrsAux ibmMacrsAux;
         particles = (Particle*) malloc(sizeof(Particle)*NUM_PARTICLES);
         
         // particle initialization with position, velocity, and solver method
-        initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
+        initializeParticle(particlesSoA, particles, ibmMacrsAux, &step, gridBlock, threadBlock);
 
-        saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+        saveParticlesInfo(&particlesSoA, step);
 
     #endif
 
@@ -231,7 +232,7 @@ int main() {
         swapGhostInterfaces(ghostInterface);
 
         #ifdef PARTICLE_MODEL
-            particleSimulation(&particlesSoA,d_fMom,streamsPart,step);
+            particleSimulation(&particlesSoA,ibmMacrsAux,d_fMom,streamsPart,step);
         #endif
 
 
@@ -355,7 +356,7 @@ int main() {
             if (particleSave){
                 printf("\n------------------------- Saving particles %06d -------------------------\n", step);
                 if(console_flush){fflush(stdout);}
-                saveParticlesInfo(&particlesSoA, step, IBM_PARTICLES_NODES_SAVE);
+                saveParticlesInfo(&particlesSoA, step);
             }
         #endif
 
