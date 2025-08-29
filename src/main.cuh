@@ -16,14 +16,15 @@
 #include "auxFunctions.cuh"
 #include "treatData.cuh"
 
-//#ifdef PARTICLE_MODEL
-    #include "./particles/class/particle.cuh"
-    #include "./particles/utils/partiClesReport.cuh"
+
+#ifdef PARTICLE_MODEL
+    #include "./particles/class/Particle.cuh"
+    #include "./particles/utils/particlesReport.cuh"
     #include "./particles/particlesBoundaryCondition.h"
     #include "./particles/models/particleSim.cuh"
     #include "./particles/models/dem/collisionDetection.cuh"
     #include "./particles/models/dem/particleMovement.cuh"
-//#endif
+#endif
 
 #ifdef OMEGA_FIELD
     #include "nnf.h"
