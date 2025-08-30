@@ -20,7 +20,11 @@ void gpuUpdateParticleOldValues(
 );
 
 __global__ 
-void gpuUpdateParticleCenterVelocityAndRotation(ParticleCenter particleCenters[NUM_PARTICLES]);
+void gpuUpdateParticleCenterVelocityAndRotation(
+    ParticleCenter *particleCenters,
+    int firstIndex,
+    int lastIndex
+);
 
 __global__
 void gpuParticleMovement(ParticleCenter particleCenters[NUM_PARTICLES]);

@@ -58,7 +58,8 @@ void ibmSimulation(
 
     // First update particle velocity using body center force and constant forces
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
-    gpuUpdateParticleCenterVelocityAndRotation <<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles >>>(particles.getPCenterArray());
+    gpuUpdateParticleCenterVelocityAndRotation <<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles >>>(pArray,range.first,range.last);
+    checkCudaErrors(cudaStreamSynchronize(streamParticles));
     getLastCudaError("IBM update particle center velocity error\n");
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
