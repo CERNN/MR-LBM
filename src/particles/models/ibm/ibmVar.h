@@ -15,43 +15,20 @@
 #include <math.h>
 
 
-/* -------------------------- IBM GENERAL DEFINES --------------------------- */
-// Number of IBM inner iterations
-#define IBM_MAX_ITERATION 1
 // Change to location of nodes http://dx.doi.org/10.1016/j.jcp.2012.02.026
 #define BREUGEM_PARAMETER (0.0)
+#define IBM_DISC_RELAXATION (0.5) // 0 = Leap-frog, 0.5 = Crank-Nicolson, 1 = Euler //NOT BEING USED CURRENTLY
 // Mesh scale for IBM, minimum distance between nodes (lower, more nodes in particle)
 #define MESH_SCALE 1.0
-// Number of iterations of Coulomb algorithm to optimize the nodes positions
-#define MESH_COULOMB 0
-// Lock particle rotation (UNUSED)
-// #define ROTATION_LOCK true
 // Assumed boundary thickness for IBM
 #define IBM_THICKNESS (1)
-// Transfer and save forces along with macroscopics
-
-#define EXPORT_FORCES false
-
-
-
-
-/* ------------------------------------------------------------------------- */
-
-#define IBM_MOVEMENT_DISCRETIZATION (0.5)  //TODO: its not the correct name, but for now i cant recall it.
-
-
-/* -------------------------------------------------------------------------- */
-
-// Some prints to test IBM
+// Number of iterations of Coulomb algorithm to optimize the nodes positions
+#define MESH_COULOMB 0
+// Number of IBM inner iterations
+#define IBM_MAX_ITERATION 1
 //#define IBM_DEBUG
-
-#ifdef IBM
-// Border size is the number of ghost nodes in one size of z for each GPU. 
-// These nodes are used for IBM force/macroscopics update/sync
-#define MACR_BORDER_NODES (2+(int)((IBM_EULER_UPDATE_DIST+IBM_PARTICLE_SHELL_THICKNESS)+0.99999999))
-#else
 #define MACR_BORDER_NODES (0)
-#endif
+
 
 /* ------------------------ THREADS AND GRIDS FOR IBM ----------------------- */
 // Threads for IBM particles
