@@ -170,97 +170,101 @@ void gpuUpdateParticleCenterVelocityAndRotation(
 
 __global__
 void gpuParticleMovement(
-    ParticleCenter particleCenters[NUM_PARTICLES])
+    ParticleCenter *pArray,
+    int firstIndex,
+    int lastIndex)
 {
-    unsigned int p = threadIdx.x + blockDim.x * blockIdx.x;
+    unsigned int localIdx = threadIdx.x + blockDim.x * blockIdx.x;
+    int globalIdx = firstIndex + localIdx;
 
-    if(p >= NUM_PARTICLES)
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
+        return;
+    }
+
+    if (pArray == nullptr) {
+        printf("ERROR: particles is nullptr\n");
+        return;
+    }
+
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
+        return;
+    }
+
+    ParticleCenter* pc_i = &pArray[globalIdx];
+
+    if(!pc_i->getMovable())
         return;
 
-    ParticleCenter *pc = &(particleCenters[p]);
+    #ifdef BC_X_WALL
+        pc_i->setPosX(pc_i->getPosX() + 0.5*(pc_i->getVelX() + pc_i->getVelOldX()));
+    #endif //BC_X_WALL
+    #ifdef BC_X_PERIODIC
+        dfloat dx  = 0.5*(pc_i->getVelX() + pc_i->getVelOldX());
+        pc_i->setPosX(std::fmod((dfloat)(pc_i->getPosX() + dx + NX),(dfloat)(NX)));
+    #endif //BC_X_PERIODIC
+
+    #ifdef BC_Y_WALL
+        pc_i->setPosY(pc_i->getPosY() + 0.5*(pc_i->getVelY() + pc_i->getVelOldY()));
+    #endif //BC_Y_WALL
+    #ifdef BC_Y_PERIODIC
+        pc_i->setPosY(std::fmod((dfloat)(pc_i->getPosY() + dy + NY),(dfloat)(NY)));
+    #endif //BC_Y_PERIODIC
+
+    #ifdef BC_Z_WALL
+        pc_i->setPosZ(pc_i->getPosZ() + 0.5*(pc_i->getVelZ() + pc_i->getVelOldZ()));
+    #endif //BC_Z_WALL
+    #ifdef BC_Z_PERIODIC
+        pc_i->setPosZ(std::fmod((dfloat)(pc_i->getPosZ() + dy + NZ_TOTAL),(dfloat)(NZ_TOTAL)));
+    #endif //BC_Z_PERIODIC
+
+    //Compute angular velocity
+    pc_i->setW_avg(0.5*(pc_i->getW() + pc_i->getW_old()));
+
+    //update angular position
+    pc_i->setW_pos(pc_i->getW_pos() + pc_i->getW_avg());
 
     #ifdef IBM_DEBUG
-    printf("gpuParticleMovement 1 pos  x: %f y: %f z: %f\n",pc->pos.x,pc->pos.y,pc->pos.z);
-    printf("gpuParticleMovement 1 vel  x: %f y: %f z: %f\n",pc->vel.x,pc->vel.y,pc->vel.z);
-    printf("gpuParticleMovement 1 w  x: %f y: %f z: %f\n",pc->w.x,pc->w.y,pc->w.z);
-    #endif
-    
-    
-    if(!pc->getMovable())
-        return;
-
-    #ifdef IBM_BC_X_WALL
-        pc->setPosX((pc->getPosX() + (pc->getVelX() * IBM_MOVEMENT_DISCRETIZATION + pc->getVelOldX() * (1.0 - IBM_MOVEMENT_DISCRETIZATION))));
-    #endif //IBM_BC_X_WALL
-    #ifdef IBM_BC_X_PERIODIC
-        dfloat dx =  (pc->getVelX() * IBM_MOVEMENT_DISCRETIZATION + pc->getVelOldX() * (1.0 - IBM_MOVEMENT_DISCRETIZATION));
-        pc->setPosX(IBM_BC_X_0 + std::fmod((dfloat)(pc->getPosX() + dx + IBM_BC_X_E - IBM_BC_X_0 - IBM_BC_X_0) , (dfloat)(IBM_BC_X_E - IBM_BC_X_0))); 
-    #endif //IBM_BC_X_PERIODIC
-
-    #ifdef IBM_BC_Y_WALL
-        pc->setPosY((pc->getPosY() + (pc->getVelY() * IBM_MOVEMENT_DISCRETIZATION + pc->getVelOldY() * (1.0 - IBM_MOVEMENT_DISCRETIZATION))));
-    #endif //IBM_BC_Y_WALL
-    #ifdef IBM_BC_Y_PERIODIC
-        dfloat dy =  (pc->getVelY() * IBM_MOVEMENT_DISCRETIZATION + pc->getVelOldY() * (1.0 - IBM_MOVEMENT_DISCRETIZATION));
-        pc->setPosY(IBM_BC_Y_0 + std::fmod((dfloat)(pc->getPosY() + dy + IBM_BC_Y_E - IBM_BC_Y_0 - IBM_BC_Y_0) , (dfloat)(IBM_BC_Y_E - IBM_BC_Y_0)));
-    #endif //IBM_BC_Y_PERIODIC
-
-    // #ifdef IBM_BC_Z_WALL
-        pc->setPosZ((pc->getPosZ() + (pc->getVelZ() * IBM_MOVEMENT_DISCRETIZATION + pc->getVelOldZ() * (1.0 - IBM_MOVEMENT_DISCRETIZATION))));
-    // #endif //IBM_BC_Z_WALL
-    #ifdef IBM_BC_Z_PERIODIC
-        dfloat dz =  (pc->getVelZ() * IBM_MOVEMENT_DISCRETIZATION + pc->getVelOldZ() * (1.0 - IBM_MOVEMENT_DISCRETIZATION));
-        pc->setPosZ(IBM_BC_Z_0 + std::fmod((dfloat)(pc->getPosZ() + dz + IBM_BC_Z_E - IBM_BC_Z_0 - IBM_BC_Z_0) , (dfloat)(IBM_BC_Z_E - IBM_BC_Z_0))); 
-    #endif //IBM_BC_Z_PERIODIC
-
-    pc->setWAvgX((pc->getWX()   * IBM_MOVEMENT_DISCRETIZATION + pc->getWOldX()   * (1.0 - IBM_MOVEMENT_DISCRETIZATION)));
-    pc->setWAvgY((pc->getWY()   * IBM_MOVEMENT_DISCRETIZATION + pc->getWOldY()   * (1.0 - IBM_MOVEMENT_DISCRETIZATION)));
-    pc->setWAvgZ((pc->getWZ()   * IBM_MOVEMENT_DISCRETIZATION + pc->getWOldZ()   * (1.0 - IBM_MOVEMENT_DISCRETIZATION)));
-    pc->setWPosX(pc->getWAvgX());
-    pc->setWPosY(pc->getWAvgY());
-    pc->setWPosZ(pc->getWAvgZ());
-
-    #ifdef IBM_DEBUG
-    printf("gpuParticleMovement 2 pos  x: %f y: %f z: %f\n",pc->pos.x,pc->pos.y,pc->pos.z);
-    printf("gpuParticleMovement 2 vel  x: %f y: %f z: %f\n",pc->vel.x,pc->vel.y,pc->vel.z);
-    printf("gpuParticleMovement 2 w  x: %f y: %f z: %f\n",pc->w.x,pc->w.y,pc->w.z);
+    printf("gpuParticleMovement 2 pos  x: %f y: %f z: %f\n",pc_i->pos.x,pc_i->pos.y,pc_i->pos.z);
+    printf("gpuParticleMovement 2 vel  x: %f y: %f z: %f\n",pc_i->vel.x,pc_i->vel.y,pc_i->vel.z);
+    printf("gpuParticleMovement 2 w  x: %f y: %f z: %f\n",pc_i->w.x,pc_i->w.y,pc_i->w.z);
     #endif
 
 
-    //update orientation vector
-    const dfloat w_norm = sqrt((pc->getWAvgX() * pc->getWAvgX()) 
-                             + (pc->getWAvgY() * pc->getWAvgY()) 
-                             + (pc->getWAvgZ() * pc->getWAvgZ()));
+    //compute orientation vector
+    const dfloat w_norm = sqrt((pc_i->getWAvgX() * pc_i->getWAvgX()) 
+                             + (pc_i->getWAvgY() * pc_i->getWAvgY()) 
+                             + (pc_i->getWAvgZ() * pc_i->getWAvgZ()));
+
     const dfloat q0 = cos(0.5*w_norm);
-    const dfloat qi = (pc->getWAvgX()/w_norm) * sin (0.5*w_norm);
-    const dfloat qj = (pc->getWAvgY()/w_norm) * sin (0.5*w_norm);
-    const dfloat qk = (pc->getWAvgZ()/w_norm) * sin (0.5*w_norm);
+    const dfloat qi = (pc_i->getWAvgX()/w_norm) * sin (0.5*w_norm);
+    const dfloat qj = (pc_i->getWAvgY()/w_norm) * sin (0.5*w_norm);
+    const dfloat qk = (pc_i->getWAvgZ()/w_norm) * sin (0.5*w_norm);
     const dfloat tq0m1 = (q0*q0) - 0.5;
 
-    dfloat x_vec = pc->getSemiAxis1X() - pc->getPosOldX();
-    dfloat y_vec = pc->getSemiAxis1Y() - pc->getPosOldY();
-    dfloat z_vec = pc->getSemiAxis1Z() - pc->getPosOldZ();
+    dfloat x_vec = pc_i->getSemiAxis1X() - pc_i->getPosOldX();
+    dfloat y_vec = pc_i->getSemiAxis1Y() - pc_i->getPosOldY();
+    dfloat z_vec = pc_i->getSemiAxis1Z() - pc_i->getPosOldZ();
 
-    
-    pc->setSemiAxis1X(pc->getPosX() + 2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec));
-    pc->setSemiAxis1Y(pc->getPosY() + 2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1 + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec));
-    pc->setSemiAxis1Z(pc->getPosZ() + 2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1 + (qk*qk))*z_vec));
+    //update semiaxis position
+    pc_i->setSemiAxis1X(pc_i->getPosX() + 2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec));
+    pc_i->setSemiAxis1Y(pc_i->getPosY() + 2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1 + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec));
+    pc_i->setSemiAxis1Z(pc_i->getPosZ() + 2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1 + (qk*qk))*z_vec));
 
-    x_vec = pc->getSemiAxis2X() - pc->getPosOldX();
-    y_vec = pc->getSemiAxis2Y() - pc->getPosOldY();
-    z_vec = pc->getSemiAxis2Z() - pc->getPosOldZ();
+    x_vec = pc_i->getSemiAxis2X() - pc_i->getPosOldX();
+    y_vec = pc_i->getSemiAxis2Y() - pc_i->getPosOldY();
+    z_vec = pc_i->getSemiAxis2Z() - pc_i->getPosOldZ();
 
-    pc->setSemiAxis2X(pc->getPosX() +  2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec));
-    pc->setSemiAxis2Y(pc->getPosY() +  2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1  + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec));
-    pc->setSemiAxis2Z(pc->getPosZ() +  2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1  + (qk*qk))*z_vec));
+    pc_i->setSemiAxis2X(pc_i->getPosX() +  2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec));
+    pc_i->setSemiAxis2Y(pc_i->getPosY() +  2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1  + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec));
+    pc_i->setSemiAxis2Z(pc_i->getPosZ() +  2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1  + (qk*qk))*z_vec));
 
-    x_vec = pc->getSemiAxis3X() - pc->getPosOldX();
-    y_vec = pc->getSemiAxis3Y() - pc->getPosOldY();
-    z_vec = pc->getSemiAxis3Z() - pc->getPosOldZ();
+    x_vec = pc_i->getSemiAxis3X() - pc_i->getPosOldX();
+    y_vec = pc_i->getSemiAxis3Y() - pc_i->getPosOldY();
+    z_vec = pc_i->getSemiAxis3Z() - pc_i->getPosOldZ();
 
-    pc->setSemiAxis3X(pc->getPosX() +  2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec));
-    pc->setSemiAxis3X(pc->getPosY() +  2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1  + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec));
-    pc->setSemiAxis3X(pc->getPosZ() +  2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1  + (qk*qk))*z_vec));
+    pc_i->setSemiAxis3X(pc_i->getPosX() +  2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec));
+    pc_i->setSemiAxis3X(pc_i->getPosY() +  2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1  + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec));
+    pc_i->setSemiAxis3X(pc_i->getPosZ() +  2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1  + (qk*qk))*z_vec));
 
 }
 

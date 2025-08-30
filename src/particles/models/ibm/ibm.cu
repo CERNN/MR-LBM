@@ -16,7 +16,6 @@ void ibmSimulation(
 
     int numIBMParticles = range.last - range.first + 1; //printf("number of ibm particles %d \n",numIBMParticles);
     const unsigned int threadsNodesIBM = 64;
-    checkCudaErrors(cudaSetDevice(GPU_INDEX));
     unsigned int pNumNodes = particles->getNodesSoA()->getNumNodes();   //printf("Number of IBM %d\n",pNumNodes);
     const unsigned int gridNodesIBM = pNumNodes % threadsNodesIBM ? pNumNodes / threadsNodesIBM + 1 : pNumNodes / threadsNodesIBM;
 
@@ -39,7 +38,6 @@ void ibmSimulation(
     //printf("Inside ibmSimulation \n");
 
     // Update particle center position and its old values
-    checkCudaErrors(cudaSetDevice(GPU_INDEX));
     gpuUpdateParticleOldValues<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
@@ -50,20 +48,17 @@ void ibmSimulation(
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Reset IBM nodes forces error\n");
     }
-/*
+
     // Calculate collision force between particles
-    checkCudaErrors(cudaSetDevice(GPU_INDEX));
     //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamIBM[0]>>>(particles.pCenterArray,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles)); 
 
     // First update particle velocity using body center force and constant forces
-    checkCudaErrors(cudaSetDevice(GPU_INDEX));
     gpuUpdateParticleCenterVelocityAndRotation <<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles >>>(pArray,range.first,range.last);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     getLastCudaError("IBM update particle center velocity error\n");
-    checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
-
+    /*
     for (int i = 0; i < IBM_MAX_ITERATION; i++)
     {
         for(int j = 0; j < N_GPUS; j++){
@@ -77,16 +72,15 @@ void ibmSimulation(
              }
          }
  
-        checkCudaErrors(cudaSetDevice(GPU_INDEX));
         // Update particle velocity using body center force and constant forces
         gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(particles.getPCenterArray());
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("IBM update particle center velocity error\n");
     }
 
-    checkCudaErrors(cudaSetDevice(GPU_INDEX));
+    */
     // Update particle center position and its old values
-    gpuParticleMovement<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(particles.getPCenterArray());
+    gpuParticleMovement<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     getLastCudaError("IBM particle movement error\n");
 

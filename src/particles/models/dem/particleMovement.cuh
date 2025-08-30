@@ -27,7 +27,11 @@ void gpuUpdateParticleCenterVelocityAndRotation(
 );
 
 __global__
-void gpuParticleMovement(ParticleCenter particleCenters[NUM_PARTICLES]);
+void gpuParticleMovement(
+    ParticleCenter *pArray,
+    int firstIndex,
+    int lastIndex
+);
 
 #endif //PARTICLE_MODEL
 
