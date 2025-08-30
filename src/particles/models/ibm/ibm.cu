@@ -126,156 +126,156 @@ void gpuResetNodesForces(IbmNodesSoA* particlesNodes)
 
 __global__
 void gpuParticleNodeMovement(
-    IbmNodesSoA const particlesNodes,
-    ParticleCenter particleCenters[NUM_PARTICLES]
+    IbmNodesSoA* particlesNodes,
+    ParticleCenter *pArray,
+    int firstIndex,
+    int lastIndex
 ){
-    int i = threadIdx.x + blockDim.x * blockIdx.x;
+    int idx = threadIdx.x + blockDim.x * blockIdx.x;
 
-    if(i >= particlesNodes.getNumNodes())
+    if(idx >= particlesNodes->getNumNodes())
         return;
 
-    const ParticleCenter pc = particleCenters[particlesNodes.getParticleCenterIdx()[i]];
+    const dfloat3SoA pos = particlesNodes->getPos();
 
-    if(!pc.getMovable())
+    //direct copy since we are not modifying
+    const ParticleCenter pc_i = pArray[particlesNodes->getParticleCenterIdx()[idx]];
+
+    if(!pc_i.getMovable())
         return;
 
     // TODO: make the calculation of w_norm along with w_avg?
-    const dfloat w_norm = sqrt((pc.getWAvgX() * pc.getWAvgX()) 
-        + (pc.getWAvgY() * pc.getWAvgY()) 
-        + (pc.getWAvgZ() * pc.getWAvgZ()));
+    const dfloat w_norm = sqrt((pc_i.getWAvgX() * pc_i.getWAvgX()) 
+                             + (pc_i.getWAvgY() * pc_i.getWAvgY()) 
+                             + (pc_i.getWAvgZ() * pc_i.getWAvgZ()));
 
+    // check the norm to see if is worth computing the rotation
     if(w_norm <= 1e-8)
     {
         dfloat dx,dy,dz;
         // dfloat new_pos_x,new_pos_y,new_pos_z;
 
-        dx = pc.getPosX() - pc.getPosOldX();
-        dy = pc.getPosY() - pc.getPosOldY();
-        dz = pc.getPosZ() - pc.getPosOldZ();
+        dx = pc_i.getPosX() - pc_i.getPosOldX();
+        dy = pc_i.getPosY() - pc_i.getPosOldY();
+        dz = pc_i.getPosZ() - pc_i.getPosOldZ();
 
-        #ifdef IBM_BC_X_WALL
-            particlesNodes.getPos().x[i] += dx;
-        #endif //IBM_BC_X_WALL
-        #ifdef IBM_BC_X_PERIODIC
-            if(abs(dx) > (dfloat)(IBM_BC_X_E - IBM_BC_X_0)/2.0){
-                if(pc.getPosX() < pc.getPosOldX() )
-                    dx = (pc.getPosX()  + (IBM_BC_X_E - IBM_BC_X_0)) - pc.getPosOldX();
+        
+        #ifdef BC_X_WALL
+            pos.x[idx] += dx;
+        #endif //BC_X_WALL
+        #ifdef BC_X_PERIODIC
+            if(abs(dx) > (dfloat)(NX)/2.0){
+                if(pc_i.getPosX() < pc_i.getPosOldX() )
+                    dx = (pc_i.getPosX() + NX) - pc_i.getPosOldX();
                 else
-                    dx = (pc.getPosX()  - (IBM_BC_X_E - IBM_BC_X_0)) - pc.getPosOldX();
+                    dx = (pc_i.getPosX() - NX) - pc_i.getPosOldX();
             }
-            particlesNodes.getPos().x[i] = IBM_BC_X_0 + std::fmod((dfloat)(particlesNodes.getPos().x[i] + dx + (IBM_BC_X_E - IBM_BC_X_0-IBM_BC_X_0)),(dfloat)(IBM_BC_X_E - IBM_BC_X_0));
-        #endif //IBM_BC_X_PERIODIC
+            pos.x[idx] = std::fmod((dfloat)(pos.x[idx] + dx + NX),(dfloat)(NX));
+        #endif //BC_X_PERIODIC
 
-
-        #ifdef IBM_BC_Y_WALL
-            particlesNodes.getPos().y[i] += dy;
-        #endif //IBM_BC_Y_WALL
-        #ifdef IBM_BC_Y_PERIODIC
-            if(abs(dy) > (dfloat)(IBM_BC_Y_E - IBM_BC_Y_0)/2.0){
-                if(pc.getPosY() < pc.getPosOldY())
-                    dy = (pc.getPosY()  + (IBM_BC_Y_E - IBM_BC_Y_0)) - pc.getPosOldY();
+        #ifdef BC_Y_WALL
+            pos.y[idx] += dy;
+        #endif //BC_Y_WALL
+        #ifdef BC_Y_PERIODIC
+            if(abs(dy) > (dfloat)(NY)/2.0){
+                if(pc_i.getPosY() < pc_i.getPosOldY() )
+                    dy = (pc_i.getPosY() + NY) - pc_i.getPosOldY();
                 else
-                    dy = (pc.getPosY()  - (IBM_BC_Y_E - IBM_BC_Y_0)) - pc.getPosOldY();
+                    dy = (pc_i.getPosY() - NY) - pc_i.getPosOldY();
             }
-            particlesNodes.getPos().y[i] = IBM_BC_Y_0 + std::fmod((dfloat)(particlesNodes.getPos().y[i] + dy + (IBM_BC_Y_E - IBM_BC_Y_0-IBM_BC_Y_0)),(dfloat)(IBM_BC_Y_E - IBM_BC_Y_0));
-        #endif // IBM_BC_Y_PERIODIC
+            pos.y[idx] = std::fmod((dfloat)(pos.y[idx] + dy + NY),(dfloat)(NY));
+        #endif //BC_Y_PERIODIC
 
-
-        #ifdef IBM_BC_Z_WALL
-            particlesNodes.getPos().z[i] += dz;
-        #endif //IBM_BC_Z_WALL
-        #ifdef IBM_BC_Z_PERIODIC
-            if(abs(dz) > (dfloat)(IBM_BC_Z_E - IBM_BC_Z_0)/2.0){
-                if(pc.getPosZ() < pc.getPosOldZ())
-                    dz = (pc.getPosZ() + (IBM_BC_Z_E - IBM_BC_Z_0)) - pc.getPosOldZ();
+        #ifdef BC_Z_WALL
+            pos.z[idx] += dz;
+        #endif //BC_Z_WALL
+        #ifdef BC_Z_PERIODIC
+            if(abs(dz) > (dfloat)(NZ)/2.0){
+                if(pc_i.getPosZ() < pc_i.getPosOldZ() )
+                    dz = (pc_i.getPosZ() + NZ_TOTAL) - pc_i.getPosOldZ();
                 else
-                    dz = (pc.getPosZ() - (IBM_BC_Z_E - IBM_BC_Z_0)) - pc.getPosOldZ();
+                    dz = (pc_i.getPosZ() - NZ_TOTAL) - pc_i.getPosOldZ();
             }
-            particlesNodes.getPos().z[i] = IBM_BC_Z_0 + std::fmod((dfloat)(particlesNodes.getPos().z[i] + dz + (IBM_BC_Z_E - IBM_BC_Z_0-IBM_BC_Z_0)),(dfloat)(IBM_BC_Z_E - IBM_BC_Z_0));
-        #endif //IBM_BC_Z_PERIODIC
-
+            pos.z[idx] = std::fmod((dfloat)(pos.z[idx] + dz + NZ_TOTAL),(dfloat)(NZ_TOTAL));
+        #endif //BC_Z_PERIODIC
+        
+        //ealier return since is no longer necessary
         return;
     }
 
-    // TODO: these variables are the same for every particle center, optimize it
-    
-
-
-    dfloat x_vec = particlesNodes.getPos().x[i] - pc.getPosOldX();
-    dfloat y_vec = particlesNodes.getPos().y[i] - pc.getPosOldY();
-    dfloat z_vec = particlesNodes.getPos().z[i] - pc.getPosOldZ();
+    //compute vector between the node and the partic
+    dfloat x_vec = pos.x[idx] - pc_i.getPosOldX();
+    dfloat y_vec = pos.y[idx] - pc_i.getPosOldY();
+    dfloat z_vec = pos.z[idx] - pc_i.getPosOldZ();
 
 
     #ifdef IBM_BC_X_PERIODIC
-        if(abs(x_vec) > (dfloat)(IBM_BC_X_E - IBM_BC_X_0)/2.0){
-            if(particlesNodes.getPos().x[i] < pc.getPosOldX() )
-                particlesNodes.getPos().x[i] += (dfloat)(IBM_BC_X_E - IBM_BC_X_0) ;
+        if(abs(x_vec) > (dfloat)(NX)/2.0){
+            if(pos.x[idx] < pc_i.getPosOldX() )
+                pos.x[idx] += (dfloat)(NX) ;
             else
-                particlesNodes.getPos().x[i] -= (dfloat)(IBM_BC_X_E - IBM_BC_X_0) ;
+                pos.x[idx] -= (dfloat)(NX) ;
         }
-
-        x_vec = particlesNodes.getPos().x[i] - pc.getPosOldX();
+        x_vec = pos.x[idx] - pc_i.getPosOldX();
     #endif //IBM_BC_X_PERIODIC
 
 
     #ifdef IBM_BC_Y_PERIODIC
-        if(abs(y_vec) > (dfloat)(IBM_BC_Y_E - IBM_BC_Y_0)/2.0){
-            if(particlesNodes.getPos().y[i] < pc.getPosOldY())
-                particlesNodes.getPos().y[i] += (dfloat)(IBM_BC_Y_E - IBM_BC_Y_0) ;
+        if(abs(y_vec) > (dfloat)(NY)/2.0){
+            if(pos.y[idx] < pc_i.getPosOldY())
+                pos.y[idx] += (dfloat)(NY) ;
             else
-                particlesNodes.getPos().y[i] -= (dfloat)(IBM_BC_Y_E - IBM_BC_Y_0) ;
+                pos.y[idx] -= (dfloat)(NY) ;
         }
 
-        y_vec = particlesNodes.getPos().y[i] - pc.getPosOldY();
+        y_vec = pos.y[idx] - pc_i.getPosOldY();
     #endif //IBM_BC_Y_PERIODIC
 
 
     #ifdef IBM_BC_Z_PERIODIC
-        if(abs(z_vec) > (dfloat)(IBM_BC_Z_E - IBM_BC_Z_0)/2.0){
-            if(particlesNodes.getPos().z[i] < pc.getPosOldZ())
-                particlesNodes.getPos().z[i] += (dfloat)(IBM_BC_Z_E - IBM_BC_Z_0) ;
+        if(abs(z_vec) > (dfloat)(NZ_TOTAL)/2.0){
+            if(pos.z[idx] < pc_i.getPosOldZ())
+                pos.z[idx] += (dfloat)(NZ_TOTAL) ;
             else
-                particlesNodes.getPos().z[i] -= (IBM_BC_Z_E - IBM_BC_Z_0) ;
+                pos.z[idx] -= (NZ_TOTAL) ;
         }
 
-        z_vec = particlesNodes.getPos().z[i] - pc.getPosOldZ();
+        z_vec = pos.z[idx] - pc_i.getPosOldZ();
     #endif //IBM_BC_Z_PERIODIC
 
-    
-    
-    
-
+       
+    // compute rotation quartenion
     const dfloat q0 = cos(0.5*w_norm);
-    const dfloat qi = (pc.getWAvgX()/w_norm) * sin (0.5*w_norm);
-    const dfloat qj = (pc.getWAvgY()/w_norm) * sin (0.5*w_norm);
-    const dfloat qk = (pc.getWAvgZ()/w_norm) * sin (0.5*w_norm);
+    const dfloat qi = (pc_i.getWAvgX()/w_norm) * sin (0.5*w_norm);
+    const dfloat qj = (pc_i.getWAvgY()/w_norm) * sin (0.5*w_norm);
+    const dfloat qk = (pc_i.getWAvgZ()/w_norm) * sin (0.5*w_norm);
 
     const dfloat tq0m1 = (q0*q0) - 0.5;
     
-    dfloat new_pos_x = pc.getPosX() + 2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec);
-    dfloat new_pos_y = pc.getPosY() + 2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1 + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec);
-    dfloat new_pos_z = pc.getPosZ() + 2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1 + (qk*qk))*z_vec);
+    dfloat new_pos_x = pc_i.getPosX() + 2 * (   (tq0m1 + (qi*qi))*x_vec + ((qi*qj) - (q0*qk))*y_vec + ((qi*qk) + (q0*qj))*z_vec);
+    dfloat new_pos_y = pc_i.getPosY() + 2 * ( ((qi*qj) + (q0*qk))*x_vec +   (tq0m1 + (qj*qj))*y_vec + ((qj*qk) - (q0*qi))*z_vec);
+    dfloat new_pos_z = pc_i.getPosZ() + 2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1 + (qk*qk))*z_vec);
 
+    //update node position
     #ifdef  IBM_BC_X_WALL
-    particlesNodes.pos.x[i] =  new_pos_x;
+        pos.x[idx] =  new_pos_x;
     #endif //IBM_BC_X_WALL
-    #ifdef  IBM_BC_Y_WALL
-    particlesNodes.getPos().y[i] =  new_pos_y;
-    #endif //IBM_BC_Y_WALL
-    #ifdef  IBM_BC_Z_WALL
-    particlesNodes.pos.z[i] =  new_pos_z;
-    #endif //IBM_BC_Z_WALL
-
-
-
     #ifdef  IBM_BC_X_PERIODIC
-    particlesNodes.getPos().x[i] =  IBM_BC_X_0 + std::fmod((dfloat)(new_pos_x + IBM_BC_X_E - IBM_BC_X_0-IBM_BC_X_0),(dfloat)(IBM_BC_X_E - IBM_BC_X_0));
+        pos.x[idx] =  std::fmod((dfloat)(new_pos_x + NX),(dfloat)(NX));
     #endif //IBM_BC_X_PERIODIC
+
+    #ifdef  IBM_BC_Y_WALL
+        pos.y[idx] =  new_pos_y;
+    #endif //IBM_BC_Y_WALL
     #ifdef  IBM_BC_Y_PERIODIC
-    particlesNodes.pos.y[i] =  IBM_BC_Y_0 + std::fmod((dfloat)(new_pos_y + IBM_BC_Y_E - IBM_BC_Y_0-IBM_BC_Y_0),(dfloat)(IBM_BC_Y_E - IBM_BC_Y_0));
+        pos.y[idx] = std::fmod((dfloat)(new_pos_y + NY),(dfloat)(NY));
     #endif //IBM_BC_Y_PERIODIC
+
+    #ifdef  IBM_BC_Z_WALL
+        pos.z[idx] =  new_pos_z;
+    #endif //IBM_BC_Z_WALL
     #ifdef  IBM_BC_Z_PERIODIC
-    particlesNodes.getPos().z[i] =  IBM_BC_Z_0 + std::fmod((dfloat)(new_pos_z + IBM_BC_Z_E - IBM_BC_Z_0-IBM_BC_Z_0),(dfloat)(IBM_BC_Z_E - IBM_BC_Z_0));
+        pos.z[idx] = std::fmod((dfloat)(new_pos_z + NZ_TOTAL),(dfloat)(NZ_TOTAL));
     #endif //IBM_BC_Z_PERIODIC
 }
 

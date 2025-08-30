@@ -39,7 +39,9 @@ void gpuForceInterpolationSpread(
 __global__
 void gpuParticleNodeMovement(
     IbmNodesSoA const particlesNodes,
-    ParticleCenter particleCenters[NUM_PARTICLES]
+    ParticleCenter *pArray,
+    int firstIndex,
+    int lastIndex
 );
 
 
