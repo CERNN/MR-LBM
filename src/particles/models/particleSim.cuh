@@ -8,12 +8,6 @@
 #include "pibm/pibm.cuh"
 #include "tracer/tracer.cuh"
 
-// void ibmSimulation(
-//     ParticlesSoA *particles,
-//     dfloat *fMom,
-//     cudaStream_t *streamParticles,
-//     unsigned int step
-// );
 
 void particleSimulation(
     ParticlesSoA *particles,

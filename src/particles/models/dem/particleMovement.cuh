@@ -13,7 +13,11 @@
 #ifdef PARTICLE_MODEL
 
 __global__
-void gpuUpdateParticleOldValues(ParticleCenter particleCenters[NUM_PARTICLES]);
+void gpuUpdateParticleOldValues(
+    ParticleCenter *particleCenters,
+    int firstIndex,
+    int lastIndex
+);
 
 __global__ 
 void gpuUpdateParticleCenterVelocityAndRotation(ParticleCenter particleCenters[NUM_PARTICLES]);

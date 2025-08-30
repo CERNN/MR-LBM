@@ -6,52 +6,56 @@
 
 __global__
 void gpuUpdateParticleOldValues(
-    ParticleCenter particleCenters[NUM_PARTICLES])
+    ParticleCenter *pArray,
+    int firstIndex,
+    int lastIndex)
 {
-    unsigned int p = threadIdx.x + blockDim.x * blockIdx.x;
+    unsigned int localIdx = threadIdx.x + blockDim.x * blockIdx.x;
+    int globalIdx = firstIndex + localIdx;
 
-    if(p >= NUM_PARTICLES)
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
         return;
+    }
 
-    ParticleCenter *pc = &(particleCenters[p]);
+    if (pArray == nullptr) {
+        printf("ERROR: particles is nullptr\n");
+        return;
+    }
+
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
+        return;
+    }
+
+    ParticleCenter* pc_i = &pArray[globalIdx];
 
     // Internal linear momentum delta = rho*volume*delta(v)/delta(t)
     // https://doi.org/10.1016/j.compfluid.2011.05.011
-    pc->setDPInternalX(0.0); //RHO_0 * pc->getVolume() * (pc->getVelX() - pc->getVelOldX());
-    pc->setDPInternalY(0.0); //RHO_0 * pc->getVolume() * (pc->getVelY() - pc->getVelOldY());
-    pc->setDPInternalY(0.0); //RHO_0 * pc->getVolume() * (pc->getVelZ() - pc->getVelOldZ());
+    pc_i->setDPInternalX(0.0); //RHO_0 * pc_i->getVolume() * (pc_i->getVelX() - pc_i->getVelOldX());
+    pc_i->setDPInternalY(0.0); //RHO_0 * pc_i->getVolume() * (pc_i->getVelY() - pc_i->getVelOldY());
+    pc_i->setDPInternalZ(0.0); //RHO_0 * pc_i->getVolume() * (pc_i->getVelZ() - pc_i->getVelOldZ());
 
     // Internal angular momentum delta = (rho_f/rho_p)*I*delta(omega)/delta(t)
     // https://doi.org/10.1016/j.compfluid.2011.05.011
     
-    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIXX() * (pc->getWX() - pc->getWOldX());
-    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIYY() * (pc->getWY() - pc->getWOldY());
-    pc->setDLInternalX(0.0); //(RHO_0 / pc->getDensity()) * pc->getIZZ() * (pc->getWZ() - pc->getWOldZ());
+    pc_i->setDLInternalX(0.0); //(RHO_0 / pc_i->getDensity()) * pc_i->getIXX() * (pc_i->getWX() - pc_i->getWOldX());
+    pc_i->setDLInternalY(0.0); //(RHO_0 / pc_i->getDensity()) * pc_i->getIYY() * (pc_i->getWY() - pc_i->getWOldY());
+    pc_i->setDLInternalZ(0.0); //(RHO_0 / pc_i->getDensity()) * pc_i->getIZZ() * (pc_i->getWZ() - pc_i->getWOldZ());
 
-    pc->setPosOldX(pc->getPosX());
-    pc->setPosOldY(pc->getPosY());
-    pc->setPosOldZ(pc->getPosZ());
+    //printf("gpuUpdateParticleOldValues 2 pos  x: %f y: %f z: %f\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
+    //printf("gpuUpdateParticleOldValues 3 pos  x: %f y: %f z: %f\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
+    //printf("gpuUpdateParticleOldValues 4 pos  x: %f y: %f z: %f\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
+    //printf("gpuUpdateParticleOldValues 5 pos  x: %f y: %f z: %f\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
+    //printf("gpuUpdateParticleOldValues 6 pos  x: %f y: %f z: %f\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
+    //printf("gpuUpdateParticleOldValues 7 pos  x: %f y: %f z: %f\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
+    
+    pc_i->setPos_old(pc_i->getPos());
+    pc_i->setVel_old(pc_i->getVel());
+    pc_i->setW_old(pc_i->getW());
+    pc_i->setF_old(pc_i->getF());
+    pc_i->setM_old(pc_i->getM());
+    pc_i->setF(dfloat3(0,0,0));
+    pc_i->setM(dfloat3(0,0,0));
 
-    pc->setVelOldX(pc->getVelX());
-    pc->setVelOldY(pc->getVelY());
-    pc->setVelOldZ(pc->getVelZ());
-
-    pc->setWOldX(pc->getWX());
-    pc->setWOldY(pc->getWY());
-    pc->setWOldZ(pc->getWZ());
-
-    pc->setFOldX(pc->getFX());
-    pc->setFOldY(pc->getFY());
-    pc->setFOldZ(pc->getFZ());
-
-    // Reset force, because kernel is always added
-    pc->setFX(0);
-    pc->setFY(0);
-    pc->setFZ(0);
-
-    pc->setMX(0);
-    pc->setMY(0);
-    pc->setMZ(0);
 }
 
 __global__ 

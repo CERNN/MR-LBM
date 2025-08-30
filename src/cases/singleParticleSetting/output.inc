@@ -13,7 +13,15 @@
 #define REPORT_SAVE (false) // save report data every # timestgeps
 #define VTK_SAVE (true) // save in vtk file
 #define BIN_SAVE (false) //save in binary file
-#define PARTICLES_SAVE (1) //Interval to save particle data
 
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;
-//#define SAVE_BC_FORCES // define if it will export BC force field to bin
+
+
+/* ------------------------- TIME AND SAVE DEFINES ------------------------- */
+
+#define PARTICLES_SAVE (1)               // Save particles info every given steps (0 not report)
+#define PARTICLES_DATA_REPORT (false)                   // Report IBM treated data every given steps (0 not report)
+
+
+#define IBM_PARTICLES_NODES_SAVE true      // Saves particles nodes data
+/* ------------------------------------------------------------------------- */

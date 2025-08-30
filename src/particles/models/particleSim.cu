@@ -14,8 +14,10 @@ void particleSimulation(
     int numPIBM   = particles->getMethodCount(PIBM);
     int numTRACER = particles->getMethodCount(TRACER);
 
+    //printf("Number of particles IBM %d PIBM %d Tracer %d \n",numIBM,numPIBM,numTRACER);
+
     if(numIBM>0){
-       // ibmSimulation(particles,ibmMacrsAux,fMom,streamParticles,step);
+       ibmSimulation(particles,ibmMacrsAux,fMom,streamParticles[0],step);
     }
     if(numPIBM>0){
         /*code*/

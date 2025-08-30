@@ -82,7 +82,7 @@ __host__ __device__ IbmNodesSoA* ParticlesSoA::getNodesSoA() {
 
 __host__ __device__ void ParticlesSoA::setNodesSoA(const IbmNodesSoA* nodes) {
     for (int i = 0; i < N_GPUS; ++i) {
-        this->nodesSoA[i] = nodes[i];  // cópia dos elementos
+        this->nodesSoA[i] = nodes[i];  // copia dos elementos
     }
 }
 
@@ -204,7 +204,7 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
 
     this->nodesSoA[0].allocateMemory(totalIbmNodes);
 
-    printf("Success Allocating particles in GPU... \t"); fflush(stdout);
+    printf("Success \n"); fflush(stdout);
 
     checkCudaErrors(cudaMallocManaged((void**)&this->pCenterArray,       sizeof(ParticleCenter) * NUM_PARTICLES));
     checkCudaErrors(cudaMallocManaged((void**)&this->pCenterLastPos,     sizeof(dfloat3)        * NUM_PARTICLES));
@@ -226,11 +226,11 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
 
         for (int p = 0; p < NUM_PARTICLES; ++p) {     
             if (particles[p].getMethod() != method)
-                continue; // <- Adicionado: só copia se for do tipo correto
+                continue; // <- Adicionado: so copia se for do tipo correto
             ParticleCenter* pc = particles[p].getPCenter();
 
             if (!pc) {
-                printf("NOTICE: Particle %d com pc == nullptr\n", p); fflush(stdout);
+                printf("NOTICE: Particle %d with pc == nullptr\n", p); fflush(stdout);
                 continue;
             }
 
@@ -241,9 +241,9 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
             this->pMethod[p]            = particles[p].getMethod();
             this->pCollideWall[p]       = particles[p].getCollideWall();
             this->pCollideParticle[p]   = particles[p].getCollideParticle();
-            printf("Antes copiar nos da partícola... \t"); fflush(stdout);
+            //printf("Antes copiar nos da particula... \t"); fflush(stdout);
             this->nodesSoA[p].copyNodesFromParticle(&particles[p], p, 0);
-            printf("Apos copiar nos da partícola... \t"); fflush(stdout);
+            //printf("Apos copiar nos da particula... \t"); fflush(stdout);
             if (firstIndex == -1) firstIndex = p;
             lastIndex = p;
         }
@@ -257,127 +257,6 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
     insertByMethod(TRACER);
     checkCudaErrors(cudaSetDevice(0));
 
-}
-
-void ParticlesSoA::updateNodesGPUs(){
-    // No need to update for 1 GPU
-    if(N_GPUS == 1)
-        return;
-    /* TODO: MULTI-GPU
-    for(int i = 0; i < NUM_PARTICLES; i++){
-        checkCudaErrors(cudaSetDevice(GPUS_TO_USE[0]));
-        if(!this->pCenterArray[i].getMovable())
-            continue;
-
-        dfloat3 pos_p = this->pCenterArray[i].getPos();
-        dfloat3 last_pos = this->pCenterLastPos[i];
-        dfloat3 w_pos = this->pCenterArray[i].getW_pos();
-        dfloat3 last_w_pos = this->pCenterLastWPos[i];
-        dfloat3 diff_w_pos = dfloat3(w_pos.x-last_w_pos.x, w_pos.y-last_w_pos.y, w_pos.z-last_w_pos.z);
-        dfloat radius = this->pCenterArray[i].getRadius();
-
-        dfloat min_pos = myMin(pos_p.z,last_pos.z) - (radius - BREUGEM_PARAMETER);
-        dfloat max_pos = myMax(pos_p.z,last_pos.z) + (radius - BREUGEM_PARAMETER);
-        int min_gpu = (int)(min_pos+NZ_TOTAL)/(NZ)-N_GPUS;
-        int max_gpu = (int)(max_pos/NZ);
-
-        // Translation
-        dfloat diff_z = (pos_p.z-last_pos.z);
-        if (diff_z < 0)
-            diff_z = -diff_z;
-        // Maximum rotation
-        diff_z += (radius-BREUGEM_PARAMETER)*sqrt(diff_w_pos.x*diff_w_pos.x+diff_w_pos.y*diff_w_pos.y);
-
-        // Particle has not moved enoush and nodes that needs to be 
-        // updated/synchronized are already considering that
-        if(diff_z < IBM_PARTICLE_UPDATE_DIST)
-            continue;
-
-        // Update particle's last position
-        this->pCenterLastPos[i] = this->pCenterArray[i].getPos();
-        this->pCenterLastWPos[i] = this->pCenterArray[i].getPos();
-        if(min_gpu == max_gpu)
-            continue;
-
-        for(int n = min_gpu; n <= max_gpu; n++){
-            // Set current device
-            int real_gpu = (n+N_GPUS)%N_GPUS;
-            checkCudaErrors(cudaSetDevice(GPUS_TO_USE[real_gpu]));
-            int left_shift = 0;
-            for(int p = 0; p < this->nodesSoA[real_gpu].getNumNodes(); p++){
-                // Shift left nodes, if a node was already removed
-                if(left_shift != 0){
-                    this->nodesSoA[real_gpu].leftShiftNodesSoA(p, left_shift);
-                }
-
-                // Node is from another particle
-                if(this->nodesSoA[real_gpu].getParticleCenterIdx()[p] != i)
-                    continue;
-
-                // Check in what GPU node is
-                dfloat pos_z = this->nodesSoA[real_gpu].getPos().z[p];
-                int node_gpu = (int) (pos_z/NZ);
-                // If node is still in same GPU, continues
-                if(node_gpu == real_gpu)
-                    continue;
-                //printf("b");
-                // to not raise any error when setting up device
-                #ifdef IBM_BC_Z_PERIODIC
-                    node_gpu = (node_gpu+N_GPUS)%N_GPUS;
-                #else
-                    if(node_gpu < 0)
-                        node_gpu = 0;
-                    else if(node_gpu >= N_GPUS)
-                        node_gpu = N_GPUS-1;
-                #endif
-
-                // Nodes will have to be shifted
-                left_shift += 1;
-
-                // Get values to move
-                IbmNodesSoA& nSoA = this->nodesSoA[real_gpu];
-                dfloat copy_S = nSoA.getS()[p];
-                unsigned int copy_pIdx = nSoA.getParticleCenterIdx()[p];
-                dfloat3 copy_pos = nSoA.getPos().getValuesFromIdx(p);
-                dfloat3 copy_vel = nSoA.getVel().getValuesFromIdx(p);
-                dfloat3 copy_vel_old = nSoA.getVelOld().getValuesFromIdx(p);
-                dfloat3 copy_f = nSoA.getF().getValuesFromIdx(p);
-                dfloat3 copy_deltaF = nSoA.getDeltaF().getValuesFromIdx(p);
-
-                // Set device to move to (unnecessary)
-                checkCudaErrors(cudaSetDevice(GPUS_TO_USE[node_gpu]));
-                IbmNodesSoA& nSoAdst = this->nodesSoA[node_gpu];
-                // Copy values to last position in nodesSoA
-                size_t idxMove = nSoAdst.getNumNodes();
-                nSoAdst.getS()[idxMove] = copy_S;
-                nSoAdst.getParticleCenterIdx()[idxMove] = copy_pIdx;
-                nSoAdst.getPos().copyValuesFromFloat3(copy_pos, idxMove);
-                nSoAdst.getVel().copyValuesFromFloat3(copy_vel, idxMove);
-                nSoAdst.getVelOld().copyValuesFromFloat3(copy_vel_old, idxMove);
-                nSoAdst.getF().copyValuesFromFloat3(copy_f, idxMove);
-                nSoAdst.getDeltaF().copyValuesFromFloat3(copy_deltaF, idxMove);
-                // Added one node to it
-                //this->nodesSoA[node_gpu].numNodes += 1;
-                nSoAdst.setNumNodes(idxMove + 1);
-                // Set back particle device (unnecessary)
-                checkCudaErrors(cudaSetDevice(GPUS_TO_USE[real_gpu]));
-                // printf("idx %d  gpu curr %d  ", p, n);
-                // for(int nnn = 0; nnn < N_GPUS; nnn++){
-                //     printf("Nodes GPU %d: %d\t", nnn, this->nodesSoA[nnn].numNodes);
-                // }
-                // printf("\n");
-            }
-            // Remove nodes that were added
-            this->nodesSoA[real_gpu].setNumNodes( this->nodesSoA[real_gpu].getNumNodes() - left_shift );
-            // this->nodesSoA[real_gpu].numNodes -= left_shift;
-        }
-    }
-    */  
-    // int sum = 0;
-    // for(int nnn = 0; nnn < N_GPUS; nnn++){
-    //     sum += this->nodesSoA[nnn].numNodes;
-    // }
-    // printf("sum nodes %d\n\n", sum);
 }
 
 

@@ -9,6 +9,7 @@ for (int i = 0; i<NUM_PARTICLES;i++){
     dfloat3 sa = {10, 20, 30};
 
     this->pShape[i] = SPHERE;
+    center.setDiameter(20);
     center.setPos(pos);
     center.setPos_old(pos);
     center.setVel(vel);
@@ -19,7 +20,7 @@ for (int i = 0; i<NUM_PARTICLES;i++){
     center.setMovable(true);
     center.setQ_pos(dfloat4(1,0,0,0));
         
-    particles[i].setMethod(PIBM);
+    particles[i].setMethod(IBM);
     particles[i].setShape(&pShape[i]);
     particles[i].setPCenter(&center);
     particles[i].setCollideParticle(false);

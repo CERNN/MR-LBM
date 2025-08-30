@@ -4,36 +4,53 @@
 
 
 void ibmSimulation(
-    ParticlesSoA particles,
+    ParticlesSoA* particles,
     IbmMacrsAux ibmMacrsAux,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
 ){
 
+    checkCudaErrors(cudaSetDevice(GPU_INDEX));
+    MethodRange range = particles->getMethodRange(IBM);
+
+    int numIBMParticles = range.last - range.first + 1; //printf("number of ibm particles %d \n",numIBMParticles);
+    const unsigned int threadsNodesIBM = 64;
+    checkCudaErrors(cudaSetDevice(GPU_INDEX));
+    unsigned int pNumNodes = particles->getNodesSoA()->getNumNodes();   //printf("Number of IBM %d\n",pNumNodes);
+    const unsigned int gridNodesIBM = pNumNodes % threadsNodesIBM ? pNumNodes / threadsNodesIBM + 1 : pNumNodes / threadsNodesIBM;
+
+    if (particles == nullptr) {
+        printf("Error: particles is nullptr\n");
+        return;
+    }
+
+    checkCudaErrors(cudaStreamSynchronize(streamParticles));
+
+    if (range.first < 0 || range.last >= NUM_PARTICLES || range.first > range.last) {
+    printf("Error: Invalid range - first: %d, last: %d, NUM_PARTICLES: %d\n", 
+            range.first, range.last, NUM_PARTICLES);
+    return;
+    }
+
+    ParticleCenter* pArray = particles->getPCenterArray();
+
+
+    //printf("Inside ibmSimulation \n");
+
     // Update particle center position and its old values
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
-    gpuUpdateParticleOldValues<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(particles.getPCenterArray());
+    gpuUpdateParticleOldValues<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
-    //define kernel values for IBM
-    unsigned int gridNodesIBM;
-    unsigned int threadsNodesIBM;
-
-    threadsNodesIBM = 64;
-    checkCudaErrors(cudaSetDevice(GPU_INDEX));
-    unsigned int pNumNodes = particles.getNodesSoA()->getNumNodes();
-    gridNodesIBM = pNumNodes % threadsNodesIBM ? pNumNodes / threadsNodesIBM + 1 : pNumNodes / threadsNodesIBM;
-
-    checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
     // Reset forces in all IBM nodes;
-    if(particles.getNodesSoA()->getNumNodes() > 0){
-        gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(particles.getNodesSoA());
+    if(pNumNodes > 0){
+        gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(particles->getNodesSoA());
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Reset IBM nodes forces error\n");
     }
-
+/*
     // Calculate collision force between particles
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamIBM[0]>>>(particles.pCenterArray,step);
@@ -53,7 +70,7 @@ void ibmSimulation(
             if(particles.getNodesSoA()[j].getNumNodes() > 0){
                 checkCudaErrors(cudaSetDevice(GPUS_TO_USE[j]));
                 // Make the interpolation of LBM and spreading of IBM forces
-                gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray(), &fMom[0], ibmMacrsAux, j);
+                //gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray(), &fMom[0], j);
                 checkCudaErrors(cudaStreamSynchronize(streamParticles));
                 getLastCudaError("IBM interpolation spread error\n");
              }
@@ -84,7 +101,8 @@ void ibmSimulation(
     }
 
     checkCudaErrors(cudaDeviceSynchronize());
- 
+
+ */
 }
 
 
@@ -101,7 +119,7 @@ void gpuResetNodesForces(IbmNodesSoA* particlesNodes)
     const dfloat3SoA force = particlesNodes->getF();
     const dfloat3SoA delta_force = particlesNodes->getDeltaF();
 
-    //TODO: FIX so it sets to zero (it has to be the pointer)
+    //TODO: FIX illegal memory access error
     force.x[idx] = 0;
     force.y[idx] = 0;
     force.z[idx] = 0;
@@ -573,9 +591,9 @@ void gpuForceInterpolationSpread(
                 }
                 #endif
                 #ifndef EXTERNAL_DUCT_BC
-                atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).x[idx]), -deltaF.x * aux);
-                atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).y[idx]), -deltaF.y * aux);
-                atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).z[idx]), -deltaF.z * aux);
+                //atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).x[idx]), -deltaF.x * aux);
+                //atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).y[idx]), -deltaF.y * aux);
+                //atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).z[idx]), -deltaF.z * aux);
 
                 // Update velocities field
                 // const dfloat inv_rho = 1 / macr.rho[idx];

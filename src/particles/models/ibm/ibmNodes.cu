@@ -112,9 +112,7 @@ void IbmNodesSoA::copyNodesFromParticle(Particle *p, unsigned int pCenterIdx, un
 {
     const int baseIdx = this->numNodes;
     int nodesAdded = 0;
-    printf("Antes get node... \t"); fflush(stdout);
     IbmNodes* node = p->getNode();
-    printf("Após get node... \t"); fflush(stdout);
 
     for (int i = 0; i < p->getNumNodes(); i++)
     {
