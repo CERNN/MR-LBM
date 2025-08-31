@@ -1,4 +1,4 @@
-#ifdef PARTICLE_MODEL
+
 #ifndef __PARTICLE_CENTER_H
 #define __PARTICLE_CENTER_H
 
@@ -7,7 +7,7 @@
 //#include "../models/ibm/ibmVar.h"
 #include "../models/dem/collisionVar.h"
 
-
+#ifdef PARTICLE_MODEL
 class CollisionData {
     public:
         __host__ __device__ CollisionData();  // Construtor
@@ -350,6 +350,7 @@ protected:
     dfloat3 semiAxis3;
     CollisionData collision;
 }; 
-#endif
 
 #endif //PARTICLE_MODEL
+#endif
+

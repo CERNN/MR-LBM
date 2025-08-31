@@ -6,7 +6,7 @@
 *   @version 0.3.0
 *   @date 26/08/2020
 */
-#ifdef PARTICLE_MODEL
+
 
 #ifndef __IBM_VAR_H
 #define __IBM_VAR_H
@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <math.h>
 
+#ifdef PARTICLE_MODEL
 
 // Change to location of nodes http://dx.doi.org/10.1016/j.jcp.2012.02.026
 #define BREUGEM_PARAMETER (0.0)
@@ -57,6 +58,7 @@ constexpr unsigned int GRID_PCOLLISION_IBM =
         : (TOTAL_PCOLLISION_IBM_THREADS / THREADS_PCOLLISION_IBM));
 /* -------------------------------------------------------------------------- */
 
+#endif //PARTICLE_MODEL
 #endif // !__IBM_VAR_H
 
-#endif //PARTICLE_MODEL
+

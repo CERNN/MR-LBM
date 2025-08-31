@@ -1,5 +1,6 @@
-#ifdef PARTICLE_MODEL
 #include "particlesReport.cuh"
+
+#ifdef PARTICLE_MODEL
 
 std::string getStrDfloat3(dfloat3 val, std::string sep){
     std::ostringstream strValues("");

@@ -1,7 +1,8 @@
-#ifdef PARTICLE_MODEL
+
 #ifndef __IBM_COLLISION_H
 #define __IBM_COLLISION_H
+#ifdef PARTICLE_MODEL
 
-
-#endif // !__IBM_COLLISION_H
 #endif //PARTICLE_MODEL
+#endif // !__IBM_COLLISION_H
+

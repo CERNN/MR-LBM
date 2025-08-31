@@ -1,6 +1,8 @@
-#ifdef PARTICLE_MODEL
+
 
 #include "pibm.cuh"
+
+#ifdef PARTICLE_MODEL
 
 void pibmSimulation(
     ParticlesSoA particles,

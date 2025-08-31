@@ -1,5 +1,3 @@
-#ifdef PARTICLE_MODEL
-
 #ifndef __PARTICLE_MODEL_PIBM_CUH
 #define __PARTICLE_MODEL_PIBM_CUH
 
@@ -12,6 +10,7 @@
 #include "../../../saveData.cuh"
 #include "./../../class/Particle.cuh"
 
+#ifdef PARTICLE_MODEL
 
 
 
@@ -22,7 +21,7 @@ void pibmSimulation(
     unsigned int step
 );
 
-
+#endif //PARTICLE_MODEL
 #endif
 
-#endif //PARTICLE_MODEL
+

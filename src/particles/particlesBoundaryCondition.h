@@ -5,7 +5,7 @@
 *   @version 0.3.0
 *   @date 14/06/2021
 */
-#ifdef PARTICLE_MODEL
+
 
 #ifndef __IBM_BC_H
 #define __IBM_BC_H
@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <math.h>
 
+#ifdef PARTICLE_MODEL
 /* -------------------------- BOUNDARY CONDITIONS -------------------------- */
 
 
@@ -69,6 +70,6 @@
 #endif //IBM_BC_Z_PERIODIC
 
 
-
-#endif // !__IBM_BC_H
 #endif //PARTICLE_MODEL
+#endif // !__IBM_BC_H
+

@@ -152,10 +152,10 @@ int main() {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaStreamCreate(&streamsLBM[0]));
     checkCudaErrors(cudaDeviceSynchronize());
-    //#ifdef PARTICLE_MODEL
+    #ifdef PARTICLE_MODEL
     cudaStream_t streamsPart[1];
     checkCudaErrors(cudaStreamCreate(&streamsPart[0]));
-    //#endif
+    #endif //PARTICLE_MODEL
 
     step=INI_STEP;
 
@@ -178,15 +178,14 @@ int main() {
         //memory allocation for particles in host and device
         ParticlesSoA particlesSoA;
         Particle *particles;
-        IbmMacrsAux ibmMacrsAux;
         particles = (Particle*) malloc(sizeof(Particle)*NUM_PARTICLES);
         
         // particle initialization with position, velocity, and solver method
-        initializeParticle(particlesSoA, particles, ibmMacrsAux, &step, gridBlock, threadBlock);
+        initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
 
         saveParticlesInfo(&particlesSoA, step);
 
-    #endif
+    #endif //PARTICLE_MODEL
 
     /* ------------------------------ TIMER EVENTS  ------------------------------ */
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
@@ -224,7 +223,7 @@ int main() {
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
             #ifdef PARTICLE_MODEL
                 if(PARTICLES_SAVE){ particleSave = !(aux % PARTICLES_SAVE);}
-            #endif
+            #endif //PARTICLE MODEL
         }
 #pragma warning(pop)
         
@@ -238,8 +237,8 @@ int main() {
         swapGhostInterfaces(ghostInterface);
 
         #ifdef PARTICLE_MODEL
-            particleSimulation(&particlesSoA,ibmMacrsAux,d_fMom,streamsPart,step);
-        #endif
+            particleSimulation(&particlesSoA,d_fMom,streamsPart,step);
+        #endif //PARTICLE_MODEL
 
 
         if(checkpoint){
@@ -273,7 +272,7 @@ int main() {
             #ifdef PARTICLE_MODEL
                 printf("Starting saveSimCheckpointParticle...\t"); fflush(stdout);
                 saveSimCheckpointParticle(particlesSoA, &step);
-            #endif
+            #endif //PARTICLE_MODEL
             
 
         }
@@ -364,11 +363,11 @@ int main() {
                 if(console_flush){fflush(stdout);}
                 saveParticlesInfo(&particlesSoA, step);
             }
-        #endif
+        #endif //PARTICLE_MODEL
 
     } 
     /* --------------------------------------------------------------------- */
-    /* ------------------------------ END LOO ------------------------------ */
+    /* ------------------------------ END LOOP ----------------------------- */
     /* --------------------------------------------------------------------- */
 
     checkCudaErrors(cudaDeviceSynchronize());

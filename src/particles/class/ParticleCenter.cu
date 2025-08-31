@@ -1,8 +1,9 @@
-#ifdef PARTICLE_MODEL
+
 
 #include "ParticleCenter.cuh"
 #include <iostream>
 
+#ifdef PARTICLE_MODEL
 __host__ __device__
 CollisionData::CollisionData() {
     reset();

@@ -1,9 +1,8 @@
-#ifdef PARTICLE_MODEL
-
 #include "particle.cuh"
 #include <cstdlib>
 #include <iostream>
 
+#ifdef PARTICLE_MODEL
 
 __host__ __device__ Particle::Particle(){
     method = none; // Initialize method

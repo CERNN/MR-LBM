@@ -1,10 +1,11 @@
 
-#ifdef PARTICLE_MODEL
+
 
 #include "IbmNodes.cuh"
 #include "../../class/Particle.cuh"
 // #include "../../class/ParticleCenter.cuh"
 
+#ifdef PARTICLE_MODEL
 // Definitions class IbmNodes
 __host__ __device__
 IbmNodes::IbmNodes()

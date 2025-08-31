@@ -1,10 +1,11 @@
-#ifdef PARTICLE_MODEL
 
 #ifndef __PARTICLE_SHARED_FUNCTIONS_CUH
 #define __PARTICLE_SHARED_FUNCTIONS_CUH
 
 #include "./../../globalStructs.h"
 #include "./../../globalFunctions.h"
+
+#ifdef PARTICLE_MODEL
 
 // Stencil distance
 #if defined(STENCIL_2)
@@ -41,6 +42,6 @@ __device__ __forceinline__  dfloat stencil(dfloat x) {
     return 0;
 }
 
-
-#endif //__PARTICLE_MODEL_TRACER_CUH
 #endif //PARTICLE_MODEL
+#endif //__PARTICLE_MODEL_TRACER_CUH
+

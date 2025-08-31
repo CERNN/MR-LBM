@@ -6,7 +6,7 @@
 *   @date 13/10/2020
 */
 
-#ifdef PARTICLE_MODEL
+
 #ifndef __PARTICLES_REPORT_H
 #define __PARTICLES_REPORT_H
 
@@ -16,6 +16,8 @@
 //#include "../lbmReport.h"
 #include "../class/Particle.cuh"
 #include "../../saveData.cuh"
+
+#ifdef PARTICLE_MODEL
 
 /**
 *   @brief Save particles informations

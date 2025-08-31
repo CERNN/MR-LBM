@@ -1,4 +1,4 @@
-#ifdef PARTICLE_MODEL
+
 
 #ifndef __IBM_NODES_H
 #define __IBM_NODES_H
@@ -9,6 +9,7 @@
 //#include "../../class/ParticleCenter.cuh"
 #pragma once
 
+#ifdef PARTICLE_MODEL
 class Particle;
 
 /*
@@ -133,7 +134,7 @@ public:
     __host__ __device__ void setS(dfloat* S);
 };
 
-
+#endif //PARTICLE_MODEL
 #endif
 
-#endif //PARTICLE_MODEL
+

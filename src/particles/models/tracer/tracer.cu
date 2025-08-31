@@ -1,7 +1,8 @@
-#ifdef PARTICLE_MODEL
+
 
 #include "tracer.cuh"
 
+#ifdef PARTICLE_MODEL
 __host__ 
 void tracerSimulation(
     ParticlesSoA *particles,

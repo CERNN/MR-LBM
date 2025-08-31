@@ -1,9 +1,10 @@
-#ifdef PARTICLE_MODEL
+
 
 //functions related to the rigid body body of the particle and discretization
 
 #include "particleMovement.cuh"
 
+#ifdef PARTICLE_MODEL
 __global__
 void gpuUpdateParticleOldValues(
     ParticleCenter *pArray,

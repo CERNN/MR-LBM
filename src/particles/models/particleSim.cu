@@ -1,10 +1,11 @@
-#ifdef PARTICLE_MODEL
+
 
 #include "particleSim.cuh"
 
+#ifdef PARTICLE_MODEL
+
 void particleSimulation(
     ParticlesSoA *particles,
-    IbmMacrsAux ibmMacrsAux,
     dfloat *fMom,
     cudaStream_t *streamParticles,
     unsigned int step
@@ -17,7 +18,7 @@ void particleSimulation(
     //printf("Number of particles IBM %d PIBM %d Tracer %d \n",numIBM,numPIBM,numTRACER);
 
     if(numIBM>0){
-       ibmSimulation(particles,ibmMacrsAux,fMom,streamParticles[0],step);
+       ibmSimulation(particles,fMom,streamParticles[0],step);
     }
     if(numPIBM>0){
         /*code*/

@@ -1,11 +1,9 @@
-#ifdef PARTICLE_MODEL
 
 #include "ibm.cuh"
 
-
+#ifdef PARTICLE_MODEL
 void ibmSimulation(
     ParticlesSoA* particles,
-    IbmMacrsAux ibmMacrsAux,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step

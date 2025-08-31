@@ -1,4 +1,4 @@
-#ifdef PARTICLE_MODEL
+
 #ifndef __PARTICLE_MODEL_TRACER_CUH
 #define __PARTICLE_MODEL_TRACER_CUH
 
@@ -11,6 +11,7 @@
 #include "../../../saveData.cuh"
 #include "./../../class/particle.cuh"
 
+#ifdef PARTICLE_MODEL
 /*
 *   @brief Handle all simulation process of the tracer particles
 *
@@ -55,7 +56,7 @@ void tracer_saveParticleInfo(
     unsigned int step
 );
 
+#endif //PARTICLE_MODEL
 
 #endif //__PARTICLE_MODEL_TRACER_CUH
 
-#endif //PARTICLE_MODEL

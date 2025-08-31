@@ -1,4 +1,4 @@
-#ifdef PARTICLE_MODEL
+
 
 #ifndef __PARTICLE_MODEL_IBM_CUH
 #define __PARTICLE_MODEL_IBM_CUH
@@ -15,10 +15,9 @@
 #include "../dem/particleMovement.cuh"
 #include "../dem/collisionDetection.cuh"
 
-
+#ifdef PARTICLE_MODEL
 void ibmSimulation(
     ParticlesSoA* particles,
-    IbmMacrsAux ibmMacrsAux,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
@@ -48,9 +47,8 @@ void gpuParticleNodeMovement(
     unsigned int step
 );
 
-
+#endif //PARTICLE_MODEL
 #endif
 
-#endif //PARTICLE_MODEL
 
 

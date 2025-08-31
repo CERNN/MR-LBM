@@ -1,4 +1,4 @@
-#ifdef PARTICLE_MODEL
+
 #ifndef __PARTICLE_H
 #define __PARTICLE_H
 
@@ -11,6 +11,7 @@
 #include <map>
 #include "./../../globalFunctions.h"
 
+#ifdef PARTICLE_MODEL
 /*
 *   Struct for particle representation
 */
@@ -148,6 +149,6 @@ class ParticlesSoA{
         std::vector<ParticleCenter> centerStorage;
 };
 
+#endif //PARTICLE_MODEL
 #endif
 
-#endif //PARTICLE_MODEL
