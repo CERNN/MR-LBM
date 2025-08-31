@@ -35,8 +35,9 @@ void gpuMomCollisionStream(
     unsigned int step,
     bool save);
 
+#ifdef LOCAL_FORCES
 __global__
 void gpuResetMacroForces(dfloat *fMom);
+#endif
 
-
-#endif __MLBM_H
+#endif //__MLBM_H

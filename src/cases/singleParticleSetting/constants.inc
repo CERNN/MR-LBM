@@ -58,7 +58,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
     #define NUM_PARTICLES 1
 
     constexpr dfloat GX = 0.0;
-    constexpr dfloat GY = 1e-5;
+    constexpr dfloat GY = -1e-2;
     constexpr dfloat GZ = 0.0;
 
     constexpr dfloat FLUID_DENSITY = 1.0;

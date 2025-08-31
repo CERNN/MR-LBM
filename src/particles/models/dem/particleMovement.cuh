@@ -14,23 +14,26 @@
 
 __global__
 void gpuUpdateParticleOldValues(
-    ParticleCenter *particleCenters,
+    ParticleCenter *pArray,
     int firstIndex,
-    int lastIndex
+    int lastIndex,    
+    unsigned int step
 );
 
 __global__ 
 void gpuUpdateParticleCenterVelocityAndRotation(
-    ParticleCenter *particleCenters,
+    ParticleCenter *pArray,
     int firstIndex,
-    int lastIndex
+    int lastIndex,    
+    unsigned int step
 );
 
 __global__
 void gpuParticleMovement(
     ParticleCenter *pArray,
     int firstIndex,
-    int lastIndex
+    int lastIndex,    
+    unsigned int step
 );
 
 #endif //PARTICLE_MODEL

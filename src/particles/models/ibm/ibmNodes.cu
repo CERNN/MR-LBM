@@ -19,8 +19,14 @@ __host__ __device__ void IbmNodes::setVel(const dfloat3& vel) { this->vel = vel;
 __host__ __device__ dfloat3 IbmNodes::getVelOld() const { return this->vel_old; }
 __host__ __device__ void IbmNodes::setVelOld(const dfloat3& vel_old) { this->vel_old = vel_old; }
 
-__host__ __device__ dfloat3 IbmNodes::getF() const { return this->f; }
-__host__ __device__ void IbmNodes::setF(const dfloat3& f) { this->f = f; }
+__host__ __device__ dfloat3 IbmNodes::getF() const { return this->f;}
+__host__ __device__ dfloat IbmNodes::getFX() const { return this->f.x;}
+__host__ __device__ dfloat IbmNodes::getFY() const { return this->f.y;}
+__host__ __device__ dfloat IbmNodes::getFZ() const { return this->f.z;}
+__host__ __device__ void IbmNodes::setF(const dfloat3& f) { this->f = f;}
+__host__ __device__ void IbmNodes::setFX(const dfloat& f_x) { this->f.x = f_x;}
+__host__ __device__ void IbmNodes::setFY(const dfloat& f_y) { this->f.y = f_y;}
+__host__ __device__ void IbmNodes::setFZ(const dfloat& f_z) { this->f.z = f_z;}
 
 __host__ __device__ dfloat3 IbmNodes::getDeltaF() const { return this->deltaF; }
 __host__ __device__ void IbmNodes::setDeltaF(const dfloat3& deltaF) { this->deltaF = deltaF; }
@@ -63,7 +69,13 @@ __host__ __device__ dfloat3SoA IbmNodesSoA::getVelOld() const { return this->vel
 __host__ __device__ void IbmNodesSoA::setVelOld(const dfloat3SoA& vel_old) { this->vel_old = vel_old; }
 
 __host__ __device__ dfloat3SoA IbmNodesSoA::getF() const { return this->f; }
+__host__ __device__ dfloat IbmNodesSoA::getFX() const { return this->f.x[0]; }
+__host__ __device__ dfloat IbmNodesSoA::getFY() const { return this->f.y[0]; }
+__host__ __device__ dfloat IbmNodesSoA::getFZ() const { return this->f.z[0]; }
 __host__ __device__ void IbmNodesSoA::setF(const dfloat3SoA& f) { this->f = f; }
+__host__ __device__ void IbmNodesSoA::setFX(const dfloat& fx) { this->f.x[0] = fx; }
+__host__ __device__ void IbmNodesSoA::setFY(const dfloat& fy) { this->f.y[0] = fy; }
+__host__ __device__ void IbmNodesSoA::setFZ(const dfloat& fz) { this->f.z[0] = fz; }
 
 __host__ __device__ dfloat3SoA IbmNodesSoA::getDeltaF() const { return this->deltaF; }
 __host__ __device__ void IbmNodesSoA::setDeltaF(const dfloat3SoA& deltaF) { this->deltaF = deltaF; }

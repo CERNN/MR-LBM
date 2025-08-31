@@ -30,7 +30,13 @@ public:
     __host__ __device__ void setVelOld(const dfloat3& vel_old);
    
     __host__ __device__ dfloat3 getF() const;
+    __host__ __device__ dfloat getFX() const;
+    __host__ __device__ dfloat getFY() const;
+    __host__ __device__ dfloat getFZ() const;
     __host__ __device__ void setF(const dfloat3& f);
+    __host__ __device__ void setFX(const dfloat& f_x);
+    __host__ __device__ void setFY(const dfloat& f_y);
+    __host__ __device__ void setFZ(const dfloat& f_z);
     
     __host__ __device__ dfloat3 getDeltaF() const;
     __host__ __device__ void setDeltaF(const dfloat3& deltaF);
@@ -112,7 +118,13 @@ public:
     __host__ __device__ void setVelOld(const dfloat3SoA& vel_old);
    
     __host__ __device__ dfloat3SoA getF() const;
+    __host__ __device__ dfloat getFX() const;
+    __host__ __device__ dfloat getFY() const;
+    __host__ __device__ dfloat getFZ() const;
     __host__ __device__ void setF(const dfloat3SoA& f);
+    __host__ __device__ void setFX(const dfloat& fx);
+    __host__ __device__ void setFY(const dfloat& fy);
+    __host__ __device__ void setFZ(const dfloat& fz);
     
     __host__ __device__ dfloat3SoA getDeltaF() const;
     __host__ __device__ void setDeltaF(const dfloat3SoA& deltaF);

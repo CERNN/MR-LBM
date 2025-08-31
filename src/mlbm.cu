@@ -728,7 +728,7 @@ __global__ void gpuMomCollisionStream(
 
 }
 
-
+#ifdef LOCAL_FORCES
 __global__
 void gpuResetMacroForces(dfloat *fMom){
     const int x = threadIdx.x + blockDim.x * blockIdx.x;
@@ -738,6 +738,7 @@ void gpuResetMacroForces(dfloat *fMom){
         return;
 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
-    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FY;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FZ;
 }
+#endif 
