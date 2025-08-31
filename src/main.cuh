@@ -15,12 +15,21 @@
 #include "globalStructs.h"
 #include "auxFunctions.cuh"
 #include "treatData.cuh"
+
+
+#ifdef PARTICLE_MODEL
+    #include "./particles/class/Particle.cuh"
+    #include "./particles/utils/particlesReport.cuh"
+    #include "./particles/particlesBoundaryCondition.h"
+    #include "./particles/models/particleSim.cuh"
+    #include "./particles/models/dem/collisionDetection.cuh"
+    #include "./particles/models/dem/particleMovement.cuh"
+#endif
+
 #ifdef OMEGA_FIELD
     #include "nnf.h"
 #endif
-#ifdef PARTICLE_TRACER
-    #include "particleTracer.cuh"
-#endif
+
 #include "errorDef.h"
 //#include "structs.h"
 //#include "globalFunctions.h"
@@ -752,7 +761,6 @@ void allocateHostMemory(
     A_YY_DIST_PARAMS_DECLARATION_PTR
     A_YZ_DIST_PARAMS_DECLARATION_PTR
     A_ZZ_DIST_PARAMS_DECLARATION_PTR
-    PARTICLE_TRACER_PARAMS_DECLARATION_PTR(h_)
     MEAN_FLOW_PARAMS_DECLARATION_PTR
     MEAN_FLOW_SECOND_DIST_PARAMS_DECLARATION_PTR
     #if NODE_TYPE_SAVE
@@ -832,13 +840,6 @@ void allocateHostMemory(
         #endif
     #endif //LOG_CONFORMATION
 
-
-
-    #ifdef PARTICLE_TRACER
-    checkCudaErrors(cudaMallocHost((void**)h_particlePos, sizeof(dfloat3) * NUM_PARTICLES));
-    memAllocated += sizeof(dfloat3) * NUM_PARTICLES;
-    #endif
-
     #if MEAN_FLOW
     checkCudaErrors(cudaMallocHost((void**)m_fMom, MEM_SIZE_MOM));
     checkCudaErrors(cudaMallocHost((void**)m_rho, MEM_SIZE_SCALAR));
@@ -873,7 +874,6 @@ void allocateHostMemory(
 __host__
 void allocateDeviceMemory(
     dfloat** d_fMom, unsigned int** dNodeType, GhostInterfaceData* ghostInterface
-    PARTICLE_TRACER_PARAMS_DECLARATION_PTR(d_)
     BC_FORCES_PARAMS_DECLARATION_PTR(d_)
 ) {
     unsigned int memAllocated = 0;
@@ -884,10 +884,6 @@ void allocateDeviceMemory(
 
     memAllocated += MEM_SIZE_MOM + sizeof(int) * NUMBER_LBM_NODES;
 
-    #ifdef PARTICLE_TRACER
-    checkCudaErrors(cudaMalloc((void**)d_particlePos, sizeof(dfloat3) * NUM_PARTICLES));
-    memAllocated += sizeof(dfloat3) * NUM_PARTICLES;
-    #endif
 
     #ifdef BC_FORCES
     cudaMalloc((void**)d_BC_Fx, MEM_SIZE_SCALAR);
@@ -911,8 +907,6 @@ void initializeDomain(
     BC_FORCES_PARAMS_DECLARATION(&d_)
     DENSITY_CORRECTION_PARAMS_DECLARATION(&h_)
     DENSITY_CORRECTION_PARAMS_DECLARATION(&d_)
-    PARTICLE_TRACER_PARAMS_DECLARATION(&h_)
-    PARTICLE_TRACER_PARAMS_DECLARATION(&d_)
     int *step, dim3 gridBlock, dim3 threadBlock
     ){
     
@@ -1049,10 +1043,6 @@ void initializeDomain(
     // Synchronize after all initializations
     checkCudaErrors(cudaDeviceSynchronize());
 
-    // Particle tracer initialization
-    #ifdef PARTICLE_TRACER
-        initializeParticles(h_particlePos, d_particlePos);
-    #endif
 
     // Synchronize and transfer data back to host if needed
     checkCudaErrors(cudaDeviceSynchronize());
@@ -1069,5 +1059,41 @@ void initializeDomain(
     #endif
 }
 
+
+#ifdef PARTICLE_MODEL
+__host__
+void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, int *step, dim3 gridBlock, dim3 threadBlock){
+
+    printf("Creating particles...\t"); fflush(stdout);
+    particlesSoA.createParticles(particles);
+    printf("Particles created!\n"); fflush(stdout);
+
+    particlesSoA.updateParticlesAsSoA(particles);
+    printf("Update ParticlesAsSoA!\n"); fflush(stdout);
+
+    int checkpoint_state = 0;
+    // Checar se exite checkpoint
+    if(LOAD_CHECKPOINT)
+    {
+        checkpoint_state = loadSimCheckpointParticle(particlesSoA, step);
+       
+    }else{
+        if(checkpoint_state != 0){
+            step = INI_STEP;
+            dim3 gridInit = gridBlock;
+            // Initialize ghost nodes
+            gridInit.z += 1;
+            
+            checkCudaErrors(cudaSetDevice(GPU_INDEX));
+            // Initialize populations
+            //gpuInitialization<<<gridInit, threads>>>(pop[i], macr[i], randomNumbers[i]);
+            checkCudaErrors(cudaDeviceSynchronize());
+
+            getLastCudaError("Initialization error");
+        }
+    }
+
+}
+#endif // PARTICLE_MODEL
 
 #endif // MAIN_CUH

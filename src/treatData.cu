@@ -305,10 +305,6 @@ void totalBcDrag(
     dfloat* sum_BC_Fy;
     dfloat* sum_BC_Fz;
 
-    //dfloat* h_BC_Fx;
-    //dfloat* h_BC_Fy;
-    //dfloat* h_BC_Fz;
-   
     cudaMalloc((void**)&sum_BC_Fx, NUM_BLOCK * sizeof(dfloat));
     cudaMalloc((void**)&sum_BC_Fy, NUM_BLOCK * sizeof(dfloat));
     cudaMalloc((void**)&sum_BC_Fz, NUM_BLOCK * sizeof(dfloat));

@@ -134,6 +134,8 @@ const size_t MEM_SIZE_SCALAR = sizeof(dfloat) * NUMBER_LBM_NODES;
 const size_t MEM_SIZE_POP = sizeof(dfloat) * NUMBER_LBM_POP_NODES * Q;
 const size_t MEM_SIZE_MOM = sizeof(dfloat) * NUMBER_LBM_NODES * NUMBER_MOMENTS;
 
+const size_t MEM_SIZE_MAP_BC = sizeof(uint32_t) * NUMBER_LBM_NODES;
+
 /* ------------------------------ GPU DEFINES ------------------------------ */
 const int N_THREADS = (NX%64?((NX%32||(NX<32))?NX:32):64); // NX or 32 or 64 
                                     // multiple of 32 for better performance.
@@ -200,17 +202,6 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
     #define BC_FORCES_PARAMS_DECLARATION(PREFIX)
     #define BC_FORCES_PARAMS(PREFIX)
 #endif
-
-#ifdef PARTICLE_TRACER
-    #define PARTICLE_TRACER_PARAMS_DECLARATION(PREFIX) dfloat* PREFIX##particlePos
-    #define PARTICLE_TRACER_PARAMS_PTR(PREFIX) PREFIX##particlePos
-#else
-    #define PARTICLE_TRACER_PARAMS_DECLARATION(PREFIX)
-    #define PARTICLE_TRACER_PARAMS_PTR(PREFIX)
-#endif
-
-
-
 
 #if NODE_TYPE_SAVE
     #define NODE_TYPE_SAVE_PARAMS_DECLARATION unsigned int* nodeTypeSave,
@@ -300,18 +291,6 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
     #define A_ZZ_DIST_PARAMS_DECLARATION_PTR
     #define A_ZZ_DIST_PARAMS_PTR
 #endif
-
-
-
-
-#ifdef PARTICLE_TRACER
-    #define PARTICLE_TRACER_PARAMS_DECLARATION_PTR(PREFIX) , dfloat** PREFIX##particlePos
-    #define PARTICLE_TRACER_PARAMS_PTR(PREFIX) , &PREFIX##particlePos
-#else
-    #define PARTICLE_TRACER_PARAMS_DECLARATION_PTR(PREFIX)
-    #define PARTICLE_TRACER_PARAMS_PTR(PREFIX)
-#endif
-
 
 
 #if MEAN_FLOW

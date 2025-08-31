@@ -20,21 +20,34 @@
     #define VTK_DFLOAT_TYPE "double"
 #endif
 
+// Pow function to use
+#ifdef SINGLE_PRECISION
+    #define POW_FUNCTION powf 
+#else
+    #define POW_FUNCTION pow
+#endif
 
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM benchmark
+#define BC_PROBLEM singleParticleSetting
                                 
 constexpr bool console_flush = false;
 
 #define GPU_INDEX 0
 
+/* ========== Verifcar se não faz parte dsa declarações do caso -> ========== */
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
+constexpr unsigned int N_GPUS = 1;    // Number of GPUS to use
+constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
+
+/* ========== <- Verifcar se não faz parte dsa declarações do caso ========== */
 
 #define STR_IMPL(A) #A
 #define STR(A) STR_IMPL(A)
+
+
 
 #define CASE_DIRECTORY cases
 #define CASE_CONSTANTS STR(CASE_DIRECTORY/BC_PROBLEM/constants.inc)
@@ -78,6 +91,8 @@ constexpr bool console_flush = false;
 #define COLREC_AZZ_RECONSTRUCTION STR(COLREC_DIRECTORY/AIJ_SCALAR/reconstruction_zz.inc)
 #define COLREC_AZZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
 
+
+#define CASE_PARTICLE_CREATE STR(../../CASE_DIRECTORY/BC_PROBLEM/particleCreation.inc)
 
 // Some compiler timer functions and auxiliaty compute macros
 
@@ -160,7 +175,7 @@ constexpr BlockDim findOptimalBlockDimensions(size_t maxElements) {
     return {bestX, bestY, bestZ};
 }
 
-// swap 32‐bit word
+// swap 32-bit word
 static inline uint32_t swap32(uint32_t v) {
     return  (v<<24) | 
            ((v<<8)&0x00FF0000) |
@@ -168,7 +183,7 @@ static inline uint32_t swap32(uint32_t v) {
             (v>>24);
 }
 
-// swap 64‐bit word
+// swap 64-bit word
 static inline uint64_t swap64(uint64_t v) {
     return  (v<<56) |
            ((v<<40)&0x00FF000000000000ULL) |
@@ -181,8 +196,8 @@ static inline uint64_t swap64(uint64_t v) {
 }
 
 
-#include CASE_MODEL
 #include CASE_CONSTANTS
+#include CASE_MODEL
 #include CASE_OUTPUTS
 
 

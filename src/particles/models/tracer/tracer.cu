@@ -1,65 +1,50 @@
-#include "particleTracer.cuh"
 
 
+#include "tracer.cuh"
 
-__host__
-void initializeParticles(    
-    dfloat3 *h_particlePos,
-    dfloat3 *d_particlePos
-){
-
-    //h_particlePos[0].x = 1*NX/4;  h_particlePos[0].y = 1*NY/4;  h_particlePos[0].z = 1*NZ/4;
-    //h_particlePos[1].x = 1*NX/4;  h_particlePos[1].y = 1*NY/4;  h_particlePos[1].z = 3*NZ/4;
-    //h_particlePos[2].x = 1*NX/4;  h_particlePos[2].y = 3*NY/4;  h_particlePos[2].z = 1*NZ/4;
-    //h_particlePos[3].x = 1*NX/4;  h_particlePos[3].y = 3*NY/4;  h_particlePos[3].z = 3*NZ/4;
-    //h_particlePos[4].x = 3*NX/4;  h_particlePos[4].y = 1*NY/4;  h_particlePos[4].z = 1*NZ/4;
-    //h_particlePos[5].x = 3*NX/4;  h_particlePos[5].y = 1*NY/4;  h_particlePos[5].z = 3*NZ/4;
-    //h_particlePos[6].x = 3*NX/4;  h_particlePos[6].y = 3*NY/4;  h_particlePos[6].z = 1*NZ/4;
-    //h_particlePos[7].x = 3*NX/4;  h_particlePos[7].y = 3*NY/4;  h_particlePos[7].z = 3*NZ/4;
-
-    std::random_device rand_dev;
-    std::minstd_rand generator(rand_dev());
-    std::uniform_int_distribution<int>  distr(0, RAND_MAX);
-
-    dfloat x_limit_B = 0 + 5 / 2.0;
-    dfloat x_limit_E = NX - 5 / 2.0;
-    dfloat y_limit_B = 0 + 5 / 2.0;
-    dfloat y_limit_E = NY - 5 / 2.0;
-    dfloat z_limit_B = 0 + 5 / 2.0;
-    dfloat z_limit_E = NZ - 5 / 2.0;
-
-
-    for ( int i = 0; i < NUM_PARTICLES; i++) {
-        h_particlePos[i].x = x_limit_B + (x_limit_E - x_limit_B) * distr(generator) / RAND_MAX;
-        h_particlePos[i].y = y_limit_B + (y_limit_E - y_limit_B) * distr(generator) / RAND_MAX;
-        h_particlePos[i].z = z_limit_B + (z_limit_E - z_limit_B) * distr(generator) / RAND_MAX;
-    }
-
-
-
-    checkCudaErrors(cudaMemcpy(d_particlePos, h_particlePos, sizeof(dfloat3)*NUM_PARTICLES, cudaMemcpyHostToDevice)); 
-
-}
-
-
-__host__
-void updateParticlePos(
-    dfloat3 *d_particlePos, 
-    dfloat3 *h_particlePos, 
+#ifdef PARTICLE_MODEL
+__host__ 
+void tracerSimulation(
+    ParticlesSoA *particles,
     dfloat *fMom,
     cudaStream_t streamParticles,
     unsigned int step
 ){
 
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
-    
+    MethodRange range = particles->getMethodRange(TRACER);
+
+    int numTracerParticles = range.last - range.first + 1;
     const unsigned int threadsNodes = 64;
-    const unsigned int gridNodes = NUM_PARTICLES % threadsNodes ? NUM_PARTICLES / threadsNodes + 1 : NUM_PARTICLES / threadsNodes;
+    const unsigned int gridNodes = (numTracerParticles + threadsNodes - 1) / threadsNodes;
+
+    if (particles == nullptr) {
+        printf("Error: particles is nullptr\n");
+        return;
+    }
 
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
-    velocityInterpolation<<<gridNodes, threadsNodes, 0, streamParticles>>>(d_particlePos, fMom,step);
+
+    if (range.first < 0 || range.last >= NUM_PARTICLES || range.first > range.last) {
+        printf("Error: Invalid range - first: %d, last: %d, NUM_PARTICLES: %d\n", 
+               range.first, range.last, NUM_PARTICLES);
+        return;
+    }
+
+    ParticleCenter* pArray = particles->getPCenterArray();
+
+    tracer_positionUpdate<<<gridNodes, threadsNodes, 0, streamParticles>>>(
+        pArray, fMom,range.first,range.last,step
+    );
+    
+    cudaError_t kernelError = cudaGetLastError();
+    if (kernelError != cudaSuccess) {
+        printf("Error in kernel tracer_positionUpdate: %s\n", cudaGetErrorString(kernelError));
+    }
+
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
+    #ifdef PARTICLE_TRACER_SAVE
 #pragma warning(push)
 #pragma warning(disable: 4804)
     if(!(step%PARTICLE_TRACER_SAVE)){
@@ -67,35 +52,50 @@ void updateParticlePos(
         saveParticleInfo(h_particlePos,step);
     }
 #pragma warning(pop)
+    #endif
+
+
 }
 
 __global__
-void velocityInterpolation(
-    dfloat3 *d_particlePos, 
+void tracer_positionUpdate(
+    ParticleCenter *pArray,
     dfloat *fMom,
+    int firstIndex,
+    int lastIndex,
     unsigned int step
 ){
-    unsigned int i = threadIdx.x + blockDim.x * blockIdx.x;
+    unsigned int localIdx = threadIdx.x + blockDim.x * blockIdx.x;
+    int globalIdx = firstIndex + localIdx;
 
-    if (i >= NUM_PARTICLES)
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
         return;
+    }
 
-    dfloat aux, aux1;
+    if (pArray == nullptr) {
+        printf("ERROR: particles is nullptr\n");
+        return;
+    }
+
+    if (globalIdx < firstIndex || globalIdx > lastIndex || globalIdx >= NUM_PARTICLES) {
+        return;
+    }
     
+    dfloat aux, aux1;
     // Calculate stencils to use and the valid interval [xyz][idx]
     dfloat stencilVal[3][P_DIST*2];
 
-    dfloat xPos = d_particlePos[i].x;
-    dfloat yPos = d_particlePos[i].y;
-    dfloat zPos = d_particlePos[i].z;
-    dfloat pos[3] = {xPos, yPos, zPos};
+    ParticleCenter* pc_i = &pArray[globalIdx];
 
+    dfloat3 pc_pos = pc_i->getPos();
+
+    dfloat pos[3] = {pc_pos.x,pc_pos.y,pc_pos.z};
+    
     const int posBase[3] = { 
-        int(xPos) - (P_DIST) + 1, 
-        int(yPos) - (P_DIST) + 1, 
-        int(zPos) - (P_DIST) + 1
+        int(pos[0]) - (P_DIST) + 1, 
+        int(pos[1]) - (P_DIST) + 1, 
+        int(pos[2]) - (P_DIST) + 1
     };
-
 
     const int maxIdx[3] = {
         #ifdef BC_X_WALL
@@ -143,7 +143,7 @@ void velocityInterpolation(
         #endif //BC_Z_PERIODIC
     };
 
-    // Particle stencil out of the domain
+     // Particle stencil out of the domain
     if(maxIdx[0] <= 0 || maxIdx[1] <= 0 || maxIdx[2] <= 0)
         return;
     // Particle stencil out of the domain
@@ -162,8 +162,8 @@ void velocityInterpolation(
     dfloat uzVar = 0;
 
     int posX, posY,posZ;
-
     // Interpolation 
+    
     for (int zk = minIdx[2]; zk <= maxIdx[2]; zk++) // z
     {
         for (int yj = minIdx[1]; yj <= maxIdx[1]; yj++) // y
@@ -209,45 +209,42 @@ void velocityInterpolation(
         }
     }
 
-
+    dfloat3 dVel = dfloat3(uxVar,uyVar,uzVar);// 0.01
     //Update particle position
-    d_particlePos[i].x += uxVar;
-    d_particlePos[i].y += uyVar;
-    d_particlePos[i].z += uzVar;
+    pc_i->setPos(pc_i->getPos() + dVel);
 
-    //AVOID THAT THE PARTICLES GO OUTSIDE OF THE DOMAIN
+      //AVOID THAT THE PARTICLES GO OUTSIDE OF THE DOMAIN
     #ifdef BC_X_WALL
-    if(d_particlePos[i].x < 0){
-        d_particlePos[i].x = 0.01;
+    if (pc_i->getPosX() < 0) {
+        pc_i->setPosX(0.01);
     }
-    if(d_particlePos[i].x > NX-1){
-        d_particlePos[i].x = NX-1.01;
+    if (pc_i->getPosX() > NX - 1) {
+        pc_i->setPosX(NX - 1.01);
     }
     #endif
 
     #ifdef BC_Y_WALL
-    if(d_particlePos[i].y < 0){
-        d_particlePos[i].y = 0.01;
+    if (pc_i->getPosY() < 0) {
+        pc_i->setPosY(0.01);
     }
-    if(d_particlePos[i].y > NY-1){
-        d_particlePos[i].y = NY-1.01;
+    if (pc_i->getPosY() > NY - 1) {
+        pc_i->setPosY(NY - 1.01);
     }
     #endif
 
     #ifdef BC_Z_WALL
-    if(d_particlePos[i].z < 0){
-        d_particlePos[i].z = 0.01;
+    if (pc_i->getPosZ() < 0) {
+        pc_i->setPosZ(0.01);
     }
-    if(d_particlePos[i].z > NZ-1){
-        d_particlePos[i].z = NZ-1.01;
+    if (pc_i->getPosZ() > NZ - 1) {
+        pc_i->setPosZ(NZ - 1.01);
     }
-    #endif
+    #endif 
 
 }
 
-
 __host__
-void saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
+void tracer_saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
     // Names of file to save particle info
     std::string strFileParticleData = getVarFilename("particleData", step, ".csv");
 
@@ -274,3 +271,5 @@ void saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
 
     outFileParticleData << strColumnNames << strValuesParticles.str();
 }
+
+#endif //PARTICLE_MODEL
