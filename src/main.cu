@@ -227,14 +227,14 @@ int main() {
         }
 #pragma warning(pop)
         
-        //
-        #ifdef LOCAL_FORCES
-        gpuResetMacroForces<<<gridBlock, threadBlock>>>(d_fMom);
-        #endif
 
         gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
         //swap interface pointers
         swapGhostInterfaces(ghostInterface);
+        
+        #ifdef LOCAL_FORCES
+            gpuResetMacroForces<<<gridBlock, threadBlock>>>(d_fMom);
+        #endif
 
         #ifdef PARTICLE_MODEL
             particleSimulation(&particlesSoA,d_fMom,streamsPart,step);

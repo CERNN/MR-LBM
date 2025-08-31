@@ -216,6 +216,7 @@ void gpuParticleMovement(
     #endif //BC_X_PERIODIC
 
     #ifdef BC_Y_WALL
+        dfloat dy  = 0.5*(pc_i->getVelY() + pc_i->getVelOldY());
         pc_i->setPosY(pc_i->getPosY() + 0.5*(pc_i->getVelY() + pc_i->getVelOldY()));
     #endif //BC_Y_WALL
     #ifdef BC_Y_PERIODIC
@@ -226,7 +227,8 @@ void gpuParticleMovement(
         pc_i->setPosZ(pc_i->getPosZ() + 0.5*(pc_i->getVelZ() + pc_i->getVelOldZ()));
     #endif //BC_Z_WALL
     #ifdef BC_Z_PERIODIC
-        pc_i->setPosZ(std::fmod((dfloat)(pc_i->getPosZ() + dy + NZ_TOTAL),(dfloat)(NZ_TOTAL)));
+        dfloat dz  = 0.5*(pc_i->getVelZ() + pc_i->getVelOldZ());
+        pc_i->setPosZ(std::fmod((dfloat)(pc_i->getPosZ() + dz + NZ_TOTAL),(dfloat)(NZ_TOTAL)));
     #endif //BC_Z_PERIODIC
 
     //Compute angular velocity

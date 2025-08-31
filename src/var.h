@@ -42,18 +42,6 @@ constexpr bool console_flush = false;
 constexpr unsigned int N_GPUS = 1;    // Number of GPUS to use
 constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
 
-/* ------------------------------ MEMORY SIZE ------------------------------ */ 
-// There are ghosts nodes in z for IBM macroscopics (velocity, density, force)
-#define NUMBER_LBM_IB_MACR_NODES (size_t)(NX*NY*(NZ+MACR_BORDER_NODES*2))
-
-// Values for all GPUs
-//#define TOTAL_NUMBER_LBM_IB_MACR_NODES (size_t)(NUMBER_LBM_IB_MACR_NODES * N_GPUS)
-//const size_t TOTAL_NUMBER_LBM_POP_NODES = NUMBER_LBM_POP_NODES * N_GPUS;
-//const size_t TOTAL_MEM_SIZE_POP = MEM_SIZE_POP * N_GPUS;
-//#define TOTAL_MEM_SIZE_IBM_SCALAR (size_t)(MEM_SIZE_IBM_SCALAR * N_GPUS)
-//const size_t TOTAL_MEM_SIZE_SCALAR = MEM_SIZE_SCALAR * N_GPUS;
-//const size_t TOTAL_MEM_SIZE_MAP_BC = MEM_SIZE_MAP_BC * N_GPUS;
-
 /* ========== <- Verifcar se não faz parte dsa declarações do caso ========== */
 
 #define STR_IMPL(A) #A

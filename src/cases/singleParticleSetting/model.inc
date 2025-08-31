@@ -18,4 +18,17 @@
                                // (useful for turbulence)
 
 
+#ifdef IBM_METHOD
+    // Change to location of nodes http://dx.doi.org/10.1016/j.jcp.2012.02.026
+    #define BREUGEM_PARAMETER (0.0)
+    // Mesh scale for IBM, minimum distance between nodes (lower, more nodes in particle)
+    #define MESH_SCALE 1.0
+    // Number of iterations of Coulomb algorithm to optimize the nodes positions
+    #define MESH_COULOMB 0
+    // #define ROTATION_LOCK true
+    // Assumed boundary thickness for IBM
+    constexpr dfloat IBM_THICKNESS = 1.0;
+    #define STENCIL_4 // Peskin Stencil
+#endif
+
 

@@ -69,7 +69,7 @@ void ibmSimulation(
             if(pNumNodes > 0){
                 checkCudaErrors(cudaSetDevice(GPUS_TO_USE[j]));
                 // Make the interpolation of LBM and spreading of IBM forces
-                //gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0],step);
+                gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0],step);
                 checkCudaErrors(cudaStreamSynchronize(streamParticles));
                 getLastCudaError("IBM interpolation spread error\n");
              }
@@ -378,12 +378,27 @@ void gpuForceInterpolationSpread(
     if(minIdx[0] >= P_DIST*2 || minIdx[1] >= P_DIST*2 || minIdx[2] >= P_DIST*2)
         return;
 
+    //if(i == 0){
+    //    printf("Node idx %d posNode x %f y %f z %f posBase x %d y %d z %d minIdx x %d y %d z %d maxIdx x %d y %d z %d \n",
+    //    i,posNode.x[i],posNode.y[i],posNode.z[i],
+    //    posBase[0],posBase[1],posBase[2],
+    //    minIdx[0],minIdx[1],minIdx[2],
+    //    maxIdx[0],maxIdx[1],maxIdx[2]);
+    //}
+
     //compute stencil values
-    for(int i = 0; i < 3; i++){
-        for(int j=minIdx[i]; j <= maxIdx[i]; j++){
-            stencilVal[i][j] = stencil(posBase[i]+j-(pos[i]-(i == 2? NZ*0 : 0)));
+    for(int ii = 0; ii < 3; ii++){
+        for(int jj=minIdx[ii]; jj <= maxIdx[ii]; jj++){
+            stencilVal[ii][jj] = stencil(posBase[ii]+jj-(pos[ii]));
+            //if(i == 0){
+            //    printf("ii %d jj %d r %f posBase[%d] = %d pos[%d] %f \t",ii,jj,r,ii,posBase[ii],ii,pos[ii]);
+            //    printf("stencilVal[%d][%d] = %f \n",ii,jj,stencilVal[ii][jj]);
+            //}
         }
     }
+
+
+
 
 
     dfloat rhoVar = 0;
@@ -434,9 +449,20 @@ void gpuForceInterpolationSpread(
                 uxVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UX_INDEX]/F_M_I_SCALE);
                 uyVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UY_INDEX]/F_M_I_SCALE);
                 uzVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UZ_INDEX]/F_M_I_SCALE);
+
+                //if(i == 0){
+                //    printf("aux %f x %d y %d z %d rho %f ux %f uy %f uz %f\n",aux,xx,yy,zz,
+                //        (RHO_0 + fMom[baseIdx + M_RHO_INDEX]),
+                //        (fMom[baseIdx + BLOCK_LBM_SIZE * M_UX_INDEX]/F_M_I_SCALE),
+                //        (fMom[baseIdx + BLOCK_LBM_SIZE * M_UY_INDEX]/F_M_I_SCALE),
+                //        (fMom[baseIdx + BLOCK_LBM_SIZE * M_UZ_INDEX]/F_M_I_SCALE));         
+                //}
+
             }
         }
     }
+
+
 
     // Velocity on node given the particle velocity and rotation
     dfloat ux_calc = 0;
@@ -511,6 +537,17 @@ void gpuForceInterpolationSpread(
     const dfloat fyIBM = force.y[i] + deltaF.y;
     const dfloat fzIBM = force.z[i] + deltaF.z;
 
+        
+    //if(i == 0){
+    //    printf("gpuForceInterpolationSpread step %d node idx %d pos x %f y %f z %f \n",step,i,xIBM,yIBM,zIBM);
+    //    printf("gpuForceInterpolationSpread step %d node idx %d vel x %f y %f z %f \n",step,i,ux_calc,uy_calc,uz_calc);
+    //    printf("gpuForceInterpolationSpread step %d lati idx %d rhoVar %f uxVar %f uyVar %f uzVar %f \n",step,i,rhoVar,uxVar,uyVar,uzVar);
+    //    printf("gpuForceInterpolationSpread step %d node idx %d deltaF x %f y %f z %f \n",step,i,deltaF.x,deltaF.y,deltaF.z);
+    //    printf("aux %f area dA %f IBM_THICKNESS %f \n",aux,dA,IBM_THICKNESS);
+    //    printf("gpuForceInterpolationSpread step %d node idx %d particle center idx %d pos x %f y %f z %f \n",step,i,particlesNodes->getParticleCenterIdx()[i],pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    //    printf("gpuForceInterpolationSpread step %d node idx %d particle center idx %d vel x %f y %f z %f \n",step,i,particlesNodes->getParticleCenterIdx()[i],pc_i->getVelX(),pc_i->getVelY(),pc_i->getVelZ());
+    //}
+
     // Spreading (zyx for memory locality)
     for (int zk = minIdx[2]; zk <= maxIdx[2]; zk++) // z
     {
@@ -545,6 +582,14 @@ void gpuForceInterpolationSpread(
                 #endif //BC_Z_PERIODIC
 
                 baseIdx = idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, 0, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ);
+
+                //if(i == 0){
+                //    printf("aux %f x %d y %d z %d base %p ux %p uy %p uz %p\n",aux,xx,yy,zz,
+                //        &(fMom[baseIdx + M_RHO_INDEX* BLOCK_LBM_SIZE]),
+                //        &(fMom[baseIdx + M_FX_INDEX* BLOCK_LBM_SIZE]),
+                //        &(fMom[baseIdx + M_FY_INDEX* BLOCK_LBM_SIZE]),
+                //        &(fMom[baseIdx + M_FZ_INDEX* BLOCK_LBM_SIZE]));         
+                //}
                 
                 atomicAdd(&(fMom[baseIdx + M_FX_INDEX* BLOCK_LBM_SIZE]), -deltaF.x * aux);
                 atomicAdd(&(fMom[baseIdx + M_FY_INDEX* BLOCK_LBM_SIZE]), -deltaF.y * aux);

@@ -17,23 +17,9 @@
 
 #ifdef PARTICLE_MODEL
 
-// Change to location of nodes http://dx.doi.org/10.1016/j.jcp.2012.02.026
-#define BREUGEM_PARAMETER (0.0)
-#define IBM_DISC_RELAXATION (0.5) // 0 = Leap-frog, 0.5 = Crank-Nicolson, 1 = Euler //NOT BEING USED CURRENTLY
-// Mesh scale for IBM, minimum distance between nodes (lower, more nodes in particle)
-#define MESH_SCALE 1.0
-// Assumed boundary thickness for IBM
-#define IBM_THICKNESS (1)
-// Number of iterations of Coulomb algorithm to optimize the nodes positions
-#define MESH_COULOMB 0
 // Number of IBM inner iterations
-#define IBM_MAX_ITERATION 1
-#define IBM_EULER_UPDATE_DIST (0.0)
-#define IBM_PARTICLE_SHELL_THICKNESS 1
+#define IBM_MAX_ITERATION 1 //TODO: cant handle more than one iteration
 //#define IBM_DEBUG
-#define MACR_BORDER_NODES (2+(int)((IBM_EULER_UPDATE_DIST+IBM_PARTICLE_SHELL_THICKNESS)+0.99999999))
-
-
 
 
 /* ------------------------ THREADS AND GRIDS FOR IBM ----------------------- */
