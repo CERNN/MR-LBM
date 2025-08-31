@@ -14,7 +14,7 @@ void ibmSimulation(
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     MethodRange range = particles->getMethodRange(IBM);
 
-    int numIBMParticles = range.last - range.first + 1; //printf("number of ibm particles %d \n",numIBMParticles);
+    //int numIBMParticles = range.last - range.first + 1; //printf("number of ibm particles %d \n",numIBMParticles);
     const unsigned int threadsNodesIBM = 64;
     unsigned int pNumNodes = particles->getNodesSoA()->getNumNodes();   //printf("Number of IBM %d\n",pNumNodes);
     const unsigned int gridNodesIBM = pNumNodes % threadsNodesIBM ? pNumNodes / threadsNodesIBM + 1 : pNumNodes / threadsNodesIBM;
@@ -51,7 +51,7 @@ void ibmSimulation(
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Reset IBM nodes forces error\n");
     }
-/*
+
     // Calculate collision force between particles
     //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamIBM[0]>>>(particles.pCenterArray,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles)); 
@@ -66,17 +66,17 @@ void ibmSimulation(
     {
         for(int j = 0; j < N_GPUS; j++){
             // If GPU has nodes in it
-            if(particles.getNodesSoA()[j].getNumNodes() > 0){
+            if(pNumNodes > 0){
                 checkCudaErrors(cudaSetDevice(GPUS_TO_USE[j]));
                 // Make the interpolation of LBM and spreading of IBM forces
-                //gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray(), &fMom[0], j);
+                gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0]);
                 checkCudaErrors(cudaStreamSynchronize(streamParticles));
                 getLastCudaError("IBM interpolation spread error\n");
              }
          }
  
         // Update particle velocity using body center force and constant forces
-        gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(particles.getPCenterArray());
+        gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last);
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("IBM update particle center velocity error\n");
     }
@@ -90,12 +90,12 @@ void ibmSimulation(
 
 
     if(pNumNodes > 0){
-        gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray());
+        gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,pArray,range.first,range.last);
        checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("IBM particle movement error\n");
     }
     checkCudaErrors(cudaDeviceSynchronize());
-*/
+
 }
 
 
@@ -292,7 +292,6 @@ void gpuForceInterpolationSpread(
     ParticleCenter* pc_i = &pArray[particlesNodes->getParticleCenterIdx()[i]];
 
     dfloat aux, aux1; // aux variable for many things
-    size_t idx; // index for many things
 
     const dfloat xIBM = posNode.x[i];
     const dfloat yIBM = posNode.y[i]; 
@@ -422,9 +421,6 @@ void gpuForceInterpolationSpread(
             }
         }
     }
-
-    // Index of particle center of this particle node
-    idx = particlesNodes->getParticleCenterIdx()[i];
 
     // Velocity on node given the particle velocity and rotation
     dfloat ux_calc = 0;
