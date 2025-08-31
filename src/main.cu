@@ -133,19 +133,17 @@ int main() {
         #endif
         BC_FORCES_PARAMS_PTR(h_)
     );
-    printf("Host Memory Allocated \n"); if(console_flush) fflush(stdout);
+
     /* -------------- ALLOCATION FOR GPU ------------- */
     allocateDeviceMemory(
         &d_fMom, &dNodeType, &ghostInterface
         BC_FORCES_PARAMS_PTR(d_)
     );
-    printf("Device Memory Allocated \n"); if(console_flush) fflush(stdout);
     #ifdef DENSITY_CORRECTION
         checkCudaErrors(cudaMallocHost((void**)&(h_mean_rho), sizeof(dfloat)));
         cudaMalloc((void**)&d_mean_rho, sizeof(dfloat));  
-        printf("Density Correction Memory Allocated \n"); if(console_flush) fflush(stdout);
     #endif
-    //printf("Allocated memory \n"); if(console_flush){fflush(stdout);}
+
 
     // Setup Streams
     cudaStream_t streamsLBM[1];
@@ -172,7 +170,7 @@ int main() {
 
     int ini_step = step;
 
-    printf("Domain Initialized\n"); if(console_flush) fflush(stdout);
+    printf("Domain Initialized. Starting simulation\n"); if(console_flush) fflush(stdout);
     
     #ifdef PARTICLE_MODEL
         //memory allocation for particles in host and device
@@ -194,7 +192,14 @@ int main() {
     /* ------------------------------ LBM LOOP ------------------------------ */
 
     #ifdef DYNAMIC_SHARED_MEMORY
-    cudaFuncSetAttribute(gpuMomCollisionStream, cudaFuncAttributeMaxDynamicSharedMemorySize, SHARED_MEMORY_SIZE); // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
+        int maxShared;
+        cudaDeviceGetAttribute(&maxShared, cudaDevAttrMaxSharedMemoryPerBlockOptin, 0);
+        if (MAX_SHARED_MEMORY_SIZE > maxShared) {
+            printf("Requested %d bytes exceeds device max %d bytes\n", MAX_SHARED_MEMORY_SIZE, maxShared);
+        }else{
+            printf("Using %d bytes of dynamic shared memory of a max of %d bytes\n", MAX_SHARED_MEMORY_SIZE, maxShared);
+            cudaFuncSetAttribute(gpuMomCollisionStream, cudaFuncAttributeMaxDynamicSharedMemorySize DYNAMIC_SHARED_MEMORY_PARAMS); // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
+        }
     #endif
 
     /* --------------------------------------------------------------------- */
@@ -226,9 +231,13 @@ int main() {
             #endif //PARTICLE MODEL
         }
 #pragma warning(pop)
-        
 
-        gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save); 
+
+        gpuMomCollisionStream << <gridBlock, threadBlock DYNAMIC_SHARED_MEMORY_PARAMS>> >(d_fMom, dNodeType,ghostInterface, DENSITY_CORRECTION_PARAMS(d_) BC_FORCES_PARAMS(d_) step, save);
+        cudaError_t err = cudaGetLastError();
+        if (err != cudaSuccess) {
+            printf("Kernel launch failed: %s\n", cudaGetErrorString(err));
+        }
         //swap interface pointers
         swapGhostInterfaces(ghostInterface);
         

@@ -27,17 +27,17 @@ dfloat Azz_zm1 = fMom[idxMom(tx, ty, tzm1, A_ZZ_C_INDEX, bx, by, ((tz == 0) ? bz
 dfloat Azz_zp1 = fMom[idxMom(tx, ty, tzp1, A_ZZ_C_INDEX, bx, by, ((tz == (BLOCK_NZ - 1)) ? bzp1 : bz))];
 
 // Compute derivatives
-dfloat dAxxdx = (Axx_xp1 - Axx_xm1) / 2;
-dfloat dAxydy = (Axy_yp1 - Axy_ym1) / 2;
-dfloat dAxzdz = (Axz_zp1 - Axz_zm1) / 2;
+dfloat dAxxdx = (Axx_xp1 - Axx_xm1) *0.5;
+dfloat dAxydy = (Axy_yp1 - Axy_ym1) *0.5;
+dfloat dAxzdz = (Axz_zp1 - Axz_zm1) *0.5;
 
-dfloat dAxydx = (Axy_xp1 - Axy_xm1) / 2;
-dfloat dAyydy = (Ayy_yp1 - Ayy_ym1) / 2;
-dfloat dAyzdz = (Ayz_zp1 - Ayz_zm1) / 2;
+dfloat dAxydx = (Axy_xp1 - Axy_xm1) *0.5;
+dfloat dAyydy = (Ayy_yp1 - Ayy_ym1) *0.5;
+dfloat dAyzdz = (Ayz_zp1 - Ayz_zm1) *0.5;
 
-dfloat dAxzdx = (Axz_xp1 - Axz_xm1) / 2;
-dfloat dAyzdy = (Ayz_yp1 - Ayz_ym1) / 2;
-dfloat dAzzdz = (Azz_zp1 - Azz_zm1) / 2;
+dfloat dAxzdx = (Axz_xp1 - Axz_xm1) *0.5;
+dfloat dAyzdy = (Ayz_yp1 - Ayz_ym1) *0.5;
+dfloat dAzzdz = (Azz_zp1 - Azz_zm1) *0.5;
 
 if ((nodeType & 0b01010101) == 0b01010101) { // wall west
     dAxxdx = (Axx_xp1 - AxxVar);

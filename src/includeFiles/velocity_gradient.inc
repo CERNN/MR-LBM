@@ -25,17 +25,17 @@ dfloat uy_zp1 = fMom[idxMom(tx, ty, tzp1, M_UY_INDEX, bx, by, ((z + 1) % NZ) / B
 dfloat uz_zp1 = fMom[idxMom(tx, ty, tzp1, M_UZ_INDEX, bx, by, ((z + 1) % NZ) / BLOCK_NZ)];
 
 
-dfloat duxdx_t30 = (ux_xp1 - ux_xm1) / 2;
-dfloat duydx_t30 = (uy_xp1 - uy_xm1) / 2;
-dfloat duzdx_t30 = (uz_xp1 - uz_xm1) / 2;
+dfloat duxdx_t30 = (ux_xp1 - ux_xm1) *0.5;
+dfloat duydx_t30 = (uy_xp1 - uy_xm1) *0.5;
+dfloat duzdx_t30 = (uz_xp1 - uz_xm1) *0.5;
 
-dfloat duxdy_t30 = (ux_yp1 - ux_ym1) / 2;
-dfloat duydy_t30 = (uy_yp1 - uy_ym1) / 2;
-dfloat duzdy_t30 = (uz_yp1 - uz_ym1) / 2;
+dfloat duxdy_t30 = (ux_yp1 - ux_ym1) *0.5;
+dfloat duydy_t30 = (uy_yp1 - uy_ym1) *0.5;
+dfloat duzdy_t30 = (uz_yp1 - uz_ym1) *0.5;
 
-dfloat duxdz_t30 = (ux_zp1 - ux_zm1) / 2;
-dfloat duydz_t30 = (uy_zp1 - uy_zm1) / 2;
-dfloat duzdz_t30 = (uz_zp1 - uz_zm1) / 2;
+dfloat duxdz_t30 = (ux_zp1 - ux_zm1) *0.5;
+dfloat duydz_t30 = (uy_zp1 - uy_zm1) *0.5;
+dfloat duzdz_t30 = (uz_zp1 - uz_zm1) *0.5;
 
 if ((nodeType & 0b01010101) == 0b01010101) { // wall west
     duxdx_t30 = (ux_xp1 - ux_t30);
