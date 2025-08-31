@@ -43,10 +43,13 @@ void ibmSimulation(
     gpuUpdateParticleOldValues<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
-
     // Reset forces in all IBM nodes;
+    IbmNodesSoA h_nodes = *(particles->getNodesSoA());
+    IbmNodesSoA* d_nodes = &h_nodes;
+    cudaMalloc(&d_nodes, sizeof(IbmNodesSoA));
+    cudaMemcpy(d_nodes, &h_nodes, sizeof(IbmNodesSoA), cudaMemcpyHostToDevice);
     if(pNumNodes > 0){
-        gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(particles->getNodesSoA());
+        gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes);
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Reset IBM nodes forces error\n");
     }
@@ -112,14 +115,12 @@ __global__
 void gpuResetNodesForces(IbmNodesSoA* particlesNodes)
 {
     int idx = threadIdx.x + blockDim.x * blockIdx.x;
-
     if (idx >= particlesNodes->getNumNodes())
         return;
 
     const dfloat3SoA force = particlesNodes->getF();
     const dfloat3SoA delta_force = particlesNodes->getDeltaF();
-
-    //TODO: FIX illegal memory access error
+    
     force.x[idx] = 0;
     force.y[idx] = 0;
     force.z[idx] = 0;
