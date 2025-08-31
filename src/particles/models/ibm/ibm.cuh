@@ -29,11 +29,9 @@ void gpuResetNodesForces(IbmNodesSoA* particlesNodes);
 
 __global__
 void gpuForceInterpolationSpread(
-    IbmNodesSoA particlesNodes,
-    ParticleCenter particleCenters[NUM_PARTICLES],
-    dfloat *fMom,
-    IbmMacrsAux ibmMacrsAux,
-    const int n_gpu
+    IbmNodesSoA* particlesNodes,
+    ParticleCenter *pArray,
+    dfloat *fMom
 );
 
 __global__

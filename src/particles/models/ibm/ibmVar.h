@@ -27,7 +27,9 @@
 // Number of IBM inner iterations
 #define IBM_MAX_ITERATION 1
 //#define IBM_DEBUG
-#define MACR_BORDER_NODES (0)
+#define MACR_BORDER_NODES (2+(int)((IBM_EULER_UPDATE_DIST+IBM_PARTICLE_SHELL_THICKNESS)+0.99999999))
+
+
 
 
 /* ------------------------ THREADS AND GRIDS FOR IBM ----------------------- */

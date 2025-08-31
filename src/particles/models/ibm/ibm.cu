@@ -48,7 +48,7 @@ void ibmSimulation(
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Reset IBM nodes forces error\n");
     }
-
+/*
     // Calculate collision force between particles
     //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamIBM[0]>>>(particles.pCenterArray,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles)); 
@@ -58,7 +58,7 @@ void ibmSimulation(
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     getLastCudaError("IBM update particle center velocity error\n");
 
-    /*
+
     for (int i = 0; i < IBM_MAX_ITERATION; i++)
     {
         for(int j = 0; j < N_GPUS; j++){
@@ -78,26 +78,21 @@ void ibmSimulation(
         getLastCudaError("IBM update particle center velocity error\n");
     }
 
-    */
+    
     // Update particle center position and its old values
     gpuParticleMovement<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last);
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     getLastCudaError("IBM particle movement error\n");
 
-    for(int i = 0; i < N_GPUS; i++){
-        // If GPU has nodes in it
-        if(particles.getNodesSoA()[i].getNumNodes() > 0){ // particles.nodesSoA[i].numNodes
-            checkCudaErrors(cudaSetDevice(GPUS_TO_USE[i]));
-            // Update particle nodes positions
-            gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray());
-            checkCudaErrors(cudaStreamSynchronize(streamParticles));
-            getLastCudaError("IBM particle movement error\n");
-        }
+
+
+    if(pNumNodes > 0){
+        gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray());
+       checkCudaErrors(cudaStreamSynchronize(streamParticles));
+        getLastCudaError("IBM particle movement error\n");
     }
-
     checkCudaErrors(cudaDeviceSynchronize());
-
- */
+*/
 }
 
 
@@ -281,81 +276,60 @@ void gpuParticleNodeMovement(
 
 __global__
 void gpuForceInterpolationSpread(
-    IbmNodesSoA particlesNodes,
-    ParticleCenter particleCenters[NUM_PARTICLES],
-    dfloat *fMom,
-    IbmMacrsAux ibmMacrsAux,
-    const int n_gpu)
+    IbmNodesSoA* particlesNodes,
+    ParticleCenter *pArray,
+    dfloat *fMom)
 {
-    // TODO: update atomic double add to use only if is double
-    const unsigned int i = threadIdx.x + blockDim.x * blockIdx.x;
-    // Shared memory to sum particles values to particle center
-    // __shared__ dfloat3 sumPC[2][64];
 
-    if (i >= particlesNodes.getNumNodes())
+    int i = threadIdx.x + blockDim.x * blockIdx.x;
+
+    if(i >= particlesNodes->getNumNodes())
         return;
+
+    const dfloat3SoA posNode = particlesNodes->getPos();
+
+    ParticleCenter* pc_i = &pArray[particlesNodes->getParticleCenterIdx()[i]];
 
     dfloat aux, aux1; // aux variable for many things
     size_t idx; // index for many things
 
-    const dfloat xIBM = particlesNodes.getPos().x[i];
-    const dfloat yIBM = particlesNodes.getPos().y[i]; 
-    const dfloat zIBM = particlesNodes.getPos().z[i];
+    const dfloat xIBM = posNode.x[i];
+    const dfloat yIBM = posNode.y[i]; 
+    const dfloat zIBM = posNode.z[i];
+
     const dfloat pos[3] = {xIBM, yIBM, zIBM};
 
     // Calculate stencils to use and the valid interval [xyz][idx]
     dfloat stencilVal[3][P_DIST*2];
-    // Base position for every index (leftest in x)
 
-   // Base position is memory, so it discount the nodes in Z in others gpus
-   /*const int posBase[3] = {
-       (int)(xIBM+0.5)-P_DIST+1, 
-       (int)(yIBM+0.5)-P_DIST+1, 
-       (int)(zIBM+0.5)-P_DIST+1-n_gpu*NZ}
-   ;*/
-    /*int posBase[3] = { 
-        int(xIBM - P_DIST + 0.5 - (xIBM < 1.0)), 
-        int(yIBM - P_DIST + 0.5 - (yIBM < 1.0)), 
-        int(zIBM - P_DIST + 0.5 - (zIBM < 1.0)) - NZ*n_gpu 
-    };*/
-    
+    // First lattice position for each coordinate
+    const int posBase[3] = {int(xIBM) - (P_DIST) + 1,int(yIBM) - (P_DIST) + 1, int(zIBM) - (P_DIST) + 1};
 
-    const int posBase[3] = { 
-        int(xIBM) - (P_DIST) + 1, 
-        int(yIBM) - (P_DIST) + 1, 
-        int(zIBM) - (P_DIST) + 1 - NZ*n_gpu 
-    };
-    // Maximum position to interpolate in Z, used for maxIdx in Z
-    int zMaxIdxPos = (n_gpu == N_GPUS-1 ? NZ : NZ+MACR_BORDER_NODES);
-    // Minimum position to interpolate in Z, used for minIdx in Z
-    int zMinIdxPos = (n_gpu == 0 ? 0 : -MACR_BORDER_NODES);
-    #ifdef IBM_BC_Z_PERIODIC
-        zMinIdxPos = -MACR_BORDER_NODES;
-        zMaxIdxPos = NZ+MACR_BORDER_NODES;
-    #endif
+   
     // Maximum stencil index for each direction xyz ("index" to stop)
     const int maxIdx[3] = {
-        #ifdef IBM_BC_X_WALL
+        #ifdef BC_X_WALL
             ((posBase[0]+P_DIST*2-1) < (int)NX)? P_DIST*2-1 : ((int)NX-1-posBase[0])
         #endif //IBM_BC_X_WALL
-        #ifdef IBM_BC_X_PERIODIC
+        #ifdef BC_X_PERIODIC
             P_DIST*2-1
-        #endif //IBM_BC_X_PERIODIC
+        #endif //BC_X_PERIODIC
         ,
-        #ifdef IBM_BC_Y_WALL 
-             ((posBase[1]+P_DIST*2-1) < (int)NY)? P_DIST*2-1 : ((int)NY-1-posBase[1])
-        #endif //IBM_BC_Y_WALL
-        #ifdef IBM_BC_Y_PERIODIC
+        #ifdef BC_Y_WALL 
+            ((posBase[1]+P_DIST*2-1) < (int)NY)? P_DIST*2-1 : ((int)NY-1-posBase[1])
+        #endif //BC_Y_WALL
+        #ifdef BC_Y_PERIODIC
             P_DIST*2-1
-        #endif //IBM_BC_Y_PERIODIC
+        #endif //BC_Y_PERIODIC
         , 
-        #ifdef IBM_BC_Z_WALL 
-            ((posBase[2]+P_DIST*2-1) < zMaxIdxPos)? P_DIST*2-1 : ((int)zMaxIdxPos-1-posBase[2])
+        #ifdef BC_Z_WALL 
+            ((posBase[1]+P_DIST*2-1) < (int)NZ)? P_DIST*2-1 : ((int)NZ-1-posBase[2])
         #endif //IBM_BC_Z_WALL
-        #ifdef IBM_BC_Z_PERIODIC
+        #ifdef BC_Z_PERIODIC
             P_DIST*2-1
-        #endif //IBM_BC_Z_PERIODIC
+        #endif //BC_Z_PERIODIC
     };
+
     // Minimum stencil index for each direction xyz ("index" to start)
     const int minIdx[3] = {
         #ifdef IBM_BC_X_WALL
@@ -373,7 +347,7 @@ void gpuForceInterpolationSpread(
         #endif //IBM_BC_Y_PERIODIC
         , 
         #ifdef IBM_BC_Z_WALL 
-            (posBase[2] >= zMinIdxPos)? 0 : zMinIdxPos-posBase[2]
+            (posBase[2] >= 0)? 0 : -posBase[2]
         #endif //IBM_BC_Z_WALL
         #ifdef IBM_BC_Z_PERIODIC
             0
@@ -388,22 +362,21 @@ void gpuForceInterpolationSpread(
     if(minIdx[0] >= P_DIST*2 || minIdx[1] >= P_DIST*2 || minIdx[2] >= P_DIST*2)
         return;
 
-    // #ifdef EXTERNAL_DUCT_BC
-    //     if (dfloat((xIBM - 0.5*NX + 0.5)*(xIBM - 0.5*NX + 0.5)+(yIBM - 0.5*NY + 0.5)*(yIBM - 0.5*NY + 0.5))>= dfloat((EXTERNAL_DUCT_BC_RADIUS)*(EXTERNAL_DUCT_BC_RADIUS)))
-    //         return;       
-    // #endif    
-
-
+    //compute stencil values
     for(int i = 0; i < 3; i++){
         for(int j=minIdx[i]; j <= maxIdx[i]; j++){
-            stencilVal[i][j] = stencil(posBase[i]+j-(pos[i]-(i == 2? NZ*n_gpu : 0)));
+            stencilVal[i][j] = stencil(posBase[i]+j-(pos[i]-(i == 2? NZ*0 : 0)));
         }
     }
+
 
     dfloat rhoVar = 0;
     dfloat uxVar = 0;
     dfloat uyVar = 0;
     dfloat uzVar = 0;
+
+    unsigned int baseIdx;
+    int xx,yy,zz;
 
     // Interpolation (zyx for memory locality)
     for (int zk = minIdx[2]; zk <= maxIdx[2]; zk++) // z
@@ -418,38 +391,39 @@ void gpuForceInterpolationSpread(
                 // same as aux = stencil(x - xIBM) * stencil(y - yIBM) * stencil(z - zIBM);
 
 
-                idx = idxScalarWBorder(
-                    #ifdef IBM_BC_X_WALL
-                        posBase[0]+xi
-                    #endif //IBM_BC_X_WALL
-                    #ifdef IBM_BC_X_PERIODIC
-                        IBM_BC_X_0 + (posBase[0]+xi + IBM_BC_X_E - IBM_BC_X_0-IBM_BC_X_0)%(IBM_BC_X_E - IBM_BC_X_0)
-                    #endif //IBM_BC_X_PERIODIC
-                    ,
-                    #ifdef IBM_BC_Y_WALL 
-                        posBase[1]+yj
-                    #endif //IBM_BC_Y_WALL
-                    #ifdef IBM_BC_Y_PERIODIC    
-                        IBM_BC_Y_0 + (posBase[1]+yj + IBM_BC_Y_E - IBM_BC_Y_0-IBM_BC_Y_0)%(IBM_BC_Y_E - IBM_BC_Y_0)
-                    #endif //IBM_BC_Y_PERIODIC
-                    , 
-                    #ifdef IBM_BC_Z_WALL  // +MACR_BORDER_NODES in z because of the ghost nodes
-                        posBase[2]+zk
-                    #endif //IBM_BC_Z_WALL
-                    #ifdef IBM_BC_Z_PERIODIC
-                        posBase[2]+zk
-                    #endif //IBM_BC_Z_PERIODIC
-                );
-                // rhoVar += macr.rho[idx] * aux;
-                // uxVar += macr.u.x[idx] * aux;
-                // uyVar += macr.u.y[idx] * aux;
-                // uzVar += macr.u.z[idx] * aux;
+                #ifdef BC_X_WALL
+                    xx = posBase[0] + xi;
+                #endif //BC_X_WALL
+                #ifdef BC_X_PERIODIC
+                    xx = (posBase[0] + xi + NX)%(NX);
+                #endif //BC_X_PERIODIC
+                
+                #ifdef BC_Y_WALL 
+                    yy = posBase[1] + yj;
+                #endif //BC_Y_WALL
+                #ifdef BC_Y_PERIODIC    
+                    yy = (posBase[1] + yj + NY)%(NY);
+                #endif //IBM_BC_Y_PERIODIC
+                
+                #ifdef BC_Z_WALL  
+                    zz = posBase[2]+zk;
+                #endif //BC_Z_WALL
+                #ifdef BC_Z_PERIODIC
+                    zz = (posBase[2]+zk + NZ)%(NZ);
+                #endif //BC_Z_PERIODIC
+
+                baseIdx = idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, 0, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ);
+
+                rhoVar += aux * (RHO_0 + fMom[baseIdx + M_RHO_INDEX]);
+                uxVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UX_INDEX]/F_M_I_SCALE);
+                uyVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UY_INDEX]/F_M_I_SCALE);
+                uzVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UZ_INDEX]/F_M_I_SCALE);
             }
         }
     }
 
     // Index of particle center of this particle node
-    idx = particlesNodes.getParticleCenterIdx()[i];
+    idx = particlesNodes->getParticleCenterIdx()[i];
 
     // Velocity on node given the particle velocity and rotation
     dfloat ux_calc = 0;
@@ -457,51 +431,51 @@ void gpuForceInterpolationSpread(
     dfloat uz_calc = 0;
 
     // Load position of particle center
-    const dfloat x_pc = particleCenters[idx].getPosX();
-    const dfloat y_pc = particleCenters[idx].getPosY();
-    const dfloat z_pc = particleCenters[idx].getPosZ();
+    const dfloat x_pc = pc_i->getPosX();
+    const dfloat y_pc = pc_i->getPosY();
+    const dfloat z_pc = pc_i->getPosZ();
 
     dfloat dx = xIBM - x_pc;
     dfloat dy = yIBM - y_pc;
     dfloat dz = zIBM - z_pc;
 
-    #ifdef IBM_BC_X_PERIODIC
-    if(abs(dx) > (dfloat)((IBM_BC_X_E - IBM_BC_X_0))/2.0){
+    #ifdef BC_X_PERIODIC
+    if(abs(dx) > (dfloat)(NX)/2.0){
         if(dx < 0)
-            dx = (xIBM + (IBM_BC_X_E - IBM_BC_X_0)) - x_pc;
+            dx = (xIBM + NX) - x_pc;
         else
-            dx = (xIBM - (IBM_BC_X_E - IBM_BC_X_0)) - x_pc;
+            dx = (xIBM - NX) - x_pc;
     }
-    #endif //IBM_BC_X_PERIODIC
+    #endif //BC_X_PERIODIC
     
-    #ifdef IBM_BC_Y_PERIODIC
-    if(abs(dy) > (dfloat)((IBM_BC_Y_E - IBM_BC_Y_0))/2.0){
+    #ifdef BC_Y_PERIODIC
+    if(abs(dy) > (dfloat)(NY)/2.0){
         if(dy < 0)
-            dy = (yIBM + (IBM_BC_Y_E - IBM_BC_Y_0)) - y_pc;
+            dy = (yIBM + NY) - y_pc;
         else
-            dy = (yIBM - (IBM_BC_Y_E - IBM_BC_Y_0)) - y_pc;
+            dy = (yIBM - NY) - y_pc;
     }
-    #endif //IBM_BC_Y_PERIODIC
+    #endif //BC_Y_PERIODIC
 
-    #ifdef IBM_BC_Z_PERIODIC
-    if(abs(dz) > (dfloat)((IBM_BC_Z_E - IBM_BC_Z_0))/2.0){
+    #ifdef BC_Z_PERIODIC
+    if(abs(dz) > (dfloat)(NZ)/2.0){
         if(dz < 0)
-            dz = (zIBM + (IBM_BC_Z_E - IBM_BC_Z_0)) - z_pc;
+            dz = (zIBM + NZ) - z_pc;
         else
-            dz = (zIBM - (IBM_BC_Z_E - IBM_BC_Z_0)) - z_pc;
+            dz = (zIBM - NZ) - z_pc;
     }
-    #endif //IBM_BC_Z_PERIODIC
+    #endif //BC_Z_PERIODIC
 
     // Calculate velocity on node if particle is movable
-    if(particleCenters[idx].getMovable()){
+    if(pc_i->getMovable()){
         // Load velocity and rotation velocity of particle center
-        const dfloat vx_pc = particleCenters[idx].getVelX();
-        const dfloat vy_pc = particleCenters[idx].getVelY();
-        const dfloat vz_pc = particleCenters[idx].getVelZ();
+        const dfloat vx_pc = pc_i->getVelX();
+        const dfloat vy_pc = pc_i->getVelY();
+        const dfloat vz_pc = pc_i->getVelZ();
 
-        const dfloat wx_pc = particleCenters[idx].getWX();
-        const dfloat wy_pc = particleCenters[idx].getWY();
-        const dfloat wz_pc = particleCenters[idx].getWZ();
+        const dfloat wx_pc = pc_i->getWX();
+        const dfloat wy_pc = pc_i->getWY();
+        const dfloat wz_pc = pc_i->getWZ();
 
         // velocity on node, given the center velocity and rotation
         // (i.e. no slip boundary condition velocity)
@@ -510,7 +484,7 @@ void gpuForceInterpolationSpread(
         uz_calc = vz_pc + (wx_pc * (dy) - wy_pc * (dx));
     }
 
-    const dfloat dA = particlesNodes.getS()[i];
+    const dfloat dA = particlesNodes->getS()[i];
     aux = 2 * rhoVar * dA * IBM_THICKNESS;
 
     dfloat3 deltaF;
@@ -519,9 +493,10 @@ void gpuForceInterpolationSpread(
     deltaF.z = aux * (uzVar - uz_calc);
 
     // Calculate IBM forces
-    const dfloat fxIBM = particlesNodes.getF().x[i] + deltaF.x;
-    const dfloat fyIBM = particlesNodes.getF().y[i] + deltaF.y;
-    const dfloat fzIBM = particlesNodes.getF().z[i] + deltaF.z;
+    const dfloat3SoA force = particlesNodes->getF();
+    const dfloat fxIBM = force.x[i] + deltaF.x;
+    const dfloat fyIBM = force.y[i] + deltaF.y;
+    const dfloat fzIBM = force.z[i] + deltaF.z;
 
     // Spreading (zyx for memory locality)
     for (int zk = minIdx[2]; zk <= maxIdx[2]; zk++) // z
@@ -535,98 +510,70 @@ void gpuForceInterpolationSpread(
                 aux = aux1 * stencilVal[0][xi];
                 // same as aux = stencil(x - xIBM) * stencil(y - yIBM) * stencil(z - zIBM);
  
-                idx = idxScalarWBorder(
-                    #ifdef IBM_BC_X_WALL
-                        posBase[0]+xi
-                    #endif //IBM_BC_X_WALL
-                    #ifdef IBM_BC_X_PERIODIC
-                        IBM_BC_X_0 + (posBase[0]+xi + IBM_BC_X_E - IBM_BC_X_0-IBM_BC_X_0)%(IBM_BC_X_E - IBM_BC_X_0)
-                    #endif //IBM_BC_X_PERIODIC
-                    ,
-                    #ifdef IBM_BC_Y_WALL 
-                        posBase[1]+yj
-                    #endif //IBM_BC_Y_WALL
-                    #ifdef IBM_BC_Y_PERIODIC
-                        IBM_BC_Y_0 + (posBase[1]+yj + IBM_BC_Y_E - IBM_BC_Y_0-IBM_BC_Y_0)%(IBM_BC_Y_E - IBM_BC_Y_0)
-                    #endif //IBM_BC_Y_PERIODIC
-                    , 
-                    #ifdef IBM_BC_Z_WALL  // +MACR_BORDER_NODES in z because of the ghost nodes
-                        posBase[2]+zk
-                    #endif //IBM_BC_Z_WALL
-                    #ifdef IBM_BC_Z_PERIODIC
-                        posBase[2]+zk
-                        //OLD: IBM_BC_Z_0 + (posBase[2]+zk+ (IBM_BC_Z_E-n_gpu*NZ) - IBM_BC_Z_0-IBM_BC_Z_0)%((IBM_BC_Z_E-n_gpu*NZ) - IBM_BC_Z_0)
-                    #endif //IBM_BC_Z_PERIODIC
-                );
+                #ifdef BC_X_WALL
+                    xx = posBase[0] + xi;
+                #endif //BC_X_WALL
+                #ifdef BC_X_PERIODIC
+                    xx = (posBase[0] + xi + NX)%(NX);
+                #endif //BC_X_PERIODIC
+                
+                #ifdef BC_Y_WALL 
+                    yy = posBase[1] + yj;
+                #endif //BC_Y_WALL
+                #ifdef BC_Y_PERIODIC    
+                    yy = (posBase[1] + yj + NY)%(NY);
+                #endif //IBM_BC_Y_PERIODIC
+                
+                #ifdef BC_Z_WALL  
+                    zz = posBase[2]+zk;
+                #endif //BC_Z_WALL
+                #ifdef BC_Z_PERIODIC
+                    zz = (posBase[2]+zk + NZ)%(NZ);
+                #endif //BC_Z_PERIODIC
 
-                #ifdef EXTERNAL_DUCT_BC
-                dfloat xCenter = DUCT_CENTER_X;
-                dfloat yCenter = DUCT_CENTER_Y;
+                baseIdx = idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, 0, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ);
+                
+                atomicAdd(&(fMom[baseIdx + M_FX_INDEX* BLOCK_LBM_SIZE]), -deltaF.x * aux);
+                atomicAdd(&(fMom[baseIdx + M_FY_INDEX* BLOCK_LBM_SIZE]), -deltaF.y * aux);
+                atomicAdd(&(fMom[baseIdx + M_FZ_INDEX* BLOCK_LBM_SIZE]), -deltaF.z * aux);
 
-                // int n_gpu2 = ((int)((posBase[2]+zk)/NZ) + 100*N_GPUS)%N_GPUS;
-
-                dfloat pos_r_i = sqrt((posBase[0] + xi - xCenter)*(posBase[0] + xi - xCenter) + (posBase[1] + yj - yCenter)*(posBase[1] + yj - yCenter));
-                //if point is outside of the duct is not computed
-                if (pos_r_i < EXTERNAL_DUCT_BC_RADIUS)
-                {
-                    atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).x[idx]), -deltaF.x * aux);
-                    atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).y[idx]), -deltaF.y * aux);
-                    atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).z[idx]), -deltaF.z * aux);
-
-                    // Update velocities field
-                    const dfloat inv_rho = 1 / macr.rho[idx];
-                    atomicAdd(&(ibmMacrsAux.getVelAux(n_gpu).x[idx]), 0.5 * -deltaF.x * aux * inv_rho);
-                    atomicAdd(&(ibmMacrsAux.getVelAux(n_gpu).y[idx]), 0.5 * -deltaF.y * aux * inv_rho);
-                    atomicAdd(&(ibmMacrsAux.getVelAux(n_gpu).z[idx]), 0.5 * -deltaF.z * aux * inv_rho);
-
-                    // if (posBase[2]+zk < NZ)
-                    // {
-                    //atomicAdd(&(macr.pbound[idx]), aux);
-                    // }
-                }
-                #endif
-                #ifndef EXTERNAL_DUCT_BC
-                //atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).x[idx]), -deltaF.x * aux);
-                //atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).y[idx]), -deltaF.y * aux);
-                //atomicAdd(&(ibmMacrsAux.getFAux(n_gpu).z[idx]), -deltaF.z * aux);
-
-                // Update velocities field
-                // const dfloat inv_rho = 1 / macr.rho[idx];
-                // atomicAdd(&(ibmMacrsAux.getVelAux(n_gpu).x[idx]), 0.5 * -deltaF.x * aux * inv_rho);
-                // atomicAdd(&(ibmMacrsAux.getVelAux(n_gpu).y[idx]), 0.5 * -deltaF.y * aux * inv_rho);
-                // atomicAdd(&(ibmMacrsAux.getVelAux(n_gpu).z[idx]), 0.5 * -deltaF.z * aux * inv_rho);
-            #endif 
+                //TODO: find a way to do subinterations
+                //here would enter the correction of the velocity field for subiterations
+                //however, on moment based, we dont have the populations to recover the original velocity
+                //therefore it would directly change the velocity field and moments
+                //also a problem on the lattices on the block frontier, as would be necessary to recompute the populations there
 
             }
         }
     }
 
+
     // Update node force
-    particlesNodes.getF().x[i] = fxIBM;
-    particlesNodes.getF().y[i] = fyIBM;
-    particlesNodes.getF().z[i] = fzIBM;
+    force.x[i] = fxIBM;
+    force.y[i] = fyIBM;
+    force.z[i] = fzIBM;
 
+
+    const dfloat3SoA delta_force = particlesNodes->getDeltaF();
     // Update node delta force
-    particlesNodes.getDeltaF().x[i] = deltaF.x;
-    particlesNodes.getDeltaF().y[i] = deltaF.y;
-    particlesNodes.getDeltaF().z[i] = deltaF.z;
+    delta_force.x[i] = deltaF.x;
+    delta_force.y[i] = deltaF.y;
+    delta_force.z[i] = deltaF.z;
 
-    // Particle node delta momentum
-    idx = particlesNodes.getParticleCenterIdx()[i];
 
     const dfloat3 deltaMomentum = dfloat3(
         (dy) * deltaF.z - (dz) * deltaF.y,
         (dz) * deltaF.x - (dx) * deltaF.z,
         (dx) * deltaF.y - (dy) * deltaF.x
     );
+    
+    atomicAdd(&(pc_i->getFXatomic()), deltaF.x);
+    atomicAdd(&(pc_i->getFYatomic()), deltaF.y);
+    atomicAdd(&(pc_i->getFZatomic()), deltaF.z);
 
-    atomicAdd(&(particleCenters[idx].getFXatomic()), deltaF.x);
-    atomicAdd(&(particleCenters[idx].getFYatomic()), deltaF.y);
-    atomicAdd(&(particleCenters[idx].getFZatomic()), deltaF.z);
-
-    atomicAdd(&(particleCenters[idx].getMXatomic()), deltaMomentum.x);
-    atomicAdd(&(particleCenters[idx].getMYatomic()), deltaMomentum.y);
-    atomicAdd(&(particleCenters[idx].getMZatomic()), deltaMomentum.z);
+    atomicAdd(&(pc_i->getMXatomic()), deltaMomentum.x);
+    atomicAdd(&(pc_i->getMYatomic()), deltaMomentum.y);
+    atomicAdd(&(pc_i->getMZatomic()), deltaMomentum.z);
 }
 
 // #endif //PARTICLE_MODEL
