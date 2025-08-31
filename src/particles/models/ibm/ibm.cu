@@ -14,7 +14,7 @@ void ibmSimulation(
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     MethodRange range = particles->getMethodRange(IBM);
 
-    int numIBMParticles = range.last - range.first + 1; //printf("number of ibm particles %d \n",numIBMParticles);
+    //int numIBMParticles = range.last - range.first + 1; //printf("number of ibm particles %d \n",numIBMParticles);
     const unsigned int threadsNodesIBM = 64;
     unsigned int pNumNodes = particles->getNodesSoA()->getNumNodes();   //printf("Number of IBM %d\n",pNumNodes);
     const unsigned int gridNodesIBM = pNumNodes % threadsNodesIBM ? pNumNodes / threadsNodesIBM + 1 : pNumNodes / threadsNodesIBM;
@@ -51,7 +51,7 @@ void ibmSimulation(
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("Reset IBM nodes forces error\n");
     }
-/*
+
     // Calculate collision force between particles
     //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamIBM[0]>>>(particles.pCenterArray,step);
     checkCudaErrors(cudaStreamSynchronize(streamParticles)); 
@@ -66,17 +66,17 @@ void ibmSimulation(
     {
         for(int j = 0; j < N_GPUS; j++){
             // If GPU has nodes in it
-            if(particles.getNodesSoA()[j].getNumNodes() > 0){
+            if(pNumNodes > 0){
                 checkCudaErrors(cudaSetDevice(GPUS_TO_USE[j]));
                 // Make the interpolation of LBM and spreading of IBM forces
-                //gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray(), &fMom[0], j);
+                gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0]);
                 checkCudaErrors(cudaStreamSynchronize(streamParticles));
                 getLastCudaError("IBM interpolation spread error\n");
              }
          }
  
         // Update particle velocity using body center force and constant forces
-        gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(particles.getPCenterArray());
+        gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last);
         checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("IBM update particle center velocity error\n");
     }
@@ -90,12 +90,12 @@ void ibmSimulation(
 
 
     if(pNumNodes > 0){
-        gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(particles.getNodesSoA()[i], particles.getPCenterArray());
+        gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,pArray,range.first,range.last);
        checkCudaErrors(cudaStreamSynchronize(streamParticles));
         getLastCudaError("IBM particle movement error\n");
     }
     checkCudaErrors(cudaDeviceSynchronize());
-*/
+
 }
 
 
@@ -205,7 +205,7 @@ void gpuParticleNodeMovement(
     dfloat z_vec = pos.z[idx] - pc_i.getPosOldZ();
 
 
-    #ifdef IBM_BC_X_PERIODIC
+    #ifdef BC_X_PERIODIC
         if(abs(x_vec) > (dfloat)(NX)/2.0){
             if(pos.x[idx] < pc_i.getPosOldX() )
                 pos.x[idx] += (dfloat)(NX) ;
@@ -213,10 +213,10 @@ void gpuParticleNodeMovement(
                 pos.x[idx] -= (dfloat)(NX) ;
         }
         x_vec = pos.x[idx] - pc_i.getPosOldX();
-    #endif //IBM_BC_X_PERIODIC
+    #endif //BC_X_PERIODIC
 
 
-    #ifdef IBM_BC_Y_PERIODIC
+    #ifdef BC_Y_PERIODIC
         if(abs(y_vec) > (dfloat)(NY)/2.0){
             if(pos.y[idx] < pc_i.getPosOldY())
                 pos.y[idx] += (dfloat)(NY) ;
@@ -225,10 +225,10 @@ void gpuParticleNodeMovement(
         }
 
         y_vec = pos.y[idx] - pc_i.getPosOldY();
-    #endif //IBM_BC_Y_PERIODIC
+    #endif //BC_Y_PERIODIC
 
 
-    #ifdef IBM_BC_Z_PERIODIC
+    #ifdef BC_Z_PERIODIC
         if(abs(z_vec) > (dfloat)(NZ_TOTAL)/2.0){
             if(pos.z[idx] < pc_i.getPosOldZ())
                 pos.z[idx] += (dfloat)(NZ_TOTAL) ;
@@ -237,7 +237,7 @@ void gpuParticleNodeMovement(
         }
 
         z_vec = pos.z[idx] - pc_i.getPosOldZ();
-    #endif //IBM_BC_Z_PERIODIC
+    #endif //BC_Z_PERIODIC
 
        
     // compute rotation quartenion
@@ -253,26 +253,26 @@ void gpuParticleNodeMovement(
     dfloat new_pos_z = pc_i.getPosZ() + 2 * ( ((qi*qj) - (q0*qj))*x_vec + ((qj*qk) + (q0*qi))*y_vec +   (tq0m1 + (qk*qk))*z_vec);
 
     //update node position
-    #ifdef  IBM_BC_X_WALL
+    #ifdef BC_X_WALL
         pos.x[idx] =  new_pos_x;
-    #endif //IBM_BC_X_WALL
-    #ifdef  IBM_BC_X_PERIODIC
+    #endif //BC_X_WALL
+    #ifdef  BC_X_PERIODIC
         pos.x[idx] =  std::fmod((dfloat)(new_pos_x + NX),(dfloat)(NX));
-    #endif //IBM_BC_X_PERIODIC
+    #endif //BC_X_PERIODIC
 
-    #ifdef  IBM_BC_Y_WALL
+    #ifdef BC_Y_WALL
         pos.y[idx] =  new_pos_y;
-    #endif //IBM_BC_Y_WALL
-    #ifdef  IBM_BC_Y_PERIODIC
+    #endif //BC_Y_WALL
+    #ifdef  BC_Y_PERIODIC
         pos.y[idx] = std::fmod((dfloat)(new_pos_y + NY),(dfloat)(NY));
-    #endif //IBM_BC_Y_PERIODIC
+    #endif //BC_Y_PERIODIC
 
-    #ifdef  IBM_BC_Z_WALL
+    #ifdef BC_Z_WALL
         pos.z[idx] =  new_pos_z;
-    #endif //IBM_BC_Z_WALL
-    #ifdef  IBM_BC_Z_PERIODIC
+    #endif //BC_Z_WALL
+    #ifdef BC_Z_PERIODIC
         pos.z[idx] = std::fmod((dfloat)(new_pos_z + NZ_TOTAL),(dfloat)(NZ_TOTAL));
-    #endif //IBM_BC_Z_PERIODIC
+    #endif //IBBC_Z_PERIODIC
 }
 
 __global__
@@ -292,7 +292,6 @@ void gpuForceInterpolationSpread(
     ParticleCenter* pc_i = &pArray[particlesNodes->getParticleCenterIdx()[i]];
 
     dfloat aux, aux1; // aux variable for many things
-    size_t idx; // index for many things
 
     const dfloat xIBM = posNode.x[i];
     const dfloat yIBM = posNode.y[i]; 
@@ -311,7 +310,7 @@ void gpuForceInterpolationSpread(
     const int maxIdx[3] = {
         #ifdef BC_X_WALL
             ((posBase[0]+P_DIST*2-1) < (int)NX)? P_DIST*2-1 : ((int)NX-1-posBase[0])
-        #endif //IBM_BC_X_WALL
+        #endif //BC_X_WALL
         #ifdef BC_X_PERIODIC
             P_DIST*2-1
         #endif //BC_X_PERIODIC
@@ -325,7 +324,7 @@ void gpuForceInterpolationSpread(
         , 
         #ifdef BC_Z_WALL 
             ((posBase[1]+P_DIST*2-1) < (int)NZ)? P_DIST*2-1 : ((int)NZ-1-posBase[2])
-        #endif //IBM_BC_Z_WALL
+        #endif //BC_Z_WALL
         #ifdef BC_Z_PERIODIC
             P_DIST*2-1
         #endif //BC_Z_PERIODIC
@@ -333,26 +332,26 @@ void gpuForceInterpolationSpread(
 
     // Minimum stencil index for each direction xyz ("index" to start)
     const int minIdx[3] = {
-        #ifdef IBM_BC_X_WALL
+        #ifdef BC_X_WALL
             (posBase[0] >= 0)? 0 : -posBase[0]
-        #endif //IBM_BC_X_WALL
-        #ifdef IBM_BC_X_PERIODIC
+        #endif //BC_X_WALL
+        #ifdef BC_X_PERIODIC
             0
-        #endif //IBM_BC_X_PERIODIC
+        #endif //BC_X_PERIODIC
         ,
-        #ifdef IBM_BC_Y_WALL 
+        #ifdef BC_Y_WALL 
             (posBase[1] >= 0)? 0 : -posBase[1]
-        #endif //IBM_BC_Y_WALL
-        #ifdef IBM_BC_Y_PERIODIC
+        #endif //BC_Y_WALL
+        #ifdef BC_Y_PERIODIC
             0
-        #endif //IBM_BC_Y_PERIODIC
+        #endif //BC_Y_PERIODIC
         , 
-        #ifdef IBM_BC_Z_WALL 
+        #ifdef BC_Z_WALL 
             (posBase[2] >= 0)? 0 : -posBase[2]
-        #endif //IBM_BC_Z_WALL
-        #ifdef IBM_BC_Z_PERIODIC
+        #endif //BC_Z_WALL
+        #ifdef BC_Z_PERIODIC
             0
-        #endif //IBM_BC_Z_PERIODIC
+        #endif //BC_Z_PERIODIC
     };
 
 
@@ -404,7 +403,7 @@ void gpuForceInterpolationSpread(
                 #endif //BC_Y_WALL
                 #ifdef BC_Y_PERIODIC    
                     yy = (posBase[1] + yj + NY)%(NY);
-                #endif //IBM_BC_Y_PERIODIC
+                #endif //BC_Y_PERIODIC
                 
                 #ifdef BC_Z_WALL  
                     zz = posBase[2]+zk;
@@ -422,9 +421,6 @@ void gpuForceInterpolationSpread(
             }
         }
     }
-
-    // Index of particle center of this particle node
-    idx = particlesNodes->getParticleCenterIdx()[i];
 
     // Velocity on node given the particle velocity and rotation
     dfloat ux_calc = 0;
@@ -523,7 +519,7 @@ void gpuForceInterpolationSpread(
                 #endif //BC_Y_WALL
                 #ifdef BC_Y_PERIODIC    
                     yy = (posBase[1] + yj + NY)%(NY);
-                #endif //IBM_BC_Y_PERIODIC
+                #endif //BC_Y_PERIODIC
                 
                 #ifdef BC_Z_WALL  
                     zz = posBase[2]+zk;

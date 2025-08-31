@@ -24,7 +24,9 @@ void ibmSimulation(
 );
 
 __global__ 
-void gpuResetNodesForces(IbmNodesSoA* particlesNodes);
+void gpuResetNodesForces(
+    IbmNodesSoA* particlesNodes
+);
 
 
 __global__
@@ -36,7 +38,7 @@ void gpuForceInterpolationSpread(
 
 __global__
 void gpuParticleNodeMovement(
-    IbmNodesSoA const particlesNodes,
+    IbmNodesSoA* particlesNodes,
     ParticleCenter *pArray,
     int firstIndex,
     int lastIndex
