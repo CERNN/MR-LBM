@@ -1,4 +1,4 @@
-
+#ifdef PARTICLE_MODEL
 
 #ifndef __PARTICLE_SHARED_FUNCTIONS_CUH
 #define __PARTICLE_SHARED_FUNCTIONS_CUH
@@ -43,3 +43,4 @@ __device__ __forceinline__  dfloat stencil(dfloat x) {
 
 
 #endif //__PARTICLE_MODEL_TRACER_CUH
+#endif //PARTICLE_MODEL

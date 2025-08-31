@@ -1,3 +1,4 @@
+#ifdef PARTICLE_MODEL
 #ifndef ___COLLISION_DETECTION_H
 #define __COLLISION_DETECTION_H
 
@@ -5,3 +6,4 @@
 
 #endif // !__COLLISION_H
 
+#endif //PARTICLE_MODEL

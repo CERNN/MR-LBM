@@ -221,8 +221,10 @@ int main() {
             if(REPORT_SAVE){ reportSave = !(step % REPORT_SAVE);}                
             if(MACR_SAVE){ macrSave   = !(step % MACR_SAVE);}
             if(MACR_SAVE || REPORT_SAVE){ save = (reportSave || macrSave);}
-            if(PARTICLES_SAVE){ particleSave = !(aux % PARTICLES_SAVE);}
             if(CHECKPOINT_SAVE){ checkpoint = !(aux % CHECKPOINT_SAVE);}
+            #ifdef PARTICLE_MODEL
+                if(PARTICLES_SAVE){ particleSave = !(aux % PARTICLES_SAVE);}
+            #endif
         }
 #pragma warning(pop)
         

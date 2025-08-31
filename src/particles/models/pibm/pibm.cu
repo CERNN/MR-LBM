@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #include "pibm.cuh"
 
@@ -9,4 +9,4 @@ void pibmSimulation(
 ){}
 
 
-//#endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL

@@ -1,4 +1,4 @@
-// #ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #include "ibm.cuh"
 
@@ -591,4 +591,4 @@ void gpuForceInterpolationSpread(
     atomicAdd(&(pc_i->getMZatomic()), deltaMomentum.z);
 }
 
-// #endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL

@@ -995,7 +995,7 @@ void initializeDomain(
 }
 
 
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 __host__
 void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, IbmMacrsAux ibmMacrsAux, int *step, dim3 gridBlock, dim3 threadBlock){
 
@@ -1031,6 +1031,6 @@ void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, IbmMacr
     }
 
 }
-//#endif // PARTICLE_MODEL
+#endif // PARTICLE_MODEL
 
 #endif // MAIN_CUH

@@ -1,3 +1,5 @@
+#ifdef PARTICLE_MODEL
+
 #ifndef __PARTICLE_MODEL_IBM_CUH
 #define __PARTICLE_MODEL_IBM_CUH
 
@@ -10,7 +12,6 @@
 #include "../../class/Particle.cuh"
 #include "../../particlesBoundaryCondition.h"
 
-#include "ibmMacrsAux.cuh"
 #include "../dem/particleMovement.cuh"
 #include "../dem/collisionDetection.cuh"
 
@@ -50,5 +51,6 @@ void gpuParticleNodeMovement(
 
 #endif
 
+#endif //PARTICLE_MODEL
 
 

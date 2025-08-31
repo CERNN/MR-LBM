@@ -362,7 +362,78 @@ void operateSimCheckpoint(
     free(tmp);
 }
 
-//#ifdef PARTICLE_MODEL
+
+
+__host__
+int getStep(){
+    std::string filename = SIMULATION_FOLDER_LOAD_CHECKPOINT;
+    std::string DIR_PATH = "..\\\\bin\\\\" + filename + "\\\\" + ID_SIM + "\\\\checkpoint\\\\" + "_";
+
+    std::ifstream fileread(DIR_PATH + "curr_step.bin", std::ios::binary);
+
+    if (!fileread) {
+        std::cerr << "Error opening file: " << (DIR_PATH + "curr_step.bin") << std::endl;
+        return -1;
+    }
+
+    fileread.seekg(0, std::ios::end);
+    std::streampos filesize = fileread.tellg();
+
+    if (filesize < sizeof(int)) {
+        std::cerr << "Error: File smaller than expected!" << std::endl;
+        return -2;
+    }
+
+    fileread.seekg(-sizeof(int), std::ios::end);
+
+    int laststep = 0;
+    fileread.read(reinterpret_cast<char*>(&laststep), sizeof(int));
+
+    if (!fileread.good()) {
+        std::cerr << "Error reading data from file!" << std::endl;
+        return -3;
+    }
+    
+    fileread.close();
+    return laststep+1;
+}
+
+__host__
+int loadSimCheckpoint( 
+    dfloat* fMom,
+    ghostInterfaceData ghostInterface,
+    int *step
+    ){
+    step[0] = getStep();
+
+    if(step[0] < INI_STEP)
+        step[0]=INI_STEP;
+
+    if (step[0]<=0){
+        std::cerr << "Starting from step " << step[0] << std::endl;
+        return 0;
+    }
+    operateSimCheckpoint(__LOAD_CHECKPOINT, fMom, ghostInterface,step);
+    return 1;
+}
+
+
+__host__
+void saveSimCheckpoint( 
+    dfloat* fMom,
+    ghostInterfaceData ghostInterface,
+    int *step
+    ){
+    std::string foldername = PATH_FILES; 
+    foldername += "\\\\";
+    foldername += ID_SIM;
+    foldername += "\\\\checkpoint";
+    createFolder(foldername);
+    operateSimCheckpoint(__SAVE_CHECKPOINT, fMom,ghostInterface, step);
+}
+
+#ifdef PARTICLE_MODEL
+
 /**
 *   @brief Operation over checkpoint, save or load 
 *   
@@ -450,62 +521,6 @@ void operateSimCheckpointParticle(
 
     free(tmp);
 }
-//#endif //PARTICLE_MODEL
-
-__host__
-int getStep(){
-    std::string filename = SIMULATION_FOLDER_LOAD_CHECKPOINT;
-    std::string DIR_PATH = "..\\\\bin\\\\" + filename + "\\\\" + ID_SIM + "\\\\checkpoint\\\\" + "_";
-
-    std::ifstream fileread(DIR_PATH + "curr_step.bin", std::ios::binary);
-
-    if (!fileread) {
-        std::cerr << "Error opening file: " << (DIR_PATH + "curr_step.bin") << std::endl;
-        return -1;
-    }
-
-    fileread.seekg(0, std::ios::end);
-    std::streampos filesize = fileread.tellg();
-
-    if (filesize < sizeof(int)) {
-        std::cerr << "Error: File smaller than expected!" << std::endl;
-        return -2;
-    }
-
-    fileread.seekg(-sizeof(int), std::ios::end);
-
-    int laststep = 0;
-    fileread.read(reinterpret_cast<char*>(&laststep), sizeof(int));
-
-    if (!fileread.good()) {
-        std::cerr << "Error reading data from file!" << std::endl;
-        return -3;
-    }
-    
-    fileread.close();
-    return laststep+1;
-}
-
-__host__
-int loadSimCheckpoint( 
-    dfloat* fMom,
-    ghostInterfaceData ghostInterface,
-    int *step
-    ){
-    step[0] = getStep();
-
-    if(step[0] < INI_STEP)
-        step[0]=INI_STEP;
-
-    if (step[0]<=0){
-        std::cerr << "Starting from step " << step[0] << std::endl;
-        return 0;
-    }
-    operateSimCheckpoint(__LOAD_CHECKPOINT, fMom, ghostInterface,step);
-    return 1;
-}
-
-//#ifdef PARTICLE_MODEL
 __host__
 int loadSimCheckpointParticle( 
     ParticlesSoA& particlesSoA,
@@ -523,24 +538,6 @@ int loadSimCheckpointParticle(
     operateSimCheckpointParticle(__LOAD_CHECKPOINT, particlesSoA, step);
     return 1;
 }
-//#endif
-
-
-__host__
-void saveSimCheckpoint( 
-    dfloat* fMom,
-    ghostInterfaceData ghostInterface,
-    int *step
-    ){
-    std::string foldername = PATH_FILES; 
-    foldername += "\\\\";
-    foldername += ID_SIM;
-    foldername += "\\\\checkpoint";
-    createFolder(foldername);
-    operateSimCheckpoint(__SAVE_CHECKPOINT, fMom,ghostInterface, step);
-}
-
-//#ifdef PARTICLE_MODEL
 __host__
 void saveSimCheckpointParticle( 
     ParticlesSoA& particlesSoA,
@@ -553,4 +550,4 @@ void saveSimCheckpointParticle(
     createFolder(foldername);
     operateSimCheckpointParticle(__SAVE_CHECKPOINT, particlesSoA, step);
 }
-//#endif
+#endif

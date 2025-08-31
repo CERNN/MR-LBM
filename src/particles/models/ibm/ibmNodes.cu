@@ -1,5 +1,5 @@
 
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #include "IbmNodes.cuh"
 #include "../../class/Particle.cuh"
@@ -158,4 +158,4 @@ void IbmNodesSoA::leftShiftNodesSoA(int idx, int left_shift){
 }
 
 
-// #endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL

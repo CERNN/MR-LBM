@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #include "particle.cuh"
 #include <cstdlib>
@@ -1163,4 +1163,4 @@ void Particle::makeEllipsoid(ParticleCenter *particleCenter)
 }
 
 
-//#endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL

@@ -6,7 +6,7 @@
 *   @date 13/10/2020
 */
 
-
+#ifdef PARTICLE_MODEL
 #ifndef __PARTICLES_REPORT_H
 #define __PARTICLES_REPORT_H
 
@@ -34,3 +34,4 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step);
 void printParticlesInfo(ParticlesSoA particles, unsigned int step);
 
 #endif
+#endif //PARTICLE_MODEL

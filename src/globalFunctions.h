@@ -5,7 +5,9 @@
 #include <builtin_types.h> // for device variables
 #include "var.h"
 #include "globalStructs.h"
+#ifdef PARTICLE_MODEL
 #include "particles/models/ibm/ibmVar.h"
+#endif
 
 __host__ __device__
     dfloat __forceinline__
@@ -275,20 +277,6 @@ __host__ __device__
     return x + NX * (y + NY*(z));
 }
 
-
-/*
-*   @brief Evaluate the position of the element of a 3D matrix ([NX][NY][NZ+2*MACR_BORDER_NODES]) 
-*         in a 1D array
-*   @param x: x axis value
-*   @param y: y axis value
-*   @param z: z axis value (-MACR_BORDER_NODES <= z < NZ+MACR_BORDER_NODES)
-*   @return element index
-*/
-__host__ __device__
-size_t __forceinline__ idxScalarWBorder(unsigned int x, unsigned int y, unsigned int z)
-{
-    return NX * ((size_t)NY*(z+MACR_BORDER_NODES) + y) + x;
-}
 
 #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 //   @note: not unsigned because it uses negative values for thread index to pad from the halo

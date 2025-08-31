@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #include "ParticleCenter.cuh"
 #include <iostream>
@@ -331,4 +331,4 @@ __host__ __device__ void ParticleCenter::setCenter1(const dfloat3 center1) { thi
 __host__ __device__ dfloat3 ParticleCenter::getCenter2() const { return this->center2; }
 __host__ __device__ void ParticleCenter::setCenter2(const dfloat3 center2) { this->center2 = center2; }
 
-//#endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL

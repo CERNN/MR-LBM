@@ -6,6 +6,7 @@
 *   @version 0.3.0
 *   @date 26/08/2020
 */
+#ifdef PARTICLE_MODEL
 
 #ifndef __IBM_VAR_H
 #define __IBM_VAR_H
@@ -57,3 +58,5 @@ constexpr unsigned int GRID_PCOLLISION_IBM =
 /* -------------------------------------------------------------------------- */
 
 #endif // !__IBM_VAR_H
+
+#endif //PARTICLE_MODEL

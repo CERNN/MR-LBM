@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #include "particleSim.cuh"
 
@@ -28,4 +28,4 @@ void particleSimulation(
 
 }
 
-//#endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL

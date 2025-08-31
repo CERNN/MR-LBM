@@ -5,6 +5,7 @@
 *   @version 0.3.0
 *   @date 14/06/2021
 */
+#ifdef PARTICLE_MODEL
 
 #ifndef __IBM_BC_H
 #define __IBM_BC_H
@@ -70,3 +71,4 @@
 
 
 #endif // !__IBM_BC_H
+#endif //PARTICLE_MODEL

@@ -1,3 +1,4 @@
+#ifdef PARTICLE_MODEL
 #ifndef __PARTICLE_SIM_CUH
 #define __PARTICLE_SIM_CUH
 
@@ -18,3 +19,4 @@ void particleSimulation(
 );
 
 #endif //__PARTICLE_SIM_CUH
+#endif //PARTICLE_MODEL

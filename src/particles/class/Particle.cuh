@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 #ifndef __PARTICLE_H
 #define __PARTICLE_H
 
@@ -150,4 +150,4 @@ class ParticlesSoA{
 
 #endif
 
-//#endif
+#endif //PARTICLE_MODEL

@@ -1,4 +1,4 @@
-
+#ifdef PARTICLE_MODEL
 #ifndef __PARTICLE_MODEL_TRACER_CUH
 #define __PARTICLE_MODEL_TRACER_CUH
 
@@ -57,3 +57,5 @@ void tracer_saveParticleInfo(
 
 
 #endif //__PARTICLE_MODEL_TRACER_CUH
+
+#endif //PARTICLE_MODEL

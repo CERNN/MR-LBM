@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #ifndef __IBM_NODES_H
 #define __IBM_NODES_H
@@ -136,4 +136,4 @@ public:
 
 #endif
 
-//#endif
+#endif //PARTICLE_MODEL

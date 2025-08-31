@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 //functions related to the rigid body body of the particle and discretization
 
@@ -279,4 +279,4 @@ void gpuParticleMovement(
 
 }
 
-//#endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL

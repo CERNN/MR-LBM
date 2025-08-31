@@ -1,3 +1,5 @@
+#ifdef PARTICLE_MODEL
+
 #ifndef __PARTICLE_MOVEMENT_H
 #define __PARTICLE_MOVEMENT_H
 
@@ -10,7 +12,6 @@
 #include "../../class/Particle.cuh"
 #include "../../particlesBoundaryCondition.h"
 
-#ifdef PARTICLE_MODEL
 
 __global__
 void gpuUpdateParticleOldValues(
@@ -36,6 +37,8 @@ void gpuParticleMovement(
     unsigned int step
 );
 
-#endif //PARTICLE_MODEL
 
 #endif // !__PARTICLE_MOVEMENT_H
+
+
+#endif //PARTICLE_MODEL

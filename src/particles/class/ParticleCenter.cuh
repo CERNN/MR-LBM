@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 #ifndef __PARTICLE_CENTER_H
 #define __PARTICLE_CENTER_H
 
@@ -352,4 +352,4 @@ protected:
 }; 
 #endif
 
-//#endif
+#endif //PARTICLE_MODEL

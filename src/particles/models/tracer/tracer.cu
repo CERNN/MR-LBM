@@ -1,4 +1,4 @@
-//#ifdef PARTICLE_MODEL
+#ifdef PARTICLE_MODEL
 
 #include "tracer.cuh"
 
@@ -271,4 +271,4 @@ void tracer_saveParticleInfo(dfloat3 *h_particlePos, unsigned int step){
     outFileParticleData << strColumnNames << strValuesParticles.str();
 }
 
-//#endif //PARTICLE_MODEL
+#endif //PARTICLE_MODEL
