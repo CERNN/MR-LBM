@@ -5,27 +5,14 @@ Projects:
     This can be done by storing the populations in the same location where it was retrived. 
     This will lead to performance decrease since is not coaslesced write.
      however it will reduce the memory ussage
-  ☐ test perfomance Z-curve array pattern for indexing within the same block structure
-  ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
-    ☐ Edit local force field to moment array
-    ☐ change the name moment array to something more descreptive
-  ✔ find a way to compute the best block size on compilation time (most likely make the sh script create a file which later is included to edit the block size) @done(25-01-03 16:04)
-    ☐  there is some bug on it for now with parallel reduction, trying to figure out what is wrong
-  ✔ allocatate the correct ammount of shared memory based on the blockSize @done(24-11-07 16:23)
-    ✔ need to find a way to compile depending on the architure @done(24-11-15 18:14)
-  ☐ Change macro condition from (non_newtonian || les model to local viscosity)
+  ☐  there is some bug on it for now with parallel reduction, trying to figure out what is wrong
   ☐ Eliminate memory allocation for solid nodes (problem, a index array is necessary 10.1016/j.jocs.2022.101723)
   ☐ Multi Block Implementation (Multi GPU) Nvidia NCCL implementation https://www.nvidia.com/en-us/on-demand/session/gtcspring21-s31880/
-  ☐ Fix parallel reduction for 2D cases bigger than 256x256
-  ☐ Separate omega from non_newtonian
-  ☐ Incorporate LES
-  ☐ Find a way to compile for linux machines on a windows machine
   ☐ Test the performance if instead of storing the populations in the shared memory, store the moments, which can be pulled and used to reconstructed the populations
       %it will increase the number of arithmetic operations, however the shared memory array will use 10 scalars per lattice instead of the 18 populations
       %allowing to use a higher block size than orginally planned. The performance might be benefical when using a D3Q27 velocity set since the reduced from to 26 to 10 scalars per lattice.
   ☐ validate/verify the other collision methods.
-  ✔ Verify D3Q27 again @done(24-11-15 18:17)
-    ☐ Find a way to define the link between bc and the velocity set between the cases.
+  ☐ Find a way to define the link between bc and the velocity set between the cases.
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
   ☐ Incorporate IBM
   ☐ Curved boundary conditions
@@ -85,3 +72,17 @@ Completed:\
         ✔ rewrite ghost values to be a struct @done(24-11-03 18:59)
     ✔ Source term for the advection-diffusion equation @done(24-11-05 01:03)
     ✔ Unify the transport equations in a single kernel @done(25-01-03 11:19)
+  ✘ Find a way to compile for linux machines on a windows machine (Not possible due nvcc compiler, but is possible make a single script for both)
+  ✔ Separate omega from non_newtonian @done(25-08-20 14:44)
+  ✔ Incorporate LES @done(25-08-20 14:44)
+  ✔ Change macro condition from (non_newtonian || les model to local viscosity) @done(25-08-20 14:44)
+  ✔ By using #def and #undef is possible to create a dynamic memory array for moments/omega/force/... and so on @done(24-02-02 23:25)
+    ✔ Edit local force field to moment array @done(25-08-20 14:44)
+    ✘ change the name moment array to something more descreptive (fMom stands for field moments)
+  ✔ allocatate the correct ammount of shared memory based on the blockSize @done(24-11-07 16:23)
+  ✔ find a way to compute the best block size on compilation time (most likely make the sh script create a file which later is included to edit the block size) @done(25-01-03 16:04)
+  (There is a problem with bigger blocks, there is too much register usagem, and therefore is not possible to go bigger sizes unless --maxrregcount=64 is added to the compiler)
+  ✔ need to find a way to compile depending on the architure @done(24-11-15 18:14)
+  ✔ Verify D3Q27 again @done(24-11-15 18:17)
+  ✘ Fix parallel reduction for 2D cases bigger than 256x256 (Focus of development isnt 2D cases )
+  ✘ test perfomance Z-curve array pattern for indexing within the same block structure (no apparent perfomance increase when using in the shared memory)
