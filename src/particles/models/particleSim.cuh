@@ -1,3 +1,11 @@
+/**
+*   @file particleSim.cuh
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @author Ricardo de Souza
+*   @brief Handle particle simulations
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
 
 #ifndef __PARTICLE_SIM_CUH
 #define __PARTICLE_SIM_CUH

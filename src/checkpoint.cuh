@@ -2,6 +2,7 @@
 *   @file checkpoint.cuh
 *   @author Waine Jr. (waine@alunos.utfpr.edu.br)
 *   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @author Ricardo de Souza
 *   @brief Loading and saving of variables checkpoints
 *   @version 0.4.0
 *   @date 01/09/2025

@@ -1,10 +1,13 @@
-/*
-*   @file ibmReport.h
+/**
+*   @file particlesReport.cuh
 *   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @brief Functions for reporting informations about IBM particles
-*   @version 0.3.0
-*   @date 13/10/2020
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @author report about particles
+*   @brief report data about particles
+*   @version 0.4.0
+*   @date 01/09/2025
 */
+
 
 
 #ifndef __PARTICLES_REPORT_H

@@ -1,3 +1,10 @@
+/**
+*   @file collisionVar.h
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief collision variables
+*   @version 0.4.0
+*   @date 01/09/2025
+*/
 
 #ifdef PARTICLE_MODEL
 /* -------------------------- COLLISION PARAMETERS -------------------------- */

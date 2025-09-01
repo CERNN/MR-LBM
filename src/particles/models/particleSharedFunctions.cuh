@@ -1,3 +1,10 @@
+/**
+*   @file particleSharedFunctions.cuh
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief shared functions for particle simulation
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
 
 #ifndef __PARTICLE_SHARED_FUNCTIONS_CUH
 #define __PARTICLE_SHARED_FUNCTIONS_CUH

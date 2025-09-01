@@ -1,3 +1,11 @@
+/**
+*   @file tracer.cuh
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief handle the simulation for tracer particles
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
+
 
 #ifndef __PARTICLE_MODEL_TRACER_CUH
 #define __PARTICLE_MODEL_TRACER_CUH

@@ -18,7 +18,7 @@
 #include "globalFunctions.h"
 #include "var.h"
 #include "includeFiles/interface.h"
-#include "boundaryCondition.cuh"
+#include "nodeTypeMap.h"
 #ifdef OMEGA_FIELD
     #include "nnf.h"
 #endif

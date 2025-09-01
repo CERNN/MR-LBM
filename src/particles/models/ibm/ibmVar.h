@@ -1,10 +1,11 @@
-/*
+/**
 *   @file ibmVar.h
-*   @author Marco Aurelio Ferrari (marcoferrari@alunos.utfpr.edu.br)
 *   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @brief Configurations for the immersed boundary method
-*   @version 0.3.0
-*   @date 26/08/2020
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @author Ricardo de Souza
+*   @brief variables for IBM
+*   @version 0.4.0
+*   @date 01/09/2025
 */
 
 
