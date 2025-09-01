@@ -1,3 +1,12 @@
+/**
+*   @file auxFunctions.h
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Auxiliary Functions
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
+
+
 #ifndef __AUX_FUNCTION_CUH
 #define __AUX_FUNCTION_CUH
 

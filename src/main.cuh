@@ -1,3 +1,13 @@
+/**
+*   @file main.cuh
+*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Main routine
+*   @version 0.4.0
+*   @date 01/09/2025
+*/
+
+
 // main.cuh
 #ifndef MAIN_CUH
 #define MAIN_CUH
@@ -20,9 +30,8 @@
 #ifdef PARTICLE_MODEL
     #include "./particles/class/Particle.cuh"
     #include "./particles/utils/particlesReport.cuh"
-    #include "./particles/particlesBoundaryCondition.h"
     #include "./particles/models/particleSim.cuh"
-    #include "./particles/models/dem/collisionDetection.cuh"
+    #include "./particles/models/dem/collision/collisionDetection.cuh"
     #include "./particles/models/dem/particleMovement.cuh"
 #endif
 
@@ -850,7 +859,7 @@ void allocateHostMemory(
     #ifdef SECOND_DIST
     checkCudaErrors(cudaMallocHost((void**)m_c, MEM_SIZE_SCALAR));
     memAllocated += MEM_SIZE_SCALAR;
-    #endif
+    #endif //SECOND_DIST
     #endif // MEAN_FLOW
 
     #ifdef BC_FORCES
@@ -866,7 +875,7 @@ void allocateHostMemory(
     #if NODE_TYPE_SAVE
     checkCudaErrors(cudaMallocHost((void**)nodeTypeSave, sizeof(unsigned int) * NUMBER_LBM_NODES));
     memAllocated += sizeof(unsigned int) * NUMBER_LBM_NODES;
-    #endif
+    #endif //NODE_TYPE_SAVE
 
     printf("Host Memory Allocated: %0.2f MB\n", (float)memAllocated / (1024.0 * 1024.0)); if(console_flush) fflush(stdout);
 }
@@ -920,7 +929,7 @@ void initializeDomain(
         printf("Random numbers initialized - Seed used: %u\n", CURAND_SEED); 
         printf("Device memory allocated for random numbers: %.2f MB\n", (float)(sizeof(float) * NUMBER_LBM_NODES) / (1024.0 * 1024.0));
         if(console_flush) fflush(stdout);
-    #endif
+    #endif //RANDOM_NUMBERS
 
     int checkpoint_state = 0;
     // LBM Initialization
@@ -1095,5 +1104,4 @@ void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, int *st
 
 }
 #endif // PARTICLE_MODEL
-
 #endif // MAIN_CUH

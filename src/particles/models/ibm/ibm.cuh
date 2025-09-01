@@ -10,10 +10,9 @@
 #include "../../../errorDef.h"
 #include "../../../saveData.cuh"
 #include "../../class/Particle.cuh"
-#include "../../particlesBoundaryCondition.h"
 
 #include "../dem/particleMovement.cuh"
-#include "../dem/collisionDetection.cuh"
+#include "../dem/collision/collisionDetection.cuh"
 
 #ifdef PARTICLE_MODEL
 void ibmSimulation(

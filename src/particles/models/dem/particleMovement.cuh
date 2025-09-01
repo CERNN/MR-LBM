@@ -10,7 +10,6 @@
 #include "../../../errorDef.h"
 #include "../../../saveData.cuh"
 #include "../../class/Particle.cuh"
-#include "../../particlesBoundaryCondition.h"
 
 #ifdef PARTICLE_MODEL
 __global__

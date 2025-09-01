@@ -1,11 +1,12 @@
-/*
+/**
 *   @file checkpoint.cuh
-*   @author Marco A Ferrari. (marcoferrari@alunos.utfpr.edu.br)
 *   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @brief Loading and saving simulation checkpoints
-*   @version 0.1.0
-*   @date 16/02/2023
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Loading and saving of variables checkpoints
+*   @version 0.4.0
+*   @date 01/09/2025
 */
+
 
 #ifndef __CHECKPOINT_H
 #define __CHECKPOINT_H

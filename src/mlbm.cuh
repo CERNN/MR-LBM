@@ -1,3 +1,11 @@
+/**
+*   @file mlbm.h
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief main kernel for moment representation 
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
+
 #ifndef __MLBM_H
 #define __MLBM_H
 
@@ -38,6 +46,6 @@ void gpuMomCollisionStream(
 #ifdef LOCAL_FORCES
 __global__
 void gpuResetMacroForces(dfloat *fMom);
-#endif
+#endif //LOCAL_FORCES
 
 #endif //__MLBM_H

@@ -1,3 +1,12 @@
+/**
+*   @file les.h
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Infomation about LES
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
+
+
 #ifndef __LES_H
 #define __LES_H
 
@@ -7,8 +16,6 @@
 
 
 #define COMPUTE_SHEAR
-
-
 #ifdef MODEL_CONST_SMAGORINSKY
 constexpr dfloat CONST_SMAGORINSKY = 0.1;
 constexpr dfloat INIT_VISC_TURB = 0.0;

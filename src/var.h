@@ -1,3 +1,13 @@
+/**
+*   @file var.h
+*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Global variables
+*   @version 0.4.0
+*   @date 01/09/2025
+*/
+
+
 #ifndef __VAR_H
 #define __VAR_H
 
@@ -36,18 +46,13 @@ constexpr bool console_flush = false;
 
 #define GPU_INDEX 0
 
-/* ========== Verifcar se não faz parte dsa declarações do caso -> ========== */
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
 constexpr unsigned int N_GPUS = 1;    // Number of GPUS to use
 constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
 
-/* ========== <- Verifcar se não faz parte dsa declarações do caso ========== */
-
 #define STR_IMPL(A) #A
 #define STR(A) STR_IMPL(A)
-
-
 
 #define CASE_DIRECTORY cases
 #define CASE_CONSTANTS STR(CASE_DIRECTORY/BC_PROBLEM/constants.inc)

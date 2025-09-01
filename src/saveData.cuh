@@ -1,3 +1,13 @@
+/**
+*   @file saveData.cuh
+*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Save data
+*   @version 0.4.0
+*   @date 01/09/2025
+*/
+
+
 #ifndef __SAVE_DATA_H
 #define __SAVE_DATA_H
 
@@ -238,4 +248,4 @@ void saveSimInfo(int step,dfloat MLUPS);
 void saveTreatData(std::string fileName, std::string dataString, int step);
 
 
-#endif __SAVE_DATA_H
+#endif //__SAVE_DATA_H

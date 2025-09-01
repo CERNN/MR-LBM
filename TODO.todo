@@ -14,11 +14,16 @@ Projects:
   ☐ validate/verify the other collision methods.
   ☐ Find a way to define the link between bc and the velocity set between the cases.
   ☐ Incorporate thixotropic model (already need import from other project, depends on thermal model implementation)
-  ☐ Incorporate IBM
   ☐ Curved boundary conditions
   ☐ Moving boudnary conditions (e.g. moving particles using voxels)
   ☐ Implementation of DDF-Shift (density is done)
-
+  ☐ Implement particle collision
+  ☐ Update license information
+  ☐ Update description for newely created functions
+  ☐ Update authorship heades in the files
+  ☐ Clean up commented old code
+  ☐ all #endif have to have comment on what define it ends
+  ☐ Verify checkpoint for IBM
 
 Archive:\
 Async call to python script to convert bin files into vtr files -- no need anymore, saves directly in vtk
@@ -86,3 +91,4 @@ Completed:\
   ✔ Verify D3Q27 again @done(24-11-15 18:17)
   ✘ Fix parallel reduction for 2D cases bigger than 256x256 (Focus of development isnt 2D cases )
   ✘ test perfomance Z-curve array pattern for indexing within the same block structure (no apparent perfomance increase when using in the shared memory)
+  ✔ Incorporate IBM @done(25-08-31 20:49)

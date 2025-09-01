@@ -735,4 +735,4 @@ void gpuResetMacroForces(dfloat *fMom){
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FY;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FZ;
 }
-#endif 
+#endif //LOCAL_FORCES

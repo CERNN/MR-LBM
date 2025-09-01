@@ -1,3 +1,13 @@
+/**
+*   @file treatData.cuh
+*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Data/macroscopics treatment
+*   @version 0.4.0
+*   @date 01/09/2025
+*/
+
+
 #ifndef __TREAT_DATA_CUH
 #define __TREAT_DATA_CUH
 
@@ -38,7 +48,7 @@ void treatData(
 
 
 
- /*
+/*
 *   @brief Calculate the mean of any moment of the flow based  on m_indexthe flow
 *   @param fMom: device macroscopic field based on block and thread index
 *   @param meanMon: meanMoment for return

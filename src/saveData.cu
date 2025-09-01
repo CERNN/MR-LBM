@@ -338,7 +338,7 @@ void saveVarVTK(
     std::ofstream ofs(filename, std::ios::binary);
     if (!ofs) throw std::runtime_error("Cannot open " + filename);
 
-    // — Header —
+    //Header 
     ofs << "# vtk DataFile Version 3.0\n"
         << "LBM output (binary)\n"
         << "BINARY\n"                               // ← here!
@@ -347,35 +347,28 @@ void saveVarVTK(
         << "ORIGIN 0 0 0\n"
         << "SPACING 1 1 1\n"
         << "POINT_DATA " << N << "\n";
-
-    // — Scalars —
     ofs << "SCALARS rho float 1\n"
         << "LOOKUP_TABLE default\n";
     writeBigEndian(ofs, rho, N);
 
-    // — Vectors velocity —
     ofs << "VECTORS velocity float\n";
-    // interleave ux,uy,uz
     for (size_t i = 0; i < N; ++i) {
         dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
         writeBigEndian(ofs, v, 3);
     }
 
-    // — Omega —
     #ifdef OMEGA_FIELD
         ofs << "SCALARS omega float 1\n"
             << "LOOKUP_TABLE default\n";
         writeBigEndian(ofs, omega, N);
     #endif
 
-    // — C —
     #ifdef SECOND_DIST
         ofs << "SCALARS C float 1\n"
             << "LOOKUP_TABLE default\n";
         writeBigEndian(ofs, C, N);
     #endif
 
-    // — Aij —
     #ifdef CONFORMATION_TENSOR
         ofs << "TENSORS6 Aij float\n";
         for (size_t i = 0; i < N; ++i) {
@@ -387,7 +380,6 @@ void saveVarVTK(
         }
     #endif
 
-    // — forces —
     #ifdef SAVE_BC_FORCES
         ofs << "VECTORS forces float\n";
         for (size_t i = 0; i < N; ++i) {
@@ -396,8 +388,6 @@ void saveVarVTK(
         }
     #endif
 
-    // — bc —
-    
     #if NODE_TYPE_SAVE
         ofs << "SCALARS bc int 1\n"
             << "LOOKUP_TABLE default\n";

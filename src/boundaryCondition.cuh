@@ -1,3 +1,11 @@
+/**
+*   @file boundaryCondition.cuh
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Definitions for boundary conditions
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
+
 #ifndef __BOUNDARY_CONDITION_CUH
 #define __BOUNDARY_CONDITION_CUH
 

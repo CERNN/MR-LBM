@@ -1,3 +1,11 @@
+/**
+*   @file nnf.h
+*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+*   @brief Information about non-Newtonian fluids
+*   @version 0.1.0
+*   @date 01/09/2025
+*/
+
 #ifndef __NNF_H
 #define __NNF_H
 
