@@ -21,7 +21,7 @@ void particleSimulation(
        ibmSimulation(particles,fMom,streamParticles[0],step);
     }
     if(numPIBM>0){
-        /*code*/
+        pibmSimulation(particles,fMom,streamParticles[0],step);
     }
     if(numTRACER>0){
         tracerSimulation(particles,fMom,streamParticles[0],step);
