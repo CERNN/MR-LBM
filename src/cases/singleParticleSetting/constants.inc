@@ -1,11 +1,11 @@
 #define PARTICLE_MODEL 
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 2000;
+constexpr int N_STEPS = 10000;
 constexpr int N = 96 * SCALE;
-constexpr int NX = 96;        // size x of the grid 
-constexpr int NY = 160;        // size y of the grid
-constexpr int NZ = 96;        // size z of the grid in one GPU
+constexpr int NX = 200;        // size x of the grid 
+constexpr int NY = 320;        // size y of the grid
+constexpr int NZ = 200;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
 constexpr dfloat U_MAX = 0.0;  
@@ -27,12 +27,13 @@ __device__ const dfloat UY_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat UZ_BC[4] =  {0, 0, 0, 0};
 __device__ const dfloat RHO_BC[4] = {RHO_0, RHO_0, RHO_0, RHO_0};
 
-#define BC_X_PERIODIC
+#define BC_X_WALL
 #define BC_Y_WALL
-#define BC_Z_PERIODIC
+#define BC_Z_WALL
 
-constexpr dfloat VISC = 0.1;
-constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
+
+constexpr dfloat TAU = 0.65;     // relaxation time
+constexpr dfloat VISC = (TAU-0.5)/3.0;
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
@@ -58,7 +59,7 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
     #define NUM_PARTICLES 1
 
     constexpr dfloat GX = 0.0;
-    constexpr dfloat GY = -7.11e-3;
+    constexpr dfloat GY = 8.4E-04;
     constexpr dfloat GZ = 0.0;
 
     constexpr dfloat FLUID_DENSITY = 1.0;

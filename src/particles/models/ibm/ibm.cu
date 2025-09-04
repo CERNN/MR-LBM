@@ -39,63 +39,26 @@ void ibmSimulation(
     ParticleCenter* pArray = particles->getPCenterArray();
 
 
-    //printf("Inside ibmSimulation \n");
-
     // Update particle center position and its old values
     gpuUpdateParticleOldValues<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
-    checkCudaErrors(cudaStreamSynchronize(streamParticles));
 
     // Reset forces in all IBM nodes;
-    if(pNumNodes > 0){
-        gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,step);
-        checkCudaErrors(cudaStreamSynchronize(streamParticles));
-        getLastCudaError("Reset IBM nodes forces error\n");
-    }
+    gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,step);
 
     // Calculate collision force between particles
-    //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamIBM[0]>>>(particles.pCenterArray,step);
-    checkCudaErrors(cudaStreamSynchronize(streamParticles)); 
+    //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
 
-    // First update particle velocity using body center force and constant forces
-    gpuUpdateParticleCenterVelocityAndRotation <<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles >>>(pArray,range.first,range.last,step);
-    checkCudaErrors(cudaStreamSynchronize(streamParticles));
-    getLastCudaError("IBM update particle center velocity error\n");
+    // Make the interpolation of LBM and spreading of IBM forces
+    gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0],step);
 
+    // Update particle velocity using body center force and constant forces
+    gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
 
-    for (int i = 0; i < IBM_MAX_ITERATION; i++)
-    {
-        for(int j = 0; j < N_GPUS; j++){
-            // If GPU has nodes in it
-            if(pNumNodes > 0){
-                checkCudaErrors(cudaSetDevice(GPUS_TO_USE[j]));
-                // Make the interpolation of LBM and spreading of IBM forces
-                gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0],step);
-                checkCudaErrors(cudaStreamSynchronize(streamParticles));
-                getLastCudaError("IBM interpolation spread error\n");
-             }
-         }
- 
-        // Update particle velocity using body center force and constant forces
-        gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
-        checkCudaErrors(cudaStreamSynchronize(streamParticles));
-        getLastCudaError("IBM update particle center velocity error\n");
-    }
-
-    
     // Update particle center position and its old values
     gpuParticleMovement<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
+    gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,pArray,range.first,range.last,step);
+    
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
-    getLastCudaError("IBM particle movement error\n");
-
-
-
-    if(pNumNodes > 0){
-        gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,pArray,range.first,range.last,step);
-        checkCudaErrors(cudaStreamSynchronize(streamParticles));
-        getLastCudaError("IBM particle movement error\n");
-    }
-    checkCudaErrors(cudaDeviceSynchronize());
-
     cudaFree(d_nodes);
 }
 
@@ -256,10 +219,10 @@ void gpuParticleNodeMovement(
 
        
     // compute rotation quartenion
-    const dfloat q0 = cos(0.5*w_norm);
-    const dfloat qi = (pc_i.getWAvgX()/w_norm) * sin (0.5*w_norm);
-    const dfloat qj = (pc_i.getWAvgY()/w_norm) * sin (0.5*w_norm);
-    const dfloat qk = (pc_i.getWAvgZ()/w_norm) * sin (0.5*w_norm);
+    const dfloat q0 = cos(w_norm/2);
+    const dfloat qi = (pc_i.getWAvgX()/w_norm) * sin (w_norm/2);
+    const dfloat qj = (pc_i.getWAvgY()/w_norm) * sin (w_norm/2);
+    const dfloat qk = (pc_i.getWAvgZ()/w_norm) * sin (w_norm/2);
 
     const dfloat tq0m1 = (q0*q0) - 0.5;
     

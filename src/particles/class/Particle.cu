@@ -485,87 +485,71 @@ void Particle::makeSpherePolar(ParticleCenter *particleCenter)
 
     unsigned int numNodes = this->numNodes;
 
-    // Coulomb node positions distribution
-    // if (coulomb != 0) {
-    //     dfloat3 dir;
-    //     dfloat mag;
-    //     dfloat scaleF;
-    //     dfloat3* cForce;
-    //     cForce = (dfloat3*)malloc(numNodes * sizeof(dfloat3));
-
-
-    //     scaleF = 0.001;
-
-    //     dfloat fx, fy, fz;
-
-    //     for (unsigned int c = 0; c < coulomb; c++) {
-    //         for (int i = 0; i < numNodes; i++) {
-    //             cForce[i].x = 0;
-    //             cForce[i].y = 0;
-    //             cForce[i].z = 0;
-    //         }
-
-    //         for (int i = 0; i < numNodes; i++) {
-    //             ParticleNode* node_i = &(this->nodes[i]);
-
-    //             for (int j = i+1; j < numNodes; j++) {
-
-    //                 ParticleNode* node_j = &(this->nodes[j]);
-
-    //                 dir.x = node_j->pos.x - node_i->pos.x;
-    //                 dir.y = node_j->pos.y - node_i->pos.y;
-    //                 dir.z = node_j->pos.z - node_i->pos.z;
-
-    //                 mag = (dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
-
-    //                 cForce[i].x -= dir.x / mag;
-    //                 cForce[i].y -= dir.y / mag;
-    //                 cForce[i].z -= dir.z / mag;
-
-    //                 cForce[j].x -= -dir.x / mag;
-    //                 cForce[j].y -= -dir.y / mag;
-    //                 cForce[j].z -= -dir.z / mag;
-    //             }
-    //         }
-    //         for (int i = 0; i < numNodes; i++) {
-    //             // Move particle
-    //             fx = cForce[i].x / scaleF;
-    //             fy = cForce[i].y / scaleF;
-    //             fz = cForce[i].z / scaleF;
-                
-    //             ParticleNode* node_i = &(this->nodes[i]);
-
-    //             node_i->pos.x += fx;
-    //             node_i->pos.y += fy;
-    //             node_i->pos.z += fz;
-
-    //             // Return to sphere
-    //             mag = sqrt(node_i->pos.x * node_i->pos.x 
-    //                 + node_i->pos.y * node_i->pos.y 
-    //                 + node_i->pos.z * node_i->pos.z);
-
-    //             node_i->pos.x *= r / mag;
-    //             node_i->pos.y *= r / mag;
-    //             node_i->pos.z *= r / mag;
-    //         }
-    //     }
-
-    //     // Area fix
-    //     for (int i = 0; i < numNodes; i++) {
-    //         ParticleNode* node_i = &(this->nodes[i]);
-
-    //         node_i->S = this->pCenter.S / (numNodes);
-    //     }
-
-    //     // Free coulomb force
-    //     free(cForce);
-
-    //     dfloat dA =  this->pCenter.S/this->numNodes;
-    //     for(int i = 0; i < numNodes; i++){
-    //         this->nodes[i].S = dA;
-    //     }
-    // }
     IbmNodes* node_i;
+    // Coulomb node positions distribution
+     if (MESH_COULOMB != 0) {
+         dfloat3 dir;
+         dfloat mag;
+         dfloat scaleF;
+         dfloat3* cForce;
+         cForce = (dfloat3*)malloc(numNodes * sizeof(dfloat3));
+        IbmNodes* node_j;
+
+         scaleF = 0.1;
+         dfloat fx, fy, fz;
+         for (unsigned int c = 0; c < MESH_COULOMB; c++) {
+             for (int i = 0; i < numNodes; i++) {
+                 cForce[i].x = 0;
+                 cForce[i].y = 0;
+                 cForce[i].z = 0;
+             }
+             for (int i = 0; i < numNodes; i++) {
+                 node_i = &(this->nodes[i]);
+                 for (int j = i+1; j < numNodes; j++) {
+                     IbmNodes* node_j = &(this->nodes[j]);
+                     dir.x = node_j->getPosX() - node_i->getPosX();
+                     dir.y = node_j->getPosY() - node_i->getPosY();
+                     dir.z = node_j->getPosZ() - node_i->getPosZ();
+                     mag = (dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+                     cForce[i].x -= dir.x / mag;
+                     cForce[i].y -= dir.y / mag;
+                     cForce[i].z -= dir.z / mag;
+                     cForce[j].x -= -dir.x / mag;
+                     cForce[j].y -= -dir.y / mag;
+                     cForce[j].z -= -dir.z / mag;
+                 }
+             }
+             for (int i = 0; i < numNodes; i++) {
+                 // Move particle
+                 fx = cForce[i].x / scaleF;
+                 fy = cForce[i].y / scaleF;
+                 fz = cForce[i].z / scaleF;          
+                 IbmNodes* node_i = &(this->nodes[i]);
+                 node_i->setPosX(node_i->getPosX() + fx);
+                 node_i->setPosY(node_i->getPosY() + fy);
+                 node_i->setPosZ(node_i->getPosZ() + fz);
+                 // Return to sphere
+                 mag = sqrt(node_i->getPosX() * node_i->getPosX() 
+                          + node_i->getPosY() * node_i->getPosY() 
+                          + node_i->getPosZ() * node_i->getPosZ());
+                 node_i->setPosX(node_i->getPosX() * r / mag);
+                 node_i->setPosY(node_i->getPosY() * r / mag);
+                 node_i->setPosZ(node_i->getPosZ() * r / mag);                          
+             }
+         }
+         // Area fix
+         for (int i = 0; i < numNodes; i++) {
+             IbmNodes* node_i = &(this->nodes[i]);
+             node_i->setS(pCenter->getS()/ (numNodes));
+         }
+         // Free coulomb force
+         free(cForce);
+         dfloat dA = pCenter->getS()/ (numNodes);
+         for(int i = 0; i < numNodes; i++){
+             IbmNodes* node_i = &(this->nodes[i]);
+             node_i->setS(dA);
+         }
+     }
 
     for (int i = 0; i < numNodes; i++) {
         node_i = &(this->nodes[i]);

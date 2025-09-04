@@ -16,6 +16,7 @@
 #include "ibm/ibm.cuh"
 #include "pibm/pibm.cuh"
 #include "tracer/tracer.cuh"
+#include "dem/collision/collisionDetection.cuh"
 
 #ifdef PARTICLE_MODEL
 void particleSimulation(

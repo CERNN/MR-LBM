@@ -12,7 +12,13 @@ IbmNodes::IbmNodes()
     : pos(), vel(), vel_old(), f(), deltaF(), S() {}
 
 __host__ __device__ dfloat3 IbmNodes::getPos() const { return this->pos; }
+__host__ __device__ dfloat IbmNodes::getPosX() const { return this->pos.x; }
+__host__ __device__ dfloat IbmNodes::getPosY() const { return this->pos.y; }
+__host__ __device__ dfloat IbmNodes::getPosZ() const { return this->pos.z; }
 __host__ __device__ void IbmNodes::setPos(const dfloat3& Pos) { this->pos = Pos; }
+__host__ __device__ void IbmNodes::setPosX(const dfloat& Pos_x) { this->pos.x = Pos_x; }
+__host__ __device__ void IbmNodes::setPosY(const dfloat& Pos_y) { this->pos.y = Pos_y; }
+__host__ __device__ void IbmNodes::setPosZ(const dfloat& Pos_z) { this->pos.z = Pos_z; }
 
 __host__ __device__ dfloat3 IbmNodes::getVel() const { return this->vel; }
 __host__ __device__ void IbmNodes::setVel(const dfloat3& vel) { this->vel = vel; }

@@ -32,23 +32,29 @@ void gpuUpdateParticleOldValues(
 
     // Internal linear momentum delta = rho*volume*delta(v)/delta(t)
     // https://doi.org/10.1016/j.compfluid.2011.05.011
-    pc_i->setDPInternalX(0.0); //RHO_0 * pc_i->getVolume() * (pc_i->getVelX() - pc_i->getVelOldX());
-    pc_i->setDPInternalY(0.0); //RHO_0 * pc_i->getVolume() * (pc_i->getVelY() - pc_i->getVelOldY());
-    pc_i->setDPInternalZ(0.0); //RHO_0 * pc_i->getVolume() * (pc_i->getVelZ() - pc_i->getVelOldZ());
+    //pc_i->setDPInternalX(RHO_0 * pc_i->getVolume() * (pc_i->getVelX() - pc_i->getVelOldX())); //;
+    //pc_i->setDPInternalY(RHO_0 * pc_i->getVolume() * (pc_i->getVelY() - pc_i->getVelOldY())); //;
+    //pc_i->setDPInternalZ(RHO_0 * pc_i->getVolume() * (pc_i->getVelZ() - pc_i->getVelOldZ())); //;
+    pc_i->setDPInternalX(0.0);
+    pc_i->setDPInternalY(0.0);
+    pc_i->setDPInternalZ(0.0);
 
     // Internal angular momentum delta = (rho_f/rho_p)*I*delta(omega)/delta(t)
     // https://doi.org/10.1016/j.compfluid.2011.05.011
     
-    pc_i->setDLInternalX(0.0); //(RHO_0 / pc_i->getDensity()) * pc_i->getIXX() * (pc_i->getWX() - pc_i->getWOldX());
-    pc_i->setDLInternalY(0.0); //(RHO_0 / pc_i->getDensity()) * pc_i->getIYY() * (pc_i->getWY() - pc_i->getWOldY());
-    pc_i->setDLInternalZ(0.0); //(RHO_0 / pc_i->getDensity()) * pc_i->getIZZ() * (pc_i->getWZ() - pc_i->getWOldZ());
+    //pc_i->setDLInternalX((RHO_0 / pc_i->getDensity()) * pc_i->getIXX() * (pc_i->getWX() - pc_i->getWOldX())); 
+    //pc_i->setDLInternalY((RHO_0 / pc_i->getDensity()) * pc_i->getIYY() * (pc_i->getWY() - pc_i->getWOldY())); 
+    //pc_i->setDLInternalZ((RHO_0 / pc_i->getDensity()) * pc_i->getIZZ() * (pc_i->getWZ() - pc_i->getWOldZ())); 
+    pc_i->setDLInternalX(0.0);
+    pc_i->setDLInternalY(0.0);
+    pc_i->setDLInternalZ(0.0);
 
-    //printf("gpuUpdateParticleOldValues 2 pos  x: %f y: %f z: %f\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
-    //printf("gpuUpdateParticleOldValues 3 pos  x: %f y: %f z: %f\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
-    //printf("gpuUpdateParticleOldValues 4 pos  x: %f y: %f z: %f\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
-    //printf("gpuUpdateParticleOldValues 5 pos  x: %f y: %f z: %f\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
-    //printf("gpuUpdateParticleOldValues 6 pos  x: %f y: %f z: %f\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
-    //printf("gpuUpdateParticleOldValues 7 pos  x: %f y: %f z: %f\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
+    //printf("gpuUpdateParticleOldValues 2 pos  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
+    //printf("gpuUpdateParticleOldValues 3 pos  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
+    //printf("gpuUpdateParticleOldValues 4 pos  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
+    //printf("gpuUpdateParticleOldValues 5 pos  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
+    //printf("gpuUpdateParticleOldValues 6 pos  x: %e y: %e z: %e\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
+    //printf("gpuUpdateParticleOldValues 7 pos  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
     
     pc_i->setPos_old(pc_i->getPos());
     pc_i->setVel_old(pc_i->getVel());
@@ -89,33 +95,37 @@ void gpuUpdateParticleCenterVelocityAndRotation(
         return;
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 pos  x: %f y: %f z: %f\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 vel  x: %f y: %f z: %f\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 w  x: %f y: %f z: %f\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 f  x: %f y: %f z: %f\n",pc_i->getF().x,pc_i->getF().y,pc_i->getF().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 m  x: %f y: %f z: %f\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 f  x: %f y: %f z: %f\n",pc_i->getDP_internal().x,pc_i->getDP_internal().y,pc_i->getDP_internal().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 pos_old  x: %f y: %f z: %f\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 vel_old  x: %f y: %f z: %f\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 w_old  x: %f y: %f z: %f\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 f_old  x: %f y: %f z: %f\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 m_old  x: %f y: %f z: %f\n",pc_i->getMOldX(),pc_i->getMOldY(),pc_i->getMOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 volume %f\n",pc_i->getVolume());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 density %f\n",pc_i->getDensity());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 f  x: %e y: %e z: %e\n",pc_i->getF().x,pc_i->getF().y,pc_i->getF().z);
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 m  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 DP  x: %e y: %e z: %e\n",pc_i->getDP_internal().x,pc_i->getDP_internal().y,pc_i->getDP_internal().z);
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 pos_old  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 vel_old  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 w_old  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 f_old  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 m_old  x: %e y: %e z: %e\n",pc_i->getMOldX(),pc_i->getMOldY(),pc_i->getMOldZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 volume %e\n",pc_i->getVolume());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 1 density %e\n",pc_i->getDensity());
     #endif
 
     // Update particle center velocity using its surface forces and the body forces
     dfloat3 g = {GX,GY,GZ};
-    pc_i->setVel(pc_i->getVel_old() + ((0.5 * (pc_i->getF_old() + pc_i->getF()) + pc_i->getDP_internal())) / (pc_i->getVolume()) 
-                + (1.0 - FLUID_DENSITY/pc_i->getDensity()) * g);
+    const dfloat inv_volume = 1 / pc_i->getVolume();
+    pc_i->setVel(pc_i->getVel_old() + (((pc_i->getF_old() + pc_i->getF())/2 + pc_i->getDP_internal())*inv_volume
+                + (pc_i->getDensity() - FLUID_DENSITY)*g) / (pc_i->getDensity()));
+    //pc_i->setVel(pc_i->getVel_old() + (((pc_i->getF_old() + pc_i->getF())/2 + pc_i->getDP_internal())) / (pc_i->getVolume()) 
+    //            + (1.0 - FLUID_DENSITY/pc_i->getDensity()) * g);
+
 
     // Update particle angular velocity  
 
     dfloat6 I = pc_i->getI();
     dfloat inv_I_det_neg = 1.0/(I.zz*I.xy*I.xy + I.yy*I.xz*I.xz + I.xx*I.yz*I.yz - I.xx*I.yy*I.zz - 2*I.xy*I.xz*I.yz);
     dfloat3 wAux = pc_i->getW_old();
-    dfloat3 wAvg = 0.5*(pc_i->getW_old() + pc_i->getW());
-    dfloat3 LM_avg = pc_i->getDL_internal() + 0.5*(pc_i->getM_old() + pc_i->getM());
+    dfloat3 wAvg = (pc_i->getW_old() + pc_i->getW())/2;
+    dfloat3 LM_avg = pc_i->getDL_internal() + (pc_i->getM_old() + pc_i->getM())/2;
 
     dfloat error = 1.0;
     dfloat3 wNew;
@@ -125,17 +135,17 @@ void gpuUpdateParticleCenterVelocityAndRotation(
     //for (int i = 0; error > 1e-4; i++)
     {
         wNew.x = pc_i->getWOldX() + ((I.yz*I.yz - I.yy*I.zz)*(LM_avg.x + (wAvg.z)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z) - (wAvg.y)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z))
-                                - (I.xy*I.yz - I.xz*I.yy)*(LM_avg.z + (wAvg.y)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z) - (wAvg.x)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z))
-                                - (I.xz*I.yz - I.xy*I.zz)*(LM_avg.y + (wAvg.x)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z) - (wAvg.z)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z)))*inv_I_det_neg;
+                                   - (I.xy*I.yz - I.xz*I.yy)*(LM_avg.z + (wAvg.y)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z) - (wAvg.x)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z))
+                                   - (I.xz*I.yz - I.xy*I.zz)*(LM_avg.y + (wAvg.x)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z) - (wAvg.z)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z)))*inv_I_det_neg;
         wNew.y = pc_i->getWOldY() + ((I.xz*I.xz - I.xx*I.zz)*(LM_avg.y + (wAvg.x)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z) - (wAvg.z)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z))
-                                - (I.xy*I.xz - I.xx*I.yz)*(LM_avg.z + (wAvg.y)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z) - (wAvg.x)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z))
-                                - (I.xz*I.yz - I.xy*I.zz)*(LM_avg.x + (wAvg.z)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z) - (wAvg.y)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z)))*inv_I_det_neg;
+                                   - (I.xy*I.xz - I.xx*I.yz)*(LM_avg.z + (wAvg.y)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z) - (wAvg.x)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z))
+                                   - (I.xz*I.yz - I.xy*I.zz)*(LM_avg.x + (wAvg.z)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z) - (wAvg.y)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z)))*inv_I_det_neg;
         wNew.z = pc_i->getWOldZ() + ((I.xy*I.xy - I.xx*I.yy)*(LM_avg.z + (wAvg.y)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z) - (wAvg.x)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z))
-                                - (I.xy*I.xz - I.xx*I.yz)*(LM_avg.y + (wAvg.x)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z) - (wAvg.z)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z))
-                                - (I.xy*I.yz - I.xz*I.yy)*(LM_avg.x + (wAvg.z)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z) - (wAvg.y)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z)))*inv_I_det_neg;
+                                   - (I.xy*I.xz - I.xx*I.yz)*(LM_avg.y + (wAvg.x)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z) - (wAvg.z)*(I.xx*wAvg.x + I.xy*wAvg.y + I.xz*wAvg.z))
+                                   - (I.xy*I.yz - I.xz*I.yy)*(LM_avg.x + (wAvg.z)*(I.xy*wAvg.x + I.yy*wAvg.y + I.yz*wAvg.z) - (wAvg.y)*(I.xz*wAvg.x + I.yz*wAvg.y + I.zz*wAvg.z)))*inv_I_det_neg;
 
 
-        wAvg = 0.5*(wAux + pc_i->getW_old());
+        wAvg = (wAux + pc_i->getW_old())/2;
         //calculate rotation quartention
         q_rot = axis_angle_to_quart(wAvg,vector_length(wAvg));
         //compute new moment of inertia       
@@ -173,9 +183,9 @@ void gpuUpdateParticleCenterVelocityAndRotation(
     pc_i->setIYZ(Iaux6.yz);
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 pos  x: %f y: %f z: %f\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 vel  x: %f y: %f z: %f\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 w  x: %f y: %f z: %f\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("gpuUpdateParticleCenterVelocityAndRotation 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("gpuUpdateParticleCenterVelocityAndRotation 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
     #endif
 }
 
@@ -207,40 +217,46 @@ void gpuParticleMovement(
     if(!pc_i->getMovable())
         return;
 
+    #ifdef PARTICLE_DEBUG
+    printf("gpuParticleMovement 1 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("gpuParticleMovement 1 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("gpuParticleMovement 1 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    #endif
+
     #ifdef BC_X_WALL
-        pc_i->setPosX(pc_i->getPosX() + 0.5*(pc_i->getVelX() + pc_i->getVelOldX()));
+        pc_i->setPosX(pc_i->getPosX() + (pc_i->getVelX() + pc_i->getVelOldX())/2);
     #endif //BC_X_WALL
     #ifdef BC_X_PERIODIC
-        dfloat dx  = 0.5*(pc_i->getVelX() + pc_i->getVelOldX());
+        dfloat dx  = (pc_i->getVelX() + pc_i->getVelOldX())/2;
         pc_i->setPosX(std::fmod((dfloat)(pc_i->getPosX() + dx + NX),(dfloat)(NX)));
     #endif //BC_X_PERIODIC
 
     #ifdef BC_Y_WALL
-        dfloat dy  = 0.5*(pc_i->getVelY() + pc_i->getVelOldY());
-        pc_i->setPosY(pc_i->getPosY() + 0.5*(pc_i->getVelY() + pc_i->getVelOldY()));
+        pc_i->setPosY(pc_i->getPosY() + (pc_i->getVelY() + pc_i->getVelOldY())/2);
     #endif //BC_Y_WALL
     #ifdef BC_Y_PERIODIC
+        dfloat dy  = (pc_i->getVelY() + pc_i->getVelOldY())/2;
         pc_i->setPosY(std::fmod((dfloat)(pc_i->getPosY() + dy + NY),(dfloat)(NY)));
     #endif //BC_Y_PERIODIC
 
     #ifdef BC_Z_WALL
-        pc_i->setPosZ(pc_i->getPosZ() + 0.5*(pc_i->getVelZ() + pc_i->getVelOldZ()));
+        pc_i->setPosZ(pc_i->getPosZ() + (pc_i->getVelZ() + pc_i->getVelOldZ())/2);
     #endif //BC_Z_WALL
     #ifdef BC_Z_PERIODIC
-        dfloat dz  = 0.5*(pc_i->getVelZ() + pc_i->getVelOldZ());
+        dfloat dz  = (pc_i->getVelZ() + pc_i->getVelOldZ())/2;
         pc_i->setPosZ(std::fmod((dfloat)(pc_i->getPosZ() + dz + NZ_TOTAL),(dfloat)(NZ_TOTAL)));
     #endif //BC_Z_PERIODIC
 
     //Compute angular velocity
-    pc_i->setW_avg(0.5*(pc_i->getW() + pc_i->getW_old()));
+    pc_i->setW_avg((pc_i->getW() + pc_i->getW_old())/2);
 
     //update angular position
     pc_i->setW_pos(pc_i->getW_pos() + pc_i->getW_avg());
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuParticleMovement 1 pos  x: %f y: %f z: %f\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    printf("gpuParticleMovement 1 vel  x: %f y: %f z: %f\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
-    printf("gpuParticleMovement 1 w  x: %f y: %f z: %f\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    printf("gpuParticleMovement 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("gpuParticleMovement 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("gpuParticleMovement 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
     #endif
 
 
@@ -249,10 +265,10 @@ void gpuParticleMovement(
                              + (pc_i->getWAvgY() * pc_i->getWAvgY()) 
                              + (pc_i->getWAvgZ() * pc_i->getWAvgZ()));
 
-    const dfloat q0 = cos(0.5*w_norm);
-    const dfloat qi = (pc_i->getWAvgX()/w_norm) * sin (0.5*w_norm);
-    const dfloat qj = (pc_i->getWAvgY()/w_norm) * sin (0.5*w_norm);
-    const dfloat qk = (pc_i->getWAvgZ()/w_norm) * sin (0.5*w_norm);
+    const dfloat q0 = cos(w_norm/2);
+    const dfloat qi = (pc_i->getWAvgX()/w_norm) * sin (w_norm/2);
+    const dfloat qj = (pc_i->getWAvgY()/w_norm) * sin (w_norm/2);
+    const dfloat qk = (pc_i->getWAvgZ()/w_norm) * sin (w_norm/2);
     const dfloat tq0m1 = (q0*q0) - 0.5;
 
     dfloat x_vec = pc_i->getSemiAxis1X() - pc_i->getPosOldX();

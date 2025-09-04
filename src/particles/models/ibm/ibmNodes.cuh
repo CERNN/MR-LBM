@@ -30,7 +30,13 @@ public:
     __host__ __device__ IbmNodes();
 
     __host__ __device__ dfloat3 getPos() const;
+    __host__ __device__ dfloat getPosX() const;
+    __host__ __device__ dfloat getPosY() const;
+    __host__ __device__ dfloat getPosZ() const;
     __host__ __device__ void setPos(const dfloat3& pos);
+    __host__ __device__ void setPosX(const dfloat& Pos_x);
+    __host__ __device__ void setPosY(const dfloat& Pos_y);
+    __host__ __device__ void setPosZ(const dfloat& Pos_z);
    
     __host__ __device__ dfloat3 getVel() const;
     __host__ __device__ void setVel(const dfloat3& vel);
