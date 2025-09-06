@@ -30,7 +30,7 @@ struct MethodRange {
 };
 
 
-enum ParticleShape { SPHERE = 0 , CAPSULE = 1, ELLIPSOID = 2};
+enum ParticleShape { SPHERE = 0 , CAPSULE = 1, ELLIPSOID = 2, GRID = 3, RANDOM = 4};
 
 class Particle {
     public:
@@ -71,6 +71,11 @@ class Particle {
         // dfloat diameter, dfloat3 center, unsigned int coulomb, bool move,dfloat density = PARTICLE_DENSITY, dfloat3 vel = dfloat3(0, 0, 0), dfloat3 w = dfloat3(0, 0, 0)
         __host__
         void makeSpherePolar(ParticleCenter *praticleCenter);
+        __host__
+        void makeUniformBox(ParticleCenter *praticleCenter);
+        __host__
+        void makeRandomBox(ParticleCenter *praticleCenter);
+
 
         __host__
         void makeCapsule(ParticleCenter *praticleCenter);

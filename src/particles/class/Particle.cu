@@ -160,6 +160,12 @@ __host__ void ParticlesSoA::createParticles(Particle *particles){
             case ELLIPSOID:
                particles[i].makeEllipsoid(particles[i].getPCenter());
                 break;
+            case GRID:
+                particles[i].makeUniformBox(particles[i].getPCenter());                
+                break;
+            case RANDOM:
+                particles[i].makeRandomBox(particles[i].getPCenter());
+                break;
             default:
                 break;
             }
@@ -271,8 +277,178 @@ void ParticlesSoA::freeNodesAndCenters(){
     this->pCenterArray = nullptr;
 }
 
-#ifdef IBM
-#endif // !IBM
+#ifdef IBM_METHOD
+
+
+__host__
+void Particle::makeUniformBox(ParticleCenter *particleCenter)
+{
+    // Particle density
+    pCenter->setDensity(2.0);
+    // Particle center position
+    pCenter->setPos({(NX-1)/2.0,(NY-1)/2.0,(NZ-1)/2.0});
+    pCenter->setPos_old({(NX-1)/2.0,(NY-1)/2.0,(NZ-1)/2.0});
+    // Particle velocity
+    pCenter->setVel({0,0,0});
+    pCenter->setVel_old({0,0,0});
+    // Particle rotation
+    pCenter->setW({0,0,0});
+    pCenter->setW_avg({0,0,0});
+    pCenter->setW_old({0,0,0});
+    //
+    pCenter->setQPosW(0);
+    pCenter->setQPosX(1);
+    pCenter->setQPosY(0);
+    pCenter->setQPosZ(0);
+
+    pCenter->setQPosOldW(0.0);
+    pCenter->setQPosOldX(1.0);
+    pCenter->setQPosOldY(0.0);
+    pCenter->setQPosOldZ(0.0);
+
+    // Innertia momentum
+    pCenter->setIXX(1.0);
+    pCenter->setIYY(1.0);
+    pCenter->setIZZ(1.0);
+
+    pCenter->setIXY(0.0);
+    pCenter->setIXZ(0.0);
+    pCenter->setIYZ(0.0);
+
+    pCenter->setFX(0.0);
+    pCenter->setFY(0.0);
+    pCenter->setFZ(0.0);
+
+    pCenter->setFOldX(0.0);
+    pCenter->setFOldY(0.0);
+    pCenter->setFOldZ(0.0);
+
+    pCenter->setMX(0.0);
+    pCenter->setMY(0.0);
+    pCenter->setMZ(0.0);
+
+    pCenter->setMOldX(0.0);
+    pCenter->setMOldY(0.0);
+    pCenter->setMOldZ(0.0);
+
+    pCenter->setMovable(false);
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    int Npoints = particleCenter->getDiameter(); //USING DIAMTER TO PASS THE NUMBER OF NODES
+
+    // estimate number of points per axis
+    unsigned int n = (unsigned int) round(cbrt((dfloat)Npoints));
+    
+    // spacing
+    dfloat dx = (dfloat)(NX-1) / n;
+    dfloat dy = (dfloat)(NY-1) / n;
+    dfloat dz = (dfloat)(NZ-1) / n;
+
+    int Nx = n;
+    int Ny = n;
+    int Nz = n;
+    this->numNodes = Nx * Ny * Nz;
+    this->nodes = (IbmNodes*) malloc(sizeof(IbmNodes) * this->numNodes);
+
+    unsigned int nodeIndex = 0;
+
+    for (unsigned int i = 0; i < Nx; i++) {
+        for (unsigned int j = 0; j < Ny; j++) {
+            for (unsigned int k = 0; k < Nz; k++) {
+                dfloat3 pos_node;
+                pos_node.x = (i * dx) + dx/2.0;
+                pos_node.y = (j * dy) + dy/2.0;
+                pos_node.z = (k * dz) + dz/2.0;
+
+                this->nodes[nodeIndex].setPos(pos_node);
+                dfloat node_s = 1.0;
+                this->nodes[nodeIndex].setS(node_s);
+
+                nodeIndex++;
+            }
+        }
+    }
+}
+
+__host__
+void Particle::makeRandomBox(ParticleCenter *particleCenter)
+{
+
+    // Particle density
+    pCenter->setDensity(particleCenter->getDensity());
+    // Particle center position
+    pCenter->setPos({(NX-1)/2.0,(NY-1)/2.0,(NZ-1)/2.0});
+    pCenter->setPos_old({(NX-1)/2.0,(NY-1)/2.0,(NZ-1)/2.0});
+    // Particle velocity
+    pCenter->setVel({0,0,0});
+    pCenter->setVel_old({0,0,0});
+    // Particle rotation
+    pCenter->setW({0,0,0});
+    pCenter->setW_avg({0,0,0});
+    pCenter->setW_old({0,0,0});
+    //
+    pCenter->setQPosW(0);
+    pCenter->setQPosX(1);
+    pCenter->setQPosY(0);
+    pCenter->setQPosZ(0);
+
+    pCenter->setQPosOldW(0.0);
+    pCenter->setQPosOldX(1.0);
+    pCenter->setQPosOldY(0.0);
+    pCenter->setQPosOldZ(0.0);
+
+    // Innertia momentum
+    pCenter->setIXX(1.0);
+    pCenter->setIYY(1.0);
+    pCenter->setIZZ(1.0);
+
+    pCenter->setIXY(0.0);
+    pCenter->setIXZ(0.0);
+    pCenter->setIYZ(0.0);
+
+    pCenter->setFX(0.0);
+    pCenter->setFY(0.0);
+    pCenter->setFZ(0.0);
+
+    pCenter->setFOldX(0.0);
+    pCenter->setFOldY(0.0);
+    pCenter->setFOldZ(0.0);
+
+    pCenter->setMX(0.0);
+    pCenter->setMY(0.0);
+    pCenter->setMZ(0.0);
+
+    pCenter->setMOldX(0.0);
+    pCenter->setMOldY(0.0);
+    pCenter->setMOldZ(0.0);
+
+    pCenter->setMovable(false);
+
+    //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    int Npoints = particleCenter->getDiameter(); // USING DIAMETER TO PASS THE NUMBER OF NODES
+
+    this->numNodes = Npoints;
+    this->nodes = (IbmNodes*) malloc(sizeof(IbmNodes) * this->numNodes);
+
+    unsigned int nodeIndex = 0;
+
+    for (unsigned int n = 0; n < Npoints; n++) {
+        dfloat3 pos_node;
+
+        // random numbers between 0 and 1, scaled to domain size
+        pos_node.x = ((dfloat) rand() / (dfloat) RAND_MAX) * (NX - 1);
+        pos_node.y = ((dfloat) rand() / (dfloat) RAND_MAX) * (NY - 1);
+        pos_node.z = ((dfloat) rand() / (dfloat) RAND_MAX) * (NZ - 1);
+
+        this->nodes[nodeIndex].setPos(pos_node);
+
+        dfloat node_s = 1.0; // uniform weight
+        this->nodes[nodeIndex].setS(node_s);
+
+        nodeIndex++;
+    }
+}
 
 // dfloat diameter, dfloat3 center, unsigned int coulomb, bool move,dfloat density, dfloat3 vel, dfloat3 w
 __host__
@@ -1144,6 +1320,6 @@ void Particle::makeEllipsoid(ParticleCenter *particleCenter)
     pCenter->setPos_old(pCenter->getPos());  
         //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 }
-
+#endif // !IBM
 
 #endif //PARTICLE_MODEL
