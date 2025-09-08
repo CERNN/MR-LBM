@@ -19,6 +19,8 @@
     #define P_DIST 1
 #elif defined(STENCIL_4)
     #define P_DIST 2
+#elif defined(STENCIL_COS)
+    #define P_DIST 2
 #else
     #define P_DIST 1
 #endif
@@ -37,12 +39,19 @@ __device__ __forceinline__  dfloat stencil(dfloat x) {
         }
     #elif defined STENCIL_4
         if (absX <= 1) {
-            return (1.0 / 8.0)*(3.0 - 2.0*absX + sqrt(1 + 4 * absX - 4 * absX*absX));
+            return (3.0 - 2.0*absX + sqrt(1 + 4 * absX - 4 * absX*absX))/8;
         }
         else if (absX > 1.0 && absX <= 2.0) {
-            return (1.0 / 8.0)*(5.0 - 2.0*absX - sqrt(-7.0 + 12.0*absX - 4.0*absX*absX));
+            return (5.0 - 2.0*absX - sqrt(-7.0 + 12.0*absX - 4.0*absX*absX))/8;
         }
         else {
+            return 0.0;
+        }
+    #elif defined STENCIL_COS
+        if (absX <= 2){
+            return (cos(M_PI*absX/2)+1.0)/4;
+        }   
+        else{
             return 0.0;
         }
     #endif //STENCIL

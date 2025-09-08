@@ -231,7 +231,7 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
 
         for (int p = 0; p < NUM_PARTICLES; ++p) {     
             if (particles[p].getMethod() != method)
-                continue; // <- Adicionado: so copia se for do tipo correto
+                continue;
             ParticleCenter* pc = particles[p].getPCenter();
 
             if (!pc) {
@@ -247,7 +247,7 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
             this->pCollideWall[p]       = particles[p].getCollideWall();
             this->pCollideParticle[p]   = particles[p].getCollideParticle();
             //printf("Antes copiar nos da particula... \t"); fflush(stdout);
-            this->nodesSoA[p].copyNodesFromParticle(&particles[p], p, 0);
+            this->nodesSoA[0].copyNodesFromParticle(&particles[p], p, 0);
             //printf("Apos copiar nos da particula... \t"); fflush(stdout);
             if (firstIndex == -1) firstIndex = p;
             lastIndex = p;
@@ -260,8 +260,6 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
     insertByMethod(IBM);
     insertByMethod(PIBM);
     insertByMethod(TRACER);
-    checkCudaErrors(cudaSetDevice(0));
-
 }
 
 
