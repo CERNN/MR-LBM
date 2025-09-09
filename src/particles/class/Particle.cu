@@ -10,6 +10,21 @@ __host__ __device__ Particle::Particle(){
     nodes = nullptr; // Initialize nodes
 }
 
+__host__ Particle::~Particle(){
+    if (pCenter) {
+        delete pCenter;
+        pCenter = nullptr;
+    }
+    if (shape) {
+        delete shape;
+        shape = nullptr;
+    }
+    if (nodes) {
+        delete nodes;
+        nodes = nullptr;
+    }
+}
+
 __host__ __device__ unsigned int Particle::getNumNodes() const {return this->numNodes;}
 __host__ __device__ void Particle::setNumNodes(unsigned int numNodes) {this->numNodes = numNodes;}
 
@@ -50,27 +65,27 @@ ParticlesSoA::~ParticlesSoA() {
         pCenterArray = nullptr;
     }
     if (pCenterLastPos) {
-        free(pCenterLastPos);
+        cudaFree(pCenterLastPos);
         pCenterLastPos = nullptr;
     }
     if (pCenterLastWPos) {
-        free(pCenterLastWPos);
+        cudaFree(pCenterLastWPos);
         pCenterLastWPos = nullptr;
     }
     if (pShape) {
-        free(pShape);
+        cudaFree(pShape);
         pShape = nullptr;
     }
     if (pMethod) {
-        free(pMethod);
+        cudaFree(pMethod);
         pMethod = nullptr;
     }
     if (pCollideWall) {
-        free(pCollideWall);
+        cudaFree(pCollideWall);
         pCollideWall = nullptr;
     }
     if (pCollideParticle) {
-        free(pCollideParticle);
+        cudaFree(pCollideParticle);
         pCollideParticle = nullptr;
     }
 }
@@ -262,7 +277,6 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
     insertByMethod(TRACER);
 }
 
-
 void ParticlesSoA::freeNodesAndCenters(){
     for(int i = 0; i < N_GPUS; i++){
         checkCudaErrors(cudaSetDevice(GPUS_TO_USE[i]));
@@ -270,9 +284,19 @@ void ParticlesSoA::freeNodesAndCenters(){
     }
     checkCudaErrors(cudaSetDevice(GPUS_TO_USE[0]));
     cudaFree(this->pCenterArray);
-    free(this->pCenterLastPos);
-    free(this->pCenterLastWPos);
     this->pCenterArray = nullptr;
+    cudaFree(this->pCenterLastPos);
+    this->pCenterLastPos = nullptr;
+    cudaFree(this->pCenterLastWPos);
+    this->pCenterLastWPos = nullptr;
+    cudaFree(this->pShape);
+    this->pShape = nullptr;
+    cudaFree(this->pMethod);
+    this->pMethod = nullptr;
+    cudaFree(this->pCollideWall);
+    this->pCollideWall = nullptr;
+    cudaFree(this->pCollideParticle);
+    this->pCollideParticle = nullptr;
 }
 
 #ifdef IBM_METHOD

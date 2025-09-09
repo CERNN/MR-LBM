@@ -35,6 +35,7 @@ enum ParticleShape { SPHERE = 0 , CAPSULE = 1, ELLIPSOID = 2, GRID = 3, RANDOM =
 class Particle {
     public:
         __host__ __device__ Particle();
+        __host__ Particle::~Particle();
 
         __host__ __device__ unsigned int getNumNodes() const;
         __host__ __device__ void setNumNodes(unsigned int numNodes);
