@@ -38,41 +38,6 @@ constexpr dfloat VISC = U_MAX * NX / RE;
 constexpr dfloat TAU = 0.8;     // relaxation time
 constexpr dfloat MACH_NUMBER = U_MAX/0.57735026918962;
 
-#ifdef THERMAL_MODEL
-    #define SECOND_DIST
-
-    #define D3G19
-
-    constexpr bool T_BOUYANCY = true;
-    constexpr dfloat T_PR_NUMBER = 10; //Prandtl Number
-    constexpr dfloat T_RA_NUMBER = 1e5; // Rayleigh Number
-    constexpr dfloat BN_NUMBER = 0.2*8;
-    constexpr dfloat T_GR_NUMBER = T_RA_NUMBER/T_PR_NUMBER; //Grashof number
-
-    constexpr dfloat T_DELTA_T = 1; //temperature difference
-    constexpr dfloat T_REFERENCE  = 1; //better closer to 1
-    constexpr dfloat T_COLD = T_REFERENCE - T_DELTA_T/2.0;
-    constexpr dfloat T_HOT = T_REFERENCE + T_DELTA_T/2.0;
-    constexpr dfloat C_0 = T_REFERENCE; //initial temperature field 
-
-    constexpr dfloat T_DIFFUSIVITY = VISC/T_PR_NUMBER; // alpha
-
-    constexpr dfloat T_gravity_t_beta = 0;
-    constexpr dfloat Ra_conf = 0;
-
-    __device__ const dfloat gravity_vector[3] =  {1.0, 0.0, 0.0};
-
-    constexpr dfloat T_DIFF_REF = (1.0/6);
-    constexpr dfloat G_TAU = T_DIFF_REF*3+0.5;
-    constexpr dfloat G_OMEGA  = 1.0/G_TAU;
-    constexpr dfloat G_TT_OMEGA = 1.0-0.5*G_OMEGA;
-
-    constexpr dfloat T_DIFF_FLUC = T_DIFFUSIVITY - T_DIFF_REF;
-    constexpr dfloat G_AAA = (3*T_DIFF_FLUC*G_OMEGA);
-    constexpr dfloat G_DIFF_FLUC_COEF = G_AAA/(1.0+G_AAA);
-#endif //THERMAL_MODEL
-
-
 /* --------------------- INITIALIZATION LOADING DEFINES -------------------- */
 constexpr int INI_STEP = 0;
 #define LOAD_CHECKPOINT false   // loads simulation checkpoint from folder 
