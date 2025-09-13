@@ -4,23 +4,23 @@ constexpr dfloat RE = 1;
 
 constexpr int SCALE = 1;
 constexpr int N = 128 * SCALE;
-constexpr int NX = 8;        // size x of the grid 
+constexpr int NX = 4;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
-constexpr int NZ = 8;        // size z of the grid in one GPU
+constexpr int NZ = 4;        // size z of the grid in one GPU
 constexpr int NZ_TOTAL = NZ;       // size z of the grid
 
-constexpr dfloat U_MAX = 0.05;  
+constexpr dfloat U_MAX = 0.0125;  
 
 constexpr dfloat L = N;
 
-constexpr dfloat U_C = U_MAX;
+constexpr dfloat U_C = 2*U_MAX;
 constexpr dfloat SUM_VISC = (U_C*L)/RE;
 constexpr dfloat BETA = 0.1; //R_v
 constexpr dfloat VISC = BETA * SUM_VISC;
 constexpr dfloat TAU = 0.5 + 3.0*VISC;     // relaxation time
 constexpr dfloat t_c = L/U_C;
 constexpr int CONFORMATION_SWITCH = 0;
-constexpr int N_STEPS = 60*t_c;
+constexpr int N_STEPS = 40000;
 
 constexpr dfloat FX = 0.0;        // force in x
 constexpr dfloat FY = 0.0;        // force in y
