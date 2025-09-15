@@ -3,7 +3,7 @@
 constexpr dfloat RE = 500;
 
 constexpr int SCALE = 1;
-constexpr int N_STEPS = 10000;
+constexpr int N_STEPS = 100;
 constexpr int N = 256 * SCALE;
 constexpr int NX = N;        // size x of the grid 
 constexpr int NY = N;        // size y of the grid
@@ -93,7 +93,7 @@ constexpr int INI_STEP = 0;
     #define DEM_METHOD
     #define LOCAL_FORCES
     //number of particles
-    #define NUM_PARTICLES 1
+    #define NUM_PARTICLES 2
 
     constexpr dfloat GX = 0.0;
     constexpr dfloat GY = 0.0;
@@ -120,3 +120,49 @@ constexpr int INI_STEP = 0;
 
     #endif //DEM_METHOD
 #endif //PARTICLE_MODEL
+
+/* -------------------------- BOUNDARY CONDITIONS -------------------------- */
+
+// --- X direction ---
+//#define IBM_BC_X_WALL
+
+#ifdef BC_X_WALL
+    // TODO: not implemented yet
+    #define BC_X_WALL_UY 0.0
+    #define BC_X_WALL_UZ 0.0
+#endif //IBM_BC_X_WALL
+
+#ifdef BC_X_PERIODIC
+    #define BC_X_0 (0)
+    #define BC_X_E (NX-0)
+#endif //BC_X_PERIODIC
+
+// --- Y direction ---
+// #define BC_Y_WALL
+//#define IBM_BC_Y_PERIODIC
+
+#ifdef BC_Y_WALL
+    // TODO: not implemented yet
+    #define BC_Y_WALL_UX 0.0
+    #define BC_Y_WALL_UZ 0.0
+#endif //BC_Y_WALL
+
+#ifdef BC_Y_PERIODIC
+    #define BC_Y_0 0
+    #define BC_Y_E (NY-0)
+#endif //BC_Y_PERIODIC
+
+// --- Z direction ---
+//#define IBM_BC_Z_WALL
+#define IBM_BC_Z_PERIODIC
+
+#ifdef BC_Z_WALL
+    // TODO: not implemented yet
+    #define BC_Z_WALL_UX 0.0
+    #define BC_Z_WALL_UY 0.0
+#endif //BC_Z_WALL
+#ifdef BC_Z_PERIODIC
+    //TODO: FIX with multi-gpu, it currently does not work with values different than 0 and NZ_TOTAl
+    #define BC_Z_0 0
+    #define BC_Z_E (NZ_TOTAL-0)
+#endif //BC_Z_PERIODIC

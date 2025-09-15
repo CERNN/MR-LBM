@@ -297,7 +297,7 @@ __host__ __device__ void ParticleCenter::setDiameter(dfloat diameter) { this->di
 __host__ __device__ bool ParticleCenter::getMovable() const { return this->movable; }
 __host__ __device__ void ParticleCenter::setMovable(bool movable) { this->movable = movable; }
 
-__host__ __device__ CollisionData ParticleCenter::getCollision() const { return this->collision; }
+__host__ __device__ CollisionData& ParticleCenter::getCollision() { return this->collision; }
 __host__ __device__ void ParticleCenter::setCollision(const CollisionData& collision) { this->collision = collision; }
 
 __host__ __device__ dfloat3 ParticleCenter::getSemiAxis1() const { return this->semiAxis1; }
