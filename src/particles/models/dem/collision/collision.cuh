@@ -88,6 +88,17 @@ void sphereWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,
 __device__
 void capsuleWallCollisionCap(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, int step);
 
+/**
+*   @brief Handle collision mechanics between an ellipsoid particle and a wall.
+*   @param pc_i: Pointer to the ParticleCenter structure representing the ellipsoid particle.
+*   @param wallData: Structure containing information about the wall, such as normal and distance.
+*   @param displacement: The displacement value 
+*   @param endpoint: The point on the ellipsoid's surface where the collision occurs.
+*   @param cr: gaussian radius on the contact point
+*   @param step: The current simulation step or time index.
+*/
+__device__
+void ellipsoidWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, dfloat cr[1],int step);
 
 //sphere functions
 /**
@@ -147,6 +158,65 @@ dfloat segment_segment_closest_points(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat
 __device__
 dfloat segment_segment_closest_points_periodic(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]);
 
+//ellipsoid functions
+/**
+*   @brief Calculate the distance between an ellipsoid particle and a wall, and find the contact point.
+*   @param pc_i: Pointer to the ParticleCenter structure representing the ellipsoid particle.
+*   @param wallData: Structure containing information about the wall, such as normal and distance.
+*   @param contactPoint2: Pointer to store the contact point between the ellipsoid and the wall.
+*   @param step: The current simulation step or time index.
+*   @param radius: gaussian radius on the closest point
+*   @return The distance between the ellipsoid and the wall at the point of contact.
+*/
+__device__
+dfloat ellipsoidWallCollisionDistance( ParticleCenter* pc_i, Wall wallData, dfloat3* contactPoint2, dfloat radius[1], unsigned int step);
+/**
+*   @brief Compute the intersection point between a line and the ellipsoid.
+*   @param pc_i: Pointer to the ParticleCenter structure representing the ellipsoid particle.
+*   @param R: 3x3 rotation matrix used to transform the ellipsoid's orientation.
+*   @param line_origin: The origin of the line used for intersection calculation.
+*   @param line_dir: The direction of the line used for intersection calculation.
+*   @return The intersection parameter between the line and the ellipsoid on .x and .y; ;.z is trash
+*/
+__device__
+dfloat3 ellipsoid_intersection(ParticleCenter* pc_i, dfloat R[3][3],dfloat3 line_origin, dfloat3 line_dir,dfloat3 translation);
+/**
+*   @brief Compute the normal vector at a given point on the ellipsoid's surface.
+*   @param pc_i: Pointer to the ParticleCenter structure representing the ellipsoid particle.
+*   @param R: 3x3 rotation matrix used to transform the ellipsoid's orientation.
+*   @param point: The point on the ellipsoid's surface where the normal vector is computed.
+*   @param radius: gaussian radius on the point
+*   @return The normal vector at the specified point on the ellipsoid's surface.
+*/
+__device__
+dfloat3 ellipsoid_normal(ParticleCenter* pc_i, dfloat R[3][3],dfloat3 point, dfloat radius[1],dfloat3 translation);
+
+/**
+*   @brief Calculate the distance between two colliding ellipsoids and determine the contact points on their surfaces.
+*   @param pc_i: Pointer to the `ParticleCenter` structure containing information about the first ellipsoid.
+*   @param pc_j: Pointer to the `ParticleCenter` structure containing information about the second ellipsoid.
+*   @param contactPoint1: Array to store the computed contact point on the surface of the first ellipsoid.
+*   @param contactPoint2: Array to store the computed contact point on the surface of the second ellipsoid.
+*   @param cr1: gaussian radius on the contact point for ellipsoid 1
+*   @param cr2: gaussian radius on the contact point for ellipsoid 2
+*   @param step: The current time step for collision detection.
+*   @return The computed distance between the two ellipsoids at the contact points.
+*/
+__device__
+dfloat ellipsoidEllipsoidCollisionDistance( ParticleCenter* pc_i, ParticleCenter* pc_j, dfloat3 contactPoint1[1], dfloat3 contactPoint2[1], dfloat cr1[1], dfloat cr2[1], dfloat3 translation, unsigned int step);
+
+/**
+*   @brief Compute the contact points between two particles based on the given direction vector and tangent vectors.
+*   @param pc_i: Pointer to the `ParticleCenter` structure containing information about the particle in order to determine the vector origon.
+*   @param dir: The direction vector representing the line connecting the two particles.
+*   @param t1: The contact points t value of the segment for the first ellipsoid
+*   @param t2: The contact points t value of the segment for the second ellipsoid
+*   @param contactPoint1: Array to store the first computed contact point on the surface of the particle.
+*   @param contactPoint2: Array to store the second computed contact point on the surface of the particle.
+*/
+__device__ 
+void computeContactPoints(dfloat3 pc_i, dfloat3 dir, dfloat3 t1, dfloat3 t2, dfloat3 contactPoint1[1], dfloat3 contactPoint2[1]);
+
 /**
 *   @brief Handle collision mechanics between two spheres.
 *   @param column: The column index in a grid or matrix representing the particles' positions.
@@ -170,6 +240,22 @@ void sphereSphereCollision(unsigned int column, unsigned int row, ParticleCenter
 */
 __device__
 void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, dfloat3* closestOnA, dfloat3* closestOnB, int step);
+
+/**
+*   @brief Process the collision between two ellipsoids by determining their closest points and applying collision response.
+*   @param column: The column index representing the position of the first ellipsoid in the grid or matrix.
+*   @param row: The row index representing the position of the second ellipsoid in the grid or matrix.
+*   @param pc_i: Pointer to the `ParticleCenter` structure containing information about the first ellipsoid.
+*   @param pc_j: Pointer to the `ParticleCenter` structure containing information about the second ellipsoid.
+*   @param closestOnA: Array to store the closest point on the surface of the first ellipsoid (A).
+*   @param closestOnB: Array to store the closest point on the surface of the second ellipsoid (B).
+*   @param dist: The calculated distance between the two ellipsoids at their closest points.
+*   @param cr1: gaussian radius on the contact point for ellipsoid 1
+*   @param cr2: gaussian radius on the contact point for ellipsoid 2
+*   @param step: The current simulation time step for collision processing.
+*/
+__device__
+void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, ParticleCenter*  pc_i, ParticleCenter*  pc_j,dfloat3 closestOnA[1], dfloat3 closestOnB[1], dfloat dist,  dfloat cr1[1], dfloat cr2[1], dfloat3 translation, int step);
 
 
 #endif //PARTICLE_MODEL

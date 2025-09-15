@@ -62,6 +62,13 @@ void checkCollisionWallsSphere(ParticleCenter* pc_i, unsigned int step);
 */
 __device__
 void checkCollisionWallsCapsule(ParticleCenter* pc_i, unsigned int step);
+/**
+*   @brief Check for collisions between an ellipsoid particle and walls.
+*   @param pc_i: Pointer to the ParticleCenter structure representing the ellipsoid particle.
+*   @param step: The current simulation step or time index.
+*/
+__device__
+void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step);
 
 /**
 *   @brief Handle collision type between two capsules.
@@ -89,8 +96,16 @@ void capsuleCapsuleCollisionCheck(unsigned int column,    unsigned int row, Part
 __device__
 void capsuleSphereCollisionCheck( unsigned int column, unsigned int row, ParticleShape *shape, ParticleCenter* pc_i,  ParticleCenter* pc_j, int step);
 
-
-
+/**
+*   @brief Check for a potential collision between two ellipsoids and trigger collision response if necessary.
+*   @param column: The column index representing the position of the first ellipsoid in the grid or matrix.
+*   @param row: The row index representing the position of the second ellipsoid in the grid or matrix.
+*   @param pc_i: Pointer to the `ParticleCenter` structure containing information about the first ellipsoid.
+*   @param pc_j: Pointer to the `ParticleCenter` structure containing information about the second ellipsoid.
+*   @param step: The current simulation time step for collision checking.
+*/
+__device__
+void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, ParticleCenter* pc_i,ParticleCenter* pc_j, int step);
 
 #endif //PARTICLE_MODEL
 #endif // !__COLLISION_H

@@ -90,7 +90,7 @@ void checkCollisionWalls(ParticleShape *shape, ParticleCenter* pc_i, unsigned in
             break;
         case ELLIPSOID:
             //printf("its a ellipsoid \n");
-            // checkCollisionWallsElipsoid(pc_i,step);
+            checkCollisionWallsElipsoid(pc_i,step);
             break;
         default:
             // Handle unknown particle types
@@ -252,6 +252,57 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
         }
     #endif
 }
+__device__
+void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
+
+    Wall wallData;
+    dfloat distanceWall = 0;
+    dfloat3 intersectionPoint;
+    dfloat3 contactPoint2[1];
+    
+    dfloat cr[1];
+
+    #ifdef BC_X_WALL
+    wallData = wall(dfloat3(1, 0, 0), 0);
+    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
+    if (distanceWall < 0) {
+        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+    }
+    wallData = wall(dfloat3(-1, 0, 0), NX-1);
+    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
+    if (distanceWall < 0) {
+        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+    }
+    #endif
+
+    #ifdef BC_Y_WALL
+    wallData = wall(dfloat3(0, 1, 0), 0);
+    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
+    if (distanceWall < 0) {
+        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+    }
+
+    wallData = wall(dfloat3(0, -1, 0), NY-1);
+    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
+    if (distanceWall < 0) {
+        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+    }
+    #endif
+    
+    #ifdef BC_Z_WALL
+    wallData = wall(dfloat3(0, 0, 1), 0);
+    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
+    if (distanceWall < 0) {
+        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+    }
+    
+    wallData = wall(dfloat3(0, 0, -1), NZ-1);
+    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
+    if (distanceWall < 0) {
+        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+    }
+    #endif
+}
 
 // ------------------------------------------------------------------------
 // -------------------- COLLISION BETWEEN PARTICLES -----------------------
@@ -316,7 +367,7 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
                 break;
             case ELLIPSOID:
                 //printf("eli - eli col \n");
-                // ellipsoidEllipsoidCollisionCheck(column,row,pc_i,pc_j, step);
+                ellipsoidEllipsoidCollisionCheck(column,row,pc_i,pc_j, step);
                 break;
             default:
                 //printf("eli - default col \n");
@@ -364,6 +415,69 @@ void capsuleSphereCollisionCheck(unsigned int column,unsigned int row,  Particle
     
 
     return;
+}
+
+__device__
+void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, ParticleCenter* pc_i,ParticleCenter* pc_j, int step){
+    dfloat3 closestOnA[1];
+    dfloat3 closestOnB[1];
+    //printf("checking collision\n");
+    dfloat cr1[1];
+    dfloat cr2[1];
+
+    dfloat minDist = 1E+37;  // Initialize to a large value
+    dfloat3 bestClosestOnA;
+    dfloat3 bestClosestOnB;
+    dfloat bestcr1, bestcr2;
+    int dx = 0, dy = 0, dz = 0;
+    dfloat dist;
+    dfloat3 translation, bestTranslation;
+
+    // Loop over periodic offsets in x, y, and z if periodic boundary conditions are enabled
+    #ifdef BC_X_PERIODIC
+    for (dx = -1; dx <= 1; dx++) {
+    #endif
+        #ifdef BC_Y_PERIODIC
+        for (dy = -1; dy <= 1; dy++) {
+        #endif
+            #ifdef BC_Z_PERIODIC
+            for (dz = -1; dz <= 1; dz++) {
+            #endif
+                translation = dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
+                dist = ellipsoidEllipsoidCollisionDistance(pc_i, pc_j,closestOnA,closestOnB,cr1, cr2,translation,step);
+                // Update the minimum distance and store the closest point
+                if (dist < minDist) {
+                    minDist = dist;
+                    bestClosestOnA = closestOnA[0];
+                    bestClosestOnB = closestOnB[0];
+                    bestcr1 = cr1[0];
+                    bestcr2 = cr2[0];
+                    bestTranslation = translation;
+                }
+
+
+            #ifdef BC_Z_PERIODIC
+            } // End Z loop
+            #endif
+        #ifdef BC_Y_PERIODIC
+        } // End Y loop
+        #endif
+    #ifdef BC_X_PERIODIC
+    } // End X loop
+    #endif
+
+    // Store the closest point on the segment
+    closestOnA[0] = bestClosestOnA;
+    closestOnB[0] = bestClosestOnB-bestTranslation;
+    cr1[0] = bestcr1;
+    cr2[0] = bestcr2;
+    dist = minDist;
+
+    if(dist<0){
+        ellipsoidEllipsoidCollision(column, row,pc_i,pc_j,closestOnA,closestOnB,dist,cr1, cr2,bestTranslation,step);
+    }
+
+
 }
 
 #endif //PARTICLE_MODEL
