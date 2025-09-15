@@ -74,9 +74,9 @@ __global__ void gpuMomCollisionStream(
    // dfloat yy = 2.0 * M_PI * y / L;
    // dfloat zz = 2.0 * M_PI * z / L;
 
-   dfloat L_Fx = 0.00; // F_0 * sin(K_const*x) * cos(K_const*y) ;
-   dfloat L_Fy = 0.00; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
-   dfloat L_Fz = 0.00;
+   dfloat L_Fx = FX; // F_0 * sin(K_const*x) * cos(K_const*y) ;
+   dfloat L_Fy = FY; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
+   dfloat L_Fz = FZ;
 
     #ifdef BC_FORCES
     dfloat L_BC_Fx = 0.0;
@@ -569,7 +569,20 @@ __global__ void gpuMomCollisionStream(
             tt_omega_t3 = tt_omegaVar * 3.0;
     #endif 
     
-        // COLLIDE
+    // zero forces in directions that are not fluid
+    if (((nodeType & EAST)  == EAST)  || ((nodeType & WEST)  == WEST)) {
+        L_Fx = 0;
+    }
+
+    if (((nodeType & NORTH) == NORTH) || ((nodeType & SOUTH) == SOUTH)) {
+        L_Fy = 0;
+    }
+
+    if (((nodeType & FRONT) == FRONT) || ((nodeType & BACK)  == BACK)) {
+        L_Fz = 0;
+    }
+
+    // COLLIDE
     #include COLREC_COLLISION
     
 
