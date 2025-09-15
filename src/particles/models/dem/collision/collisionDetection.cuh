@@ -39,7 +39,7 @@ void gpuParticlesCollisionHandler(ParticleShape *shape, ParticleCenter *pArray, 
 *   @param step: The current time step for collision checking.
 */
 __device__
-void checkCollisionBetweenParticles(unsigned int column, unsigned int row, ParticleShape *shape, ParticleCenter* pc_i, ParticleCenter* pc_j, int step);
+void checkCollisionBetweenParticles(unsigned int column, unsigned int row, ParticleShape *shape_i,ParticleShape *shape_j, ParticleCenter* pc_i, ParticleCenter* pc_j, int step);
 
 /**
 *   @brief Check for collisions between a particle and walls based on the particle's shape.

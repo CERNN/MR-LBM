@@ -57,22 +57,24 @@ void gpuParticlesCollisionHandler(ParticleShape *shape, ParticleCenter *pArray, 
     const unsigned int column = idx - ((row-1)*row)/2;
 
     ParticleCenter* pc_i = &pArray[column];
+    ParticleShape* shape_i = &shape[column];
    
     #ifdef IBM_DEBUG
-    printf("collision step %d x: %f \n",step,pc_i->pos.x);
+    printf("collision step %d x: %f \n",step,pc_i->getPosX());
     #endif
     //collision against walls
     if(row == NUM_PARTICLES){
         if(!pc_i->getMovable())
             return;
         //printf("checking collision with wall  \n");
-        checkCollisionWalls(shape,pc_i,step);
+        checkCollisionWalls(shape_i,pc_i,step);
     }else{    //Collision between particles
-        ParticleCenter* pc_j = &pArray[row]; //&particles->getPCenterArray()[row];
+        ParticleCenter* pc_j = &pArray[row]; 
+        ParticleShape* shape_j = &shape[row];
         if(!pc_i->getMovable() && !pc_j->getMovable())
             return;
         //printf("checking collision with other particle  \n");
-        checkCollisionBetweenParticles(column,row,shape,pc_i,pc_j,step);
+        checkCollisionBetweenParticles(column,row,shape_i,shape_j,pc_i,pc_j,step);
     }
 }
 
@@ -309,12 +311,12 @@ void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
 // ------------------------------------------------------------------------ 
 
 __device__
-void checkCollisionBetweenParticles( unsigned int column,unsigned int row,ParticleShape *shape,ParticleCenter* pc_i,ParticleCenter* pc_j,int step){
+void checkCollisionBetweenParticles( unsigned int column,unsigned int row,ParticleShape *shape_i,ParticleShape *shape_j,ParticleCenter* pc_i,ParticleCenter* pc_j,int step){
 
-    //printf("shape %d %d \n",pc_i->collision.shape,pc_j->collision.shape);
-    switch (*shape) {
+    // printf("shape %d %d \n",*shape_i,*shape_j);
+    switch (*shape_i) {
         case SPHERE:
-            switch (*shape) {
+            switch (*shape_j) {
             case SPHERE:
             //printf("sph - sph col \n");
                 //printf("collision between spheres \n");
@@ -324,7 +326,7 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
                 break;
             case CAPSULE:
             //printf("sphe - cap col \n");
-                capsuleSphereCollisionCheck(column,row,shape,pc_i,pc_j,step);
+                capsuleSphereCollisionCheck(column,row,shape_i,pc_i,pc_j,step);
                 break;
             case ELLIPSOID:
             //printf("sph - eli col \n");
@@ -337,10 +339,10 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
             }
             break;
         case CAPSULE:
-            switch (*shape) {
+            switch (*shape_j) {
             case SPHERE:
                 //printf("cap - sph col \n");
-                capsuleSphereCollisionCheck(column,row,shape,pc_i,pc_j,step);
+                capsuleSphereCollisionCheck(column,row,shape_i,pc_i,pc_j,step);
                 break;
             case CAPSULE:
                 //printf("cap - cap col \n");
@@ -356,7 +358,7 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
             }
             break;
         case ELLIPSOID:
-            switch (*shape) {
+            switch (*shape_j) {
             case SPHERE:
                 //printf("eli - sphere col \n");
                 //collision ellipsoid-sphere
