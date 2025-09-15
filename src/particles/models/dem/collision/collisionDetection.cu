@@ -86,7 +86,7 @@ void checkCollisionWalls(ParticleShape *shape, ParticleCenter* pc_i, unsigned in
             break;
         case CAPSULE:
            //printf("its a capsule \n");
-            // checkCollisionWallsCapsule(pc_i,step);
+            checkCollisionWallsCapsule(pc_i,step);
             break;
         case ELLIPSOID:
             //printf("its a ellipsoid \n");
@@ -164,6 +164,95 @@ void checkCollisionWallsSphere(ParticleCenter* pc_i,unsigned int step){
 
 }
 
+__device__
+void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
+    const dfloat halfLength = vector_length(pc_i->getSemiAxis1());
+    const dfloat radius = pc_i->getRadius();
+
+    // Calculate capsule endpoints using the orientation vector
+    dfloat3 endpoint1 = pc_i->getSemiAxis1();
+    dfloat3 endpoint2 = pc_i->getSemiAxis2();
+
+    Wall wallData = wall(dfloat3(0, 0, 0), 0);
+    dfloat distanceWall1 = 0;
+    dfloat distanceWall2 = 0;
+
+    #ifdef BC_X_WALL
+        wallData = wall(dfloat3(1, 0, 0), 0);
+        distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
+        distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
+
+        if (distanceWall1 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+        }
+        if (distanceWall2 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+        }
+
+        wallData = wall(dfloat3(-1, 0, 0), (NX - 1));
+        distanceWall1 = wallData.distance +  dot_product(endpoint1, wallData.normal);
+        distanceWall2 = wallData.distance +  dot_product(endpoint2, wallData.normal);
+
+
+        if (distanceWall1 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+        }
+        if (distanceWall2 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+        }
+
+    #endif
+    #ifdef BC_Y_WALL
+        wallData = wall(dfloat3( 0,1,0),0);
+        distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
+        distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
+
+        if (distanceWall1 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+        }
+        if (distanceWall2 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+        }
+
+        
+        wallData = wall(dfloat3(0, 1, 0), (NY - 1));
+        distanceWall1 = wallData.distance +  dot_product(endpoint1, wallData.normal);
+        distanceWall2 = wallData.distance +  dot_product(endpoint2, wallData.normal);
+
+
+        if (distanceWall1 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+        }
+        if (distanceWall2 < radius) {;
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+        }
+
+    #endif
+    #ifdef BC_Z_WALL
+        wallData = wall(dfloat3( 0,0,1),0);
+        distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
+        distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
+
+        if (distanceWall1 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+        }
+        if (distanceWall2 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+        }
+        
+        wallData = wall(dfloat3(0, 0, -1), (NZ - 1));
+        distanceWall1 = wallData.distance +  dot_product(endpoint1, wallData.normal);
+        distanceWall2 = wallData.distance +  dot_product(endpoint2, wallData.normal);
+
+        if (distanceWall1 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+        }
+        if (distanceWall2 < radius) {
+            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+        }
+    #endif
+}
+
 // ------------------------------------------------------------------------
 // -------------------- COLLISION BETWEEN PARTICLES -----------------------
 // ------------------------------------------------------------------------ 
@@ -204,7 +293,7 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
                 break;
             case CAPSULE:
                 //printf("cap - cap col \n");
-                // capsuleCapsuleCollisionCheck(column,row,pc_i,pc_j, step, pc_i->collision.semiAxis,pc_i->collision.semiAxis2, pc_i->radius,pc_j->collision.semiAxis, pc_j->collision.semiAxis2, pc_j->radius);
+                capsuleCapsuleCollisionCheck(column,row,pc_i,pc_j, step, pc_i->getSemiAxis1(),pc_i->getSemiAxis2(), pc_i->getRadius(),pc_j->getSemiAxis1(), pc_j->getSemiAxis2(), pc_j->getRadius());
             case ELLIPSOID:
                 //printf("cap - eli col \n");
                 //collision capsule-ellipsoid
@@ -245,6 +334,18 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
 // ------------------------------------------------------------------------ 
 // -------------------- INTER PARTICLE COLLISION CHECK---------------------
 // ------------------------------------------------------------------------ 
+
+__device__
+void capsuleCapsuleCollisionCheck(    unsigned int column,    unsigned int row,ParticleCenter* pc_i, ParticleCenter* pc_j, int step, dfloat3 cylA1, dfloat3 cylA2, dfloat radiusA, dfloat3 cylB1, dfloat3 cylB2, dfloat radiusB) {
+    dfloat3 closestOnA[1];
+    dfloat3 closestOnB[1];
+
+    if(segment_segment_closest_points_periodic(cylA1, cylA2, cylB1, cylB2, closestOnA, closestOnB) < radiusA + radiusB){
+        capsuleCapsuleCollision(column, row,pc_i,pc_j,closestOnA,closestOnB,step);
+    }
+
+    return;
+}
 
 __device__
 void capsuleSphereCollisionCheck(unsigned int column,unsigned int row,  ParticleShape *shape, ParticleCenter* pc_i, ParticleCenter* pc_j, int step){

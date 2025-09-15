@@ -196,6 +196,112 @@ void sphereWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,
     atomicAdd(&(pc_i->getMYatomic()), m_dirs.y);
     atomicAdd(&(pc_i->getMZatomic()), m_dirs.z);
 }
+__device__
+void capsuleWallCollisionCap(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, int step){
+
+    //particle information
+    const dfloat3 pos_i = pc_i->getPos(); //center position
+    const dfloat3 pos_c_i = endpoint; //cap position
+
+    const dfloat m_i = pc_i ->getVolume() * pc_i ->getDensity();
+    const dfloat r_i = pc_i->getRadius();
+
+    const dfloat3 v_i = pc_i->getVel(); //VELOCITY OF THE CENTER OF MASS
+    const dfloat3 w_i = pc_i->getW();
+
+    //wall information        
+    dfloat3 wall_speed = dfloat3(0,0,0); // relative velocity vector
+    dfloat3 n = wallData.normal;
+
+    //invert collision direction since is from sphere to wall
+    n.x = -n.x;
+    n.y = -n.y;
+    n.z = -n.z;
+
+
+    //vector center-> cap
+    dfloat3 rr = pos_c_i - pos_i;
+
+    dfloat3 G = v_i - wall_speed;
+
+
+    //constants 
+    //effective radius and mass
+    const dfloat effective_radius = r_i; //wall is r = infinity
+    const dfloat effective_mass = m_i; //wall has infinite mass
+    //collision constants
+    const dfloat STIFFNESS_NORMAL = SPHERE_WALL_STIFFNESS_NORMAL_CONST * sqrt(abs(effective_radius));
+    const dfloat STIFFNESS_TANGENTIAL = SPHERE_WALL_STIFFNESS_TANGENTIAL_CONST * sqrt(effective_radius) * sqrt (abs(displacement));
+    const dfloat damping_const = (- 2.0 * log(PW_REST_COEF)  / (sqrt(M_PI*M_PI + log(PW_REST_COEF)*log(PW_REST_COEF)))); //TODO FIND A WAY TO PROCESS IN COMPILE TIME
+    const dfloat DAMPING_NORMAL = damping_const * sqrt (effective_mass * STIFFNESS_NORMAL );
+    const dfloat DAMPING_TANGENTIAL = damping_const * sqrt (effective_mass * STIFFNESS_TANGENTIAL);
+
+    //normal force
+    dfloat f_kn = -STIFFNESS_NORMAL * sqrt(abs(displacement*displacement*displacement));
+    dfloat3 f_normal = f_kn * n - DAMPING_NORMAL *  dot_product(G,n) * n * POW_FUNCTION(abs(displacement),0.25);
+    dfloat f_n = vector_length(f_normal);
+
+    //tangential force
+    dfloat3 G_ct = G + r_i * cross_product(w_i,n+rr) - dot_product(G,n)*n;
+    dfloat mag = vector_length(G_ct);
+
+
+    dfloat3 t;//tangential velocity vector
+    if (mag != 0){
+        //tangential vector
+        t = G_ct / mag;
+    }else{
+        t.x = 0.0;
+        t.y = 0.0;
+        t.z = 0.0;
+    }
+
+    //retrive stored displacedment 
+    int tang_index = calculateWallIndex(n); //wall can be directly computed
+    dfloat3 tang_disp; //total tangential displacement
+
+    int last_step = pc_i->getCollision().getLastCollisionStep(tang_index);
+    if(step - last_step > 1){ //there is no prior collision
+        //first need to erase previous collision
+        endCollision(pc_i->getCollision(),tang_index,step);
+        //now we start the new collision tracking
+        startCollision(pc_i->getCollision(),tang_index,true,n,step);
+        tang_disp = G_ct;
+    }else{//there is already a collision in progress
+        tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,G_ct,step);
+    }
+
+    //tangential force
+    dfloat3 f_tang;
+    f_tang.x = - STIFFNESS_TANGENTIAL * tang_disp.x - DAMPING_TANGENTIAL * G_ct.x* POW_FUNCTION(abs(tang_disp.x) ,0.25);
+    f_tang.y = - STIFFNESS_TANGENTIAL * tang_disp.y - DAMPING_TANGENTIAL * G_ct.y* POW_FUNCTION(abs(tang_disp.y) ,0.25);
+    f_tang.z = - STIFFNESS_TANGENTIAL * tang_disp.z - DAMPING_TANGENTIAL * G_ct.z* POW_FUNCTION(abs(tang_disp.z) ,0.25);
+
+    mag = vector_length(f_tang);
+
+    //determine if slip or not,
+    if(  mag > PW_FRICTION_COEF * fabsf(f_n) ){
+         tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,-G_ct,step);
+        f_tang = - PW_FRICTION_COEF * f_n * t;
+    }
+
+    //sum the forces
+    dfloat3 f_dirs = f_normal + f_tang;
+
+    //calculate moments
+    dfloat3 m_dirs = cross_product((n*r_i) + rr,f_dirs);
+
+    //save date in the particle information
+    atomicAdd(&(pc_i->getFXatomic()), f_dirs.x);
+    atomicAdd(&(pc_i->getFYatomic()), f_dirs.y);
+    atomicAdd(&(pc_i->getFZatomic()), f_dirs.z);
+
+    atomicAdd(&(pc_i->getMXatomic()), m_dirs.x);
+    atomicAdd(&(pc_i->getMYatomic()), m_dirs.y);
+    atomicAdd(&(pc_i->getMZatomic()), m_dirs.z);
+    
+
+}
 
 __device__
 dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j) {
@@ -224,6 +330,7 @@ dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j) {
     
     return dist - (r1 + r2);
 }
+
 __device__
 dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB, dfloat3 closestOnAB[1]) {
     dfloat minDist = 1E+37;  // Initialize to a large value
@@ -274,6 +381,96 @@ dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB,
 
     // Return the minimum distance
     return minDist;
+}
+// Project a point onto a segment and constrain it within the segment
+__device__
+dfloat3 constrain_to_segment(dfloat3 point, dfloat3 segStart, dfloat3 segEnd) {
+    dfloat3 segDir = segEnd - segStart;
+    dfloat segLengthSqr = dot_product(segDir,segDir);
+    if (segLengthSqr == 0.0) 
+        return segStart;  // The segment is a point
+
+    dfloat t = dot_product((point - segStart), segDir) / segLengthSqr;
+    t = clamp01(t);
+
+    return (segStart + (segDir * t));
+}
+// Main function to compute the closest distance between two segments and return the closest points
+__device__
+dfloat segment_segment_closest_points(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]) {
+
+    dfloat3 segDC = (q2 - p2);  // Vector from p2 to q2 (segment [p2, q2])
+    dfloat lineDirSqrMag = dot_product(segDC,segDC);  // Square magnitude of segment [p2, q2]
+
+    // Project p1 and q1 onto the plane defined by segment [p2, q2]
+    dfloat3 inPlaneA = p1 - ((dot_product(p1-p2,segDC)/lineDirSqrMag)*segDC);
+    dfloat3 inPlaneB = q1 - ((dot_product(q1-p2,segDC)/lineDirSqrMag)*segDC);
+    dfloat3 inPlaneBA = (inPlaneB - inPlaneA);
+    dfloat t = dot_product(p2-inPlaneA,inPlaneBA) / dot_product(inPlaneBA, inPlaneBA);
+
+
+    if (dot_product(inPlaneBA, inPlaneBA) == 0.0) {
+        t = 0.0;  // Handle case where inPlaneA and inPlaneB are the same (segments are parallel)
+    }
+
+    // Find the closest point on segment [p1, q1] to the line [p2, q2]
+    dfloat3 segABtoLineCD = p1 + clamp01(t)*(q1-p1);
+
+    // Constrain the result to segment [p2, q2]
+    closestOnCD[0] = constrain_to_segment(segABtoLineCD, p2, q2);
+
+    // Constrain the closest point on segment [p2, q2] back to segment [p1, q1]
+    closestOnAB[0] = constrain_to_segment(closestOnCD[0], p1, q1);
+
+
+    // Calculate the distance between the closest points on the two segments
+    dfloat3 diff = vector_length(closestOnAB[0] - closestOnCD[0]);
+    return vector_length(diff);  // Return the distance between the closest points
+}
+__device__
+dfloat segment_segment_closest_points_periodic(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]){
+    dfloat minDist = 1E+37;  // Initialize to a large value
+    dfloat3 bestClosestOnAB, bestClosestOnCD;
+    int dx = 0;
+    int dy = 0;
+    int dz = 0;
+    #ifdef BC_X_PERIODIC
+    for ( dx = -1; dx <= 1; dx++) {
+    #endif
+        #ifdef BC_Y_PERIODIC
+        for ( dy = -1; dy <= 1; dy++) {
+        #endif
+            #ifdef BC_Z_PERIODIC
+            for ( dz = -1; dz <= 1; dz++) {
+            #endif
+                // Translate segment [p2, q2] by periodic offsets
+                dfloat3 p2_translated = p2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
+                dfloat3 q2_translated = q2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
+
+                // Compute closest points between segment [p1, q1] and translated segment [p2_translated, q2_translated]
+                dfloat3 tempClosestOnAB, tempClosestOnCD;
+                dfloat dist = segment_segment_closest_points(p1, q1, p2_translated, q2_translated, &tempClosestOnAB, &tempClosestOnCD);
+                // Update minimum distance and store the best closest points
+                if (dist < minDist) {
+                    minDist = dist;
+                    bestClosestOnAB = tempClosestOnAB;
+                    bestClosestOnCD = tempClosestOnCD;
+                }
+
+            #ifdef BC_Z_PERIODIC
+            }
+            #endif
+        #ifdef BC_Y_PERIODIC
+        }
+        #endif
+
+    #ifdef BC_X_PERIODIC
+    }
+    #endif
+    closestOnAB[0] = bestClosestOnAB;
+    closestOnCD[0] = bestClosestOnCD;
+
+    return minDist;  // Return the minimum distance between the segments
 }
 
 // ------------------------------------------------------------------------ 

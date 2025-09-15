@@ -55,7 +55,28 @@ void checkCollisionWalls(ParticleShape *shape, ParticleCenter* pc_i, unsigned in
 */
 __device__
 void checkCollisionWallsSphere(ParticleCenter* pc_i, unsigned int step);
+/**
+*   @brief Check for collisions between a capsule and walls.
+*   @param pc_i: Pointer to the `ParticleCenter` structure containing capsule information.
+*   @param step: The current time step for collision checking.
+*/
+__device__
+void checkCollisionWallsCapsule(ParticleCenter* pc_i, unsigned int step);
 
+/**
+*   @brief Handle collision type between two capsules.
+*   @param pc_i: Pointer to the `ParticleCenter` structure containing information about the first capsule.
+*   @param pc_j: Pointer to the `ParticleCenter` structure containing information about the second capsule.
+*   @param step: The current time step for collision processing.
+*   @param capA1: Center of the cap1 of particle i
+*   @param capA2: Center of the cap2 of particle i
+*   @param radiusA: Radius of particle i
+*   @param capB1: Center of the cap1 of particle j
+*   @param capB2: Center of the cap2 of particle j
+*   @param radiusB: Radius of particle j
+*/
+__device__
+void capsuleCapsuleCollisionCheck(unsigned int column,    unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, int step, dfloat3 capA1, dfloat3 capA2,dfloat radiusA, dfloat3 capB1, dfloat3 capB2,dfloat radiusB);
 
 /**
 *   @brief Handle collision mechanics between a capsule and an ellipsoid.

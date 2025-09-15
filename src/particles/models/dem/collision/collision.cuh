@@ -77,6 +77,18 @@ void endCollision(CollisionData &collisionData, int index, int currentTimeStep);
 __device__
 void sphereWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,int step);
 
+/**
+*   @brief Handle collision mechanics between a capsule's end cap and a wall.
+*   @param pc_i: Pointer to the `ParticleCenter` structure containing capsule information.
+*   @param wallData: The data structure representing the wall.
+*   @param displacement: The displacement value for the capsule's end cap.
+*   @param endpoint: The endpoint of the capsule's end cap.
+*   @param step: The current time step for collision processing.
+*/
+__device__
+void capsuleWallCollisionCap(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, int step);
+
+
 //sphere functions
 /**
 *   @brief Compute the gap between two spheres.
@@ -97,6 +109,43 @@ dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j);
 */
 __device__
 dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB, dfloat3 closestOnAB[1]);
+
+/**
+*   @brief Constrain a point to lie within a given segment.
+*   @param point: The point to be constrained.
+*   @param segStart: The start point of the segment.
+*   @param segEnd: The end point of the segment.
+*   @return The constrained point that lies on the segment.
+*/
+__device__
+dfloat3 constrain_to_segment(dfloat3 point, dfloat3 segStart, dfloat3 segEnd);
+
+
+/**
+*   @brief Compute the closest points and distance between two line segments in 3D.
+*   @param p1: Start point of the first segment.
+*   @param q1: End point of the first segment.
+*   @param p2: Start point of the second segment.
+*   @param q2: End point of the second segment.
+*   @param closestOnAB: Output for the closest point on the first segment.
+*   @param closestOnCD: Output for the closest point on the second segment.
+*   @return The shortest distance between the two segments.
+*   @obs: https://zalo.github.io/blog/closest-point-between-segments/
+*/
+__device__
+dfloat segment_segment_closest_points(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]);
+/**
+*   @brief Compute the closest points and distance between two line segments in 3D considering periodic conditions.
+*   @param p1: Start point of the first segment.
+*   @param q1: End point of the first segment.
+*   @param p2: Start point of the second segment.
+*   @param q2: End point of the second segment.
+*   @param closestOnAB: Output for the closest point on the first segment.
+*   @param closestOnCD: Output for the closest point on the second segment.
+*   @return The shortest distance between the two segments.
+*/
+__device__
+dfloat segment_segment_closest_points_periodic(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]);
 
 /**
 *   @brief Handle collision mechanics between two spheres.
