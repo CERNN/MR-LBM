@@ -515,7 +515,15 @@ dfloat3 quart_to_euler(dfloat4 q);
 */
 __device__
 void rotationMatrixFromVectors(dfloat3 v1, dfloat3 v2, dfloat R[3][3]);
-
+/**
+*   @brief Computes the rotation matrix that aligns three orthogonal vectors v1, v2, and v3.
+*   @param v1 The first vector (must be orthogonal to v2 and v3).
+*   @param v2 The second vector (must be orthogonal to v1 and v3).
+*   @param v3 The third vector (must be orthogonal to v1 and v2).
+*   @param R Output 3x3 rotation matrix.
+*/
+__device__
+void rotationMatrixFromVectors(dfloat3 v1, dfloat3 v2, dfloat3 v3, dfloat R[3][3]);
 
 // ****************************************************************************
 // ***********************   ROTATION OPERATIONS   ****************************

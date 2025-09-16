@@ -80,34 +80,34 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step){
 
     outFilePCenter << strColumnNames << strValuesParticles.str();
 
-    #ifdef IBM_PARTICLES_NODES_SAVE
-    if((*particles->getPMethod() == IBM)){
-        strColumnNames = "particle_index" + sep + "pos_x" + sep + "pos_y" + sep + "pos_z" + sep + "S\n";
+    if(IBM_PARTICLES_NODES_SAVE){
+        if((*particles->getPMethod() == IBM)){
+            strColumnNames = "particle_index" + sep + "pos_x" + sep + "pos_y" + sep + "pos_z" + sep + "S\n";
 
-        std::ostringstream strValuesMesh("");
-        strValuesMesh << std::scientific;
-        // TODO: fix it
-        for(int n_gpu = 0; n_gpu < N_GPUS; n_gpu++){
-            checkCudaErrors(cudaSetDevice(GPUS_TO_USE[n_gpu]));
-            IbmNodesSoA pnSoA = particles->getNodesSoA()[n_gpu];
+            std::ostringstream strValuesMesh("");
+            strValuesMesh << std::scientific;
+            // TODO: fix it
+            for(int n_gpu = 0; n_gpu < N_GPUS; n_gpu++){
+                checkCudaErrors(cudaSetDevice(GPUS_TO_USE[n_gpu]));
+                IbmNodesSoA pnSoA = particles->getNodesSoA()[n_gpu];
 
-            for(int i = 0; i < pnSoA.getNumNodes(); i++){
-                dfloat3 pos = pnSoA.getPos().getValuesFromIdx(i);
-                strValuesMesh << pnSoA.getParticleCenterIdx()[i] << sep;
-                strValuesMesh << getStrDfloat3(pos, sep) << sep;
-                strValuesMesh << pnSoA.getS()[i] << "\n";
+                for(int i = 0; i < pnSoA.getNumNodes(); i++){
+                    dfloat3 pos = pnSoA.getPos().getValuesFromIdx(i);
+                    strValuesMesh << pnSoA.getParticleCenterIdx()[i] << sep;
+                    strValuesMesh << getStrDfloat3(pos, sep) << sep;
+                    strValuesMesh << pnSoA.getS()[i] << "\n";
+                }
             }
-        }
 
-        // Names of file to save particle info
-        std::string strFilePNodes = getVarFilename("pNodes", step, ".csv");
+            // Names of file to save particle info
+            std::string strFilePNodes = getVarFilename("pNodes", step, ".csv");
 
-        // File to save particle info
-        std::ofstream outFilePNodes(strFilePNodes);
+            // File to save particle info
+            std::ofstream outFilePNodes(strFilePNodes);
 
-        outFilePNodes << strColumnNames << strValuesMesh.str();
-    } 
-    #endif //IBM_PARTICLES_NODES_SAVE
+            outFilePNodes << strColumnNames << strValuesMesh.str();
+        } 
+    }
    
 }
 

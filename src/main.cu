@@ -500,7 +500,11 @@ int main() {
     cudaFree(uz);
 
     // Free particle
-
+    #ifdef PARTICLE_MODEL
+    free(particles);
+    particlesSoA.freeNodesAndCenters();
+    #endif
+    
     #ifdef SECOND_DIST 
     cudaFree(C);
     #endif 

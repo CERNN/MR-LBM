@@ -288,7 +288,7 @@ public:
     __host__ __device__ bool getMovable() const;
     __host__ __device__ void setMovable(bool movable);
 
-    __host__ __device__ CollisionData getCollision() const;
+    __host__ __device__ CollisionData& getCollision()   ;
     __host__ __device__ void setCollision(const CollisionData& collision);
 
     __host__ __device__ dfloat3 getSemiAxis1() const;

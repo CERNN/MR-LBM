@@ -286,6 +286,13 @@ void rotationMatrixFromVectors(dfloat3 v1, dfloat3 v2, dfloat R[3][3]){
 
 }
 
+__device__
+void rotationMatrixFromVectors(dfloat3 v1, dfloat3 v2, dfloat3 v3, dfloat R[3][3]){
+    R[0][0] = v1.x; R[1][0] = v2.x; R[2][0] = v3.x;
+    R[0][1] = v1.y; R[1][1] = v2.y; R[2][1] = v3.y;
+    R[0][2] = v1.z; R[1][2] = v2.z; R[2][2] = v3.z;
+}
+
 
 // ****************************************************************************
 // ***********************   ROTATION OPERATIONS   ****************************

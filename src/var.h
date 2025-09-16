@@ -40,7 +40,7 @@
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM singleParticleSetting
+#define BC_PROBLEM benchmark_ibm
                                 
 constexpr bool console_flush = false;
 

@@ -46,7 +46,9 @@ void ibmSimulation(
     gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,step);
 
     // Calculate collision force between particles
-    //gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
+    ParticleShape* shape = particles->getPShape();
+    gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamParticles>>>(shape,pArray,step);
+ 
 
     // Make the interpolation of LBM and spreading of IBM forces
     gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0],step);
@@ -60,6 +62,7 @@ void ibmSimulation(
     
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     cudaFree(d_nodes);
+    // cudaFree(d_particlesSoA);
 }
 
 

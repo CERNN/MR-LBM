@@ -29,6 +29,12 @@ typedef struct dfloat3 {
         this->z = z;
     }
 
+    // Overload the unary - operator
+    __host__ __device__
+    dfloat3 operator-() const {
+        return dfloat3(-x, -y, -z);
+    }
+
     // Element-wise addition
     __host__ __device__
     friend dfloat3 operator+(const dfloat3& a, const dfloat3& b) {
@@ -348,5 +354,17 @@ typedef struct ghostInterfaceData  {
     #endif
     */
 } GhostInterfaceData;
+
+typedef struct wall{
+    dfloat3 normal;
+    dfloat distance;
+
+    __host__ __device__
+    wall(dfloat3 normal = dfloat3(0,0,0), dfloat distance = 0)
+    {
+        this->normal = normal;
+        this->distance = distance;
+    }
+} Wall;
 
 #endif //__GLOBAL_STRUCTS_H
