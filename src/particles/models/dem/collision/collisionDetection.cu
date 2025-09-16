@@ -110,20 +110,20 @@ void checkCollisionWallsSphere(ParticleCenter* pc_i,unsigned int step){
     #ifdef BC_X_WALL
         wallData = wall(dfloat3( 1,0,0),0);
         distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
-        printf("distance to x = 0 is %f, radius = %f \n",distanceWall,pc_i->getRadius());
+        //printf("distance to x = 0 is %f, radius = %f \n",distanceWall,pc_i->getRadius());
         if (distanceWall < pc_i->getRadius()){
-            printf("colliding with x = 0 with a deformation of %f \n",pc_i->getRadius() - distanceWall);
-            printf("particle position is x = %f y = %f z = %f \n ",pos_i.x,pos_i.y,pos_i.z);
+            //printf("colliding with x = 0 with a deformation of %f \n",pc_i->getRadius() - distanceWall);
+            //printf("particle position is x = %f y = %f z = %f \n ",pos_i.x,pos_i.y,pos_i.z);
             sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
 
         }
         wallData = wall(dfloat3( -1,0,0),(NX - 1));
         //for this case the dot product will be always negative, while the first term will be always better, hence we have to invert and use + signal
         distanceWall = wallData.distance + dot_product(pos_i,wallData.normal);
-        printf("distance to x = 1 is %f, radius = %f \n",distanceWall,pc_i->getRadius());
+        //printf("distance to x = 1 is %f, radius = %f \n",distanceWall,pc_i->getRadius());
         if (distanceWall < pc_i->getRadius()){
-            printf("colliding with x = 1 with a deformation of %f \n",pc_i->getRadius() - distanceWall);
-            printf("particle position is x = %f y = %f z = %f \n ",pos_i.x,pos_i.y,pos_i.z);
+            //printf("colliding with x = 1 with a deformation of %f \n",pc_i->getRadius() - distanceWall);
+            //printf("particle position is x = %f y = %f z = %f \n ",pos_i.x,pos_i.y,pos_i.z);
             sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
         }
     #endif
