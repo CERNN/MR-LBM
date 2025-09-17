@@ -27,6 +27,6 @@ void pibmSimulation(
 );
 
 #endif //PARTICLE_MODEL
-#endif
+#endif //__PARTICLE_MODEL_PIBM_CUH
 
 

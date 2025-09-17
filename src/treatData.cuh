@@ -77,8 +77,8 @@ void totalKineticEnergy(dfloat *fMom, size_t step);
  */
 __host__ 
 void totalSpringEnergy(dfloat *fMom,size_t step);
-#endif
-#endif
+#endif //CONFORMATION_TENSOR
+#endif //CONVECTION_DIFFUSION_TRANSPORT
 /**
  *  @brief Calculate the turbulent kinetic energy based on the velocity field
  *  @param fMom: Pointer to the device array containing the current macroscopic moments.

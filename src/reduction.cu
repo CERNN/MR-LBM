@@ -195,8 +195,8 @@ void sumReductionThread_SE(dfloat* g_idata, dfloat* g_odata)
         g_odata[bid] = sdata[0];
     }
 }
-#endif
-#endif
+#endif //CONFORMATION_TENSOR
+#endif //CONVECTION_DIFFUSION_TRANSPORT
 
 __global__ 
 void sumReductionScalar(dfloat* g_idata, dfloat* g_odata)

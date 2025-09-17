@@ -80,8 +80,8 @@ void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata);
 */
 __global__ 
 void sumReductionThread_SE(dfloat* g_idata, dfloat* g_odata);
-#endif
-#endif
+#endif //CONFORMATION_TENSOR
+#endif //CONVECTION_DIFFUSION_TRANSPORT
 
 /**
  *  @brief Perform paralel reduction of all threads of a block of for kinetic energy

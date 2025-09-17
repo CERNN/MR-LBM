@@ -52,16 +52,16 @@ __host__
 void linearMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif 
+    #endif //SECOND_DIST
     #if NODE_TYPE_SAVE
     dfloat* nodeTypeSave,
     unsigned int* hNodeType,
-    #endif
+    #endif //NODE_TYPE_SAVE
     #if defined BC_FORCES && defined SAVE_BC_FORCES
     dfloat* h_BC_Fx,
     dfloat* h_BC_Fy,
     dfloat* h_BC_Fz,
-    #endif
+    #endif // BC_FORCES && SAVE_BC_FORCES
     unsigned int step
 );
 
@@ -79,44 +79,44 @@ __host__
 void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, unsigned int* hNodeType, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif 
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST 
     dfloat* Axx,
-    #endif
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST 
     dfloat* Axy,
-    #endif
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST 
     dfloat* Axz,
-    #endif
+    #endif //A_XZ_DIST
     #ifdef A_YY_DIST 
     dfloat* Ayy,
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST 
     dfloat* Ayz,
-    #endif
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST 
     dfloat* Azz,
-    #endif
+    #endif //A_ZZ_DIST
     #ifdef LOG_CONFORMATION
         #ifdef A_XX_DIST
         dfloat* Cxx,
-        #endif
+        #endif //A_XX_DIST
         #ifdef A_XY_DIST
         dfloat* Cxy,
-        #endif
+        #endif //A_XY_DIST
         #ifdef A_XZ_DIST
         dfloat* Cxz,
-        #endif
+        #endif //A_XZ_DIST
         #ifdef A_YY_DIST
         dfloat* Cyy,
-        #endif
+        #endif //A_YY_DIST
         #ifdef A_YZ_DIST
         dfloat* Cyz,
-        #endif
+        #endif //A_YZ_DIST
         #ifdef A_ZZ_DIST
         dfloat* Czz,
-        #endif
+        #endif //A_ZZ_DIST
     #endif //LOG_CONFORMATION
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
@@ -151,25 +151,25 @@ void saveVarVTK(
     OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST 
     dfloat* Axx,
-    #endif
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST 
     dfloat* Axy,
-    #endif
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST 
     dfloat* Axz,
-    #endif
+    #endif //A_XZ_DIST
     #ifdef A_YY_DIST 
     dfloat* Ayy,
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST 
     dfloat* Ayz,
-    #endif
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST 
     dfloat* Azz,
-    #endif
+    #endif //A_ZZ_DIST
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps

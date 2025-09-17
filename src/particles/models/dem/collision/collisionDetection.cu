@@ -108,7 +108,7 @@ void checkCollisionWallsSphere(ParticleCenter* pc_i,unsigned int step){
         if (distanceWall < pc_i->getRadius()){
             sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
         }
-    #endif
+    #endif //BC_X_WALL
     #ifdef BC_Y_WALL
         wallData = wall(dfloat3(0,1,0),0);
         distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
@@ -120,7 +120,7 @@ void checkCollisionWallsSphere(ParticleCenter* pc_i,unsigned int step){
         if (distanceWall < pc_i->getRadius()){
             sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
         }
-    #endif
+    #endif //BC_Y_WALL
     #ifdef BC_Z_WALL
         wallData = wall(dfloat3(0,0,1),0);
         distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
@@ -132,7 +132,7 @@ void checkCollisionWallsSphere(ParticleCenter* pc_i,unsigned int step){
         if (distanceWall < pc_i->getRadius()){
             sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
         }
-    #endif
+    #endif //BC_Z_WALL
 
 }
 
@@ -173,7 +173,7 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
             capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
         }
 
-    #endif
+    #endif //BC_X_WALL
     #ifdef BC_Y_WALL
         wallData = wall(dfloat3( 0,1,0),0);
         distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
@@ -199,7 +199,7 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
             capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
         }
 
-    #endif
+    #endif //BC_Y_WALL
     #ifdef BC_Z_WALL
         wallData = wall(dfloat3( 0,0,1),0);
         distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
@@ -222,7 +222,7 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
         if (distanceWall2 < radius) {
             capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
         }
-    #endif
+    #endif //BC_Z_WALL
 }
 __device__
 void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
@@ -245,7 +245,7 @@ void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
     if (distanceWall < 0) {
         ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
     }
-    #endif
+    #endif //BC_X_WALL
 
     #ifdef BC_Y_WALL
     wallData = wall(dfloat3(0, 1, 0), 0);
@@ -259,7 +259,7 @@ void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
     if (distanceWall < 0) {
         ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
     }
-    #endif
+    #endif //BC_Y_WALL
     
     #ifdef BC_Z_WALL
     wallData = wall(dfloat3(0, 0, 1), 0);
@@ -273,7 +273,7 @@ void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
     if (distanceWall < 0) {
         ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
     }
-    #endif
+    #endif //BC_Z_WALL
 }
 
 // ------------------------------------------------------------------------
@@ -390,13 +390,13 @@ void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, Par
     // Loop over periodic offsets in x, y, and z if periodic boundary conditions are enabled
     #ifdef BC_X_PERIODIC
     for (dx = -1; dx <= 1; dx++) {
-    #endif
+    #endif //BC_X_PERIODIC
         #ifdef BC_Y_PERIODIC
         for (dy = -1; dy <= 1; dy++) {
-        #endif
+        #endif //BC_Y_PERIODIC
             #ifdef BC_Z_PERIODIC
             for (dz = -1; dz <= 1; dz++) {
-            #endif
+            #endif //BC_Z_PERIODIC
                 translation = dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
                 dist = ellipsoidEllipsoidCollisionDistance(pc_i, pc_j,closestOnA,closestOnB,cr1, cr2,translation,step);
                 // Update the minimum distance and store the closest point
@@ -412,13 +412,13 @@ void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, Par
 
             #ifdef BC_Z_PERIODIC
             } // End Z loop
-            #endif
+            #endif //BC_Z_PERIODIC
         #ifdef BC_Y_PERIODIC
         } // End Y loop
-        #endif
+        #endif //BC_Y_PERIODIC
     #ifdef BC_X_PERIODIC
     } // End X loop
-    #endif
+    #endif //BC_X_PERIODIC
 
     // Store the closest point on the segment
     closestOnA[0] = bestClosestOnA;
@@ -447,15 +447,15 @@ dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j) {
     #ifdef BC_X_PERIODIC
         if(delta.x > NX / 2.0) delta.x -= NX;
         if(delta.x < -NX / 2.0) delta.x += NX;
-    #endif
+    #endif //BC_X_PERIODIC
     #ifdef BC_Y_PERIODIC
         if(delta.y > NY / 2.0) delta.y -= NY;
         if(delta.y < -NY / 2.0) delta.y += NY;
-    #endif
+    #endif //BC_Y_PERIODIC
     #ifdef BC_Z_PERIODIC
         if(delta.z > NZ / 2.0) delta.z -= NZ;
         if(delta.z < -NZ / 2.0) delta.z += NZ;
-    #endif
+    #endif //BC_Z_PERIODIC
 
     dfloat dist = sqrtf(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
     

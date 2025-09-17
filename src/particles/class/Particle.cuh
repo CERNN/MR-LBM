@@ -165,5 +165,5 @@ class ParticlesSoA{
 };
 
 #endif //PARTICLE_MODEL
-#endif
+#endif //!__PARTICLE_H
 

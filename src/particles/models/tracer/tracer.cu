@@ -52,7 +52,7 @@ void tracerSimulation(
         saveParticleInfo(h_particlePos,step);
     }
 #pragma warning(pop)
-    #endif
+    #endif //PARTICLE_TRACER_SAVE
 
 
 }
@@ -219,7 +219,7 @@ void tracer_positionUpdate(
     if (pc_i->getPosX() > NX - 1) {
         pc_i->setPosX(NX - 1.01);
     }
-    #endif
+    #endif //BC_X_WALL
 
     #ifdef BC_Y_WALL
     if (pc_i->getPosY() < 0) {
@@ -228,7 +228,7 @@ void tracer_positionUpdate(
     if (pc_i->getPosY() > NY - 1) {
         pc_i->setPosY(NY - 1.01);
     }
-    #endif
+    #endif //BC_Y_WALL
 
     #ifdef BC_Z_WALL
     if (pc_i->getPosZ() < 0) {
@@ -237,7 +237,7 @@ void tracer_positionUpdate(
     if (pc_i->getPosZ() > NZ - 1) {
         pc_i->setPosZ(NZ - 1.01);
     }
-    #endif 
+    #endif //BC_Z_WALL
 
 }
 

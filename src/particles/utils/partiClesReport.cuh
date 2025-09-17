@@ -61,5 +61,5 @@ void saveParticlesInfo(ParticlesSoA *particles, unsigned int step);
  */
 void printParticlesInfo(ParticlesSoA particles, unsigned int step);
 
-#endif
 #endif //PARTICLE_MODEL
+#endif //!__PARTICLES_REPORT_H

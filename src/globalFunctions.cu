@@ -89,13 +89,13 @@ dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB,
     // Loop over periodic offsets in x, y, and z if periodic boundary conditions are enabled
     #ifdef BC_X_PERIODIC
     for (dx = -1; dx <= 1; dx++) {
-    #endif
+    #endif //BC_X_PERIODIC
         #ifdef BC_Y_PERIODIC
         for (dy = -1; dy <= 1; dy++) {
-        #endif
+        #endif //BC_Y_PERIODIC
             #ifdef BC_Z_PERIODIC
             for (dz = -1; dz <= 1; dz++) {
-            #endif
+            #endif //BC_Y_PERIODIC
                 // Translate the segment by the periodic offsets
                 dfloat3 segA_translated = segA + dfloat3(dx * NX, dy * NY, dz * NZ);
                 dfloat3 segB_translated = segB + dfloat3(dx * NX, dy * NY, dz * NZ);
@@ -117,13 +117,13 @@ dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB,
 
             #ifdef BC_Z_PERIODIC
             } // End Z loop
-            #endif
+            #endif //BC_Z_PERIODIC
         #ifdef BC_Y_PERIODIC
         } // End Y loop
-        #endif
+        #endif //BC_Y_PERIODIC
     #ifdef BC_X_PERIODIC
     } // End X loop
-    #endif
+    #endif //BC_X_PERIODIC
 
     // Store the closest point on the segment
     closestOnAB[0] = bestClosestOnAB;
@@ -189,13 +189,13 @@ dfloat segment_segment_closest_points_periodic(dfloat3 p1, dfloat3 q1, dfloat3 p
     int dz = 0;
     #ifdef BC_X_PERIODIC
     for ( dx = -1; dx <= 1; dx++) {
-    #endif
+    #endif //BC_X_PERIODIC
         #ifdef BC_Y_PERIODIC
         for ( dy = -1; dy <= 1; dy++) {
-        #endif
+        #endif //BC_Y_PERIODIC
             #ifdef BC_Z_PERIODIC
             for ( dz = -1; dz <= 1; dz++) {
-            #endif
+            #endif //BC_Z_PERIODIC
                 // Translate segment [p2, q2] by periodic offsets
                 dfloat3 p2_translated = p2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
                 dfloat3 q2_translated = q2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
@@ -212,14 +212,14 @@ dfloat segment_segment_closest_points_periodic(dfloat3 p1, dfloat3 q1, dfloat3 p
 
             #ifdef BC_Z_PERIODIC
             }
-            #endif
+            #endif //BC_Z_PERIODIC
         #ifdef BC_Y_PERIODIC
         }
-        #endif
+        #endif //BC_Y_PERIODIC
 
     #ifdef BC_X_PERIODIC
     }
-    #endif
+    #endif //BC_X_PERIODIC
     closestOnAB[0] = bestClosestOnAB;
     closestOnCD[0] = bestClosestOnCD;
 

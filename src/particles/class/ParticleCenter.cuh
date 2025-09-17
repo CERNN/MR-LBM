@@ -362,5 +362,5 @@ protected:
 }; 
 
 #endif //PARTICLE_MODEL
-#endif
+#endif //!__PARTICLE_CENTER_H
 

@@ -21,7 +21,7 @@
 constexpr dfloat CONST_SMAGORINSKY = 0.1;
 constexpr dfloat INIT_VISC_TURB = 0.0;
 constexpr dfloat Implicit_const = 2.0*SQRT_2*3*3/(RHO_0)*CONST_SMAGORINSKY*CONST_SMAGORINSKY;
-#endif
+#endif //MODEL_CONST_SMAGORINSKY
 
 /**
  * @brief Calculate the LES relaxation time based on the Smagorinsky model
@@ -33,7 +33,7 @@ constexpr dfloat Implicit_const = 2.0*SQRT_2*3*3/(RHO_0)*CONST_SMAGORINSKY*CONST
 dfloat calcTau_les(dfloat omegaOld, dfloat const auxStressMag, const int step){
     #ifdef MODEL_CONST_SMAGORINSKY
         tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
-    #endif
+    #endif //MODEL_CONST_SMAGORINSKY
     return tau_t;
 };
 

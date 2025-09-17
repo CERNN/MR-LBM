@@ -18,7 +18,7 @@
 #include "globalStructs.h"
 #ifdef PARTICLE_MODEL
 #include "particles/models/ibm/ibmVar.h"
-#endif
+#endif //PARTICLE_MODEL
 
 /**
  * @brief Compute the equilibrium distribution function
@@ -215,7 +215,7 @@ g_idxPopZ(
 {
     return tx + BLOCK_NX * (ty + BLOCK_NY * (pop + GF * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
-#endif
+#endif //#if defined(SECOND_DIST) || defined(A_XX_DIST) || defined(A_XY_DIST) || defined(A_XZ_DIST) || defined(A_YY_DIST) || defined(A_YZ_DIST) || defined(A_ZZ_DIST)
 
 #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 __device__ int __forceinline__
@@ -256,7 +256,7 @@ g_idxUZ(
     return dir + 3*(tx + BLOCK_NX*(ty + BLOCK_NY*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
     //return tx + BLOCK_NX * (ty + BLOCK_NY * (dir + 3 * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * bz))));
 }
-#endif
+#endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
 #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 __device__ int __forceinline__
@@ -295,7 +295,7 @@ g_idxConfZ(
 {
     return dir + 6*(tx + BLOCK_NX*(ty + BLOCK_NY*(bx + NUM_BLOCK_X*(by+NUM_BLOCK_Y*(bz)))));
 }
-#endif
+#endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
 
 /**
@@ -361,7 +361,7 @@ size_t idxVelBlock(const int tx, const int ty, const int tz, const int uIndex)
 {
     return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(uIndex)) );
 }
-#endif
+#endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
 
 #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
@@ -380,7 +380,7 @@ size_t idxConfBlock(const int tx, const int ty, const int tz, const int confInde
 {
     return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ *(confIndex)) );
 }
-#endif
+#endif //COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
 
 
 // ****************************************************************************

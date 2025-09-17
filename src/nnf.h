@@ -28,14 +28,14 @@ constexpr dfloat GAMMA_0 = 0;       // Truncated Power-Law.
                                     // Leave as 0 to no truncate
 #define OMEGA_LAST_STEP // Needs omega from last step
 // Calculated variables
-#endif
+#endif //POWERLAW
 /* --------------------------------BINGHAM---------------------------------- */
 #ifdef BINGHAM
 // Inputs
 //constexpr dfloat S_Y= 0.005;
 // Calculated variables
 constexpr dfloat OMEGA_P = (dfloat)(1.0) / (3.0*VISC+0.5);    // 1/tau_p = 1/(3*eta_p+0.5)
-#endif
+#endif //BINGHAM
 /* ------------------------------KEE_TURCOTEE-------------------------------- */
 #ifdef BI_VISCOSITY
 // Inputs
@@ -50,7 +50,7 @@ constexpr dfloat OMEGA_Y = 1.0/TAU_Y;
 constexpr dfloat OMEGA_P = 1 / (3.0*VISC+0.5);
 constexpr dfloat GAMMA_C = S_Y / ETA_Y;
 
-#endif
+#endif //BI_VISCOSITY
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------------KEE_TURCOTEE-------------------------------- */
@@ -61,7 +61,7 @@ constexpr dfloat S_Y = 0;
 constexpr dfloat t1 = 1e-3;
 constexpr dfloat eta_0 =  1e-3;
 
-#endif
+#endif //KEE_TURCOTEE
 
 
 
@@ -102,7 +102,7 @@ constexpr dfloat eta_0 =  1e-3;
 
         return omega;
     }
-    #endif 
+    #endif //POWER_LAW
 
 
     #ifdef BINGHAM
@@ -117,7 +117,7 @@ constexpr dfloat eta_0 =  1e-3;
         return OMEGA_P * myMax(0.0, (1 - S_Y / auxStressMag));
         //return OMEGA_P * myMax(0.0, (1 - S_Y * ((dfloat)(step - NNF_TRIGGER_STEP)/(NNF_TRIGGER_STEP_SIZE)) / auxStressMag));
     }
-    #endif  
+    #endif //BINGHAM
 
     #ifdef BI_VISCOSITY
     /**
@@ -130,7 +130,7 @@ constexpr dfloat eta_0 =  1e-3;
     dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag){
         return  myMax(OMEGA_Y, OMEGA_P *(1 - S_Y *(1-VISC_RATIO) / auxStressMag));
     }
-    #endif  
+    #endif //BI_VISCOSITY
 
 
     // NOT TESTE/VALIDATED https://arxiv.org/abs/2401.02942 has analythical solution
@@ -165,7 +165,7 @@ constexpr dfloat eta_0 =  1e-3;
 
         return omega;
     }
-    #endif
+    #endif //KEE_TURCOTEE
 
 
 #endif // OMEGA_FIELD

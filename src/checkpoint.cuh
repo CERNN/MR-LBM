@@ -27,7 +27,7 @@
 #include "var.h"
 #ifdef PARTICLE_MODEL
     #include "particles/class/particle.cuh"
-#endif
+#endif //PARTICLE_MODEL
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -157,7 +157,7 @@ void operateSimCheckpointParticle(
     ParticlesSoA& particlesSoA,
     int* step
 );
-#endif
+#endif //PARTICLE_MODEL
 
 
 /**
@@ -185,7 +185,7 @@ int loadSimCheckpointParticle(
     ParticlesSoA& particlesSoA,
     int *step
 );
-#endif
+#endif //PARTICLE_MODEL
 
 
 /**
@@ -213,7 +213,7 @@ void saveSimCheckpointParticle(
     ParticlesSoA& particlesSoA,
     int *step
 );
-#endif
+#endif //PARTICLE_MODEL
 
 
 

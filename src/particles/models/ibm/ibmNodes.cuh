@@ -148,6 +148,6 @@ public:
 };
 
 #endif //PARTICLE_MODEL
-#endif
+#endif //!__IBM_NODES_H
 
 

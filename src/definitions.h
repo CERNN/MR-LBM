@@ -50,10 +50,10 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 // #define SECOND_DIST
 #ifdef D3G7
     #include "includeFiles/velocitySets/D3G7.inc"
-#endif
+#endif //D3G7
 #ifdef D3G19
     #include "includeFiles/velocitySets/D3G19.inc"
-#endif
+#endif //D3G19
 
 /* ------------------------------ MODEL MACROS ------------------------------ */
 
@@ -62,12 +62,12 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
     #define OMEGA_FIELD
     #define NON_NEWTONIAN_FLUID
     #define COMPUTE_SHEAR
-#endif
+#endif  //POWERLAW || BINGHAM || BI_VISCOSITY
 
 #if defined(LES_MODEL)
     #define OMEGA_FIELD
     #define COMPUTE_SHEAR
-#endif
+#endif //LES_MODEL
 
 
 
@@ -87,14 +87,14 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
     #if (defined(SM_86) || defined(SM_89))
         constexpr size_t SHARED_MEMORY_SIZE = 101376;  // sm86
     #endif
-#endif
+#endif //DYNAMIC_SHARED_MEMORY
 
 constexpr int SHARED_MEMORY_ELEMENT_SIZE = sizeof(dfloat) * (Q - 1);
 #ifdef SHARED_MEMORY_LIMIT
     constexpr size_t MAX_ELEMENTS_IN_BLOCK = SHARED_MEMORY_LIMIT / SHARED_MEMORY_ELEMENT_SIZE;
 #else
     constexpr int MAX_ELEMENTS_IN_BLOCK = 48128 / SHARED_MEMORY_ELEMENT_SIZE;
-#endif
+#endif //SHARED_MEMORY_LIMIT
 
 constexpr BlockDim optimalBlockDimArray = findOptimalBlockDimensions(MAX_ELEMENTS_IN_BLOCK);
 
@@ -125,15 +125,6 @@ const size_t NUMBER_LBM_NODES = NUM_BLOCK * BLOCK_LBM_SIZE;
 const size_t NUMBER_GHOST_FACE_XY = BLOCK_NX*BLOCK_NY*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 const size_t NUMBER_GHOST_FACE_XZ = BLOCK_NX*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
 const size_t NUMBER_GHOST_FACE_YZ = BLOCK_NY*BLOCK_NZ*NUM_BLOCK_X*NUM_BLOCK_Y*NUM_BLOCK_Z;
-
-//#define MOMENT_ORDER (1+2)
-//#ifdef OMEGA_FIELD
-//const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6 + 1;
-//#endif
-//#ifndef OMEGA_FIELD
-//const size_t NUMBER_MOMENTS = (MOMENT_ORDER)* (MOMENT_ORDER + 1)* (MOMENT_ORDER + 2) / 6;
-//#endif
-
 
 const size_t MEM_SIZE_BLOCK_LBM = sizeof(dfloat) * BLOCK_LBM_SIZE * NUMBER_MOMENTS;
 const size_t MEM_SIZE_BLOCK_GHOST = sizeof(dfloat) * BLOCK_GHOST_SIZE * Q;
@@ -168,23 +159,22 @@ constexpr int probe_index = probe_x + NX * (probe_y + NY*(probe_z));
 
 #if defined(HO_RR) || defined(HOME_LBM)
     #define HIGH_ORDER_COLLISION
-#endif
+#endif // HO_RR || HOME_LBM
 
 
-//#define COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
     #define HALO_SIZE 1
     const size_t VEL_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 3;
 #else
     const size_t VEL_GRAD_BLOCK_SIZE = 0;
-#endif
+#endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
 #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
     #define HALO_SIZE 1
     const size_t CONFORMATION_GRAD_BLOCK_SIZE = (BLOCK_NX + 2 * HALO_SIZE) * (BLOCK_NY + 2 * HALO_SIZE) * (BLOCK_NZ + 2 * HALO_SIZE) * 6;
 #else
     const size_t CONFORMATION_GRAD_BLOCK_SIZE = 0;
-#endif
+#endif //COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
 
 constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_BLOCK_SIZE, CONFORMATION_GRAD_BLOCK_SIZE))*sizeof(dfloat);
 
@@ -193,7 +183,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
     #define DYNAMIC_SHARED_MEMORY_PARAMS ,MAX_SHARED_MEMORY_SIZE
 #else
     #define DYNAMIC_SHARED_MEMORY_PARAMS
-#endif
+#endif //DYNAMIC_SHARED_MEMORY
 
 
 // Single-pointer macros
@@ -203,7 +193,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define DENSITY_CORRECTION_PARAMS_DECLARATION(PREFIX)
     #define DENSITY_CORRECTION_PARAMS(PREFIX)
-#endif
+#endif //DENSITY_CORRECTION
 
 
 
@@ -213,7 +203,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define BC_FORCES_PARAMS_DECLARATION(PREFIX)
     #define BC_FORCES_PARAMS(PREFIX)
-#endif
+#endif //BC_FORCES
 
 #if NODE_TYPE_SAVE
     #define NODE_TYPE_SAVE_PARAMS_DECLARATION unsigned int* nodeTypeSave,
@@ -221,7 +211,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define NODE_TYPE_SAVE_PARAMS_DECLARATION
     #define NODE_TYPE_SAVE_PARAMS
-#endif
+#endif //NODE_TYPE_SAVE
 
 
 
@@ -231,7 +221,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define OMEGA_FIELD_PARAMS_DECLARATION
     #define OMEGA_FIELD_PARAMS
-#endif
+#endif //OMEGA_FIELD
 
 
 
@@ -242,7 +232,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define OMEGA_FIELD_PARAMS_DECLARATION_PTR
     #define OMEGA_FIELD_PARAMS_PTR
-#endif
+#endif //OMEGA_FIELD
 
 
 
@@ -252,7 +242,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define SECOND_DIST_PARAMS_DECLARATION_PTR
     #define SECOND_DIST_PARAMS_PTR
-#endif
+#endif //SECOND_DIST
 
 
 #ifdef A_XX_DIST
@@ -261,7 +251,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define A_XX_DIST_PARAMS_DECLARATION_PTR
     #define A_XX_DIST_PARAMS_PTR
-#endif
+#endif //A_XX_DIST
 
 #ifdef A_XY_DIST
     #define A_XY_DIST_PARAMS_DECLARATION_PTR ,dfloat** Axy
@@ -269,7 +259,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define A_XY_DIST_PARAMS_DECLARATION_PTR
     #define A_XY_DIST_PARAMS_PTR
-#endif
+#endif //A_XY_DIST
 
 
 #ifdef A_XZ_DIST
@@ -278,7 +268,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define A_XZ_DIST_PARAMS_DECLARATION_PTR
     #define A_XZ_DIST_PARAMS_PTR
-#endif
+#endif //A_XZ_DIST
 
 #ifdef A_YY_DIST
     #define A_YY_DIST_PARAMS_DECLARATION_PTR ,dfloat** Ayy
@@ -286,7 +276,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define A_YY_DIST_PARAMS_DECLARATION_PTR
     #define A_YY_DIST_PARAMS_PTR
-#endif
+#endif //A_YY_DIST
 
 #ifdef A_YZ_DIST
     #define A_YZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Ayz
@@ -294,7 +284,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define A_YZ_DIST_PARAMS_DECLARATION_PTR
     #define A_YZ_DIST_PARAMS_PTR
-#endif
+#endif //A_YZ_DIST
 
 #ifdef A_ZZ_DIST
     #define A_ZZ_DIST_PARAMS_DECLARATION_PTR ,dfloat** Azz
@@ -302,7 +292,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define A_ZZ_DIST_PARAMS_DECLARATION_PTR
     #define A_ZZ_DIST_PARAMS_PTR
-#endif
+#endif //A_ZZ_DIST
 
 
 #if MEAN_FLOW
@@ -314,13 +304,13 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
     #else
         #define MEAN_FLOW_SECOND_DIST_PARAMS_DECLARATION_PTR
         #define MEAN_FLOW_SECOND_DIST_PARAMS_PTR
-    #endif
+    #endif //SECOND_DIST
 #else
     #define MEAN_FLOW_PARAMS_DECLARATION_PTR
     #define MEAN_FLOW_PARAMS_PTR
     #define MEAN_FLOW_SECOND_DIST_PARAMS_DECLARATION_PTR
     #define MEAN_FLOW_SECOND_DIST_PARAMS_PTR
-#endif
+#endif //MEAN_FLOW
 
 
 
@@ -330,7 +320,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define BC_FORCES_PARAMS_DECLARATION_PTR(PREFIX)
     #define BC_FORCES_PARAMS_PTR(PREFIX)
-#endif
+#endif //BC_FORCES
 
 
 #ifdef DENSITY_CORRECTION
@@ -339,7 +329,7 @@ constexpr int MAX_SHARED_MEMORY_SIZE = myMax(BLOCK_LBM_SIZE_POP, myMax(VEL_GRAD_
 #else
     #define DENSITY_CORRECTION_PARAMS_DECLARATION_PTR
     #define DENSITY_CORRECTION_PARAMS_PTR
-#endif
+#endif //DENSITY_CORRECTION
 
 
 #endif //!__DEFINITIONS_H

@@ -22,7 +22,7 @@
 #include "nodeTypeMap.h"
 #ifdef OMEGA_FIELD
     #include "nnf.h"
-#endif
+#endif //OMEGA_FIELD
 
 
 /**

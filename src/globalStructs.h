@@ -307,37 +307,37 @@ typedef struct ghostInterfaceData  {
         ghostData g_fGhost;
         ghostData g_gGhost;
         ghostData g_h_fGhost;
-    #endif
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST
         ghostData Axx_fGhost;
         ghostData Axx_gGhost;
         ghostData Axx_h_fGhost;
-    #endif 
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST
         ghostData Axy_fGhost;
         ghostData Axy_gGhost;
         ghostData Axy_h_fGhost;
-    #endif 
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST
         ghostData Axz_fGhost;
         ghostData Axz_gGhost;
         ghostData Axz_h_fGhost;
-    #endif
+    #endif //A_XZ_DIST
     #ifdef A_YY_DIST
         ghostData Ayy_fGhost;
         ghostData Ayy_gGhost;
         ghostData Ayy_h_fGhost;
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST
         ghostData Ayz_fGhost;
         ghostData Ayz_gGhost;
         ghostData Ayz_h_fGhost;
-    #endif 
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST
         ghostData Azz_fGhost;
         ghostData Azz_gGhost;
         ghostData Azz_h_fGhost;
-    #endif
+    #endif //A_ZZ_DIST
 
 } GhostInterfaceData;
 

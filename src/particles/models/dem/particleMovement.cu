@@ -56,7 +56,7 @@ void gpuUpdateParticleOldValues(
     printf("gpuUpdateParticleOldValues 5 pos  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
     printf("gpuUpdateParticleOldValues 6 pos  x: %e y: %e z: %e\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
     printf("gpuUpdateParticleOldValues 7 pos  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
-    #endif
+    #endif //PARTICLE_DEBUG
 
     pc_i->setPos_old(pc_i->getPos());
     pc_i->setVel_old(pc_i->getVel());
@@ -110,7 +110,7 @@ void gpuUpdateParticleCenterVelocityAndRotation(
     printf("gpuUpdateParticleCenterVelocityAndRotation 1 m_old  x: %e y: %e z: %e\n",pc_i->getMOldX(),pc_i->getMOldY(),pc_i->getMOldZ());
     printf("gpuUpdateParticleCenterVelocityAndRotation 1 volume %e\n",pc_i->getVolume());
     printf("gpuUpdateParticleCenterVelocityAndRotation 1 density %e\n",pc_i->getDensity());
-    #endif
+    #endif //PARTICLE_DEBUG
 
     // Update particle center velocity using its surface forces and the body forces
     dfloat3 g = {GX,GY,GZ};
@@ -188,7 +188,7 @@ void gpuUpdateParticleCenterVelocityAndRotation(
     printf("gpuUpdateParticleCenterVelocityAndRotation 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
     printf("gpuUpdateParticleCenterVelocityAndRotation 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
     printf("gpuUpdateParticleCenterVelocityAndRotation 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
-    #endif
+    #endif //PARTICLE_DEBUG
 }
 
 __global__
@@ -223,7 +223,7 @@ void gpuParticleMovement(
     printf("gpuParticleMovement 1 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
     printf("gpuParticleMovement 1 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
     printf("gpuParticleMovement 1 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
-    #endif
+    #endif //PARTICLE_DEBUG
 
     #ifdef BC_X_WALL
         pc_i->setPosX(pc_i->getPosX() + (pc_i->getVelX() + pc_i->getVelOldX())/2);
@@ -259,7 +259,7 @@ void gpuParticleMovement(
     printf("gpuParticleMovement 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
     printf("gpuParticleMovement 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
     printf("gpuParticleMovement 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
-    #endif
+    #endif //PARTICLE_DEBUG
 
 
     //compute orientation vector

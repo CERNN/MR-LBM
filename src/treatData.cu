@@ -11,11 +11,11 @@ void treatData(
 ){
     #if TREATFIELD
     computeNusseltNumber(h_fMom,fMom,step);
-    #endif
+    #endif //TREATFIELD
 
     #if TREATPOINT
     probeExport(fMom, OMEGA_FIELD_PARAMS step);
-    #endif
+    #endif //TREATPOINT
     #if TREATLINE
     velocityProfile(fMom,1,step);
     velocityProfile(fMom,2,step);
@@ -23,11 +23,11 @@ void treatData(
     velocityProfile(fMom,4,step);
     velocityProfile(fMom,5,step);
     velocityProfile(fMom,6,step);
-    #endif
+    #endif //TREATLINE
 
     #ifdef TREAT_DATA_INCLUDE
     #include CASE_TREAT_DATA
-    #endif
+    #endif //TREAT_DATA_INCLUDE
 
     //totalKineticEnergy(fMom,step);         
 }
@@ -229,8 +229,8 @@ void totalSpringEnergy(
     saveTreatData("_totalSpringEnergy",strDataInfo.str(),step);
     cudaFree(sumKE);
 }
-#endif
-#endif
+#endif //CONFORMATION_TENSOR
+#endif //CONVECTION_DIFFUSION_TRANSPORT
 
 __host__ 
 void turbulentKineticEnergy(
@@ -593,7 +593,7 @@ void computeNusseltNumber(
     strDataInfo <<"step,"<< step<< "," << Nu_sum;// << "," << mean_counter;
     saveTreatData("_Nu_mean",strDataInfo.str(),step);
 
-    #endif 
+    #endif //THERMAL_MODEL
 }
 
 

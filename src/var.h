@@ -25,18 +25,18 @@
 #ifdef SINGLE_PRECISION
     typedef float dfloat;      // single precision
     #define VTK_DFLOAT_TYPE "float"
-#endif
+#endif //SINGLE_PRECISION
 #ifdef DOUBLE_PRECISION
     typedef double dfloat;      // double precision
     #define VTK_DFLOAT_TYPE "double"
-#endif
+#endif //DOUBLE_PRECISION
 
 // Pow function to use
 #ifdef SINGLE_PRECISION
     #define POW_FUNCTION powf 
 #else
     #define POW_FUNCTION pow
-#endif
+#endif //SINGLE_PRECISION
 
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
@@ -104,11 +104,11 @@ constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
 
 #ifndef myMax
 #define myMax(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
+#endif //!myMax
 
 #ifndef myMin
 #define myMin(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
+#endif //!myMin
 
 
 constexpr dfloat constexprSqrt(dfloat x, dfloat curr, dfloat prev) {
