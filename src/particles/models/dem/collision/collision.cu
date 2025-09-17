@@ -910,11 +910,11 @@ void sphereSphereCollision(unsigned int column,unsigned int row, ParticleCenter*
             pos_i.x - pos_j.x
         #endif //BC_X_WALL
         #ifdef BC_X_PERIODIC 
-        abs(pos_i.x - pos_j.x) > ((BC_X_E - BC_X_0) / 2.0) ? 
+        abs(pos_i.x - pos_j.x) > ((NX-1) / 2.0) ? 
         (pos_i.x < pos_j.x ?
-            (pos_i.x + (BC_X_E - BC_X_0) - pos_j.x)
+            (pos_i.x + (NX-1) - pos_j.x)
             : 
-            (pos_i.x - (BC_X_E - BC_X_0) - pos_j.x)
+            (pos_i.x - (NX-1) - pos_j.x)
         )
         : pos_i.x - pos_j.x
         #endif //BC_X_PERIODIC
@@ -923,11 +923,11 @@ void sphereSphereCollision(unsigned int column,unsigned int row, ParticleCenter*
            (pos_i.y - pos_j.y)
         #endif //BC_Y_WALL
         #ifdef BC_Y_PERIODIC
-        abs(pos_i.y - pos_j.y) > ((BC_Y_E - BC_Y_0) / 2.0) ? 
+        abs(pos_i.y - pos_j.y) > ((NY-1) / 2.0) ? 
         (pos_i.y < pos_j.y ?
-            (pos_i.y + (BC_Y_E - BC_Y_0) - pos_j.y)
+            (pos_i.y + (NY-1) - pos_j.y)
             : 
-            (pos_i.y - (BC_Y_E - BC_Y_0) - pos_j.y)
+            (pos_i.y - (NY-1) - pos_j.y)
         )
         : pos_i.y - pos_j.y
         #endif //BC_Y_PERIODIC
@@ -936,11 +936,11 @@ void sphereSphereCollision(unsigned int column,unsigned int row, ParticleCenter*
             pos_i.z - pos_j.z
         #endif //BC_Z_WALL
         #ifdef BC_Z_PERIODIC
-            abs(pos_i.z - pos_j.z) > ((BC_Z_E - BC_Z_0) / 2.0) ? 
+            abs(pos_i.z - pos_j.z) > ((NZ-1) / 2.0) ? 
             (pos_i.z < pos_j.z ?
-                (pos_i.z + (BC_Z_E - BC_Z_0) - pos_j.z)
+                (pos_i.z + (NZ-1) - pos_j.z)
                 : 
-                (pos_i.z - (BC_Z_E - BC_Z_0) - pos_j.z)
+                (pos_i.z - (NZ-1) - pos_j.z)
             )
             : pos_i.z - pos_j.z
         #endif //BC_Z_PERIODIC
@@ -1109,11 +1109,11 @@ void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCent
             pos_i.x - pos_j.x
         #endif //BC_X_WALL
         #ifdef BC_X_PERIODIC 
-        abs(pos_i.x - pos_j.x) > ((BC_X_E - BC_X_0) / 2.0) ? 
+        abs(pos_i.x - pos_j.x) > ((NX-1) / 2.0) ? 
         (pos_i.x < pos_j.x ?
-            (pos_i.x + (BC_X_E - BC_X_0) - pos_j.x)
+            (pos_i.x + (NX-1) - pos_j.x)
             : 
-            (pos_i.x - (BC_X_E - BC_X_0) - pos_j.x)
+            (pos_i.x - (NX-1) - pos_j.x)
         )
         : pos_i.x - pos_j.x
         #endif //BC_X_PERIODIC
@@ -1122,11 +1122,11 @@ void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCent
             pos_i.y - pos_j.y
         #endif //BC_Y_WALL
         #ifdef BC_Y_PERIODIC
-        abs(pos_i.y - pos_j.y) > ((BC_Y_E - BC_Y_0) / 2.0) ? 
+        abs(pos_i.y - pos_j.y) > ((NY-1) / 2.0) ? 
         (pos_i.y < pos_j.y ?
-            (pos_i.y + (BC_Y_E - BC_Y_0) - pos_j.y)
+            (pos_i.y + (NY-1) - pos_j.y)
             : 
-            (pos_i.y - (BC_Y_E - BC_Y_0) - pos_j.y)
+            (pos_i.y - (NY-1) - pos_j.y)
         )
         : pos_i.y - pos_j.y
         #endif //BC_Y_PERIODIC
@@ -1135,11 +1135,11 @@ void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCent
             pos_i.z - pos_j.z
         #endif //BC_Z_WALL
         #ifdef BC_Z_PERIODIC
-            abs(pos_i.z - pos_j.z) > ((BC_Z_E - BC_Z_0) / 2.0) ? 
+            abs(pos_i.z - pos_j.z) > ((NZ-1) / 2.0) ? 
             (pos_i.z < pos_j.z ?
-                (pos_i.z + (BC_Z_E - BC_Z_0) - pos_j.z)
+                (pos_i.z + (NZ-1) - pos_j.z)
                 : 
-                (pos_i.z - (BC_Z_E - BC_Z_0) - pos_j.z)
+                (pos_i.z - (NZ-1) - pos_j.z)
             )
             : pos_i.z - pos_j.z
         #endif //BC_Z_PERIODIC
@@ -1293,11 +1293,11 @@ void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, Particle
             pos_i.x - pos_j.x
         #endif //BC_X_WALL
         #ifdef BC_X_PERIODIC 
-        abs(pos_i.x - pos_j.x) > ((BC_X_E - BC_X_0) / 2.0) ? 
+        abs(pos_i.x - pos_j.x) > ((NX-1) / 2.0) ? 
         (pos_i.x < pos_j.x ?
-            (pos_i.x + (BC_X_E - BC_X_0) - pos_j.x)
+            (pos_i.x + (NX-1) - pos_j.x)
             : 
-            (pos_i.x - (BC_X_E - BC_X_0) - pos_j.x)
+            (pos_i.x - (NX-1) - pos_j.x)
         )
         : pos_i.x - pos_j.x
         #endif //BC_X_PERIODIC
@@ -1306,11 +1306,11 @@ void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, Particle
             pos_i.y - pos_j.y
         #endif //BC_Y_WALL
         #ifdef BC_Y_PERIODIC
-        abs(pos_i.y - pos_j.y) > ((BC_Y_E - BC_Y_0) / 2.0) ? 
+        abs(pos_i.y - pos_j.y) > ((NY-1) / 2.0) ? 
         (pos_i.y < pos_j.y ?
-            (pos_i.y + (BC_Y_E - BC_Y_0) - pos_j.y)
+            (pos_i.y + (NY-1) - pos_j.y)
             : 
-            (pos_i.y - (BC_Y_E - BC_Y_0) - pos_j.y)
+            (pos_i.y - (NY-1) - pos_j.y)
         )
         : pos_i.y - pos_j.y
         #endif //BC_Y_PERIODIC
@@ -1319,11 +1319,11 @@ void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, Particle
             pos_i.z - pos_j.z
         #endif //BC_Z_WALL
         #ifdef BC_Z_PERIODIC
-            abs(pos_i.z - pos_j.z) > ((BC_Z_E - BC_Z_0) / 2.0) ? 
+            abs(pos_i.z - pos_j.z) > ((NZ-1) / 2.0) ? 
             (pos_i.z < pos_j.z ?
-                (pos_i.z + (BC_Z_E - BC_Z_0) - pos_j.z)
+                (pos_i.z + (NZ-1) - pos_j.z)
                 : 
-                (pos_i.z - (BC_Z_E - BC_Z_0) - pos_j.z)
+                (pos_i.z - (NZ-1) - pos_j.z)
             )
             : pos_i.z - pos_j.z
         #endif //BC_Z_PERIODIC

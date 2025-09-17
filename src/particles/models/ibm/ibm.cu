@@ -55,7 +55,7 @@ void ibmSimulation(
 
     // Update particle velocity using body center force and constant forces
     gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
-
+ 
     // Update particle center position and its old values
     gpuParticleMovement<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
     gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,pArray,range.first,range.last,step);
@@ -305,7 +305,7 @@ void gpuForceInterpolationSpread(
         #endif //BC_Y_PERIODIC
         , 
         #ifdef BC_Z_WALL 
-            ((posBase[1]+P_DIST*2-1) < (int)NZ)? P_DIST*2-1 : ((int)NZ-1-posBase[2])
+            ((posBase[2]+P_DIST*2-1) < (int)NZ)? P_DIST*2-1 : ((int)NZ-1-posBase[2])
         #endif //BC_Z_WALL
         #ifdef BC_Z_PERIODIC
             P_DIST*2-1
@@ -338,7 +338,7 @@ void gpuForceInterpolationSpread(
 
 
     // Particle stencil out of the domain
-    if(maxIdx[0] <= 0 || maxIdx[1] <= 0 || maxIdx[2] <= 0)
+    if(maxIdx[0] < 0 || maxIdx[1] < 0 || maxIdx[2] < 0)
         return;
     // Particle stencil out of the domain
     if(minIdx[0] >= P_DIST*2 || minIdx[1] >= P_DIST*2 || minIdx[2] >= P_DIST*2)
@@ -387,27 +387,10 @@ void gpuForceInterpolationSpread(
                 aux = aux1 * stencilVal[0][xi];
                 // same as aux = stencil(x - xIBM) * stencil(y - yIBM) * stencil(z - zIBM);
 
+                xx = (posBase[0] + xi + NX)%(NX);
+                yy = (posBase[1] + yj + NY)%(NY);
+                zz = (posBase[2] + zk + NZ)%(NZ);
 
-                #ifdef BC_X_WALL
-                    xx = posBase[0] + xi;
-                #endif //BC_X_WALL
-                #ifdef BC_X_PERIODIC
-                    xx = (posBase[0] + xi + NX)%(NX);
-                #endif //BC_X_PERIODIC
-                
-                #ifdef BC_Y_WALL 
-                    yy = posBase[1] + yj;
-                #endif //BC_Y_WALL
-                #ifdef BC_Y_PERIODIC    
-                    yy = (posBase[1] + yj + NY)%(NY);
-                #endif //BC_Y_PERIODIC
-                
-                #ifdef BC_Z_WALL  
-                    zz = posBase[2]+zk;
-                #endif //BC_Z_WALL
-                #ifdef BC_Z_PERIODIC
-                    zz = (posBase[2]+zk + NZ)%(NZ);
-                #endif //BC_Z_PERIODIC
 
                 baseIdx = idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, 0, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ);
 
@@ -526,36 +509,9 @@ void gpuForceInterpolationSpread(
                 aux = aux1 * stencilVal[0][xi];
                 // same as aux = stencil(x - xIBM) * stencil(y - yIBM) * stencil(z - zIBM);
  
-                #ifdef BC_X_WALL
-                    xx = posBase[0] + xi;
-                #endif //BC_X_WALL
-                #ifdef BC_X_PERIODIC
-                    xx = (posBase[0] + xi + NX)%(NX);
-                #endif //BC_X_PERIODIC
-                
-                #ifdef BC_Y_WALL 
-                    yy = posBase[1] + yj;
-                #endif //BC_Y_WALL
-                #ifdef BC_Y_PERIODIC    
-                    yy = (posBase[1] + yj + NY)%(NY);
-                #endif //BC_Y_PERIODIC
-                
-                #ifdef BC_Z_WALL  
-                    zz = posBase[2]+zk;
-                #endif //BC_Z_WALL
-                #ifdef BC_Z_PERIODIC
-                    zz = (posBase[2]+zk + NZ)%(NZ);
-                #endif //BC_Z_PERIODIC
-
-                baseIdx = idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, 0, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ);
-
-                //if(i == 0){
-                //    printf("aux %f x %d y %d z %d base %p ux %p uy %p uz %p\n",aux,xx,yy,zz,
-                //        &(fMom[baseIdx + M_RHO_INDEX* BLOCK_LBM_SIZE]),
-                //        &(fMom[baseIdx + M_FX_INDEX* BLOCK_LBM_SIZE]),
-                //        &(fMom[baseIdx + M_FY_INDEX* BLOCK_LBM_SIZE]),
-                //        &(fMom[baseIdx + M_FZ_INDEX* BLOCK_LBM_SIZE]));         
-                //}
+                xx = (posBase[0] + xi + NX)%(NX);
+                yy = (posBase[1] + yj + NY)%(NY);
+                zz = (posBase[2] + zk + NZ)%(NZ);
                 
                 atomicAdd(&(fMom[baseIdx + M_FX_INDEX* BLOCK_LBM_SIZE]), -deltaF.x * aux);
                 atomicAdd(&(fMom[baseIdx + M_FY_INDEX* BLOCK_LBM_SIZE]), -deltaF.y * aux);
