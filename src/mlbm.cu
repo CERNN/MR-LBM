@@ -75,16 +75,14 @@ __global__ void gpuMomCollisionStream(
    // dfloat zz = 2.0 * M_PI * z / L;
 
     #ifdef LOCAL_FORCES
-    dfloat L_Fx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
-    dfloat L_Fy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    dfloat L_Fx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]; // F_0 * sin(K_const*x) * cos(K_const*y) ;
+    dfloat L_Fy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
     dfloat L_Fz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
     #else
     dfloat L_Fx = FX; // F_0 * sin(K_const*x) * cos(K_const*y) ;
     dfloat L_Fy = FY; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
     dfloat L_Fz = FZ;
     #endif //LOCAL_FORCES
-
-   
 
 
     #ifdef BC_FORCES
@@ -571,6 +569,20 @@ __global__ void gpuMomCollisionStream(
             tt_omega_t3 = tt_omegaVar * 3.0;
     #endif //OMEGA_FIELD
     
+    // zero forces in directions that are not fluid
+    if (((nodeType & EAST)  == EAST)  || ((nodeType & WEST)  == WEST)) {
+        L_Fx = 0;
+    }
+
+    if (((nodeType & NORTH) == NORTH) || ((nodeType & SOUTH) == SOUTH)) {
+        L_Fy = 0;
+    }
+
+    if (((nodeType & FRONT) == FRONT) || ((nodeType & BACK)  == BACK)) {
+        L_Fz = 0;
+    }
+
+
     // COLLIDE
     #include COLREC_COLLISION
     
