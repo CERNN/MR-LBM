@@ -1,5 +1,6 @@
 /**
  *  @file var.h
+ *  Contributors history:
  *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @brief Global variables
@@ -128,6 +129,20 @@ constexpr dfloat invSqrtt(dfloat x) {
     return (x > 0 && x < std::numeric_limits<dfloat>::infinity())
         ? invSqrtNewton(x, 1.0 / x, 0)
         : std::numeric_limits<dfloat>::quiet_NaN();
+}
+
+// Use log(x) = 2 * ((x-1)/(x+1) + 1/3*((x-1)/(x+1))^3 + 1/5*((x-1)/(x+1))^5 + ...)
+constexpr dfloat constexprLn(dfloat x) {
+    return (x > 0) ? 2.0 * [&]() {
+        dfloat y = (x - 1.0) / (x + 1.0);
+        dfloat y_pow = y;
+        dfloat sum = y;
+        for (int n = 1; n < 50; ++n) {  // 50 terms
+            y_pow *= y * y;
+            sum += y_pow / (2*n + 1);
+        }
+        return sum;
+    }() : std::numeric_limits<dfloat>::quiet_NaN();
 }
 
 // Compile-time power of 2 checker

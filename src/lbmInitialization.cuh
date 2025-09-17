@@ -1,5 +1,6 @@
 /**
  *  @file lbmInitialization.h
+ *  Contributors history:
  *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @brief Variable Initialization

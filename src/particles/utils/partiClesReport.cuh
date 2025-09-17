@@ -1,8 +1,8 @@
 /**
  *  @file particlesReport.cuh
+ *  Contributors history:
  *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
- *  @author report about particles
  *  @brief report data about particles
  *  @version 0.4.0
  *  @date 01/09/2025

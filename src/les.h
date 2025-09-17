@@ -1,10 +1,11 @@
 /**
  *  @file les.h
+ *  Contributors history:
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @brief Infomation about LES
  *  @version 0.1.0
  *  @date 01/09/2025
-*/
+ */
 
 
 #ifndef __LES_H

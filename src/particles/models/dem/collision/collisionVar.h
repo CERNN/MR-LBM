@@ -1,5 +1,6 @@
 /**
  *  @file collisionVar.h
+ *  Contributors history:
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @brief collision variables
  *  @version 0.4.0

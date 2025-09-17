@@ -1,5 +1,6 @@
 /**
  *  @file mlbm.h
+ *  Contributors history:
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @brief main kernel for moment representation 
  *  @version 0.1.0

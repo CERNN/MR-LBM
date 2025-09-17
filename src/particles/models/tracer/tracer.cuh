@@ -1,5 +1,6 @@
 /**
  *  @file tracer.cuh
+ *  Contributors history:
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @brief handle the simulation for tracer particles
  *  @version 0.1.0

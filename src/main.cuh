@@ -1,12 +1,13 @@
 /**
  *  @file main.cuh
+ *  Contributors history:
  *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @author Ricardo de Souza
  *  @brief Main routine
  *  @version 0.4.0
  *  @date 01/09/2025
-*/
+ */
 
 
 // main.cuh

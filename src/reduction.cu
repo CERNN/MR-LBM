@@ -33,6 +33,7 @@ https://docs.nvidia.com/cuda/eula/index.html
 /**
  *  @file reduction.cu
  *  @brief Modified version of NVIDIA's parallel reduction sample
+ *  Contributors history:
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @date 2025-08-31
  *

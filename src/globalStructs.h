@@ -1,11 +1,12 @@
 /**
  *  @file globalStructs.h
+ *  Contributors history:
  *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
  *  @author Marco Aurelio Ferrari (marcoferrari@alunos.utfpr.edu.br)
  *  @brief Global general structs
  *  @version 0.4.0
  *  @date 01/09/2025
-*/
+ */
 
 #ifndef __GLOBAL_STRUCTS_H
 #define __GLOBAL_STRUCTS_H

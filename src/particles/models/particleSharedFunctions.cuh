@@ -1,5 +1,6 @@
 /**
  *  @file particleSharedFunctions.cuh
+ *  Contributors history:
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @brief shared functions for particle simulation
  *  @version 0.1.0

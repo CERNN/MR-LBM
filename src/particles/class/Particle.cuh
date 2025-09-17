@@ -1,5 +1,6 @@
 /**
  *  @file Particle.cuh
+ *  Contributors history:
  *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
  *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
  *  @author Ricardo de Souza
