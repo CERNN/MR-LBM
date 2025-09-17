@@ -363,22 +363,10 @@ void gpuForceInterpolationSpread(
                 yy = (posBase[1] + yj + NY)%(NY);
                 zz = (posBase[2] + zk + NZ)%(NZ);
 
-
-                baseIdx = idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, 0, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ);
-
-                rhoVar += aux * (RHO_0 + fMom[baseIdx + M_RHO_INDEX]);
-                uxVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UX_INDEX]/F_M_I_SCALE);
-                uyVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UY_INDEX]/F_M_I_SCALE);
-                uzVar  += aux * (fMom[baseIdx + BLOCK_LBM_SIZE * M_UZ_INDEX]/F_M_I_SCALE);
-
-                //if(i == 0){
-                //    printf("aux %f x %d y %d z %d rho %f ux %f uy %f uz %f\n",aux,xx,yy,zz,
-                //        (RHO_0 + fMom[baseIdx + M_RHO_INDEX]),
-                //        (fMom[baseIdx + BLOCK_LBM_SIZE * M_UX_INDEX]/F_M_I_SCALE),
-                //        (fMom[baseIdx + BLOCK_LBM_SIZE * M_UY_INDEX]/F_M_I_SCALE),
-                //        (fMom[baseIdx + BLOCK_LBM_SIZE * M_UZ_INDEX]/F_M_I_SCALE));         
-                //}
-
+                rhoVar += aux * (RHO_0 + fMom[idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, M_RHO_INDEX, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ)]);
+                uxVar  += aux * (fMom[idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, M_UX_INDEX, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ)]/F_M_I_SCALE);
+                uyVar  += aux * (fMom[idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, M_UY_INDEX, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ)]/F_M_I_SCALE);
+                uzVar  += aux * (fMom[idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, M_UZ_INDEX, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ)]/F_M_I_SCALE);
             }
         }
     }
@@ -474,9 +462,9 @@ void gpuForceInterpolationSpread(
                 yy = (posBase[1] + yj + NY)%(NY);
                 zz = (posBase[2] + zk + NZ)%(NZ);
                 
-                atomicAdd(&(fMom[baseIdx + M_FX_INDEX* BLOCK_LBM_SIZE]), -deltaF.x * aux);
-                atomicAdd(&(fMom[baseIdx + M_FY_INDEX* BLOCK_LBM_SIZE]), -deltaF.y * aux);
-                atomicAdd(&(fMom[baseIdx + M_FZ_INDEX* BLOCK_LBM_SIZE]), -deltaF.z * aux);
+                atomicAdd(&(fMom[idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, M_FX_INDEX, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ)]), -deltaF.x * aux);
+                atomicAdd(&(fMom[idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, M_FY_INDEX, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ)]), -deltaF.y * aux);
+                atomicAdd(&(fMom[idxMom(xx%BLOCK_NX, yy%BLOCK_NY, zz%BLOCK_NZ, M_FZ_INDEX, xx/BLOCK_NX, yy/BLOCK_NY, zz/BLOCK_NZ)]), -deltaF.z * aux);
 
                 //TODO: find a way to do subinterations
                 //here would enter the correction of the velocity field for subiterations

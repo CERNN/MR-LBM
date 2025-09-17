@@ -17,12 +17,10 @@ Projects:
   ☐ Curved boundary conditions
   ☐ Moving boudnary conditions (e.g. moving particles using voxels)
   ☐ Implementation of DDF-Shift (density is done)
-  ☐ Update description for newely created functions
-  ☐ Update authorship heades in the files
-  ☐ Clean up commented old code
-  ☐ all #endif have to have comment on what define it ends
   ☐ Verify checkpoint for IBM
   ☐ Decouple save data from the simulation (i.e device copies to device memory, continues operation, meanwhile host is saving on disk, operation is halted if call for save is called again and still didnt finalize the previous save)
+  ☐ Change collision tracking so it a linked list instead a fixed array. (need evaluate performance)
+  ☐ Simplify function declaration (specially the host variables, create a class to store the pointers for each host moment field)
 
 Archive:\
 Async call to python script to convert bin files into vtr files -- no need anymore, saves directly in vtk
@@ -92,3 +90,7 @@ Completed:\
   ✘ test perfomance Z-curve array pattern for indexing within the same block structure (no apparent perfomance increase when using in the shared memory)
   ✔ Incorporate IBM @done(25-08-31 20:49)
   ✔ Implement particle collision @done(25-09-16 21:29)
+  ✔ Clean up commented old code @done(25-09-17 16:28)
+  ✔ Update description for newely created functions @done(25-09-17 16:29)
+  ✔ Update authorship heades in the files @done(25-09-17 16:29)
+  ✔ all #endif have to have comment on what define it ends @done(25-09-17 17:17)
