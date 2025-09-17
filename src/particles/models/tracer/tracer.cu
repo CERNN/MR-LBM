@@ -174,8 +174,6 @@ void tracer_positionUpdate(
                 // Dirac delta (kernel)
                 aux = aux1 * stencilVal[0][xi];
 
-                //printf("%d %e \n",i,aux1);
-
                 posX =                     
                     #ifdef BC_X_WALL
                     posBase[0]+xi

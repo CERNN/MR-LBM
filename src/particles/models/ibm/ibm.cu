@@ -18,9 +18,9 @@ void ibmSimulation(
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     MethodRange range = particles->getMethodRange(IBM);
 
-    //int numIBMParticles = range.last - range.first + 1; //printf("number of ibm particles %d \n",numIBMParticles);
+    //int numIBMParticles = range.last - range.first + 1; 
     const unsigned int threadsNodesIBM = 64;
-    unsigned int pNumNodes = particles->getNodesSoA()->getNumNodes();   //printf("Number of IBM %d\n",pNumNodes);
+    unsigned int pNumNodes = particles->getNodesSoA()->getNumNodes();
     const unsigned int gridNodesIBM = pNumNodes % threadsNodesIBM ? pNumNodes / threadsNodesIBM + 1 : pNumNodes / threadsNodesIBM;
 
     if (particles == nullptr) {
@@ -78,25 +78,12 @@ void gpuResetNodesForces(IbmNodesSoA* particlesNodes, unsigned int step)
     const dfloat3SoA force = particlesNodes->getF();
     const dfloat3SoA delta_force = particlesNodes->getDeltaF();
 
-    //if(idx ==0){
-    //    printf("gpuResetNodesForces 1 step %d force x: %f y: %f z: %\n",step,particlesNodes->getF().x[idx],particlesNodes->getF().y[idx],particlesNodes->getF().z[idx]);
-    //    printf("gpuResetNodesForces 2 step %d force x: %f y: %f z: %\n",step,particlesNodes->getFX(),particlesNodes->getFY(),particlesNodes->getFZ());
-    //}
-    
     force.x[idx] = 0;
     force.y[idx] = 0;
     force.z[idx] = 0;
     delta_force.x[idx] = 0;
     delta_force.y[idx] = 0;
     delta_force.z[idx] = 0;
-
-    //if(idx ==0){
-    //    printf("gpuResetNodesForces 3 step %d force x: %f y: %f z: %f\n",step,force.x[idx],force.y[idx],force.z[idx]);
-    //    printf("gpuResetNodesForces 4 step %d delta_force x: %f y: %f z: %f\n",step,delta_force.x[idx],delta_force.y[idx],delta_force.z[idx]);
-    //    printf("gpuResetNodesForces 5 step %d force x: %f y: %f z: %f\n",step,particlesNodes->getF().x[idx],particlesNodes->getF().y[idx],particlesNodes->getF().z[idx]);
-    //    printf("gpuResetNodesForces 6 step %d force x: %f y: %f z: %f\n",step,particlesNodes->getFX(),particlesNodes->getFY(),particlesNodes->getFZ());
-    //}
-
 }
 
 
@@ -344,28 +331,13 @@ void gpuForceInterpolationSpread(
     if(minIdx[0] >= P_DIST*2 || minIdx[1] >= P_DIST*2 || minIdx[2] >= P_DIST*2)
         return;
 
-    //if(i == 0){
-    //    printf("Node idx %d posNode x %f y %f z %f posBase x %d y %d z %d minIdx x %d y %d z %d maxIdx x %d y %d z %d \n",
-    //    i,posNode.x[i],posNode.y[i],posNode.z[i],
-    //    posBase[0],posBase[1],posBase[2],
-    //    minIdx[0],minIdx[1],minIdx[2],
-    //    maxIdx[0],maxIdx[1],maxIdx[2]);
-    //}
 
     //compute stencil values
     for(int ii = 0; ii < 3; ii++){
         for(int jj=minIdx[ii]; jj <= maxIdx[ii]; jj++){
             stencilVal[ii][jj] = stencil(posBase[ii]+jj-(pos[ii]));
-            //if(i == 0){
-            //    printf("ii %d jj %d r %f posBase[%d] = %d pos[%d] %f \t",ii,jj,r,ii,posBase[ii],ii,pos[ii]);
-            //    printf("stencilVal[%d][%d] = %f \n",ii,jj,stencilVal[ii][jj]);
-            //}
         }
     }
-
-
-
-
 
     dfloat rhoVar = 0;
     dfloat uxVar = 0;
@@ -485,17 +457,6 @@ void gpuForceInterpolationSpread(
     const dfloat fxIBM = force.x[i] + deltaF.x;
     const dfloat fyIBM = force.y[i] + deltaF.y;
     const dfloat fzIBM = force.z[i] + deltaF.z;
-
-        
-    //if(i == 0){
-    //    printf("gpuForceInterpolationSpread step %d node idx %d pos x %f y %f z %f \n",step,i,xIBM,yIBM,zIBM);
-    //    printf("gpuForceInterpolationSpread step %d node idx %d vel x %f y %f z %f \n",step,i,ux_calc,uy_calc,uz_calc);
-    //    printf("gpuForceInterpolationSpread step %d lati idx %d rhoVar %f uxVar %f uyVar %f uzVar %f \n",step,i,rhoVar,uxVar,uyVar,uzVar);
-    //    printf("gpuForceInterpolationSpread step %d node idx %d deltaF x %f y %f z %f \n",step,i,deltaF.x,deltaF.y,deltaF.z);
-    //    printf("aux %f area dA %f IBM_THICKNESS %f \n",aux,dA,IBM_THICKNESS);
-    //    printf("gpuForceInterpolationSpread step %d node idx %d particle center idx %d pos x %f y %f z %f \n",step,i,particlesNodes->getParticleCenterIdx()[i],pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    //    printf("gpuForceInterpolationSpread step %d node idx %d particle center idx %d vel x %f y %f z %f \n",step,i,particlesNodes->getParticleCenterIdx()[i],pc_i->getVelX(),pc_i->getVelY(),pc_i->getVelZ());
-    //}
 
     // Spreading (zyx for memory locality)
     for (int zk = minIdx[2]; zk <= maxIdx[2]; zk++) // z

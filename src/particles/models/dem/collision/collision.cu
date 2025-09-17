@@ -849,8 +849,6 @@ void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCent
 
     //FINAL FORCE RESULTS
 
-    //printf("pp  step %d fny %f fnt %f fnz %f \n",step,f_normal.x,f_tang.y, f_normal.z);
-
     // Force in each direction
     dfloat3 f_dirs = f_normal + f_tang;
     //Torque in each direction
@@ -1019,19 +1017,11 @@ void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, Particle
 
     //FINAL FORCE RESULTS
 
-    //printf("pp  step %d fny %f fnt %f fnz %f \n",step,f_normal.x,f_tang.y, f_normal.z);
-
     // Force in each direction
     dfloat3 f_dirs = f_normal + f_tang;
     //Torque in each direction
     dfloat3 m_dirs_i = cross_product(rri, f_dirs);
     dfloat3 m_dirs_j = cross_product(rrj, -f_dirs);
-
-    //printf("f_dirs   %f %f %f \n",f_dirs.x,f_dirs.y,f_dirs.z);
-    //printf("m_dirs_i %f %f %f \n",m_dirs_i.x,m_dirs_i.y,m_dirs_i.z);
-    //printf("rri      %f %f %f \n",rri.x,rri.y,rri.z);
-    //printf("m_dirs_j %f %f %f \n",m_dirs_j.x,m_dirs_j.y,m_dirs_j.z);
-    //printf("rrj      %f %f %f \n",rrj.x,rrj.y,rrj.z);
     
     // Force positive in particle i (column)
     atomicAdd(&(pc_i->getFXatomic()), f_dirs.x);
@@ -1200,7 +1190,6 @@ dfloat ellipsoidEllipsoidCollisionDistance( ParticleCenter* pc_i, ParticleCenter
         new_sphere_center2 = closest_point2 - r * normal2;
 
         error = vector_length(new_sphere_center2 - sphere_center2) + vector_length(new_sphere_center1 - sphere_center1);
-        //printf("error %d %f \n",error);
         if (error < tolerance ){
             break;      
         }else{

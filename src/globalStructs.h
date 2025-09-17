@@ -338,19 +338,7 @@ typedef struct ghostInterfaceData  {
         ghostData Azz_gGhost;
         ghostData Azz_h_fGhost;
     #endif
-    /*
-    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-        ghostData f_uGhost;
-        ghostData g_uGhost;
-        ghostData h_f_uGhost;
-    #endif
 
-    #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
-        ghostData conf_fGhost;
-        ghostData conf_gGhost;
-        ghostData conf_h_fGhost;
-    #endif
-    */
 } GhostInterfaceData;
 
 typedef struct wall{

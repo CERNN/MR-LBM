@@ -261,9 +261,7 @@ __host__ void ParticlesSoA::updateParticlesAsSoA(Particle* particles){
             this->pMethod[p]            = particles[p].getMethod();
             this->pCollideWall[p]       = particles[p].getCollideWall();
             this->pCollideParticle[p]   = particles[p].getCollideParticle();
-            //printf("Antes copiar nos da particula... \t"); fflush(stdout);
             this->nodesSoA[0].copyNodesFromParticle(&particles[p], p, 0);
-            //printf("Apos copiar nos da particula... \t"); fflush(stdout);
             if (firstIndex == -1) firstIndex = p;
             lastIndex = p;
         }
@@ -561,10 +559,7 @@ void Particle::makeSpherePolar(ParticleCenter *particleCenter)
     pCenter->getCollision().reset(); 
 
     // for (int i = 0; i < MAX_ACTIVE_COLLISIONS; ++i) {
-    //     printf("PartnerID: %d\n", pCenter->getCollision().getCollisionPartnerID(i));
     //     dfloat3 displacement = pCenter->getCollision().getTangentialDisplacement(i);
-    //     printf("Displacement: (%f, %f, %f)\n", displacement.x, displacement.y, displacement.z);
-    //     printf("PartnerStep: %d\n",pCenter->getCollision().getLastCollisionStep(i));
     // }
 
     //breugem correction
@@ -765,9 +760,7 @@ void Particle::makeSpherePolar(ParticleCenter *particleCenter)
 
     // for(int ii = 0;ii<numNodes;ii++){
     //     IbmNodes* node_j = &(this->nodes[ii]);
-    //     // printf("%f %f %f \n",node_j->pos.x,node_j->pos.y,node_j->pos.z );
     //     dfloat3 updatedPos = node_j->getPos();
-    //     printf("Node %d - Pos: (%f, %f, %f)\n", ii, updatedPos.x, updatedPos.y, updatedPos.z);
     // }
    
     // Free allocated variables
@@ -1061,7 +1054,6 @@ void Particle::makeCapsule(ParticleCenter *particleCenter){
 
     for(int ii = 0;ii<nTotalPoints;ii++){
          IbmNodes* node_j = &(this->nodes[ii]);
-         printf("Ponto: %d X:%f , Y:%f, Z:%f \n",ii,node_j->getPos().x,node_j->getPos().y,node_j->getPos().z );
     }
 
 }
@@ -1237,12 +1229,7 @@ void Particle::makeEllipsoid(ParticleCenter *particleCenter)
     posy[i] *= b*scaling;
     posz[i] *= c*scaling;
     }
-    
-    /*
-    for(int ii = 0;ii<N;ii++){
-         printf("%f %f %f \n",posx[ii],posy[ii],posz[ii] );
-     }*/
-   
+      
 
     this->nodes = (IbmNodes*) malloc(sizeof(IbmNodes) * this->numNodes);
 
@@ -1324,7 +1311,6 @@ void Particle::makeEllipsoid(ParticleCenter *particleCenter)
     // this->pCenter.collision.shape = ELLIPSOID;
     for(int ii = 0;ii<numberNodes;ii++){
          IbmNodes* node_j = &(this->nodes[ii]);
-         printf("Ponto: %d,  %f,%f,%f \n",ii,node_j->getPos().x,node_j->getPos().y,node_j->getPos().z );
      }
 
     // Free allocated memory

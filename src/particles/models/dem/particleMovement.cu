@@ -49,13 +49,15 @@ void gpuUpdateParticleOldValues(
     pc_i->setDLInternalY(0.0);
     pc_i->setDLInternalZ(0.0);
 
-    //printf("gpuUpdateParticleOldValues 2 pos  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
-    //printf("gpuUpdateParticleOldValues 3 pos  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
-    //printf("gpuUpdateParticleOldValues 4 pos  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
-    //printf("gpuUpdateParticleOldValues 5 pos  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
-    //printf("gpuUpdateParticleOldValues 6 pos  x: %e y: %e z: %e\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
-    //printf("gpuUpdateParticleOldValues 7 pos  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
-    
+    #ifdef PARTICLE_DEBUG
+    printf("gpuUpdateParticleOldValues 2 pos  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
+    printf("gpuUpdateParticleOldValues 3 pos  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
+    printf("gpuUpdateParticleOldValues 4 pos  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
+    printf("gpuUpdateParticleOldValues 5 pos  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
+    printf("gpuUpdateParticleOldValues 6 pos  x: %e y: %e z: %e\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
+    printf("gpuUpdateParticleOldValues 7 pos  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
+    #endif
+
     pc_i->setPos_old(pc_i->getPos());
     pc_i->setVel_old(pc_i->getVel());
     pc_i->setW_old(pc_i->getW());

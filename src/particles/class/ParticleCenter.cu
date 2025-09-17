@@ -8,7 +8,7 @@ __host__ __device__
 CollisionData::CollisionData() {
     reset();
 }
-// Função reset usando os setters
+
 __host__ __device__
 void CollisionData::reset() {
     for (int i = 0; i < MAX_ACTIVE_COLLISIONS; ++i) {

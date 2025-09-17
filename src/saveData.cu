@@ -81,7 +81,6 @@ void saveMacr(
     //linearize
     size_t indexMacr;
     for(int z = 0; z< NZ;z++){
-        ///printf("z %d \n", z);
         for(int y = 0; y< NY;y++){
             for(int x = 0; x< NX;x++){
                 indexMacr = idxScalarGlobal(x,y,z);
@@ -423,7 +422,7 @@ void folderSetup()
     system(cmd.c_str());
     return;
 #endif // !Unix
-    printf("I don't know how to setup folders for your operational system :(\n");
+    printf("Operational system not supported\n");
     return;
 }
 

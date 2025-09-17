@@ -520,7 +520,6 @@ __global__ void gpuMomCollisionStream(
 
 
     #ifdef DENSITY_CORRECTION
-        //printf("%f ",d_mean_rho[0]-1.0) ;
         rhoVar -= (d_mean_rho[0]) ;
         invRho = 1/rhoVar;
     #endif // DENSITY_CORRECTION

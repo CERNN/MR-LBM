@@ -318,28 +318,6 @@ void operateSimCheckpoint(
     }
 
     #endif
-    /*
-    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-
-        f_arr(ghostInterface.f_uGhost.X_0, f_filename("f_uGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3, tmp);
-        f_arr(ghostInterface.f_uGhost.X_1, f_filename("f_uGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 3, tmp);
-        f_arr(ghostInterface.f_uGhost.Y_0, f_filename("f_uGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3, tmp);
-        f_arr(ghostInterface.f_uGhost.Y_1, f_filename("f_uGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 3, tmp);
-        f_arr(ghostInterface.f_uGhost.Z_0, f_filename("f_uGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3, tmp);
-        f_arr(ghostInterface.f_uGhost.Z_1, f_filename("f_uGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 3, tmp);        
-    #endif
-    
-    #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
-
-        f_arr(ghostInterface.conf_fGhost.X_0, f_filename("conf_fGhost.X_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 6, tmp);
-        f_arr(ghostInterface.conf_fGhost.X_1, f_filename("conf_fGhost.X_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_YZ * 6, tmp);
-        f_arr(ghostInterface.conf_fGhost.Y_0, f_filename("conf_fGhost.Y_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 6, tmp);
-        f_arr(ghostInterface.conf_fGhost.Y_1, f_filename("conf_fGhost.Y_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XZ * 6, tmp);
-        f_arr(ghostInterface.conf_fGhost.Z_0, f_filename("conf_fGhost.Z_0"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6, tmp);
-        f_arr(ghostInterface.conf_fGhost.Z_1, f_filename("conf_fGhost.Z_1"), sizeof(dfloat) * NUMBER_GHOST_FACE_XY * 6, tmp);        
-    #endif
-    */
-
 
     free(tmp);
 }

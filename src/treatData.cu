@@ -515,24 +515,11 @@ void probeExport(dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step)
     dfloat* ux;
     dfloat* uy;
     dfloat* uz;
-
-    /*dfloat* mxx;
-    dfloat* mxy;
-    dfloat* mxz;
-    dfloat* myy;
-    dfloat* myz;
-    dfloat* mzz;*/
     
     checkCudaErrors(cudaMallocHost((void**)&(rho), sizeof(dfloat)));    
     checkCudaErrors(cudaMallocHost((void**)&(ux), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(uy), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(uz), sizeof(dfloat)));    
-    /*checkCudaErrors(cudaMallocHost((void**)&(mxx), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(mxy), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(mxz), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(myy), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(myz), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(mzz), sizeof(dfloat)));*/
 
     checkCudaErrors(cudaDeviceSynchronize());
     for(int i=0; i< probeNumber; i++){
@@ -544,37 +531,16 @@ void probeExport(dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step)
         sizeof(dfloat), cudaMemcpyDeviceToHost));
         checkCudaErrors(cudaMemcpy(uz , fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_UZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
         sizeof(dfloat), cudaMemcpyDeviceToHost));
-        /*checkCudaErrors(cudaMemcpy(mxx, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MXX_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(mxy, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MXY_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(mxz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MXZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(myy, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MYY_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(myz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MYZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(mzz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MZZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));*/
 
         strDataInfo <<"\t"<< *ux << "\t" << *uy << "\t" << *uz;
 
     }
     saveTreatData("_probeData",strDataInfo.str(),step);
 
-
-
-
     cudaFree(rho);
     cudaFree(ux);
     cudaFree(uy);
     cudaFree(uz);
-    /*cudaFree(mxx);
-    cudaFree(mxy);
-    cudaFree(mxz);
-    cudaFree(myy);
-    cudaFree(myz);
-    cudaFree(mzz);*/
 
 }
 
