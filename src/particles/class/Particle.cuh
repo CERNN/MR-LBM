@@ -1,12 +1,12 @@
 /**
-*   @file Particle.cuh
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @author Ricardo de Souza
-*   @brief Struct for particle
-*   @version 0.4.0
-*   @date 01/01/2025
-*/
+ *  @file Particle.cuh
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @author Ricardo de Souza
+ *  @brief Struct for particle
+ *  @version 0.4.0
+ *  @date 01/01/2025
+ */
 #ifndef __PARTICLE_H
 #define __PARTICLE_H
 
@@ -58,17 +58,17 @@ class Particle {
         __host__ __device__ ParticleShape* getShape() const;
         __host__ __device__ void setShape(ParticleShape* shape);
 
-         /*
-        *   @brief Create the particle in the shape of a sphere with given diameter and center
-        *   @param part: particle object to override values
-        *   @param diameter: sphere diameter in dfloat
-        *   @param center : sphere center position
-        *   @param coloumb: number of interations for coloumb optimization
-        *   @param move: particle is movable or not
-        *   @param density: particle density
-        *   @param vel: particle velocity
-        *   @param w: particle rotation velocity
-        */
+         /**
+         *  @brief Create the particle in the shape of a sphere with given diameter and center
+         *  @param part: particle object to override values
+         *  @param diameter: sphere diameter in dfloat
+         *  @param center : sphere center position
+         *  @param coloumb: number of interations for coloumb optimization
+         *  @param move: particle is movable or not
+         *  @param density: particle density
+         *  @param vel: particle velocity
+         *  @param w: particle rotation velocity
+         */
         // dfloat diameter, dfloat3 center, unsigned int coulomb, bool move,dfloat density = PARTICLE_DENSITY, dfloat3 vel = dfloat3(0, 0, 0), dfloat3 w = dfloat3(0, 0, 0)
         __host__
         void makeSpherePolar(ParticleCenter *praticleCenter);

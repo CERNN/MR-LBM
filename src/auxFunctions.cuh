@@ -1,9 +1,9 @@
 /**
-*   @file auxFunctions.h
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @brief Auxiliary Functions
-*   @version 0.1.0
-*   @date 01/09/2025
+ *  @file auxFunctions.h
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @brief Auxiliary Functions
+ *  @version 0.1.0
+ *  @date 01/09/2025
 */
 
 
@@ -29,14 +29,19 @@
 #include <iomanip>      // std::setprecision
 
 
-/*
-*   @brief Calculate the mean density value of the field and save it
-*   @param fMom: device macroscopic field based on block and thread index
-*   @param step: current time step
+/**
+ *  @brief Calculate the mean density value of the field and save it
+ *  @param fMom: Pointer to the device array containing the current macroscopic moments.
+ *  @param step: Current time step
 */
 __host__ 
 void mean_rho(dfloat *fMom, size_t step, dfloat *d_mean_rho);
 
+/** 
+ *  @brief Compute and update the mean flow values (velocity and temperature if applicable) over time.
+ *  @param h_fMom: Pointer to the host array containing the current macroscopic moments.
+ *  @param fMom: Pointer to the device array containing the current macroscopic moments.
+*/
 __host__
 void meanFlowComputation(
     dfloat* h_fMom,

@@ -1,11 +1,11 @@
 /**
-*   @file main.cuh
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @author Ricardo de Souza
-*   @brief Main routine
-*   @version 0.4.0
-*   @date 01/09/2025
+ *  @file main.cuh
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @author Ricardo de Souza
+ *  @brief Main routine
+ *  @version 0.4.0
+ *  @date 01/09/2025
 */
 
 
@@ -48,11 +48,11 @@
 #include "saveData.cuh"
 #include "checkpoint.cuh"
 
-/*
-*   @brief Swaps the pointers of two dfloat variables.
-*   @param pt1: reference to the first dfloat pointer to be swapped
-*   @param pt2: reference to the second dfloat pointer to be swapped
-*/
+/**
+ *  @brief Swaps the pointers of two dfloat variables.
+ *  @param pt1: reference to the first dfloat pointer to be swapped
+ *  @param pt2: reference to the second dfloat pointer to be swapped
+ */
 __host__ __device__
 void interfaceSwap(dfloat* &pt1, dfloat* &pt2) {
     dfloat *temp = pt1;
@@ -60,6 +60,13 @@ void interfaceSwap(dfloat* &pt1, dfloat* &pt2) {
     pt2 = temp;
 }
 
+/**
+ * @brief Initializes CUDA events for timing.
+ * @param start Reference to the start event.
+ * @param stop Reference to the stop event.
+ * @param start_step Reference to the start event for a step.
+ * @param stop_step Reference to the stop event for a step.
+ */
 void initializeCudaEvents(cudaEvent_t &start, cudaEvent_t &stop, cudaEvent_t &start_step, cudaEvent_t &stop_step) {
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
     checkCudaErrors(cudaEventCreate(&start));
@@ -71,7 +78,14 @@ void initializeCudaEvents(cudaEvent_t &start, cudaEvent_t &stop, cudaEvent_t &st
     checkCudaErrors(cudaEventRecord(start_step, 0));
 }
 
-
+/**
+ * @brief Records the elapsed time between two CUDA events and calculates MLUPS.
+ * @param start_step Reference to the start event for a step.
+ * @param stop_step Reference to the stop event for a step.
+ * @param step Current simulation step.
+ * @param ini_step Initial simulation step.
+ * @return The calculated MLUPS (Mega Lattice Updates Per Second).
+ */
 dfloat recordElapsedTime(cudaEvent_t &start_step, cudaEvent_t &stop_step, int step, int ini_step) {
     checkCudaErrors(cudaEventRecord(stop_step, 0));
     checkCudaErrors(cudaEventSynchronize(stop_step));
@@ -85,10 +99,10 @@ dfloat recordElapsedTime(cudaEvent_t &start_step, cudaEvent_t &stop_step, int st
     return MLUPS;
 }
 
-/*
-*   @brief Frees the memory allocated for the ghost interface data.
-*   @param ghostInterface: reference to the ghost interface data structure
-*/
+/**
+ *  @brief Frees the memory allocated for the ghost interface data.
+ *  @param ghostInterface: reference to the ghost interface data structure
+ */
 __host__
 void interfaceFree(ghostInterfaceData &ghostInterface)
 {
@@ -332,14 +346,14 @@ void interfaceFree(ghostInterfaceData &ghostInterface)
     }
 }
 
-/*
-*   @brief Performs a CUDA memory copy for ghost interface data between source and destination.
-*   @param ghostInterface: reference to the ghost interface data structure
-*   @param dst: destination ghost data structure
-*   @param src: source ghost data structure
-*   @param kind: type of memory copy (e.g., cudaMemcpyHostToDevice)
-*   @param Q: number of quantities in the ghost data that are transfered
-*/
+/**
+ *  @brief Performs a CUDA memory copy for ghost interface data between source and destination.
+ *  @param ghostInterface: reference to the ghost interface data structure
+ *  @param dst: destination ghost data structure
+ *  @param src: source ghost data structure
+ *  @param kind: type of memory copy (e.g., cudaMemcpyHostToDevice)
+ *  @param Q: number of quantities in the ghost data that are transfered
+ */
 __host__
 void interfaceCudaMemcpy(GhostInterfaceData& ghostInterface, ghostData& dst, const ghostData& src, cudaMemcpyKind kind, int Q) {
     struct MemcpyPair {
@@ -364,10 +378,10 @@ void interfaceCudaMemcpy(GhostInterfaceData& ghostInterface, ghostData& dst, con
 
 
 }
-/*
-*   @brief Swaps the ghost interfaces.
-*   @param ghostInterface: reference to the ghost interface data structure
-*/
+/**
+ *  @brief Swaps the ghost interfaces.
+ *  @param ghostInterface: reference to the ghost interface data structure
+ */
 __host__
 void swapGhostInterfaces(GhostInterfaceData& ghostInterface) {
     // Synchronize device before performing swaps
@@ -466,10 +480,10 @@ void swapGhostInterfaces(GhostInterfaceData& ghostInterface) {
 }
 
 
-/*
-*   @brief Allocates memory for the ghost interface data.
-*   @param ghostInterface: reference to the ghost interface data structure
-*/
+/**
+ *  @brief Allocates memory for the ghost interface data.
+ *  @param ghostInterface: reference to the ghost interface data structure
+ */
 __host__
 void interfaceMalloc(ghostInterfaceData &ghostInterface)
 {
@@ -759,7 +773,14 @@ void interfaceMalloc(ghostInterfaceData &ghostInterface)
     printf("Device Memory Allocated for Interface: %.2f MB \n", (float)memAllocated /(1024.0 * 1024.0)); if(console_flush) fflush(stdout);
 }
 
-
+/**
+ * @brief Allocate host memory for simulation arrays
+ * @param h_fMom Pointer to host memory for distribution functions
+ * @param rho Pointer to host memory for density field
+ * @param ux Pointer to host memory for x-velocity field
+ * @param uy Pointer to host memory for y-velocity field
+ * @param uz Pointer to host memory for z-velocity field
+ */
 __host__
 void allocateHostMemory(
     dfloat** h_fMom, dfloat** rho, dfloat** ux, dfloat** uy, dfloat** uz
@@ -881,6 +902,12 @@ void allocateHostMemory(
     printf("Host Memory Allocated: %0.2f MB\n", (float)memAllocated / (1024.0 * 1024.0)); if(console_flush) fflush(stdout);
 }
 
+/**
+ * @brief Allocate device memory for simulation arrays
+ * @param d_fMom Pointer to device memory for distribution functions
+ * @param dNodeType Pointer to device memory for node types
+ * @param ghostInterface Pointer to ghost interface data structure
+ */
 __host__
 void allocateDeviceMemory(
     dfloat** d_fMom, unsigned int** dNodeType, GhostInterfaceData* ghostInterface
@@ -905,7 +932,19 @@ void allocateDeviceMemory(
     printf("Device Memory Allocated for Bulk flow: %.2f MB \n", (float)memAllocated /(1024.0 * 1024.0));
 }
 
-
+/**
+ * @brief Initialize the simulation domain, including random numbers, LBM distributions, node types, and ghost interfaces.
+ * @param ghostInterface Reference to the ghost interface data structure
+ * @param d_fMom Pointer to device memory for distribution functions
+ * @param h_fMom Pointer to host memory for distribution functions
+ * @param m_fMom Pointer to device memory for mean flow distribution functions (if MEAN_FLOW is enabled)
+ * @param hNodeType Pointer to host memory for node types
+ * @param dNodeType Pointer to device memory for node types
+ * @param randomNumbers Pointer to array of pointers for random number storage
+ * @param step Pointer to the current simulation step
+ * @param gridBlock CUDA grid dimensions for kernel launches
+ * @param threadBlock CUDA thread block dimensions for kernel launches
+ */
 __host__
 void initializeDomain(
     GhostInterfaceData &ghostInterface, 
@@ -1071,6 +1110,14 @@ void initializeDomain(
 
 
 #ifdef PARTICLE_MODEL
+/**
+ * @brief Initialize particles in the simulation domain, including creation and updating of particle data structures.
+ * @param particlesSoA Reference to the ParticlesSoA data structure
+ * @param particles Pointer to the array of Particle structures
+ * @param step Pointer to the current simulation step
+ * @param gridBlock CUDA grid dimensions for kernel launches
+ * @param threadBlock CUDA thread block dimensions for kernel launches
+ */
 __host__
 void initializeParticle(ParticlesSoA& particlesSoA, Particle *particles, int *step, dim3 gridBlock, dim3 threadBlock){
 

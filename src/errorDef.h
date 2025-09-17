@@ -13,7 +13,12 @@
 #define getLastCudaError(msg)  __getLastCudaError(msg,__FILE__,__LINE__)
 #define checkCurandStatus(status) __checkCurandStatus(status, __FILE__, __LINE__)
 
-
+/**
+ * @brief Check the curand status and print error message if not successful
+ * @param status: curand status to check
+ * @param file: file name where the error occurred
+ * @param line: line number where the error occurred
+ */
 inline void __checkCurandStatus(curandStatus_t status, const char* const file, const int line)
 {
     if (status != CURAND_STATUS_SUCCESS)
@@ -23,7 +28,13 @@ inline void __checkCurandStatus(curandStatus_t status, const char* const file, c
     }
 }
 
-
+/**
+ * @brief Check the cuda error and print error message if not successful
+ * @param err: cuda error to check
+ * @param func: function name where the error occurred
+ * @param file: file name where the error occurred
+ * @param line: line number where the error occurred
+ */
 inline void __checkCudaErrors(cudaError_t err, const char* const func, const char* const file, const int line)
 {
     if (err != cudaSuccess)
@@ -34,7 +45,12 @@ inline void __checkCudaErrors(cudaError_t err, const char* const func, const cha
     }
 }
 
-
+/**
+ * @brief Get the last cuda error and print error message if not successful
+ * @param errorMessage: custom error message
+ * @param file: file name where the error occurred
+ * @param line: line number where the error occurred
+ */
 inline void __getLastCudaError(const char* const errorMessage, const char* const file, const int line)
 {
     cudaError_t err = cudaGetLastError();

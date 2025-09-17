@@ -46,61 +46,64 @@ https://docs.nvidia.com/cuda/eula/index.html
 #include "nodeTypeMap.h"
 
 
-/*
-*   @brief Perform paralel reduction of all threads of a block of a moment
-*   @param g_idata: moment point
-*   @param g_odata: sum of moments inside the block
-*   @param m_index: moment index
+/**
+ *  @brief Perform paralel reduction of all threads of a block of a moment
+ *  @param g_idata: moment point
+ *  @param g_odata: sum of moments inside the block
+ *  @param m_index: moment index
 */
 __global__ 
 void sumReductionThread(dfloat* g_idata, dfloat* g_odata, int m_index);
 
-/*
-*   @brief Perform paralel reduction of all threads of a block of for kinetic energy
-*   @param g_idata: moment point
-*   @param g_odata: sum of moments inside the block
+/**
+ *  @brief Perform paralel reduction of all threads of a block of for kinetic energy
+ *  @param g_idata: moment point
+ *  @param g_odata: sum of moments inside the block
 */
 __global__ 
 void sumReductionThread_rho(dfloat* g_idata, dfloat* g_odata);
 
-/*
-*   @brief Perform paralel reduction of all threads of a block of for kinetic energy
-*   @param g_idata: moment point
-*   @param g_odata: sum of moments inside the block
+/**
+ *  @brief Perform paralel reduction of all threads of a block of for kinetic energy
+ *  @param g_idata: moment point
+ *  @param g_odata: sum of moments inside the block
 */
 __global__ 
 void sumReductionThread_KE(dfloat* g_idata, dfloat* g_odata);
 
 #ifdef CONVECTION_DIFFUSION_TRANSPORT
 #ifdef CONFORMATION_TENSOR
+/**
+ *  @brief Perform paralel reduction of all threads of a block of for spring energy
+ *  @param g_idata: moment point
+ *  @param g_odata: sum of moments inside the block
+*/
 __global__ 
 void sumReductionThread_SE(dfloat* g_idata, dfloat* g_odata);
 #endif
 #endif
 
-/*
-*   @brief Perform paralel reduction of all threads of a block of for kinetic energy
-*   @param g_idata: moment point
-*   @param g_odata: sum of moments inside the block
-*   @param m_fMom: mean moment array
+/**
+ *  @brief Perform paralel reduction of all threads of a block of for kinetic energy
+ *  @param g_idata: moment point
+ *  @param g_odata: sum of moments inside the block
+ *  @param m_fMom: mean moment array
 */
 __global__ 
 void sumReductionThread_TKE(dfloat* g_idata, dfloat* g_odata, dfloat *m_fMom);
 
-
-
-/*
-*   @brief Perform paralel reduction of all threads of a block of for scalar array
-*   @param g_idata: moment point
-*   @param g_odata: sum of moments inside the block
+/**
+ *  @brief Perform paralel reduction of all threads of a block of for scalar array
+ *  @param g_idata: moment point
+ *  @param g_odata: sum of moments inside the block
 */
 __global__ 
 void sumReductionScalar(dfloat* g_idata, dfloat* g_odata);
 
-/*
-*   @brief Perform paralel reduction of reduced block point
-*   @param g_idata: reduced pointer
-*   @param g_odata: reduced pointer
+/**
+ *  @brief Perform paralel reduction of reduced block point
+ *  @param g_idata: reduced pointer
+ *  @param g_odata: reduced pointer
 */
 __global__ 
 void sumReductionBlock(dfloat* g_idata, dfloat* g_odata);

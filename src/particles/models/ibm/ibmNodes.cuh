@@ -1,12 +1,12 @@
 /**
-*   @file main.cuh
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @author Ricardo de Souza
-*   @brief Struct for IBM particle node
-*   @version 0.4.0
-*   @date 01/09/2025
-*/
+ *  @file main.cuh
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @author Ricardo de Souza
+ *  @brief Struct for IBM particle node
+ *  @version 0.4.0
+ *  @date 01/09/2025
+ */
 
 #ifndef __IBM_NODES_H
 #define __IBM_NODES_H
@@ -91,24 +91,22 @@ public:
     ~IbmNodesSoA();
 
     /**
-    *   @brief Allocate memory for given maximum number of nodes
-    *   
-    *   @param numMaxNodes: maximum number of nodes
-    */
+     *  @brief Allocate memory for given maximum number of nodes 
+     *  @param numMaxNodes: maximum number of nodes
+     */
    __host__ void allocateMemory(unsigned int numMaxNodes);
 
     /**
-    *   @brief Free allocated memory
-    */
+     *  @brief Free allocated memory
+     */
    __host__ void freeMemory();
 
     /**
-    *   @brief Copy nodes values from particle
-    *
-    *   @param p: particle with nodes to copy
-    *   @param pCenterIdx: index of particle center for given particle nodes
-    *   @param baseIdx: base index to use while copying
-    */
+     *  @brief Copy nodes values from particle
+     *  @param p: particle with nodes to copy
+     *  @param pCenterIdx: index of particle center for given particle nodes
+     *  @param baseIdx: base index to use while copying
+     */
     __host__ void copyNodesFromParticle(Particle *particle, unsigned int pCenterIdx, unsigned int n_gpu);
  
     __host__ void updateNodesGPUs();

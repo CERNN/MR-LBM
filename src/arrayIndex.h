@@ -1,10 +1,10 @@
 /**
-*   @file arrayIndex.h
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @brief Array index for fMom
-*   @version 0.1.0
-*   @date 01/09/2025
-*/
+ *  @file arrayIndex.h
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @brief Array index for fMom
+ *  @version 0.1.0
+ *  @date 01/09/2025
+ */
 
 
 #ifndef __ARRAYINDEX_H

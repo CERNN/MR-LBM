@@ -101,15 +101,6 @@ void writeFileIntoArray(void* arr, const std::string filename, const size_t arr_
     fclose(file);
 }
 
-/**
-*   @brief Writes dfloat3SoA GPU arrays content into files
-*
-*   @param arr GPU arrays to read content from
-*   @param foldername Foldername to save files to
-*   @param arr_size_bytes Size in bytes to write for each file. If zero, reads whole file
-*   @param tmp Temporary array used to read from file (already allocated, 
-*                make sure that the file content fits in it)
-*/
 __host__ 
 void writeFilesIntoDfloat3SoA(dfloat3SoA arr, const std::string foldername, const size_t arr_size_bytes, void* tmp){
     // Write x, y and z to files
@@ -137,15 +128,6 @@ std::string getCheckpointFilenameRead(std::string name){
     #endif
 }
 
-/**
-*   @brief Reads files contents into dfloat3SoA GPU arrays
-*
-*   @param arr GPU arrays to write content to
-*   @param foldername Foldername to read files from
-*   @param arr_size_bytes Size in bytes to read for each file. 
-*   @param tmp Temporary array used to write to file (already allocated, 
-*                make sure that the file content fits in it)
-*/
 __host__
 void readFilesIntoDfloat3SoA(dfloat3SoA arr, const std::string foldername, const size_t arr_size_bytes, void* tmp){
     // Read to x, y and z in dfloat3SoA
@@ -434,15 +416,6 @@ void saveSimCheckpoint(
 
 #ifdef PARTICLE_MODEL
 
-/**
-*   @brief Operation over checkpoint, save or load 
-*   
-*   @param oper operation to do, either __LOAD_CHECKPOINT or __SAVE_CHECKPOINT 
-*   @param pop Populations array
-*   @param macr Macroscopics array
-*   @param particlesSoA Particles structure of arrays object
-*   @param step Pointer to current step value in main
-*/
 __host__
 void operateSimCheckpointParticle( 
     int oper,

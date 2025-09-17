@@ -1,9 +1,9 @@
 /**
-*   @file nnf.h
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @brief Information about non-Newtonian fluids
-*   @version 0.1.0
-*   @date 01/09/2025
+ *  @file nnf.h
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @brief Information about non-Newtonian fluids
+ *  @version 0.1.0
+ *  @date 01/09/2025
 */
 
 #ifndef __NNF_H
@@ -68,6 +68,12 @@ constexpr dfloat eta_0 =  1e-3;
 
 #ifdef OMEGA_FIELD
     #ifdef POWER_LAW
+    /**
+     * @brief Calculate relaxation parameter omega for Non-Newtonian fluids
+     * @param omegaOld Relaxation parameter from last step
+     * @param auxStressMag Magnitude of the auxiliary stress tensor
+     * @param step Current simulation step
+     */
     __device__ 
     dfloat calcOmega_nnf(dfloat omegaOld, dfloat const auxStressMag, const int step){
         omega = omegaOld; //initial guess
@@ -99,6 +105,12 @@ constexpr dfloat eta_0 =  1e-3;
 
 
     #ifdef BINGHAM
+        /**
+     * @brief Calculate relaxation parameter omega for Non-Newtonian fluids
+     * @param omegaOld Relaxation parameter from last step
+     * @param auxStressMag Magnitude of the auxiliary stress tensor
+     * @param step Current simulation step
+     */
     __device__ 
     dfloat __forceinline__ calcOmega_nnf(dfloat omegaOld, dfloat const auxStressMag, const int step){
         return OMEGA_P * myMax(0.0, (1 - S_Y / auxStressMag));
@@ -107,6 +119,12 @@ constexpr dfloat eta_0 =  1e-3;
     #endif  
 
     #ifdef BI_VISCOSITY
+    /**
+     * @brief Calculate relaxation parameter omega for Non-Newtonian fluids
+     * @param omegaOld Relaxation parameter from last step
+     * @param auxStressMag Magnitude of the auxiliary stress tensor
+     * @param step Current simulation step
+     */
     __device__ 
     dfloat __forceinline__ calcOmega(dfloat omegaOld, dfloat const auxStressMag){
         return  myMax(OMEGA_Y, OMEGA_P *(1 - S_Y *(1-VISC_RATIO) / auxStressMag));
@@ -116,6 +134,12 @@ constexpr dfloat eta_0 =  1e-3;
 
     // NOT TESTE/VALIDATED https://arxiv.org/abs/2401.02942 has analythical solution
     #ifdef KEE_TURCOTEE
+    /**
+     * @brief Calculate relaxation parameter omega for Non-Newtonian fluids
+     * @param omegaOld Relaxation parameter from last step
+     * @param auxStressMag Magnitude of the auxiliary stress tensor
+     * @param step Current simulation step
+     */
     __device__ 
     dfloat calcOmega_nnf(dfloat omegaOld, dfloat const auxStressMag, const int step){
         const dfloat A = auxStressMag/2;

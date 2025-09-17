@@ -1,10 +1,10 @@
 /**
-*   @file globalStructs.h
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @author Marco Aurelio Ferrari (marcoferrari@alunos.utfpr.edu.br)
-*   @brief Global general structs
-*   @version 0.4.0
-*   @date 01/09/2025
+ *  @file globalStructs.h
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (marcoferrari@alunos.utfpr.edu.br)
+ *  @brief Global general structs
+ *  @version 0.4.0
+ *  @date 01/09/2025
 */
 
 #ifndef __GLOBAL_STRUCTS_H
@@ -172,10 +172,10 @@ typedef struct dfloat3SoA {
     }
 
     /**
-    *   @brief Allocate memory for SoA
+     *  @brief Allocate memory for SoA
     *   
-    *   @param arraySize: array size, in number of elements
-    *   @param location: array location, IN_VIRTUAL or IN_HOST
+     *  @param arraySize: array size, in number of elements
+     *  @param location: array location, IN_VIRTUAL or IN_HOST
     */
     __host__
     void allocateMemory(size_t arraySize, int location = IN_VIRTUAL){
@@ -199,7 +199,7 @@ typedef struct dfloat3SoA {
     }
 
     /**
-    *   @brief Free memory of SoA
+     *  @brief Free memory of SoA
     */
     __host__
     void freeMemory(){
@@ -224,12 +224,11 @@ typedef struct dfloat3SoA {
    
 
     /**
-    *   @brief Copy values from another dfloat3SoA array
-    *   
-    *   @param arrayRef: arrays to copy values
-    *   @param memSize: size of memory to copy, in bytes
-    *   @param baseIdx: base index for this
-    *   @param baseIdxRef: base index for arrayRef
+     *  @brief Copy values from another dfloat3SoA array  
+     *  @param arrayRef: arrays to copy values
+     *  @param memSize: size of memory to copy, in bytes
+     *  @param baseIdx: base index for this
+     *  @param baseIdxRef: base index for arrayRef
     */
    __host__
     void copyFromDfloat3SoA(dfloat3SoA arrayRef, size_t memSize, size_t baseIdx=0, size_t baseIdxRef=0){
@@ -256,11 +255,10 @@ typedef struct dfloat3SoA {
     }
 
     /**
-    *   @brief Copy value from dfloat3
-    *   
-    *   @param val: dfloat3 to copy values
-    *   @param idx: index to write values to
-    */
+     *  @brief Copy value from dfloat3 
+     *  @param val: dfloat3 to copy values
+     *  @param idx: index to write values to
+     */
     __host__ __device__
     void copyValuesFromFloat3(dfloat3 val, size_t idx){
         this->x[idx] = val.x;
@@ -269,11 +267,10 @@ typedef struct dfloat3SoA {
     }
 
     /**
-    *   @brief Get the falues from given index
-    *   
-    *   @param idx: index to copy from
-    *   @return dfloat3: dfloat3 with values
-    */
+     *  @brief Get the falues from given index
+     *  @param idx: index to copy from
+     *  @return dfloat3: dfloat3 with values
+     */
     __host__ __device__
     dfloat3 getValuesFromIdx(size_t idx){
         return dfloat3(this->x[idx], this->y[idx], this->z[idx]);

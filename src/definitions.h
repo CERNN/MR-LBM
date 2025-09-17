@@ -1,11 +1,11 @@
 /**
-*   @file definitions.h
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @brief Global definitions
-*   @version 0.4.0
-*   @date 01/09/2025
-*/
+ *  @file definitions.h
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @brief Global definitions
+ *  @version 0.4.0
+ *  @date 01/09/2025
+ */
 
 
 

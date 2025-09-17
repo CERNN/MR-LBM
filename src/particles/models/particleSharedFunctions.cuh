@@ -1,10 +1,10 @@
 /**
-*   @file particleSharedFunctions.cuh
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @brief shared functions for particle simulation
-*   @version 0.1.0
-*   @date 01/09/2025
-*/
+ *  @file particleSharedFunctions.cuh
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @brief shared functions for particle simulation
+ *  @version 0.1.0
+ *  @date 01/09/2025
+ */
 
 #ifndef __PARTICLE_SHARED_FUNCTIONS_CUH
 #define __PARTICLE_SHARED_FUNCTIONS_CUH
@@ -27,7 +27,11 @@
 
 
 
-
+/**
+ *  @brief Compute the value of the interpolation stencil function based on the distance x.
+ *  @param x The distance from the point of interest.
+ *  @return The value of the stencil function at distance x.
+ */
 __device__ __forceinline__  dfloat stencil(dfloat x) {
     dfloat absX = abs(x);
     #if defined STENCIL_2

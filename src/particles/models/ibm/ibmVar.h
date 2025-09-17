@@ -1,12 +1,12 @@
 /**
-*   @file ibmVar.h
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
-*   @author Ricardo de Souza
-*   @brief variables for IBM
-*   @version 0.4.0
-*   @date 01/09/2025
-*/
+ *  @file ibmVar.h
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @author Ricardo de Souza
+ *  @brief variables for IBM
+ *  @version 0.4.0
+ *  @date 01/09/2025
+ */
 
 
 #ifndef __IBM_VAR_H
