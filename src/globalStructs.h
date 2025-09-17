@@ -1,11 +1,12 @@
 /**
-*   @file globalStructs.h
-*   @author Marco Aurelio Ferrari (marcoferrari@alunos.utfpr.edu.br)
-*   @author Waine Jr. (waine@alunos.utfpr.edu.br)
-*   @brief Global general structs
-*   @version 0.3.0
-*   @date 26/08/2020
-*/
+ *  @file globalStructs.h
+ *  Contributors history:
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (marcoferrari@alunos.utfpr.edu.br)
+ *  @brief Global general structs
+ *  @version 0.4.0
+ *  @date 01/09/2025
+ */
 
 #ifndef __GLOBAL_STRUCTS_H
 #define __GLOBAL_STRUCTS_H
@@ -27,6 +28,12 @@ typedef struct dfloat3 {
         this->x = x;
         this->y = y;
         this->z = z;
+    }
+
+    // Overload the unary - operator
+    __host__ __device__
+    dfloat3 operator-() const {
+        return dfloat3(-x, -y, -z);
     }
 
     // Element-wise addition
@@ -141,6 +148,146 @@ typedef struct dfloat6{
 } dfloat6;
 
 
+typedef struct dfloat3SoA {
+    int varLocation; // IN_VIRTUAL or IN_HOST
+    dfloat* x; // x array
+    dfloat* y; // y array
+    dfloat* z; // z array
+
+    __host__ __device__
+    dfloat3SoA()
+    {
+        varLocation = 0;
+        x = nullptr;
+        y = nullptr;
+        z = nullptr;
+    }
+
+    __host__ __device__
+    ~dfloat3SoA()
+    {
+        varLocation = 0;
+        x = nullptr;
+        y = nullptr;
+        z = nullptr;
+    }
+
+    /**
+     *  @brief Allocate memory for SoA
+    *   
+     *  @param arraySize: array size, in number of elements
+     *  @param location: array location, IN_VIRTUAL or IN_HOST
+    */
+    __host__
+    void allocateMemory(size_t arraySize, int location = IN_VIRTUAL){
+        size_t memSize = sizeof(dfloat) * arraySize;
+
+        this->varLocation = location;
+        switch(location){
+        case IN_VIRTUAL:
+            checkCudaErrors(cudaMallocManaged((void**)&(this->x), memSize));
+            checkCudaErrors(cudaMallocManaged((void**)&(this->y), memSize));
+            checkCudaErrors(cudaMallocManaged((void**)&(this->z), memSize));
+            break;
+        case IN_HOST:
+            checkCudaErrors(cudaMallocHost((void**)&(this->x), memSize));
+            checkCudaErrors(cudaMallocHost((void**)&(this->y), memSize));
+            checkCudaErrors(cudaMallocHost((void**)&(this->z), memSize));
+            break;
+        default:
+            break;
+        }
+    }
+
+    /**
+     *  @brief Free memory of SoA
+    */
+    __host__
+    void freeMemory(){
+        switch (this->varLocation)
+        {
+        case IN_VIRTUAL:
+            checkCudaErrors(cudaFree(this->x));
+            checkCudaErrors(cudaFree(this->y));
+            checkCudaErrors(cudaFree(this->z));
+            break;
+
+        case IN_HOST:
+            checkCudaErrors(cudaFreeHost(this->x));
+            checkCudaErrors(cudaFreeHost(this->y));
+            checkCudaErrors(cudaFreeHost(this->z));
+            break;
+        default:
+            break;
+        }
+    }
+
+   
+
+    /**
+     *  @brief Copy values from another dfloat3SoA array  
+     *  @param arrayRef: arrays to copy values
+     *  @param memSize: size of memory to copy, in bytes
+     *  @param baseIdx: base index for this
+     *  @param baseIdxRef: base index for arrayRef
+    */
+   __host__
+    void copyFromDfloat3SoA(dfloat3SoA arrayRef, size_t memSize, size_t baseIdx=0, size_t baseIdxRef=0){
+
+        cudaStream_t streamX, streamY, streamZ;
+        checkCudaErrors(cudaStreamCreate(&(streamX)));
+        checkCudaErrors(cudaStreamCreate(&(streamY)));
+        checkCudaErrors(cudaStreamCreate(&(streamZ)));
+
+        checkCudaErrors(cudaMemcpyAsync(this->x+baseIdx, arrayRef.x+baseIdxRef, 
+            memSize, cudaMemcpyDefault, streamX));
+        checkCudaErrors(cudaMemcpyAsync(this->y+baseIdx, arrayRef.y+baseIdxRef, 
+            memSize, cudaMemcpyDefault, streamY));
+        checkCudaErrors(cudaMemcpyAsync(this->z+baseIdx, arrayRef.z+baseIdxRef, 
+            memSize, cudaMemcpyDefault, streamZ));
+
+        checkCudaErrors(cudaStreamSynchronize(streamX));
+        checkCudaErrors(cudaStreamSynchronize(streamY));
+        checkCudaErrors(cudaStreamSynchronize(streamZ));
+
+        checkCudaErrors(cudaStreamDestroy(streamX));
+        checkCudaErrors(cudaStreamDestroy(streamY));
+        checkCudaErrors(cudaStreamDestroy(streamZ));
+    }
+
+    /**
+     *  @brief Copy value from dfloat3 
+     *  @param val: dfloat3 to copy values
+     *  @param idx: index to write values to
+     */
+    __host__ __device__
+    void copyValuesFromFloat3(dfloat3 val, size_t idx){
+        this->x[idx] = val.x;
+        this->y[idx] = val.y;
+        this->z[idx] = val.z;
+    }
+
+    /**
+     *  @brief Get the falues from given index
+     *  @param idx: index to copy from
+     *  @return dfloat3: dfloat3 with values
+     */
+    __host__ __device__
+    dfloat3 getValuesFromIdx(size_t idx){
+        return dfloat3(this->x[idx], this->y[idx], this->z[idx]);
+    }
+
+    __host__ __device__
+    void leftShift(size_t idx, size_t left_shift){
+        this->x[idx-left_shift] = this->x[idx];
+        this->y[idx-left_shift] = this->y[idx];
+        this->z[idx-left_shift] = this->z[idx];
+    }
+
+} dfloat3SoA;
+
+
+
 typedef struct ghostData {
     dfloat* X_0;
     dfloat* X_1;
@@ -160,50 +307,50 @@ typedef struct ghostInterfaceData  {
         ghostData g_fGhost;
         ghostData g_gGhost;
         ghostData g_h_fGhost;
-    #endif
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST
         ghostData Axx_fGhost;
         ghostData Axx_gGhost;
         ghostData Axx_h_fGhost;
-    #endif 
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST
         ghostData Axy_fGhost;
         ghostData Axy_gGhost;
         ghostData Axy_h_fGhost;
-    #endif 
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST
         ghostData Axz_fGhost;
         ghostData Axz_gGhost;
         ghostData Axz_h_fGhost;
-    #endif
+    #endif //A_XZ_DIST
     #ifdef A_YY_DIST
         ghostData Ayy_fGhost;
         ghostData Ayy_gGhost;
         ghostData Ayy_h_fGhost;
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST
         ghostData Ayz_fGhost;
         ghostData Ayz_gGhost;
         ghostData Ayz_h_fGhost;
-    #endif 
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST
         ghostData Azz_fGhost;
         ghostData Azz_gGhost;
         ghostData Azz_h_fGhost;
-    #endif
-    /*
-    #ifdef COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
-        ghostData f_uGhost;
-        ghostData g_uGhost;
-        ghostData h_f_uGhost;
-    #endif
+    #endif //A_ZZ_DIST
 
-    #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
-        ghostData conf_fGhost;
-        ghostData conf_gGhost;
-        ghostData conf_h_fGhost;
-    #endif
-    */
 } GhostInterfaceData;
+
+typedef struct wall{
+    dfloat3 normal;
+    dfloat distance;
+
+    __host__ __device__
+    wall(dfloat3 normal = dfloat3(0,0,0), dfloat distance = 0)
+    {
+        this->normal = normal;
+        this->distance = distance;
+    }
+} Wall;
 
 #endif //__GLOBAL_STRUCTS_H

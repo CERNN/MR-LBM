@@ -15,15 +15,15 @@ __global__ void gpuMomCollisionStream(
     dfloat pop[Q];
     #ifdef CONVECTION_DIFFUSION_TRANSPORT
     dfloat gNode[GQ];
-    #endif
+    #endif //CONVECTION_DIFFUSION_TRANSPORT
     dfloat pics2;
     dfloat multiplyTerm;
 
     #ifdef DYNAMIC_SHARED_MEMORY
     extern __shared__ dfloat s_pop[]; 
     #else
-    __shared__ dfloat s_pop[MAX_SHARED_MEMORY_SIZE];
-    #endif
+    __shared__ dfloat s_pop[MAX_SHARED_MEMORY_SIZE/sizeof(dfloat)];
+    #endif //DYNAMIC_SHARED_MEMORY
     
     const int baseIdx = idxMom(threadIdx.x, threadIdx.y, threadIdx.z, 0, blockIdx.x, blockIdx.y, blockIdx.z);
     const int baseIdxPop = idxPopBlock(threadIdx.x, threadIdx.y, threadIdx.z,  0);
@@ -59,7 +59,7 @@ __global__ void gpuMomCollisionStream(
         const dfloat tt_omegaVar = 1 - omegaVar*0.5;
         const dfloat omegaVar_d2 = omegaVar*0.5;
         const dfloat tt_omega_t3 = tt_omegaVar * 3.0;
-    #endif
+    #endif //OMEGA_FIELD
     
     /*
     if(z > (NZ_TOTAL-50)){
@@ -74,15 +74,22 @@ __global__ void gpuMomCollisionStream(
    // dfloat yy = 2.0 * M_PI * y / L;
    // dfloat zz = 2.0 * M_PI * z / L;
 
-   dfloat L_Fx = FX; // F_0 * sin(K_const*x) * cos(K_const*y) ;
-   dfloat L_Fy = FY; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
-   dfloat L_Fz = FZ;
+    #ifdef LOCAL_FORCES
+    dfloat L_Fx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]; // F_0 * sin(K_const*x) * cos(K_const*y) ;
+    dfloat L_Fy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
+    dfloat L_Fz = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)];
+    #else
+    dfloat L_Fx = FX; // F_0 * sin(K_const*x) * cos(K_const*y) ;
+    dfloat L_Fy = FY; //-F_0 * sin(K_const*y) * cos(K_const*x) ;
+    dfloat L_Fz = FZ;
+    #endif //LOCAL_FORCES
+
 
     #ifdef BC_FORCES
     dfloat L_BC_Fx = 0.0;
     dfloat L_BC_Fy = 0.0;
     dfloat L_BC_Fz = 0.0;
-    #endif
+    #endif //BC_FORCES
 
 
     #include COLREC_RECONSTRUCTION
@@ -150,10 +157,10 @@ __global__ void gpuMomCollisionStream(
 
         #ifdef COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
             #include "includeFiles/conformationTransport/conformation_gradient.inc"   
-        #endif
+        #endif //COMPUTE_CONF_GRADIENT_FINITE_DIFFERENCE
 
         #include "includeFiles/conformationTransport/conformation_evolution.inc"
-    #endif
+    #endif //CONFORMATION_TENSOR
 
     #ifdef CONVECTION_DIFFUSION_TRANSPORT
         #ifdef SECOND_DIST 
@@ -189,7 +196,7 @@ __global__ void gpuMomCollisionStream(
                 qy_t30 = F_M_I_SCALE*((gNode[3] - gNode[4] + gNode[7] - gNode[ 8] + gNode[11] - gNode[12] + gNode[14] - gNode[13] + gNode[17] - gNode[18]));
                 qz_t30 = F_M_I_SCALE*((gNode[5] - gNode[6] + gNode[9] - gNode[10] + gNode[11] - gNode[12] + gNode[16] - gNode[15] + gNode[18] - gNode[17]));
             }
-        #endif
+        #endif //SECOND_DIST
         #ifdef A_XX_DIST
             //dfloat GxxVar = fMom[baseIdx + BLOCK_LBM_SIZE * G_XX_C_INDEX];
             dfloat invAxx = 1/AxxVar;
@@ -448,7 +455,7 @@ __global__ void gpuMomCollisionStream(
     pop[24] = s_pop[idxPopBlock(xp1, ym1, zp1, 23)];
     pop[25] = s_pop[idxPopBlock(xp1, ym1, zm1, 24)];
     pop[26] = s_pop[idxPopBlock(xm1, yp1, zp1, 25)];
-    #endif
+    #endif //D3Q27
 
     /* load pop from global in cover nodes */
 
@@ -480,7 +487,7 @@ __global__ void gpuMomCollisionStream(
             m_zz_t45 = (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18])* invRho - cs2;
 
 
-        #endif
+        #endif //D3Q19
         #ifdef D3Q27
             rhoVar = pop[0] + pop[1] + pop[2] + pop[3] + pop[4] + pop[5] + pop[6] + pop[7] + pop[8] + pop[9] + pop[10] + pop[11] + pop[12] + pop[13] + pop[14] + pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26];
             invRho = 1 / rhoVar;
@@ -494,7 +501,7 @@ __global__ void gpuMomCollisionStream(
             m_yy_t45 = ( (pop[ 3] + pop[ 4] + pop[ 7] + pop[ 8] + pop[11] + pop[12]  +  pop[13] + pop[14] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
             m_yz_t90 = (((pop[11] + pop[12] + pop[19] + pop[20] + pop[25] + pop[26]) - (pop[17] + pop[18] + pop[21] + pop[22] + pop[23] + pop[24])))* invRho;
             m_zz_t45 = ( (pop[ 5] + pop[ 6] + pop[ 9] + pop[10] + pop[11] + pop[12]  +  pop[15] + pop[16] + pop[17] + pop[18] + pop[19] + pop[20] + pop[21] + pop[22] + pop[23] + pop[24] + pop[25] + pop[26]))* invRho - cs2;
-        #endif
+        #endif //D3Q27
     }
 
     // multiply moments by as2 -- as4*0.5 -- as4 - add correction to m_alpha_beta
@@ -511,7 +518,6 @@ __global__ void gpuMomCollisionStream(
 
 
     #ifdef DENSITY_CORRECTION
-        //printf("%f ",d_mean_rho[0]-1.0) ;
         rhoVar -= (d_mean_rho[0]) ;
         invRho = 1/rhoVar;
     #endif // DENSITY_CORRECTION
@@ -522,12 +528,10 @@ __global__ void gpuMomCollisionStream(
                 L_Fz += gravity_vector[2] * T_gravity_t_beta * RHO_0*((cVar-T_REFERENCE));
         }
             
-    #endif
+    #endif //THERMAL_MODEL
     
-
-    // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
-    #if defined(OMEGA_FIELD) || defined(LES_MODEL)
-        //TODO change to fix perfomance
+    #ifdef COMPUTE_SHEAR
+            //TODO change to fix perfomance
         const dfloat S_XX = rhoVar * (m_xx_t45/F_M_II_SCALE - ux_t30*ux_t30/(F_M_I_SCALE*F_M_I_SCALE));
         const dfloat S_YY = rhoVar * (m_yy_t45/F_M_II_SCALE - uy_t30*uy_t30/(F_M_I_SCALE*F_M_I_SCALE));
         const dfloat S_ZZ = rhoVar * (m_zz_t45/F_M_II_SCALE - uz_t30*uz_t30/(F_M_I_SCALE*F_M_I_SCALE));
@@ -545,29 +549,25 @@ __global__ void gpuMomCollisionStream(
         const dfloat auxStressMag = sqrt(0.5 * (
             (S_XX + uFxxd2) * (S_XX + uFxxd2) +(S_YY + uFyyd2) * (S_YY + uFyyd2) + (S_ZZ + uFzzd2) * (S_ZZ + uFzzd2) +
             2 * ((S_XY + uFxyd2) * (S_XY + uFxyd2) + (S_XZ + uFxzd2) * (S_XZ + uFxzd2) + (S_YZ + uFyzd2) * (S_YZ + uFyzd2))));
-            #ifdef OMEGA_FIELD
-                /*
-                dfloat eta = (1.0/omegaVar - 0.5) / 3.0;
-                dfloat gamma_dot = (1 - 0.5 * (omegaVar)) * auxStressMag / eta;
-                eta = VISC + S_Y/gamma_dot;
-                omegaVar = omegaVar;// 1.0 / (0.5 + 3.0 * eta);
-                */
-            omegaVar = calcOmega(omegaVar, auxStressMag,step);
 
-
-            #endif//  OMEGA_FIELD
+    #endif //COMPUTE_SHEAR
+    // MOMENTS DETERMINED, COMPUTE OMEGA IF NON-NEWTONIAN FLUID
+    #if defined(OMEGA_FIELD)
+            #ifdef NON_NEWTONIAN_FLUID 
+                omegaVar = calcOmega_nnf(omegaVar, auxStressMag,step);
+            #endif //NON_NEWTONIAN_FLUID
 
             #ifdef LES_MODEL
-                dfloat tau_t = 0.5*sqrt(TAU*TAU+Implicit_const*auxStressMag)-0.5*TAU;
-                dfloat visc_turb_var = tau_t/3.0;
-
+                dfloat tau_t = calcTau_les(omegaVar, auxStressMag,step);
                 omegaVar = 1.0/(TAU + tau_t);
-            #endif
+            #endif //LES_MODEL
+
+            //Compute new auxiliary variables
             t_omegaVar = 1 - omegaVar;
             tt_omegaVar = 1 - omegaVar*0.5;
             omegaVar_d2 = omegaVar*0.5;
             tt_omega_t3 = tt_omegaVar * 3.0;
-    #endif 
+    #endif //OMEGA_FIELD
     
     // zero forces in directions that are not fluid
     if (((nodeType & EAST)  == EAST)  || ((nodeType & WEST)  == WEST)) {
@@ -581,6 +581,7 @@ __global__ void gpuMomCollisionStream(
     if (((nodeType & FRONT) == FRONT) || ((nodeType & BACK)  == BACK)) {
         L_Fz = 0;
     }
+
 
     // COLLIDE
     #include COLREC_COLLISION
@@ -606,9 +607,8 @@ __global__ void gpuMomCollisionStream(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = m_zz_t45;
     
     #ifdef OMEGA_FIELD
-    //fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
         fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omegaVar;
-    #endif
+    #endif //OMEGA_FIELD
 
 
     if(save){
@@ -617,7 +617,7 @@ __global__ void gpuMomCollisionStream(
         d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = (L_BC_Fx);
         d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = (L_BC_Fy);
         d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = (L_BC_Fz);
-        #endif 
+        #endif //BC_FORCES
     }
     #ifdef CONVECTION_DIFFUSION_TRANSPORT
         #ifdef SECOND_DIST 
@@ -634,7 +634,7 @@ __global__ void gpuMomCollisionStream(
             fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30;
             fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30;
 
-        #endif
+        #endif //SECOND_DIST
         #ifdef A_XX_DIST
             Axx_udx_t30 = CONF_DIFF_FLUC_COEF * (Axx_qx_t30*invAxx - ux_t30);
             Axx_udy_t30 = CONF_DIFF_FLUC_COEF * (Axx_qy_t30*invAxx - uy_t30);
@@ -731,3 +731,18 @@ __global__ void gpuMomCollisionStream(
     #endif //COMPUTE_VEL_GRADIENT_FINITE_DIFFERENCE
 
 }
+
+#ifdef LOCAL_FORCES
+__global__
+void gpuResetMacroForces(dfloat *fMom){
+    const int x = threadIdx.x + blockDim.x * blockIdx.x;
+    const int y = threadIdx.y + blockDim.y * blockIdx.y;
+    const int z = threadIdx.z + blockDim.z * blockIdx.z;
+    if (x >= NX || y >= NY || z >= NZ)
+        return;
+
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FY;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FZ;
+}
+#endif //LOCAL_FORCES

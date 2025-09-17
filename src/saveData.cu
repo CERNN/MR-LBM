@@ -1,7 +1,26 @@
 #include "saveData.cuh"
 #ifdef OMEGA_FIELD
 #include "nnf.h"
-#endif
+#endif //OMEGA_FIELD
+
+// choose correct swap based on sizeof(dfloat)
+template<typename T>
+void writeBigEndian(std::ofstream& ofs, const T* data, size_t count) {
+    for (size_t i = 0; i < count; ++i) {
+        if constexpr (sizeof(T) == 4) {
+            uint32_t tmp;
+            memcpy(&tmp, &data[i], 4);
+            tmp = swap32(tmp);
+            ofs.write(reinterpret_cast<char*>(&tmp), 4);
+        }
+        else if constexpr (sizeof(T) == 8) {
+            uint64_t tmp;
+            memcpy(&tmp, &data[i], 8);
+            tmp = swap64(tmp);
+            ofs.write(reinterpret_cast<char*>(&tmp), 8);
+        }
+    }
+}
 
 __host__
 void saveMacr(
@@ -14,44 +33,44 @@ void saveMacr(
     OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST 
     dfloat* Axx,
-    #endif
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST 
     dfloat* Axy,
-    #endif
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST 
     dfloat* Axz,
-    #endif
+    #endif //A_XZ_DIST
     #ifdef A_YY_DIST 
     dfloat* Ayy,
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST 
     dfloat* Ayz,
-    #endif
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST 
     dfloat* Azz,
-    #endif
+    #endif //A_ZZ_DIST
     #ifdef LOG_CONFORMATION
         #ifdef A_XX_DIST
         dfloat* Cxx,
-        #endif
+        #endif //A_XX_DIST
         #ifdef A_XY_DIST
         dfloat* Cxy,
-        #endif
+        #endif //A_XY_DIST
         #ifdef A_XZ_DIST
         dfloat* Cxz,
-        #endif
+        #endif //A_XZ_DIST
         #ifdef A_YY_DIST
         dfloat* Cyy,
-        #endif
+        #endif //A_YY_DIST
         #ifdef A_YZ_DIST
         dfloat* Cyz,
-        #endif
+        #endif //A_YZ_DIST
         #ifdef A_ZZ_DIST
         dfloat* Czz,
-        #endif
+        #endif //A_ZZ_DIST
     #endif //LOG_CONFORMATION
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
@@ -62,7 +81,6 @@ void saveMacr(
     //linearize
     size_t indexMacr;
     for(int z = 0; z< NZ;z++){
-        ///printf("z %d \n", z);
         for(int y = 0; y< NY;y++){
             for(int x = 0; x< NX;x++){
                 indexMacr = idxScalarGlobal(x,y,z);
@@ -74,35 +92,34 @@ void saveMacr(
 
                 #ifdef OMEGA_FIELD
                 omega[indexMacr] = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
-                #endif
+                #endif //OMEGA_FIELD
 
                 #ifdef SECOND_DIST 
                 C[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                #endif
+                #endif //SECOND_DIST
                 #ifdef A_XX_DIST 
                 Axx[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XX_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
-                #endif
+                #endif //A_XX_DIST
                 #ifdef A_XY_DIST 
                 Axy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XY_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
-                #endif
+                #endif //A_XY_DIST
                 #ifdef A_XZ_DIST 
                 Axz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_XZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
-                #endif
+                #endif //A_XZ_DIST
                 #ifdef A_YY_DIST 
                 Ayy[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_YY_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
-                #endif
+                #endif //A_YY_DIST
                 #ifdef A_YZ_DIST 
                 Ayz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_YZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
-                #endif
+                #endif //A_YZ_DIST
                 #ifdef A_ZZ_DIST 
                 Azz[indexMacr]  = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, A_ZZ_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] - CONF_ZERO;
-                #endif
+                #endif //A_ZZ_DIST
                 
                 #if NODE_TYPE_SAVE
                 nodeTypeSave[indexMacr] = (dfloat)hNodeType[idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)]; 
-                #endif
-                //data += rho[indexMacr]*(ux[indexMacr]*ux[indexMacr] + uy[indexMacr]*uy[indexMacr] + uz[indexMacr]*uz[indexMacr]);
-                //meanRho += rho[indexMacr];
+                #endif //NODE_TYPE_SAVE
+
             }
         }
     }
@@ -136,7 +153,7 @@ void saveMacr(
         cudaFreeHost(temp_x);
         cudaFreeHost(temp_y);
         cudaFreeHost(temp_z);
-    #endif
+    #endif // BC_FORCES && SAVE_BC_FORCES
 
 
     // Names of files
@@ -157,25 +174,25 @@ void saveMacr(
                 rho,ux,uy,uz, OMEGA_FIELD_PARAMS
                     #ifdef SECOND_DIST 
                     C,
-                    #endif 
+                    #endif //SECOND_DIST
                     #ifdef A_XX_DIST 
                     Axx,
-                    #endif 
+                    #endif //A_XX_DIST
                     #ifdef A_XY_DIST 
                     Axy,
-                    #endif
+                    #endif //A_XY_DIST
                     #ifdef A_XZ_DIST 
                     Axz,
-                    #endif
+                    #endif //A_XZ_DIST
                     #ifdef A_YY_DIST 
                     Ayy,
-                    #endif
+                    #endif //A_YY_DIST
                     #ifdef A_YZ_DIST 
                     Ayz,
-                    #endif
+                    #endif //A_YZ_DIST
                     #ifdef A_ZZ_DIST 
                     Azz,
-                    #endif
+                    #endif //A_ZZ_DIST
                     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) 
                     nSteps     
                 );
@@ -188,36 +205,36 @@ void saveMacr(
 
         #ifdef OMEGA_FIELD
         strFileOmega = getVarFilename("omega", nSteps, ".bin");
-        #endif
+        #endif //OMEGA_FIELD
         #ifdef SECOND_DIST 
         strFileC = getVarFilename("C", nSteps, ".bin");
-        #endif
+        #endif //SECOND_DIST
         #ifdef A_XX_DIST 
         strFileAxx = getVarFilename("Axx", nSteps, ".bin");
-        #endif
+        #endif //A_XX_DIST
         #ifdef A_XY_DIST 
         strFileAxy = getVarFilename("Axy", nSteps, ".bin");
-        #endif
+        #endif //A_XY_DIST
         #ifdef A_XZ_DIST 
         strFileAxz = getVarFilename("Axz", nSteps, ".bin");
-        #endif
+        #endif //A_XZ_DIST
         #ifdef A_YY_DIST 
         strFileAyy = getVarFilename("Ayy", nSteps, ".bin");
-        #endif
+        #endif //A_YY_DIST
         #ifdef A_YZ_DIST 
         strFileAyz = getVarFilename("Ayz", nSteps, ".bin");
-        #endif
+        #endif //A_YZ_DIST
         #ifdef A_ZZ_DIST 
         strFileAzz = getVarFilename("Azz", nSteps, ".bin");
-        #endif
+        #endif //A_ZZ_DIST
         #if NODE_TYPE_SAVE
         strFileBc = getVarFilename("bc", nSteps, ".bin");
-        #endif
+        #endif //NODE_TYPE_SAVE
         #if defined BC_FORCES && defined SAVE_BC_FORCES
         strFileFx = getVarFilename("fx", nSteps, ".bin");
         strFileFy = getVarFilename("fy", nSteps, ".bin");
         strFileFz = getVarFilename("fz", nSteps, ".bin");
-        #endif
+        #endif //BC_FORCES &&  SAVE_BC_FORCES
         // saving files
         saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
         saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
@@ -225,37 +242,37 @@ void saveMacr(
         saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
         #ifdef OMEGA_FIELD
         saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //OMEGA_FIELD
         #ifdef SECOND_DIST
         saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //SECOND_DIST
         #ifdef A_XX_DIST 
         saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //A_XX_DIST
         #ifdef A_XY_DIST 
         saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //A_XY_DIST
         #ifdef A_XZ_DIST 
         saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //A_XZ_DIST
         #ifdef A_YY_DIST 
         saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //A_YY_DIST
         #ifdef A_YZ_DIST 
         saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //A_YZ_DIST
         #ifdef A_ZZ_DIST 
         saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //A_ZZ_DIST
         
         #if NODE_TYPE_SAVE
         saveVarBin(strFileBc, (dfloat*)nodeTypeSave, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //NODE_TYPE_SAVE
         #if defined BC_FORCES && defined SAVE_BC_FORCES
         saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
         saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
         saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
-        #endif
+        #endif //BC_FORCES && SAVE_BC_FORCES
     }
 }
 
@@ -281,24 +298,7 @@ void saveVarBin(
     }
 }
 
-// choose correct swap based on sizeof(dfloat)
-template<typename T>
-void writeBigEndian(std::ofstream& ofs, const T* data, size_t count) {
-    for (size_t i = 0; i < count; ++i) {
-        if constexpr (sizeof(T) == 4) {
-            uint32_t tmp;
-            memcpy(&tmp, &data[i], 4);
-            tmp = swap32(tmp);
-            ofs.write(reinterpret_cast<char*>(&tmp), 4);
-        }
-        else if constexpr (sizeof(T) == 8) {
-            uint64_t tmp;
-            memcpy(&tmp, &data[i], 8);
-            tmp = swap64(tmp);
-            ofs.write(reinterpret_cast<char*>(&tmp), 8);
-        }
-    }
-}
+
 
 void saveVarVTK(
     std::string filename, 
@@ -309,25 +309,25 @@ void saveVarVTK(
     OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST 
     dfloat* Axx,
-    #endif
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST 
     dfloat* Axy,
-    #endif
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST 
     dfloat* Axz,
-    #endif
+    #endif //A_XY_DIST
     #ifdef A_YY_DIST 
     dfloat* Ayy,
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST 
     dfloat* Ayz,
-    #endif
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST 
     dfloat* Azz,
-    #endif
+    #endif //A_ZZ_DIST
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps 
@@ -338,7 +338,7 @@ void saveVarVTK(
     std::ofstream ofs(filename, std::ios::binary);
     if (!ofs) throw std::runtime_error("Cannot open " + filename);
 
-    // — Header —
+    //Header 
     ofs << "# vtk DataFile Version 3.0\n"
         << "LBM output (binary)\n"
         << "BINARY\n"                               // ← here!
@@ -347,35 +347,28 @@ void saveVarVTK(
         << "ORIGIN 0 0 0\n"
         << "SPACING 1 1 1\n"
         << "POINT_DATA " << N << "\n";
-
-    // — Scalars —
     ofs << "SCALARS rho float 1\n"
         << "LOOKUP_TABLE default\n";
     writeBigEndian(ofs, rho, N);
 
-    // — Vectors velocity —
     ofs << "VECTORS velocity float\n";
-    // interleave ux,uy,uz
     for (size_t i = 0; i < N; ++i) {
         dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
         writeBigEndian(ofs, v, 3);
     }
 
-    // — Omega —
     #ifdef OMEGA_FIELD
         ofs << "SCALARS omega float 1\n"
             << "LOOKUP_TABLE default\n";
         writeBigEndian(ofs, omega, N);
-    #endif
+    #endif //OMEGA_FIELD
 
-    // — C —
     #ifdef SECOND_DIST
         ofs << "SCALARS C float 1\n"
             << "LOOKUP_TABLE default\n";
         writeBigEndian(ofs, C, N);
-    #endif
+    #endif //SECOND_DIST
 
-    // — Aij —
     #ifdef CONFORMATION_TENSOR
         ofs << "TENSORS6 Aij float\n";
         for (size_t i = 0; i < N; ++i) {
@@ -385,24 +378,21 @@ void saveVarVTK(
             };
             writeBigEndian(ofs, tensor, 6);
         }
-    #endif
+    #endif //CONFORMATION_TENSOR
 
-    // — forces —
     #ifdef SAVE_BC_FORCES
         ofs << "VECTORS forces float\n";
         for (size_t i = 0; i < N; ++i) {
             dfloat f[3] = { fx[i], fy[i], fz[i] };
             writeBigEndian(ofs, f, 3);
         }
-    #endif
+    #endif //SAVE_BC_FORCES
 
-    // — bc —
-    
     #if NODE_TYPE_SAVE
         ofs << "SCALARS bc int 1\n"
             << "LOOKUP_TABLE default\n";
         writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N);
-    #endif  
+    #endif //NODE_TYPE_SAVE
 }
 
 
@@ -431,7 +421,7 @@ void folderSetup()
     system(cmd.c_str());
     return;
 #endif // !Unix
-    printf("I don't know how to setup folders for your operational system :(\n");
+    printf("Operational system not supported\n");
     return;
 }
 
@@ -485,7 +475,7 @@ std::string getSimInfoString(int step,dfloat MLUPS)
         strSimInfo << "          Precision: float\n";
     #else
         strSimInfo << "          Precision: double\n";
-    #endif
+    #endif //SINGLE_PRECISION
     strSimInfo << "                 NX: " << NX << "\n";
     strSimInfo << "                 NY: " << NY << "\n";
     strSimInfo << "                 NZ: " << NZ << "\n";
@@ -508,7 +498,7 @@ std::string getSimInfoString(int step,dfloat MLUPS)
     strSimInfo << "\n------------------------------ BOUNDARY CONDITIONS -----------------------------\n";
     #ifdef BC_MOMENT_BASED
     strSimInfo << "            BC mode: Moment Based \n";
-    #endif
+    #endif //BC_MOMENT_BASED
     strSimInfo << "            BC type: " << STR(BC_PROBLEM) << "\n";
     strSimInfo << "--------------------------------------------------------------------------------\n";
 
@@ -640,229 +630,8 @@ void saveTreatData(std::string fileName, std::string dataString, int step)
 
     outfile << dataString.c_str() << std::endl; 
     outfile.close(); 
-    #endif
+    #endif //SAVEDATA
     #if CONSOLEPRINT
     printf("%s \n",dataString.c_str());
-    #endif
+    #endif //CONSOLEPRINT
 }
-
-/*
-__host__
-void loadMoments(
-    dfloat* h_fMom,
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
-    OMEGA_FIELD_PARAMS_DECLARATION
-    #ifdef SECOND_DIST
-    dfloat* C
-    #endif 
-){
-    size_t indexMacr;
-
-
-    //first moments
-    dfloat rhoVar, uxVar, uyVar, uzVar;
-    dfloat pixx, pixy, pixz, piyy, piyz, pizz;
-    dfloat invRho;
-    dfloat pop[Q];
-    #ifdef OMEGA_FIELD
-    dfloat omegaVar;
-    #endif
-    #ifdef SECOND_DIST 
-    dfloat cVar, invC, qx_t30, qy_t30, qz_t30;
-    dfloat gNode[GQ];
-    #endif
-
-    
-
-
-    for(int z = 0; z< NZ;z++){
-        for(int y = 0; y< NY;y++){
-            for(int x = 0; x< NX;x++){
-                indexMacr = idxScalarGlobal(x,y,z);
-
-                rhoVar = rho[indexMacr];
-                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_RHO_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = rhoVar-RHO_0;
-                uxVar = ux[indexMacr];
-                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = F_M_I_SCALE*uxVar;
-                uyVar = uy[indexMacr];
-                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UY_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = F_M_I_SCALE*uyVar;
-                uzVar = uz[indexMacr];
-                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UZ_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = F_M_I_SCALE*uzVar;
-
-
-                //second moments
-                //define equilibrium populations
-                for (int i = 0; i < Q; i++)
-                {
-                    pop[i] = gpu_f_eq(w[i] * RHO_0,
-                                    3 * (uxVar * cx[i] + uyVar * cy[i] + uzVar * cz[i]),
-                                    1 - 1.5 * (uxVar * uxVar + uyVar * uyVar + uzVar * uzVar));
-                }
-
-
-                invRho = 1.0/rhoVar;
-                pixx =  (pop[1] + pop[2] + pop[7] + pop[8] + pop[9] + pop[10] + pop[13] + pop[14] + pop[15] + pop[16]) * invRho - cs2;
-                pixy = ((pop[7] + pop[ 8]) - (pop[13] + pop[14])) * invRho;
-                pixz = ((pop[9] + pop[10]) - (pop[15] + pop[16])) * invRho;
-                piyy =  (pop[3] + pop[4] + pop[7] + pop[8] + pop[11] + pop[12] + pop[13] + pop[14] + pop[17] + pop[18]) * invRho - cs2;
-                piyz = ((pop[11]+pop[12])-(pop[17]+pop[18])) * invRho;
-                pizz =  (pop[5] + pop[6] + pop[9] + pop[10] + pop[11] + pop[12] + pop[15] + pop[16] + pop[17] + pop[18]) * invRho - cs2;
-
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*pixx;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_IJ_SCALE*pixy;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MXZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_IJ_SCALE*pixz;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*piyy;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MYZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_IJ_SCALE*piyz;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_MZZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = F_M_II_SCALE*pizz;
-
-
-                #ifdef OMEGA_FIELD
-                omegaVar = omega[indexMacr];
-                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_OMEGA_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = omegaVar; 
-                #endif
-
-                #ifdef SECOND_DIST 
-                cVar = C[indexMacr];
-                h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = cVar;
-
-                dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC - uxVar*F_M_I_SCALE);
-                dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC - uyVar*F_M_I_SCALE);
-                dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC - uzVar*F_M_I_SCALE);
-
-                dfloat multiplyTerm = cVar * gW0;
-                dfloat pics2 = 1.0;
-
-                gNode[ 0] = multiplyTerm * (pics2);
-                multiplyTerm = cVar * gW1;
-                gNode[ 1] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE  + udx_t30 );
-                gNode[ 2] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE  - udx_t30 );
-                gNode[ 3] = multiplyTerm * (pics2 + uyVar * F_M_I_SCALE  + udy_t30 );
-                gNode[ 4] = multiplyTerm * (pics2 - uyVar * F_M_I_SCALE  - udy_t30 );
-                gNode[ 5] = multiplyTerm * (pics2 + uzVar * F_M_I_SCALE  + udz_t30 );
-                gNode[ 6] = multiplyTerm * (pics2 - uzVar * F_M_I_SCALE  - udz_t30 );
-                multiplyTerm = cVar * gW2;
-                gNode[ 7] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE + uyVar * F_M_I_SCALE + udx_t30 + udy_t30 );
-                gNode[ 8] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE - uyVar * F_M_I_SCALE - udx_t30 - udy_t30 );
-                gNode[ 9] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE + uzVar * F_M_I_SCALE + udx_t30 + udz_t30 );
-                gNode[10] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE - uzVar * F_M_I_SCALE - udx_t30 - udz_t30 );
-                gNode[11] = multiplyTerm * (pics2 + uyVar * F_M_I_SCALE + uzVar * F_M_I_SCALE + udy_t30 + udz_t30 );
-                gNode[12] = multiplyTerm * (pics2 - uyVar * F_M_I_SCALE - uzVar * F_M_I_SCALE - udy_t30 - udz_t30 );
-                gNode[13] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE - uyVar * F_M_I_SCALE + udx_t30 - udy_t30 );
-                gNode[14] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE + uyVar * F_M_I_SCALE - udx_t30 + udy_t30 );
-                gNode[15] = multiplyTerm * (pics2 + uxVar * F_M_I_SCALE - uzVar * F_M_I_SCALE + udx_t30 - udz_t30 );
-                gNode[16] = multiplyTerm * (pics2 - uxVar * F_M_I_SCALE + uzVar * F_M_I_SCALE - udx_t30 + udz_t30 );
-                gNode[17] = multiplyTerm * (pics2 + uyVar * F_M_I_SCALE - uzVar * F_M_I_SCALE + udy_t30 - udz_t30 );
-                gNode[18] = multiplyTerm * (pics2 - uyVar * F_M_I_SCALE + uzVar * F_M_I_SCALE - udy_t30 + udz_t30 );
-
-                qx_t30 = F_M_I_SCALE*((gNode[1] - gNode[2] + gNode[7] - gNode[ 8] + gNode[ 9] - gNode[10] + gNode[13] - gNode[14] + gNode[15] - gNode[16]));
-                qy_t30 = F_M_I_SCALE*((gNode[3] - gNode[4] + gNode[7] - gNode[ 8] + gNode[11] - gNode[12] + gNode[14] - gNode[13] + gNode[17] - gNode[18]));
-                qz_t30 = F_M_I_SCALE*((gNode[5] - gNode[6] + gNode[9] - gNode[10] + gNode[11] - gNode[12] + gNode[16] - gNode[15] + gNode[18] - gNode[17]));
-
-
-
-
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qy_t30;
-                h_fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qz_t30;
-                #endif
-
-
-
-            }
-        }
-    }
-}
-
-
-__host__
-void loadSimField(
-    dfloat* h_fMom,
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
-    OMEGA_FIELD_PARAMS_DECLARATION
-    #ifdef SECOND_DIST
-    dfloat* C
-    #endif 
-){
-    std::string strFileRho, strFileUx, strFileUy, strFileUz;
-    std::string strFileOmega;
-    std::string strFileC;
-    std::string strFileBc; 
-    std::string strFileFx, strFileFy, strFileFz;
-
-    strFileRho = getVarFilename("rho", LOAD_FIELD_STEP, ".bin");
-    strFileUx = getVarFilename("ux", LOAD_FIELD_STEP, ".bin");
-    strFileUy = getVarFilename("uy", LOAD_FIELD_STEP, ".bin");
-    strFileUz = getVarFilename("uz", LOAD_FIELD_STEP, ".bin");
-    #ifdef OMEGA_FIELD
-    strFileOmega = getVarFilename("omega", LOAD_FIELD_STEP, ".bin");
-    #endif
-    #ifdef SECOND_DIST 
-    strFileC = getVarFilename("C", LOAD_FIELD_STEP, ".bin");
-    #endif
-    #if NODE_TYPE_SAVE
-    strFileBc = getVarFilename("bc", LOAD_FIELD_STEP, ".bin");
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    strFileFx = getVarFilename("fx", LOAD_FIELD_STEP, ".bin");
-    strFileFy = getVarFilename("fy", LOAD_FIELD_STEP, ".bin");
-    strFileFz = getVarFilename("fz", LOAD_FIELD_STEP, ".bin");
-    #endif
-
-    // load files
-    loadVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
-    loadVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
-    loadVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
-    loadVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
-    #ifdef OMEGA_FIELD
-    loadVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
-    #endif
-    #ifdef SECOND_DIST
-    loadVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
-    #endif
-    #if NODE_TYPE_SAVE
-    loadVarBin(strFileBc, nodeTypeSave, MEM_SIZE_SCALAR, false);
-    #endif
-    #if defined BC_FORCES && defined SAVE_BC_FORCES
-    loadVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
-    loadVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
-    loadVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
-    #endif
-
-
-    loadMoments(h_fMom,rho,ux,uy,uz, OMEGA_FIELD_PARAMS_DECLARATION
-            #ifdef SECOND_DIST
-            C
-            #endif 
-            );
-
-}
-
-
-void loadVarBin(
-    std::string strFile, 
-    dfloat* var, 
-    size_t memSize,
-    bool append)
-{
-    FILE* outFile = nullptr;
-    if(append)
-        outFile = fopen(strFile.c_str(), "ab");
-    else
-        outFile = fopen(strFile.c_str(), "wb");
-    if(outFile != nullptr)
-    {
-        fread(var, memSize, 1, outFile);
-        fclose(outFile);
-    }
-    else
-    {
-        printf("Error loading \"%s\" \nProbably wrong path!\n", strFile.c_str());
-    }
-}
-*/

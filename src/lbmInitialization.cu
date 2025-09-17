@@ -207,6 +207,13 @@ __global__ void gpuInitialization_mom(
     #endif
     #endif
 
+    #ifdef LOCAL_FORCES
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FY;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FZ;
+    #endif 
+
+
 }
 
 __global__ void gpuInitialization_pop(
@@ -912,24 +919,6 @@ __global__ void gpuInitialization_nodeType(
     dNodeType[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = nodeType;
 }
 
-
-__global__ void gpuInitialization_force(
-    dfloat *d_BC_Fx, dfloat* d_BC_Fy, dfloat* d_BC_Fz)
-{
-    int x = threadIdx.x + blockDim.x * blockIdx.x;
-    int y = threadIdx.y + blockDim.y * blockIdx.y;
-    int z = threadIdx.z + blockDim.z * blockIdx.z;
-    if (x >= NX || y >= NY || z >= NZ)
-        return;
-
-    size_t index = idxScalarGlobal(x, y, z);
-
-    d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
-    d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
-    d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0; 
-}
-
-
 __host__ void hostInitialization_nodeType_bulk(
     unsigned int *hNodeType)
 {
@@ -945,7 +934,6 @@ __host__ void hostInitialization_nodeType_bulk(
     }
     printf("bulk done\n");
 }
-
 
 __host__ void hostInitialization_nodeType(
     unsigned int *hNodeType)
@@ -963,9 +951,24 @@ __host__ void hostInitialization_nodeType(
         }
     }
 
-    printf("boundary condition done\n");
+    printf("Setting boundary condition completed\n");
 }
 
+__global__ void gpuInitialization_force(
+    dfloat *d_BC_Fx, dfloat* d_BC_Fy, dfloat* d_BC_Fz)
+{
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
+    int z = threadIdx.z + blockDim.z * blockIdx.z;
+    if (x >= NX || y >= NY || z >= NZ)
+        return;
+
+    size_t index = idxScalarGlobal(x, y, z);
+
+    d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0; 
+}
 
 void read_xyz_file(
     const std::string& filename,
@@ -1002,7 +1005,6 @@ void read_xyz_file(
 
 
         index = idxScalarBlock(x % BLOCK_NX, y % BLOCK_NY, z % BLOCK_NZ, x / BLOCK_NX, y / BLOCK_NY, z / BLOCK_NZ);
-        //printf("x %d y %d z %d \n",x,y,z); fflush(stdout);
         dNodeType[idxScalarBlock(x % BLOCK_NX, y % BLOCK_NY, z % BLOCK_NZ, x / BLOCK_NX, y / BLOCK_NY, z / BLOCK_NZ)] = SOLID_NODE;
 
 
@@ -1030,22 +1032,6 @@ void read_xyz_file(
     printf("voxels imported \n");
 }
 
-/*
-void define_voxel_bc(
-    unsigned int *dNodeType
-){
-    for(int x= 0;x<NX;x++){
-        for(int y =0; y<NY;y++){
-            for(int z =0; z<NZ_TOTAL;z++){
-                unsigned int index = idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ);
-                if(dNodeType[index] == MISSING_DEFINITION){
-                    dNodeType[index] = bc_id(dNodeType,x,y,z);
-                }
-            }
-        }
-    }
-}
-*/
 
 __global__ 
 void define_voxel_bc(

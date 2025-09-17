@@ -82,7 +82,7 @@ void meanFlowComputation(
 
     #ifdef THERMAL_MODEL
     dfloat t_cc0 = 0.0;
-    #endif
+    #endif //THERMAL_MODEL
 
     //old mean values
     dfloat m_ux = 0.0;
@@ -91,7 +91,7 @@ void meanFlowComputation(
 
     #ifdef THERMAL_MODEL
     dfloat m_cc = 0.0;
-    #endif
+    #endif //THERMAL_MODEL
 
 
     #pragma warning(push)
@@ -112,7 +112,7 @@ void meanFlowComputation(
 
                 #ifdef THERMAL_MODEL
                 t_cc0 = h_fMom[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                #endif
+                #endif //THERMAL_MODEL
 
                 //STORE AND UPDATE MEANS
 
@@ -123,7 +123,7 @@ void meanFlowComputation(
 
                 #ifdef THERMAL_MODEL
                 m_cc = fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)];
-                #endif
+                #endif //THERMAL_MODEL
                 
                 //update and store mean values
                 fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M_UX_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_ux + (t_ux0 - m_ux)*(mean_counter);
@@ -132,7 +132,7 @@ void meanFlowComputation(
 
                 #ifdef THERMAL_MODEL
                 fMom_mean[idxMom(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, M2_C_INDEX, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ)] = m_cc + (t_cc0 - m_cc)*(mean_counter);
-                #endif
+                #endif //THERMAL_MODEL
 
                 count++;
 

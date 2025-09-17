@@ -11,11 +11,11 @@ void treatData(
 ){
     #if TREATFIELD
     computeNusseltNumber(h_fMom,fMom,step);
-    #endif
+    #endif //TREATFIELD
 
     #if TREATPOINT
     probeExport(fMom, OMEGA_FIELD_PARAMS step);
-    #endif
+    #endif //TREATPOINT
     #if TREATLINE
     velocityProfile(fMom,1,step);
     velocityProfile(fMom,2,step);
@@ -23,11 +23,11 @@ void treatData(
     velocityProfile(fMom,4,step);
     velocityProfile(fMom,5,step);
     velocityProfile(fMom,6,step);
-    #endif
+    #endif //TREATLINE
 
     #ifdef TREAT_DATA_INCLUDE
     #include CASE_TREAT_DATA
-    #endif
+    #endif //TREAT_DATA_INCLUDE
 
     //totalKineticEnergy(fMom,step);         
 }
@@ -229,8 +229,8 @@ void totalSpringEnergy(
     saveTreatData("_totalSpringEnergy",strDataInfo.str(),step);
     cudaFree(sumKE);
 }
-#endif
-#endif
+#endif //CONFORMATION_TENSOR
+#endif //CONVECTION_DIFFUSION_TRANSPORT
 
 __host__ 
 void turbulentKineticEnergy(
@@ -305,10 +305,6 @@ void totalBcDrag(
     dfloat* sum_BC_Fy;
     dfloat* sum_BC_Fz;
 
-    //dfloat* h_BC_Fx;
-    //dfloat* h_BC_Fy;
-    //dfloat* h_BC_Fz;
-   
     cudaMalloc((void**)&sum_BC_Fx, NUM_BLOCK * sizeof(dfloat));
     cudaMalloc((void**)&sum_BC_Fy, NUM_BLOCK * sizeof(dfloat));
     cudaMalloc((void**)&sum_BC_Fz, NUM_BLOCK * sizeof(dfloat));
@@ -519,24 +515,11 @@ void probeExport(dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step)
     dfloat* ux;
     dfloat* uy;
     dfloat* uz;
-
-    /*dfloat* mxx;
-    dfloat* mxy;
-    dfloat* mxz;
-    dfloat* myy;
-    dfloat* myz;
-    dfloat* mzz;*/
     
     checkCudaErrors(cudaMallocHost((void**)&(rho), sizeof(dfloat)));    
     checkCudaErrors(cudaMallocHost((void**)&(ux), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(uy), sizeof(dfloat)));
     checkCudaErrors(cudaMallocHost((void**)&(uz), sizeof(dfloat)));    
-    /*checkCudaErrors(cudaMallocHost((void**)&(mxx), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(mxy), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(mxz), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(myy), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(myz), sizeof(dfloat)));
-    checkCudaErrors(cudaMallocHost((void**)&(mzz), sizeof(dfloat)));*/
 
     checkCudaErrors(cudaDeviceSynchronize());
     for(int i=0; i< probeNumber; i++){
@@ -548,37 +531,16 @@ void probeExport(dfloat* fMom, OMEGA_FIELD_PARAMS_DECLARATION unsigned int step)
         sizeof(dfloat), cudaMemcpyDeviceToHost));
         checkCudaErrors(cudaMemcpy(uz , fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_UZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
         sizeof(dfloat), cudaMemcpyDeviceToHost));
-        /*checkCudaErrors(cudaMemcpy(mxx, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MXX_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(mxy, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MXY_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(mxz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MXZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(myy, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MYY_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(myz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MYZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));
-        checkCudaErrors(cudaMemcpy(mzz, fMom + idxMom(x[i]%BLOCK_NX, y[i]%BLOCK_NY, z[i]%BLOCK_NZ, M_MZZ_INDEX, x[i]/BLOCK_NX, y[i]/BLOCK_NY, z[i]/BLOCK_NZ),
-        sizeof(dfloat), cudaMemcpyDeviceToHost));*/
 
         strDataInfo <<"\t"<< *ux << "\t" << *uy << "\t" << *uz;
 
     }
     saveTreatData("_probeData",strDataInfo.str(),step);
 
-
-
-
     cudaFree(rho);
     cudaFree(ux);
     cudaFree(uy);
     cudaFree(uz);
-    /*cudaFree(mxx);
-    cudaFree(mxy);
-    cudaFree(mxz);
-    cudaFree(myy);
-    cudaFree(myz);
-    cudaFree(mzz);*/
 
 }
 
@@ -631,7 +593,7 @@ void computeNusseltNumber(
     strDataInfo <<"step,"<< step<< "," << Nu_sum;// << "," << mean_counter;
     saveTreatData("_Nu_mean",strDataInfo.str(),step);
 
-    #endif 
+    #endif //THERMAL_MODEL
 }
 
 
