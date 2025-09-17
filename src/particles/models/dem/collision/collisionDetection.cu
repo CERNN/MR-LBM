@@ -482,4 +482,32 @@ void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, Par
 
 }
 
+__device__
+dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j) {
+    dfloat3 p1 = pc_i->getPos();
+    dfloat3 p2 = pc_j->getPos();
+
+    dfloat r1 = pc_i->getRadius();
+    dfloat r2 = pc_j->getRadius();
+
+    dfloat3 delta = p1 - p2;
+
+    #ifdef BC_X_PERIODIC
+        if(delta.x > NX / 2.0) delta.x -= NX;
+        if(delta.x < -NX / 2.0) delta.x += NX;
+    #endif
+    #ifdef BC_Y_PERIODIC
+        if(delta.y > NY / 2.0) delta.y -= NY;
+        if(delta.y < -NY / 2.0) delta.y += NY;
+    #endif
+    #ifdef BC_Z_PERIODIC
+        if(delta.z > NZ / 2.0) delta.z -= NZ;
+        if(delta.z < -NZ / 2.0) delta.z += NZ;
+    #endif
+
+    dfloat dist = sqrtf(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
+    
+    return dist - (r1 + r2);
+}
+
 #endif //PARTICLE_MODEL

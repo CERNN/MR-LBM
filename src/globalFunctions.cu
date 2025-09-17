@@ -13,6 +13,11 @@ dfloat3 vector_lerp(dfloat3 v1, dfloat3 v2, dfloat t) {
     return dfloat3(v1.x + t * (v2.x - v1.x), v1.y + t * (v2.y - v1.y), v1.z + t * (v2.z - v1.z));
 }
 
+
+// ****************************************************************************
+// ************************   VECTOR OPERATIONS   *****************************
+// ****************************************************************************
+
 __device__
 dfloat3 planeProjection(dfloat3 P, dfloat3 n, dfloat d) {
     // Copy original coordinates
@@ -40,10 +45,6 @@ dfloat3 planeProjection(dfloat3 P, dfloat3 n, dfloat d) {
 
     return proj;
 }
-
-// ****************************************************************************
-// ************************   VECTOR OPERATIONS   *****************************
-// ****************************************************************************
 
 __host__ __device__
 dfloat dot_product(dfloat3 v1, dfloat3 v2) {
@@ -79,6 +80,152 @@ dfloat3 vector_normalize(dfloat3 v) {
     }
     return norm_v;
 }
+__device__
+dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB, dfloat3 closestOnAB[1]) {
+    dfloat minDist = 1E+37;  // Initialize to a large value
+    dfloat3 bestClosestOnAB;
+    int dx = 0, dy = 0, dz = 0;
+
+    // Loop over periodic offsets in x, y, and z if periodic boundary conditions are enabled
+    #ifdef BC_X_PERIODIC
+    for (dx = -1; dx <= 1; dx++) {
+    #endif
+        #ifdef BC_Y_PERIODIC
+        for (dy = -1; dy <= 1; dy++) {
+        #endif
+            #ifdef BC_Z_PERIODIC
+            for (dz = -1; dz <= 1; dz++) {
+            #endif
+                // Translate the segment by the periodic offsets
+                dfloat3 segA_translated = segA + dfloat3(dx * NX, dy * NY, dz * NZ);
+                dfloat3 segB_translated = segB + dfloat3(dx * NX, dy * NY, dz * NZ);
+
+                // Compute the closest point on the translated segment
+                dfloat3 ab = segB_translated - segA_translated;
+                dfloat3 ap = p - segA_translated;
+                dfloat t = dot_product(ap, ab) / dot_product(ab, ab);
+                t = myMax(0, myMin(1, t));  // Clamp t to [0, 1]
+
+                dfloat3 tempClosestOnAB = segA_translated + ab * t;
+                dfloat dist = vector_length(p - tempClosestOnAB);
+
+                // Update the minimum distance and store the closest point
+                if (dist < minDist) {
+                    minDist = dist;
+                    bestClosestOnAB = tempClosestOnAB;
+                }
+
+            #ifdef BC_Z_PERIODIC
+            } // End Z loop
+            #endif
+        #ifdef BC_Y_PERIODIC
+        } // End Y loop
+        #endif
+    #ifdef BC_X_PERIODIC
+    } // End X loop
+    #endif
+
+    // Store the closest point on the segment
+    closestOnAB[0] = bestClosestOnAB;
+
+    // Return the minimum distance
+    return minDist;
+}
+
+// Project a point onto a segment and constrain it within the segment
+__device__
+dfloat3 constrain_to_segment(dfloat3 point, dfloat3 segStart, dfloat3 segEnd) {
+    dfloat3 segDir = segEnd - segStart;
+    dfloat segLengthSqr = dot_product(segDir,segDir);
+    if (segLengthSqr == 0.0) 
+        return segStart;  // The segment is a point
+
+    dfloat t = dot_product((point - segStart), segDir) / segLengthSqr;
+    t = clamp01(t);
+
+    return (segStart + (segDir * t));
+}
+
+// Main function to compute the closest distance between two segments and return the closest points
+__device__
+dfloat segment_segment_closest_points(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]) {
+
+    dfloat3 segDC = (q2 - p2);  // Vector from p2 to q2 (segment [p2, q2])
+    dfloat lineDirSqrMag = dot_product(segDC,segDC);  // Square magnitude of segment [p2, q2]
+
+    // Project p1 and q1 onto the plane defined by segment [p2, q2]
+    dfloat3 inPlaneA = p1 - ((dot_product(p1-p2,segDC)/lineDirSqrMag)*segDC);
+    dfloat3 inPlaneB = q1 - ((dot_product(q1-p2,segDC)/lineDirSqrMag)*segDC);
+    dfloat3 inPlaneBA = (inPlaneB - inPlaneA);
+    dfloat t = dot_product(p2-inPlaneA,inPlaneBA) / dot_product(inPlaneBA, inPlaneBA);
+
+
+    if (dot_product(inPlaneBA, inPlaneBA) == 0.0) {
+        t = 0.0;  // Handle case where inPlaneA and inPlaneB are the same (segments are parallel)
+    }
+
+    // Find the closest point on segment [p1, q1] to the line [p2, q2]
+    dfloat3 segABtoLineCD = p1 + clamp01(t)*(q1-p1);
+
+    // Constrain the result to segment [p2, q2]
+    closestOnCD[0] = constrain_to_segment(segABtoLineCD, p2, q2);
+
+    // Constrain the closest point on segment [p2, q2] back to segment [p1, q1]
+    closestOnAB[0] = constrain_to_segment(closestOnCD[0], p1, q1);
+
+
+    // Calculate the distance between the closest points on the two segments
+    dfloat3 diff = vector_length(closestOnAB[0] - closestOnCD[0]);
+    return vector_length(diff);  // Return the distance between the closest points
+}
+
+
+__device__
+dfloat segment_segment_closest_points_periodic(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]){
+    dfloat minDist = 1E+37;  // Initialize to a large value
+    dfloat3 bestClosestOnAB, bestClosestOnCD;
+    int dx = 0;
+    int dy = 0;
+    int dz = 0;
+    #ifdef BC_X_PERIODIC
+    for ( dx = -1; dx <= 1; dx++) {
+    #endif
+        #ifdef BC_Y_PERIODIC
+        for ( dy = -1; dy <= 1; dy++) {
+        #endif
+            #ifdef BC_Z_PERIODIC
+            for ( dz = -1; dz <= 1; dz++) {
+            #endif
+                // Translate segment [p2, q2] by periodic offsets
+                dfloat3 p2_translated = p2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
+                dfloat3 q2_translated = q2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
+
+                // Compute closest points between segment [p1, q1] and translated segment [p2_translated, q2_translated]
+                dfloat3 tempClosestOnAB, tempClosestOnCD;
+                dfloat dist = segment_segment_closest_points(p1, q1, p2_translated, q2_translated, &tempClosestOnAB, &tempClosestOnCD);
+                // Update minimum distance and store the best closest points
+                if (dist < minDist) {
+                    minDist = dist;
+                    bestClosestOnAB = tempClosestOnAB;
+                    bestClosestOnCD = tempClosestOnCD;
+                }
+
+            #ifdef BC_Z_PERIODIC
+            }
+            #endif
+        #ifdef BC_Y_PERIODIC
+        }
+        #endif
+
+    #ifdef BC_X_PERIODIC
+    }
+    #endif
+    closestOnAB[0] = bestClosestOnAB;
+    closestOnCD[0] = bestClosestOnCD;
+
+    return minDist;  // Return the minimum distance between the segments
+}
+
 
 // ****************************************************************************
 // ************************   MATRIX OPERATIONS   *****************************

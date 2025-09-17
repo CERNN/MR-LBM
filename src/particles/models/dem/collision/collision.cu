@@ -3,11 +3,15 @@
 
 #ifdef PARTICLE_MODEL
 
-//collision tracking
+
+// ****************************************************************************
+// ************************   COLLISION TRACKING   ****************************
+// ****************************************************************************
+
 __device__ 
 int calculateWallIndex(const dfloat3 &n) {
     // Calculate the index based on the normal vector
-    return 7 + (1 - (int)n.x) - 2 * (1 - (int)n.y) - 3 * (1 - (int)n.z);
+
     /*
     n.x n.y n.z index
     1   0   0   2
@@ -18,6 +22,8 @@ int calculateWallIndex(const dfloat3 &n) {
     0   0   -1  0
     0   0   0   3 -> external duct, since normal will be reduced to 0,0,0 when convert to integer
     */
+
+    return 7 + (1 - (int)n.x) - 2 * (1 - (int)n.y) - 3 * (1 - (int)n.z);
 }
 
 __device__ 
@@ -28,10 +34,10 @@ int getCollisionIndexByPartnerID(const CollisionData &collisionData, int partner
             return i; // Found the collision index for a particle
         }
     }
-
     // If no match is found, return -1
     return -1;
 }
+
 __device__ 
 int startCollision(CollisionData &collisionData, int partnerID, bool isWall, const dfloat3 &wallNormal, int currentTimeStep) {
     int index = -1;
@@ -54,15 +60,16 @@ int startCollision(CollisionData &collisionData, int partnerID, bool isWall, con
 
     return index;
 }
+
 __device__ 
 dfloat3 updateTangentialDisplacement(CollisionData &collisionData, int index, const dfloat3 &displacement, int currentTimeStep) {
-        collisionData.setTangentialDisplacement(index, (collisionData.getTangentialDisplacement(index) + displacement));
-        collisionData.setLastCollisionStep(index, currentTimeStep);
-
+    collisionData.setTangentialDisplacement(index, (collisionData.getTangentialDisplacement(index) + displacement));
+    collisionData.setLastCollisionStep(index, currentTimeStep);
     return collisionData.getTangentialDisplacement(index);
 }
+
 __device__ 
-void    endCollision(CollisionData &collisionData, int index, int currentTimeStep) {
+void endCollision(CollisionData &collisionData, int index, int currentTimeStep) {
     // Check if index is valid for wall collisions (0 to 6)
     if (index >= 0 && index <= 6) {
         collisionData.setLastCollisionStep(index, -1);
@@ -71,14 +78,17 @@ void    endCollision(CollisionData &collisionData, int index, int currentTimeSte
     else if (index >= 7 && index < MAX_ACTIVE_COLLISIONS ) {
         if (currentTimeStep - collisionData.getLastCollisionStep(index) > 1) {
             collisionData.setTangentialDisplacement(index, {0.0, 0.0, 0.0});
-            collisionData.setLastCollisionStep(index, -1); // Indicate the slot is available 
+            collisionData.setLastCollisionStep(index, -1); // Indicate the slot is available '
             collisionData.setCollisionPartnerID(index, -1); // Optionally reset
         }
     }
 }
 
-//collision mechanics with walls
+// ****************************************************************************
+// **************************   WALL COLLISION   ******************************
+// ****************************************************************************
 
+// -------------------------- SPHERE COLLISION --------------------------------
 __device__
 void sphereWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,int step){
 
@@ -196,6 +206,8 @@ void sphereWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,
     atomicAdd(&(pc_i->getMYatomic()), m_dirs.y);
     atomicAdd(&(pc_i->getMZatomic()), m_dirs.z);
 }
+
+// ------------------------- CAPSULE COLLISIONS -------------------------------
 __device__
 void capsuleWallCollisionCap(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, int step){
 
@@ -303,6 +315,7 @@ void capsuleWallCollisionCap(ParticleCenter* pc_i,Wall wallData,dfloat displacem
 
 }
 
+// ------------------------ ELLIPSOID COLLISIONS ------------------------------
 __device__
 void ellipsoidWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, dfloat cr[1], int step){
 
@@ -408,178 +421,6 @@ void ellipsoidWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displaceme
     atomicAdd(&(pc_i->getMYatomic()), m_dirs.y);
     atomicAdd(&(pc_i->getMZatomic()), m_dirs.z);
 }
-
-__device__
-dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j) {
-    dfloat3 p1 = pc_i->getPos();
-    dfloat3 p2 = pc_j->getPos();
-
-    dfloat r1 = pc_i->getRadius();
-    dfloat r2 = pc_j->getRadius();
-
-    dfloat3 delta = p1 - p2;
-
-    #ifdef BC_X_PERIODIC
-        if(delta.x > NX / 2.0) delta.x -= NX;
-        if(delta.x < -NX / 2.0) delta.x += NX;
-    #endif
-    #ifdef BC_Y_PERIODIC
-        if(delta.y > NY / 2.0) delta.y -= NY;
-        if(delta.y < -NY / 2.0) delta.y += NY;
-    #endif
-    #ifdef BC_Z_PERIODIC
-        if(delta.z > NZ / 2.0) delta.z -= NZ;
-        if(delta.z < -NZ / 2.0) delta.z += NZ;
-    #endif
-
-    dfloat dist = sqrtf(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
-    
-    return dist - (r1 + r2);
-}
-
-__device__
-dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB, dfloat3 closestOnAB[1]) {
-    dfloat minDist = 1E+37;  // Initialize to a large value
-    dfloat3 bestClosestOnAB;
-    int dx = 0, dy = 0, dz = 0;
-
-    // Loop over periodic offsets in x, y, and z if periodic boundary conditions are enabled
-    #ifdef BC_X_PERIODIC
-    for (dx = -1; dx <= 1; dx++) {
-    #endif
-        #ifdef BC_Y_PERIODIC
-        for (dy = -1; dy <= 1; dy++) {
-        #endif
-            #ifdef BC_Z_PERIODIC
-            for (dz = -1; dz <= 1; dz++) {
-            #endif
-                // Translate the segment by the periodic offsets
-                dfloat3 segA_translated = segA + dfloat3(dx * NX, dy * NY, dz * NZ);
-                dfloat3 segB_translated = segB + dfloat3(dx * NX, dy * NY, dz * NZ);
-
-                // Compute the closest point on the translated segment
-                dfloat3 ab = segB_translated - segA_translated;
-                dfloat3 ap = p - segA_translated;
-                dfloat t = dot_product(ap, ab) / dot_product(ab, ab);
-                t = myMax(0, myMin(1, t));  // Clamp t to [0, 1]
-
-                dfloat3 tempClosestOnAB = segA_translated + ab * t;
-                dfloat dist = vector_length(p - tempClosestOnAB);
-
-                // Update the minimum distance and store the closest point
-                if (dist < minDist) {
-                    minDist = dist;
-                    bestClosestOnAB = tempClosestOnAB;
-                }
-
-            #ifdef BC_Z_PERIODIC
-            } // End Z loop
-            #endif
-        #ifdef BC_Y_PERIODIC
-        } // End Y loop
-        #endif
-    #ifdef BC_X_PERIODIC
-    } // End X loop
-    #endif
-
-    // Store the closest point on the segment
-    closestOnAB[0] = bestClosestOnAB;
-
-    // Return the minimum distance
-    return minDist;
-}
-// Project a point onto a segment and constrain it within the segment
-__device__
-dfloat3 constrain_to_segment(dfloat3 point, dfloat3 segStart, dfloat3 segEnd) {
-    dfloat3 segDir = segEnd - segStart;
-    dfloat segLengthSqr = dot_product(segDir,segDir);
-    if (segLengthSqr == 0.0) 
-        return segStart;  // The segment is a point
-
-    dfloat t = dot_product((point - segStart), segDir) / segLengthSqr;
-    t = clamp01(t);
-
-    return (segStart + (segDir * t));
-}
-// Main function to compute the closest distance between two segments and return the closest points
-__device__
-dfloat segment_segment_closest_points(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]) {
-
-    dfloat3 segDC = (q2 - p2);  // Vector from p2 to q2 (segment [p2, q2])
-    dfloat lineDirSqrMag = dot_product(segDC,segDC);  // Square magnitude of segment [p2, q2]
-
-    // Project p1 and q1 onto the plane defined by segment [p2, q2]
-    dfloat3 inPlaneA = p1 - ((dot_product(p1-p2,segDC)/lineDirSqrMag)*segDC);
-    dfloat3 inPlaneB = q1 - ((dot_product(q1-p2,segDC)/lineDirSqrMag)*segDC);
-    dfloat3 inPlaneBA = (inPlaneB - inPlaneA);
-    dfloat t = dot_product(p2-inPlaneA,inPlaneBA) / dot_product(inPlaneBA, inPlaneBA);
-
-
-    if (dot_product(inPlaneBA, inPlaneBA) == 0.0) {
-        t = 0.0;  // Handle case where inPlaneA and inPlaneB are the same (segments are parallel)
-    }
-
-    // Find the closest point on segment [p1, q1] to the line [p2, q2]
-    dfloat3 segABtoLineCD = p1 + clamp01(t)*(q1-p1);
-
-    // Constrain the result to segment [p2, q2]
-    closestOnCD[0] = constrain_to_segment(segABtoLineCD, p2, q2);
-
-    // Constrain the closest point on segment [p2, q2] back to segment [p1, q1]
-    closestOnAB[0] = constrain_to_segment(closestOnCD[0], p1, q1);
-
-
-    // Calculate the distance between the closest points on the two segments
-    dfloat3 diff = vector_length(closestOnAB[0] - closestOnCD[0]);
-    return vector_length(diff);  // Return the distance between the closest points
-}
-__device__
-dfloat segment_segment_closest_points_periodic(dfloat3 p1, dfloat3 q1, dfloat3 p2, dfloat3 q2, dfloat3 closestOnAB[1], dfloat3 closestOnCD[1]){
-    dfloat minDist = 1E+37;  // Initialize to a large value
-    dfloat3 bestClosestOnAB, bestClosestOnCD;
-    int dx = 0;
-    int dy = 0;
-    int dz = 0;
-    #ifdef BC_X_PERIODIC
-    for ( dx = -1; dx <= 1; dx++) {
-    #endif
-        #ifdef BC_Y_PERIODIC
-        for ( dy = -1; dy <= 1; dy++) {
-        #endif
-            #ifdef BC_Z_PERIODIC
-            for ( dz = -1; dz <= 1; dz++) {
-            #endif
-                // Translate segment [p2, q2] by periodic offsets
-                dfloat3 p2_translated = p2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
-                dfloat3 q2_translated = q2 + dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
-
-                // Compute closest points between segment [p1, q1] and translated segment [p2_translated, q2_translated]
-                dfloat3 tempClosestOnAB, tempClosestOnCD;
-                dfloat dist = segment_segment_closest_points(p1, q1, p2_translated, q2_translated, &tempClosestOnAB, &tempClosestOnCD);
-                // Update minimum distance and store the best closest points
-                if (dist < minDist) {
-                    minDist = dist;
-                    bestClosestOnAB = tempClosestOnAB;
-                    bestClosestOnCD = tempClosestOnCD;
-                }
-
-            #ifdef BC_Z_PERIODIC
-            }
-            #endif
-        #ifdef BC_Y_PERIODIC
-        }
-        #endif
-
-    #ifdef BC_X_PERIODIC
-    }
-    #endif
-    closestOnAB[0] = bestClosestOnAB;
-    closestOnCD[0] = bestClosestOnCD;
-
-    return minDist;  // Return the minimum distance between the segments
-}
-
-//ellipsoid functions
 __device__
 dfloat ellipsoidWallCollisionDistance( ParticleCenter* pc_i, Wall wallData,dfloat3 contactPoint2[1], dfloat radius[1], unsigned int step){
     //contruct rotation matrix
@@ -652,240 +493,12 @@ dfloat ellipsoidWallCollisionDistance( ParticleCenter* pc_i, Wall wallData,dfloa
     return dist;
 
 }
-__device__
-dfloat3 ellipsoid_intersection(ParticleCenter* pc_i, dfloat R[3][3],dfloat3 line_origin, dfloat3 line_dir,dfloat3 translation){
-    dfloat3 p0, p0_rotated, d_rotated;
-    dfloat A, B, C;
-    dfloat DELTA;
-    dfloat3 t;
 
-    dfloat3 center = pc_i->getPos() + translation;
+// ****************************************************************************
+// ************************   PARTICLE COLLISION   ****************************
+// ****************************************************************************
 
-    dfloat a_axis = vector_length(pc_i->getSemiAxis1()-pc_i->getPos());
-    dfloat b_axis = vector_length(pc_i->getSemiAxis2()-pc_i->getPos());
-    dfloat c_axis = vector_length(pc_i->getSemiAxis3()-pc_i->getPos());
-
-    p0 = line_origin - center; // Line origin relative to the ellipsoid center
-
-
-    // Apply rotation to the line origin
-    p0_rotated.x = R[0][0] * p0.x + R[0][1] * p0.y + R[0][2] * p0.z;
-    p0_rotated.y = R[1][0] * p0.x + R[1][1] * p0.y + R[1][2] * p0.z;
-    p0_rotated.z = R[2][0] * p0.x + R[2][1] * p0.y + R[2][2] * p0.z;
-
-    // Transform the line direction into the ellipsoid's coordinate system
-    d_rotated.x = R[0][0] * line_dir.x + R[0][1] * line_dir.y + R[0][2] * line_dir.z;
-    d_rotated.y = R[1][0] * line_dir.x + R[1][1] * line_dir.y + R[1][2] * line_dir.z;
-    d_rotated.z = R[2][0] * line_dir.x + R[2][1] * line_dir.y + R[2][2] * line_dir.z;
-
-
-
-    // Ellipsoid equation coefficients (in rotated space)
-    A = (d_rotated.x / a_axis) * (d_rotated.x / a_axis) + (d_rotated.y / b_axis) * (d_rotated.y / b_axis) + (d_rotated.z / c_axis) * (d_rotated.z / c_axis);
-    B = 2 * ((p0_rotated.x * d_rotated.x) / (a_axis * a_axis) + (p0_rotated.y * d_rotated.y) / (b_axis * b_axis) + (p0_rotated.z * d_rotated.z) / (c_axis * c_axis));
-    C = (p0_rotated.x / a_axis) * (p0_rotated.x / a_axis) + (p0_rotated.y / b_axis) * (p0_rotated.y / b_axis) + (p0_rotated.z / c_axis) * (p0_rotated.z / c_axis) - 1;
-
-    DELTA = B*B - 4*A*C;
-
-    t = dfloat3((-B + sqrtf(DELTA)) / (2.0 * A),(-B - sqrtf(DELTA)) / (2.0 * A),0);
-
-    return t;
-}
-__device__
-dfloat3 ellipsoid_normal(ParticleCenter* pc_i, dfloat R[3][3],dfloat3 point, dfloat radius[1],dfloat3 translation){
-    dfloat3 local_point;
-    dfloat3 grad_local;
-    dfloat3 normal;
-    dfloat norm;
-
-
-    dfloat3 center = pc_i->getPos() + translation;
-    
-    dfloat a_axis = vector_length(pc_i->getSemiAxis1()-pc_i->getPos());
-    dfloat b_axis = vector_length(pc_i->getSemiAxis2()-pc_i->getPos());
-    dfloat c_axis = vector_length(pc_i->getSemiAxis3()-pc_i->getPos());
-
-    // Transform the point into the ellipsoid's local coordinates
-    local_point.x = (R[0][0] * (point.x - center.x) + R[0][1] * (point.y - center.y) + R[0][2] * (point.z - center.z));
-    local_point.y = (R[1][0] * (point.x - center.x) + R[1][1] * (point.y - center.y) + R[1][2] * (point.z - center.z));
-    local_point.z = (R[2][0] * (point.x - center.x) + R[2][1] * (point.y - center.y) + R[2][2] * (point.z - center.z));
-
-    dfloat a4 = a_axis*a_axis*a_axis*a_axis;
-    dfloat b4 = b_axis*b_axis*b_axis*b_axis;
-    dfloat c4 = c_axis*c_axis*c_axis*c_axis;
-
-
-    radius[0] = (a_axis*b_axis*c_axis*(a4*b4*local_point.z*local_point.z + a4*c4*local_point.y*local_point.y+ b4*c4*local_point.x*local_point.x))/(a4*b4*c4);
-
-    // Compute the gradient in local coordinates
-    grad_local.x = 2 * local_point.x / (a_axis * a_axis);
-    grad_local.y = 2 * local_point.y / (b_axis * b_axis);
-    grad_local.z = 2 * local_point.z / (c_axis * c_axis);
-
-    // Transform the gradient back to global coordinates
-    normal.x = R[0][0] * grad_local.x + R[1][0] * grad_local.y + R[2][0] * grad_local.z;
-    normal.y = R[0][1] * grad_local.x + R[1][1] * grad_local.y + R[2][1] * grad_local.z;
-    normal.z = R[0][2] * grad_local.x + R[1][2] * grad_local.y + R[2][2] * grad_local.z;
-
-    // Normalize the normal vector
-    norm = sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
-    if (norm > 0) { // Avoid division by zero
-        normal.x /= norm;
-        normal.y /= norm;
-        normal.z /= norm;
-    }
-
-
-    return normal;
-}
-
-__device__
-dfloat ellipsoidEllipsoidCollisionDistance( ParticleCenter* pc_i, ParticleCenter* pc_j,dfloat3 contactPoint1[1], dfloat3 contactPoint2[1], dfloat cr1[1], dfloat cr2[1], dfloat3 translation, unsigned int step){
-    dfloat R1[3][3];
-    dfloat R2[3][3];
-    dfloat dist, error;
-    dfloat3 new_sphere_center1, new_sphere_center2;
-    dfloat3 closest_point1, closest_point2;
-
-    //obtain semi-axis values
-    dfloat a1 = vector_length(pc_i->getSemiAxis1()-pc_i->getPos());
-    dfloat b1 = vector_length(pc_i->getSemiAxis2()-pc_i->getPos());
-    dfloat c1 = vector_length(pc_i->getSemiAxis3()-pc_i->getPos());
-    
-    dfloat a2 = vector_length(pc_j->getSemiAxis1()-pc_j->getPos());
-    dfloat b2 = vector_length(pc_j->getSemiAxis2()-pc_j->getPos());
-    dfloat c2 = vector_length(pc_j->getSemiAxis3()-pc_j->getPos());
-
-
-    //obtain rotation matrix
-    rotationMatrixFromVectors((pc_i->getSemiAxis1() - pc_i->getPos())/a1,(pc_i->getSemiAxis2() - pc_i->getPos())/b1,(pc_i->getSemiAxis3() - pc_i->getPos())/c1,R1);
-    rotationMatrixFromVectors((pc_j->getSemiAxis1() - pc_j->getPos())/a2,(pc_j->getSemiAxis2() - pc_j->getPos())/b2,(pc_j->getSemiAxis3() - pc_j->getPos())/c2,R2);
-
-    dfloat3 dir = (pc_j->getPos() + translation) - pc_i->getPos();
-
-    dfloat3 t1 = ellipsoid_intersection(pc_i,R1,pc_i->getPos(),dir,dfloat3(0,0,0));
-    dfloat3 t2 = ellipsoid_intersection(pc_j,R2,pc_i->getPos(),dir,translation);
-
-    computeContactPoints(pc_i->getPos(), dir, t1,  t2, &closest_point1, &closest_point2);
-
-    dfloat r = 3; //TODO FIND A BETTER WAY TO GET THE BEST RADIUS FOR THIS DETECTION
-
-
-    //compute normal vector at intersection
-    dfloat3 normal1 = ellipsoid_normal(pc_i,R1,closest_point1,cr1,dfloat3(0,0,0));
-    dfloat3 normal2 = ellipsoid_normal(pc_j,R2,closest_point2,cr2,translation);
-    dfloat3 sphere_center1 = closest_point1 - r * normal1;
-    dfloat3 sphere_center2 = closest_point2 - r * normal2;
-
-
-    //Iteration loop
-    dfloat max_iters = 20;
-    dfloat tolerance = 1e-3;
-    for(int i = 0; i< max_iters;i++){
-         dir = sphere_center2 - sphere_center1;
-         
-        t1 = ellipsoid_intersection(pc_i,R1,sphere_center1,dir,dfloat3(0,0,0));
-        t2 = ellipsoid_intersection(pc_j,R2,sphere_center1,dir,translation);
-
-        computeContactPoints(sphere_center1, dir, t1, t2, &closest_point1, &closest_point2);
-
-        normal1 = ellipsoid_normal(pc_i,R1,closest_point1,cr1,dfloat3(0,0,0));
-        normal2 = ellipsoid_normal(pc_j,R2,closest_point2,cr2,translation);
-
-        new_sphere_center1 = closest_point1 - r * normal1;
-        new_sphere_center2 = closest_point2 - r * normal2;
-
-        error = vector_length(new_sphere_center2 - sphere_center2) + vector_length(new_sphere_center1 - sphere_center1);
-        //printf("error %d %f \n",error);
-        if (error < tolerance ){
-            break;      
-        }else{
-            //update values
-            sphere_center1 = new_sphere_center1;
-            sphere_center2 = new_sphere_center2;
-        }
-    }
-
-    contactPoint1[0] = closest_point1;
-    contactPoint2[0] = closest_point2;
-    dist = vector_length(sphere_center2 - sphere_center1) - 2*r;
-    return dist;
-
-}
-
-__device__
-void computeContactPoints(dfloat3 pos_i, dfloat3 dir, dfloat3 t1, dfloat3 t2, dfloat3 contactPoint1[1], dfloat3 contactPoint2[1])
-{
-
-
-    dfloat3 inter11 = pos_i + t1.x * dir;
-    dfloat3 inter12 = pos_i + t1.y * dir;
-    dfloat3 inter21 = pos_i + t2.x * dir;
-    dfloat3 inter22 = pos_i + t2.y * dir;
-
-    // compute distances
-    dfloat distances[2][2];
-    distances[0][0] = vector_length(inter11 - inter21);
-    distances[0][1] = vector_length(inter11 - inter22);
-    distances[1][0] = vector_length(inter12 - inter21);
-    distances[1][1] = vector_length(inter12 - inter22);
-
-    // find minimum distances
-    dfloat min_dist = 1e37;
-    int i_min = 0;
-    int j_min = 0;
-    if (distances[0][0] < min_dist)
-    {
-        min_dist = distances[0][0];
-        i_min = 0;
-        j_min = 0;
-    }
-    if (distances[0][1] < min_dist)
-    {
-        min_dist = distances[0][1];
-        i_min = 0;
-        j_min = 1;
-    }
-    if (distances[1][0] < min_dist)
-    {
-        min_dist = distances[1][0];
-        i_min = 1;
-        j_min = 0;
-    }
-    if (distances[1][1] < min_dist)
-    {
-        min_dist = distances[1][1];
-        i_min = 1;
-        j_min = 1;
-    }
-
-    switch (i_min * 2 + j_min)
-    {
-    case 0: // i_min = 0, j_min = 0
-        contactPoint1[0] = inter11;
-        contactPoint2[0] = inter21;
-        break;
-    case 1: // i_min = 0, j_min = 1
-        contactPoint1[0] = inter11;
-        contactPoint2[0] = inter22;
-        break;
-    case 2: // i_min = 1, j_min = 0
-        contactPoint1[0] = inter12;
-        contactPoint2[0] = inter21;
-        break;
-    case 3: // i_min = 1, j_min = 1
-        contactPoint1[0] = inter12;
-        contactPoint2[0] = inter22;
-        break;
-    default:
-        break;
-    }
-}
-
-// ------------------------------------------------------------------------ 
-// -------------------- SPHERE COLLISION ---------- -----------------------
-// ------------------------------------------------------------------------ 
-
+// -------------------------- SPHERE COLLISION --------------------------------
 __device__
 void sphereSphereCollision(unsigned int column,unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, int step){
     // Particle i info (column)
@@ -1079,10 +692,7 @@ void sphereSphereCollision(unsigned int column,unsigned int row, ParticleCenter*
 
 }
 
-// ------------------------------------------------------------------------ 
-// -------------------- CAPSULE COLLISIONS -------- -----------------------
-// ------------------------------------------------------------------------ 
-
+// ------------------------- CAPSULE COLLISIONS -------------------------------
 __device__
 void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCenter* pc_i,  ParticleCenter* pc_j, dfloat3 closestOnA[1], dfloat3 closestOnB[1], int step){
     // Particle i info (column)
@@ -1266,10 +876,7 @@ void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCent
     atomicAdd(&(pc_j->getMZatomic()), m_dirs_j.z); 
 }
 
-// ------------------------------------------------------------------------ 
-// -------------------- ELLIPSOID COLLISIONS ------------------------------
-// ------------------------------------------------------------------------ 
-
+// ------------------------ ELLIPSOID COLLISIONS ------------------------------
 __device__
 void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, ParticleCenter*  pc_i, ParticleCenter*  pc_j,dfloat3 closestOnA[1], dfloat3 closestOnB[1], dfloat dist, dfloat cr1[1], dfloat cr2[1], dfloat3 translation, int step){
     // Particle i info (column)
@@ -1445,5 +1052,238 @@ void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, Particle
     atomicAdd(&(pc_j->getMZatomic()), m_dirs_j.z); 
 
 }
+
+
+// ****************************************************************************
+// ******************   AUXILIARY COLLISION FUNCTIONS  ************************
+// ****************************************************************************
+__device__
+dfloat3 ellipsoid_intersection(ParticleCenter* pc_i, dfloat R[3][3],dfloat3 line_origin, dfloat3 line_dir,dfloat3 translation){
+    dfloat3 p0, p0_rotated, d_rotated;
+    dfloat A, B, C;
+    dfloat DELTA;
+    dfloat3 t;
+
+    dfloat3 center = pc_i->getPos() + translation;
+
+    dfloat a_axis = vector_length(pc_i->getSemiAxis1()-pc_i->getPos());
+    dfloat b_axis = vector_length(pc_i->getSemiAxis2()-pc_i->getPos());
+    dfloat c_axis = vector_length(pc_i->getSemiAxis3()-pc_i->getPos());
+
+    p0 = line_origin - center; // Line origin relative to the ellipsoid center
+
+
+    // Apply rotation to the line origin
+    p0_rotated.x = R[0][0] * p0.x + R[0][1] * p0.y + R[0][2] * p0.z;
+    p0_rotated.y = R[1][0] * p0.x + R[1][1] * p0.y + R[1][2] * p0.z;
+    p0_rotated.z = R[2][0] * p0.x + R[2][1] * p0.y + R[2][2] * p0.z;
+
+    // Transform the line direction into the ellipsoid's coordinate system
+    d_rotated.x = R[0][0] * line_dir.x + R[0][1] * line_dir.y + R[0][2] * line_dir.z;
+    d_rotated.y = R[1][0] * line_dir.x + R[1][1] * line_dir.y + R[1][2] * line_dir.z;
+    d_rotated.z = R[2][0] * line_dir.x + R[2][1] * line_dir.y + R[2][2] * line_dir.z;
+
+
+
+    // Ellipsoid equation coefficients (in rotated space)
+    A = (d_rotated.x / a_axis) * (d_rotated.x / a_axis) + (d_rotated.y / b_axis) * (d_rotated.y / b_axis) + (d_rotated.z / c_axis) * (d_rotated.z / c_axis);
+    B = 2 * ((p0_rotated.x * d_rotated.x) / (a_axis * a_axis) + (p0_rotated.y * d_rotated.y) / (b_axis * b_axis) + (p0_rotated.z * d_rotated.z) / (c_axis * c_axis));
+    C = (p0_rotated.x / a_axis) * (p0_rotated.x / a_axis) + (p0_rotated.y / b_axis) * (p0_rotated.y / b_axis) + (p0_rotated.z / c_axis) * (p0_rotated.z / c_axis) - 1;
+
+    DELTA = B*B - 4*A*C;
+
+    t = dfloat3((-B + sqrtf(DELTA)) / (2.0 * A),(-B - sqrtf(DELTA)) / (2.0 * A),0);
+
+    return t;
+}
+__device__
+dfloat3 ellipsoid_normal(ParticleCenter* pc_i, dfloat R[3][3],dfloat3 point, dfloat radius[1],dfloat3 translation){
+    dfloat3 local_point;
+    dfloat3 grad_local;
+    dfloat3 normal;
+    dfloat norm;
+
+
+    dfloat3 center = pc_i->getPos() + translation;
+    
+    dfloat a_axis = vector_length(pc_i->getSemiAxis1()-pc_i->getPos());
+    dfloat b_axis = vector_length(pc_i->getSemiAxis2()-pc_i->getPos());
+    dfloat c_axis = vector_length(pc_i->getSemiAxis3()-pc_i->getPos());
+
+    // Transform the point into the ellipsoid's local coordinates
+    local_point.x = (R[0][0] * (point.x - center.x) + R[0][1] * (point.y - center.y) + R[0][2] * (point.z - center.z));
+    local_point.y = (R[1][0] * (point.x - center.x) + R[1][1] * (point.y - center.y) + R[1][2] * (point.z - center.z));
+    local_point.z = (R[2][0] * (point.x - center.x) + R[2][1] * (point.y - center.y) + R[2][2] * (point.z - center.z));
+
+    dfloat a4 = a_axis*a_axis*a_axis*a_axis;
+    dfloat b4 = b_axis*b_axis*b_axis*b_axis;
+    dfloat c4 = c_axis*c_axis*c_axis*c_axis;
+
+
+    radius[0] = (a_axis*b_axis*c_axis*(a4*b4*local_point.z*local_point.z + a4*c4*local_point.y*local_point.y+ b4*c4*local_point.x*local_point.x))/(a4*b4*c4);
+
+    // Compute the gradient in local coordinates
+    grad_local.x = 2 * local_point.x / (a_axis * a_axis);
+    grad_local.y = 2 * local_point.y / (b_axis * b_axis);
+    grad_local.z = 2 * local_point.z / (c_axis * c_axis);
+
+    // Transform the gradient back to global coordinates
+    normal.x = R[0][0] * grad_local.x + R[1][0] * grad_local.y + R[2][0] * grad_local.z;
+    normal.y = R[0][1] * grad_local.x + R[1][1] * grad_local.y + R[2][1] * grad_local.z;
+    normal.z = R[0][2] * grad_local.x + R[1][2] * grad_local.y + R[2][2] * grad_local.z;
+
+    // Normalize the normal vector
+    norm = sqrt(normal.x * normal.x + normal.y * normal.y + normal.z * normal.z);
+    if (norm > 0) { // Avoid division by zero
+        normal.x /= norm;
+        normal.y /= norm;
+        normal.z /= norm;
+    }
+
+
+    return normal;
+}
+__device__
+dfloat ellipsoidEllipsoidCollisionDistance( ParticleCenter* pc_i, ParticleCenter* pc_j,dfloat3 contactPoint1[1], dfloat3 contactPoint2[1], dfloat cr1[1], dfloat cr2[1], dfloat3 translation, unsigned int step){
+    dfloat R1[3][3];
+    dfloat R2[3][3];
+    dfloat dist, error;
+    dfloat3 new_sphere_center1, new_sphere_center2;
+    dfloat3 closest_point1, closest_point2;
+
+    //obtain semi-axis values
+    dfloat a1 = vector_length(pc_i->getSemiAxis1()-pc_i->getPos());
+    dfloat b1 = vector_length(pc_i->getSemiAxis2()-pc_i->getPos());
+    dfloat c1 = vector_length(pc_i->getSemiAxis3()-pc_i->getPos());
+    
+    dfloat a2 = vector_length(pc_j->getSemiAxis1()-pc_j->getPos());
+    dfloat b2 = vector_length(pc_j->getSemiAxis2()-pc_j->getPos());
+    dfloat c2 = vector_length(pc_j->getSemiAxis3()-pc_j->getPos());
+
+
+    //obtain rotation matrix
+    rotationMatrixFromVectors((pc_i->getSemiAxis1() - pc_i->getPos())/a1,(pc_i->getSemiAxis2() - pc_i->getPos())/b1,(pc_i->getSemiAxis3() - pc_i->getPos())/c1,R1);
+    rotationMatrixFromVectors((pc_j->getSemiAxis1() - pc_j->getPos())/a2,(pc_j->getSemiAxis2() - pc_j->getPos())/b2,(pc_j->getSemiAxis3() - pc_j->getPos())/c2,R2);
+
+    dfloat3 dir = (pc_j->getPos() + translation) - pc_i->getPos();
+
+    dfloat3 t1 = ellipsoid_intersection(pc_i,R1,pc_i->getPos(),dir,dfloat3(0,0,0));
+    dfloat3 t2 = ellipsoid_intersection(pc_j,R2,pc_i->getPos(),dir,translation);
+
+    computeContactPoints(pc_i->getPos(), dir, t1,  t2, &closest_point1, &closest_point2);
+
+    dfloat r = 3; //TODO FIND A BETTER WAY TO GET THE BEST RADIUS FOR THIS DETECTION
+
+
+    //compute normal vector at intersection
+    dfloat3 normal1 = ellipsoid_normal(pc_i,R1,closest_point1,cr1,dfloat3(0,0,0));
+    dfloat3 normal2 = ellipsoid_normal(pc_j,R2,closest_point2,cr2,translation);
+    dfloat3 sphere_center1 = closest_point1 - r * normal1;
+    dfloat3 sphere_center2 = closest_point2 - r * normal2;
+
+
+    //Iteration loop
+    dfloat max_iters = 20;
+    dfloat tolerance = 1e-3;
+    for(int i = 0; i< max_iters;i++){
+         dir = sphere_center2 - sphere_center1;
+         
+        t1 = ellipsoid_intersection(pc_i,R1,sphere_center1,dir,dfloat3(0,0,0));
+        t2 = ellipsoid_intersection(pc_j,R2,sphere_center1,dir,translation);
+
+        computeContactPoints(sphere_center1, dir, t1, t2, &closest_point1, &closest_point2);
+
+        normal1 = ellipsoid_normal(pc_i,R1,closest_point1,cr1,dfloat3(0,0,0));
+        normal2 = ellipsoid_normal(pc_j,R2,closest_point2,cr2,translation);
+
+        new_sphere_center1 = closest_point1 - r * normal1;
+        new_sphere_center2 = closest_point2 - r * normal2;
+
+        error = vector_length(new_sphere_center2 - sphere_center2) + vector_length(new_sphere_center1 - sphere_center1);
+        //printf("error %d %f \n",error);
+        if (error < tolerance ){
+            break;      
+        }else{
+            //update values
+            sphere_center1 = new_sphere_center1;
+            sphere_center2 = new_sphere_center2;
+        }
+    }
+
+    contactPoint1[0] = closest_point1;
+    contactPoint2[0] = closest_point2;
+    dist = vector_length(sphere_center2 - sphere_center1) - 2*r;
+    return dist;
+
+}
+__device__
+void computeContactPoints(dfloat3 pos_i, dfloat3 dir, dfloat3 t1, dfloat3 t2, dfloat3 contactPoint1[1], dfloat3 contactPoint2[1])
+{
+
+
+    dfloat3 inter11 = pos_i + t1.x * dir;
+    dfloat3 inter12 = pos_i + t1.y * dir;
+    dfloat3 inter21 = pos_i + t2.x * dir;
+    dfloat3 inter22 = pos_i + t2.y * dir;
+
+    // compute distances
+    dfloat distances[2][2];
+    distances[0][0] = vector_length(inter11 - inter21);
+    distances[0][1] = vector_length(inter11 - inter22);
+    distances[1][0] = vector_length(inter12 - inter21);
+    distances[1][1] = vector_length(inter12 - inter22);
+
+    // find minimum distances
+    dfloat min_dist = 1e37;
+    int i_min = 0;
+    int j_min = 0;
+    if (distances[0][0] < min_dist)
+    {
+        min_dist = distances[0][0];
+        i_min = 0;
+        j_min = 0;
+    }
+    if (distances[0][1] < min_dist)
+    {
+        min_dist = distances[0][1];
+        i_min = 0;
+        j_min = 1;
+    }
+    if (distances[1][0] < min_dist)
+    {
+        min_dist = distances[1][0];
+        i_min = 1;
+        j_min = 0;
+    }
+    if (distances[1][1] < min_dist)
+    {
+        min_dist = distances[1][1];
+        i_min = 1;
+        j_min = 1;
+    }
+
+    switch (i_min * 2 + j_min)
+    {
+    case 0: // i_min = 0, j_min = 0
+        contactPoint1[0] = inter11;
+        contactPoint2[0] = inter21;
+        break;
+    case 1: // i_min = 0, j_min = 1
+        contactPoint1[0] = inter11;
+        contactPoint2[0] = inter22;
+        break;
+    case 2: // i_min = 1, j_min = 0
+        contactPoint1[0] = inter12;
+        contactPoint2[0] = inter21;
+        break;
+    case 3: // i_min = 1, j_min = 1
+        contactPoint1[0] = inter12;
+        contactPoint2[0] = inter22;
+        break;
+    default:
+        break;
+    }
+}
+
 
 #endif //PARTICLE_MODEL

@@ -108,5 +108,15 @@ void capsuleSphereCollisionCheck( unsigned int column, unsigned int row, Particl
 __device__
 void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, ParticleCenter* pc_i,ParticleCenter* pc_j, int step);
 
+/**
+ *  @brief Compute the gap between two spheres.
+ *  @param pc_i: Pointer to the `ParticleCenter` structure containing information about the first sphere.
+ *  @param pc_j: Pointer to the `ParticleCenter` structure containing information about the second sphere.
+ *  @return The distance between the surfaces of the two spheres.
+ */
+__device__
+dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j);
+
+
 #endif //PARTICLE_MODEL
 #endif // !__COLLISION_H
