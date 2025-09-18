@@ -16,7 +16,16 @@
 *.exe
 doc/Reports/*
 doc/Requirements.docx
-bin/*
+bin/*.bat
+bin/*.csv
+bin/*.exe
+bin/*.exp
+bin/*.lib
+bin/**/*.txt
+bin/**/*.bin
+bin/**/*.vtr
+bin/**/*.vtk
+bin/**/*.csv
 src/CUDA/.vs/
 src/CUDA/x64
 *.vcxproj*
@@ -27,5 +36,3 @@ src/CUDA/x64
 *.test
 ./bin
 *.ptx
-
-bin/001sim_D3Q19_sm86.exe

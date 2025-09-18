@@ -1,3 +1,15 @@
+/**
+ *  @file saveData.cuh
+ *  Contributors history:
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @author Ricardo de Souza
+ *  @brief Save data
+ *  @version 0.4.0
+ *  @date 01/09/2025
+ */
+
+
 #ifndef __SAVE_DATA_H
 #define __SAVE_DATA_H
 
@@ -23,119 +35,88 @@
 #include "errorDef.h"
 #include "globalStructs.h"
 
+template<typename T>
+void writeBigEndian(std::ofstream& ofs, const T* data, size_t count);
 
-/*
-*   @brief Change field vector order to be used saved in binary
-*   @param h_fMom: host macroscopic field based on block and thread index
-*   @param rho: rho field
-*   @param ux: ux field
-*   @param uy: uy field
-*   @param uz: uz field
-*   @param nSteps: number of steps of the simulation
+
+/**
+ *  @brief Change field vector order to be used saved in binary
+ *  @param h_fMom: Pointer to the host array containing the current macroscopic moments.
+ *  @param rho: rho field
+ *  @param ux: ux field
+ *  @param uy: uy field
+ *  @param uz: uz field
+ *  @param step: Current time step
 */
 __host__
 void linearMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif 
+    #endif //SECOND_DIST
     #if NODE_TYPE_SAVE
     dfloat* nodeTypeSave,
     unsigned int* hNodeType,
-    #endif
+    #endif //NODE_TYPE_SAVE
     #if defined BC_FORCES && defined SAVE_BC_FORCES
     dfloat* h_BC_Fx,
     dfloat* h_BC_Fy,
     dfloat* h_BC_Fz,
-    #endif
+    #endif // BC_FORCES && SAVE_BC_FORCES
     unsigned int step
 );
 
-/*
-__host__
-void loadMoments(
-    dfloat* h_fMom,
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz, OMEGA_FIELD_PARAMS_DECLARATION
-    #ifdef SECOND_DIST
-    dfloat* C
-    #endif 
-);
 
-__host__
-void loadSimField(
-    dfloat* h_fMom,
-    dfloat* rho,
-    dfloat* ux,
-    dfloat* uy,
-    dfloat* uz,
-    OMEGA_FIELD_PARAMS_DECLARATION
-    #ifdef SECOND_DIST
-    dfloat* C
-    #endif 
-);
-
-void loadVarBin(
-    std::string strFile, 
-    dfloat* var, 
-    size_t memSize,
-    bool append);
-*/
-
-/*
-*   @brief Save all macroscopics in binary format
-*   @param rho: rho field
-*   @param ux: ux field
-*   @param uy: uy field
-*   @param uz: uz field
-*   @param nSteps: number of steps of the simulation
-*   @obs Check CPU endianess
-*   @obs The initial position of the array is x=0 and y=0 and z=0, 
-*        so the variables starts on SWF and ends in NEB
+/**
+ *  @brief Save all macroscopics in binary format
+ *  @param rho: rho field
+ *  @param ux: ux field
+ *  @param uy: uy field
+ *  @param uz: uz field
+ *  @param hNodeType: Pointer to the host array containing the current node types.
+ *  @param nSteps: number of steps of the simulation
 */
 __host__
 void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, unsigned int* hNodeType, OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif 
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST 
     dfloat* Axx,
-    #endif
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST 
     dfloat* Axy,
-    #endif
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST 
     dfloat* Axz,
-    #endif
+    #endif //A_XZ_DIST
     #ifdef A_YY_DIST 
     dfloat* Ayy,
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST 
     dfloat* Ayz,
-    #endif
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST 
     dfloat* Azz,
-    #endif
+    #endif //A_ZZ_DIST
     #ifdef LOG_CONFORMATION
         #ifdef A_XX_DIST
         dfloat* Cxx,
-        #endif
+        #endif //A_XX_DIST
         #ifdef A_XY_DIST
         dfloat* Cxy,
-        #endif
+        #endif //A_XY_DIST
         #ifdef A_XZ_DIST
         dfloat* Cxz,
-        #endif
+        #endif //A_XZ_DIST
         #ifdef A_YY_DIST
         dfloat* Cyy,
-        #endif
+        #endif //A_YY_DIST
         #ifdef A_YZ_DIST
         dfloat* Cyz,
-        #endif
+        #endif //A_YZ_DIST
         #ifdef A_ZZ_DIST
         dfloat* Czz,
-        #endif
+        #endif //A_ZZ_DIST
     #endif //LOG_CONFORMATION
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
@@ -143,11 +124,11 @@ void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, u
 );
 
 /*
-*   @brief Save array content to binary file
-*   @param strFile: filename to save
-*   @param var: float variable to save
-*   @param memSize: sizeof var
-*   @param append: content must be appended to file or overwrite
+ *  @brief Save array content to binary file
+ *  @param strFile: filename to save
+ *  @param var: float variable to save
+ *  @param memSize: sizeof var
+ *  @param append: content must be appended to file or overwrite
 */
 void saveVarBin(
     std::string strFile, 
@@ -156,12 +137,10 @@ void saveVarBin(
     bool append
 );
 
-template<typename T>
-void writeBigEndian(std::ofstream& ofs, const T* data, size_t count);
 
 /*
-*   @brief Save field on vtk file
-*   @param var_name: name of the variable
+ *  @brief Save field on vtk file
+ *  @param var_name: name of the variable
 */
 void saveVarVTK(
     std::string strFileVtk, 
@@ -172,36 +151,41 @@ void saveVarVTK(
     OMEGA_FIELD_PARAMS_DECLARATION
     #ifdef SECOND_DIST 
     dfloat* C,
-    #endif
+    #endif //SECOND_DIST
     #ifdef A_XX_DIST 
     dfloat* Axx,
-    #endif
+    #endif //A_XX_DIST
     #ifdef A_XY_DIST 
     dfloat* Axy,
-    #endif
+    #endif //A_XY_DIST
     #ifdef A_XZ_DIST 
     dfloat* Axz,
-    #endif
+    #endif //A_XZ_DIST
     #ifdef A_YY_DIST 
     dfloat* Ayy,
-    #endif
+    #endif //A_YY_DIST
     #ifdef A_YZ_DIST 
     dfloat* Ayz,
-    #endif
+    #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST 
     dfloat* Azz,
-    #endif
+    #endif //A_ZZ_DIST
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps
 );
 
-/*
-*   @brief Get variable filename
-*   @param var_name: name of the variable
-*   @param step: steps number of the file
-*   @param ext: file extension (with dot, e.g. ".bin", ".csv")
-*   @return filename string
+/**
+ *  @brief Setup folder to save variables
+*/
+void folderSetup();
+
+/**
+ *  @brief Get variable filename
+ *  @param var_name: name of the variable
+ *  @param step: steps number of the file
+ *  @param ext: file extension (with dot, e.g. ".bin", ".csv")
+ *  @return filename string
 */
 std::string getVarFilename(
     const std::string varName, 
@@ -209,33 +193,30 @@ std::string getVarFilename(
     const std::string ext
 );
 
-/*
-*   @brief Setup folder to save variables
-*/
-void folderSetup();
-
-/*
+/**
 *   Get string with simulation information
-*   @param step: simulation's step
-*   @return string with simulation info
+ *  @param step: simulation's step
+ *  @param MLUPS: Mega Lattice Updates Per Second
+ *  @return string with simulation info
 */
 std::string getSimInfoString(int step,dfloat MLUPS);
 
-/*
+/**
 *   Save simulation's information
-*   @param info: simulation's informations
+ *  @param info: simulation's informations
+ *  @param MLUPS: Mega Lattice Updates Per Second
 */
 void saveSimInfo(int step,dfloat MLUPS);
 
 
 
-/*
-*   @brief Saves in a ".txt" file the required treated data
-*   @param fileName: primary file name
-*   @param dataString: dataString to be saved
-*   @param step: time step
+/**
+ *  @brief Saves in a ".txt" file the required treated data
+ *  @param fileName: primary file name
+ *  @param dataString: dataString to be saved
+ *  @param step: time step
 */
 void saveTreatData(std::string fileName, std::string dataString, int step);
 
 
-#endif __SAVE_DATA_H
+#endif //__SAVE_DATA_H

@@ -37,56 +37,53 @@ __global__ void gpuInitialization_mom(
     size_t index = idxScalarGlobal(x, y, z);
 
     //first moments
-    dfloat rho, ux, uy, uz;
+    dfloat rho = RHO_0, ux = U_0_X, uy = U_0_Y, uz = U_0_Z;
     #ifdef OMEGA_FIELD
     dfloat omega;
     #endif
     #ifdef SECOND_DIST 
-    dfloat cVar = 1.0, qx_t30 = 0.0, qy_t30 = 0.0, qz_t30 = 0.0;
+    dfloat cVar = 1.0;
+    dfloat qx_t30 = 3.0*cVar*(ux - 0.0);
+    dfloat qy_t30 = 3.0*cVar*(uy - 0.0);
+    dfloat qz_t30 = 3.0*cVar*(uz - 0.0);
     #endif
-    #ifndef  LOG_CONFORMATION
+    #ifdef  CONFORMATION_TENSOR
+        //assuming that velocity has grad = 0 
         #ifdef A_XX_DIST 
-        dfloat AxxVar = 1.0, Axx_qx_t30 = 0.0, Axx_qy_t30 = 0.0, Axx_qz_t30 = 0.0;
+        dfloat AxxVar = 1.0 + CONF_ZERO; 
+        dfloat Axx_qx_t30 = 3.0*AxxVar*(ux + 0.0);
+        dfloat Axx_qy_t30 = 3.0*AxxVar*(uy + 0.0);
+        dfloat Axx_qz_t30 = 3.0*AxxVar*(uz + 0.0);
         #endif
         #ifdef A_XY_DIST 
-        dfloat AxyVar = 1.0, Axy_qx_t30 = 0.0, Axy_qy_t30 = 0.0, Axy_qz_t30 = 0.0;
+        dfloat AxyVar = 1.0 + CONF_ZERO;
+        dfloat Axy_qx_t30 = 3.0*AxyVar*(ux + 0.0);
+        dfloat Axy_qy_t30 = 3.0*AxyVar*(uy + 0.0);
+        dfloat Axy_qz_t30 = 3.0*AxyVar*(uz + 0.0);
         #endif
         #ifdef A_XZ_DIST 
-        dfloat AxzVar = 1.0, Axz_qx_t30 = 0.0, Axz_qy_t30 = 0.0, Axz_qz_t30 = 0.0;
+        dfloat AxzVar = 1.0 + CONF_ZERO;
+        dfloat Axz_qx_t30 = 3.0*AxzVar*(ux + 0.0);
+        dfloat Axz_qy_t30 = 3.0*AxzVar*(uy + 0.0);
+        dfloat Axz_qz_t30 = 3.0*AxzVar*(uz + 0.0);
         #endif
         #ifdef A_YY_DIST 
-        dfloat AyyVar = 1.0, Ayy_qx_t30 = 0.0, Ayy_qy_t30 = 0.0, Ayy_qz_t30 = 0.0;
+        dfloat AyyVar = 1.0 + CONF_ZERO;
+        dfloat Ayy_qx_t30 = 3.0*AyyVar*(ux + 0.0);
+        dfloat Ayy_qy_t30 = 3.0*AyyVar*(uy + 0.0);
+        dfloat Ayy_qz_t30 = 3.0*AyyVar*(uz + 0.0);
         #endif
         #ifdef A_YZ_DIST 
-        dfloat AyzVar = 1.0, Ayz_qx_t30 = 0.0, Ayz_qy_t30 = 0.0, Ayz_qz_t30 = 0.0;
+        dfloat AyzVar = 1.0 + CONF_ZERO;
+        dfloat Ayz_qx_t30 = 3.0*AyzVar*(ux + 0.0);
+        dfloat Ayz_qy_t30 = 3.0*AyzVar*(uy + 0.0);
+        dfloat Ayz_qz_t30 = 3.0*AyzVar*(uz + 0.0);
         #endif
         #ifdef A_ZZ_DIST 
-        dfloat AzzVar = 1.0, Azz_qx_t30 = 0.0, Azz_qy_t30 = 0.0, Azz_qz_t30 = 0.0;
-        #endif
-    #else
-        #ifdef A_XX_DIST 
-        dfloat AxxVar = 0.0, Axx_qx_t30 = 0.0, Axx_qy_t30 = 0.0, Axx_qz_t30 = 0.0;
-        dfloat Cxx = 1.0;
-        #endif
-        #ifdef A_XY_DIST 
-        dfloat AxyVar = 0.0, Axy_qx_t30 = 0.0, Axy_qy_t30 = 0.0, Axy_qz_t30 = 0.0;
-        dfloat Cxy = 1.0;
-        #endif
-        #ifdef A_XZ_DIST 
-        dfloat AxzVar = 0.0, Axz_qx_t30 = 0.0, Axz_qy_t30 = 0.0, Axz_qz_t30 = 0.0;
-        dfloat Cxz = 1.0;
-        #endif
-        #ifdef A_YY_DIST 
-        dfloat AyyVar = 0.0, Ayy_qx_t30 = 0.0, Ayy_qy_t30 = 0.0, Ayy_qz_t30 = 0.0;
-        dfloat Cyy = 1.0;
-        #endif
-        #ifdef A_YZ_DIST 
-        dfloat AyzVar = 0.0, Ayz_qx_t30 = 0.0, Ayz_qy_t30 = 0.0, Ayz_qz_t30 = 0.0;
-        dfloat Cyz = 1.0;
-        #endif
-        #ifdef A_ZZ_DIST 
-        dfloat AzzVar = 0.0, Azz_qx_t30 = 0.0, Azz_qy_t30 = 0.0, Azz_qz_t30 = 0.0;
-        dfloat Czz = 1.0;
+        dfloat AzzVar = 1.0 + CONF_ZERO;
+        dfloat Azz_qx_t30 = 3.0*AzzVar*(ux + 0.0);
+        dfloat Azz_qy_t30 = 3.0*AzzVar*(uy + 0.0);
+        dfloat Azz_qz_t30 = 3.0*AzzVar*(uz + 0.0);
         #endif
     #endif
 
@@ -131,16 +128,11 @@ __global__ void gpuInitialization_mom(
 
     #ifdef OMEGA_FIELD
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_OMEGA_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = omega;
-    #endif   
+    #endif 
+    
+    
     #ifdef SECOND_DIST 
-
-
     dfloat invC= 1.0/cVar;
-
-    //TODO: fix initialization when a flux exist, since i initialize with zero, there is no problem currently
-    dfloat udx_t30 = G_DIFF_FLUC_COEF * (qx_t30*invC*0.0 - ux*F_M_I_SCALE);
-    dfloat udy_t30 = G_DIFF_FLUC_COEF * (qy_t30*invC*0.0 - uy*F_M_I_SCALE);
-    dfloat udz_t30 = G_DIFF_FLUC_COEF * (qz_t30*invC*0.0 - uz*F_M_I_SCALE);
 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = cVar;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M2_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = qx_t30;
@@ -154,10 +146,10 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qz_t30;
-        #ifdef LOG_CONFORMATION
-            fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XX_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxx;
-            fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XX_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxx;
-        #endif
+    #ifdef LOG_CONFORMATION
+        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XX_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxx;
+        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XX_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxx;
+    #endif
     #endif 
     #ifdef A_XY_DIST 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  AxyVar;
@@ -214,6 +206,13 @@ __global__ void gpuInitialization_mom(
         fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_ZZ_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Czz;
     #endif
     #endif
+
+    #ifdef LOCAL_FORCES
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FX;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FY;
+    fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FZ_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = FZ;
+    #endif 
+
 
 }
 
@@ -920,24 +919,6 @@ __global__ void gpuInitialization_nodeType(
     dNodeType[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = nodeType;
 }
 
-
-__global__ void gpuInitialization_force(
-    dfloat *d_BC_Fx, dfloat* d_BC_Fy, dfloat* d_BC_Fz)
-{
-    int x = threadIdx.x + blockDim.x * blockIdx.x;
-    int y = threadIdx.y + blockDim.y * blockIdx.y;
-    int z = threadIdx.z + blockDim.z * blockIdx.z;
-    if (x >= NX || y >= NY || z >= NZ)
-        return;
-
-    size_t index = idxScalarGlobal(x, y, z);
-
-    d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
-    d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
-    d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0; 
-}
-
-
 __host__ void hostInitialization_nodeType_bulk(
     unsigned int *hNodeType)
 {
@@ -953,7 +934,6 @@ __host__ void hostInitialization_nodeType_bulk(
     }
     printf("bulk done\n");
 }
-
 
 __host__ void hostInitialization_nodeType(
     unsigned int *hNodeType)
@@ -971,9 +951,24 @@ __host__ void hostInitialization_nodeType(
         }
     }
 
-    printf("boundary condition done\n");
+    printf("Setting boundary condition completed\n");
 }
 
+__global__ void gpuInitialization_force(
+    dfloat *d_BC_Fx, dfloat* d_BC_Fy, dfloat* d_BC_Fz)
+{
+    int x = threadIdx.x + blockDim.x * blockIdx.x;
+    int y = threadIdx.y + blockDim.y * blockIdx.y;
+    int z = threadIdx.z + blockDim.z * blockIdx.z;
+    if (x >= NX || y >= NY || z >= NZ)
+        return;
+
+    size_t index = idxScalarGlobal(x, y, z);
+
+    d_BC_Fx[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    d_BC_Fy[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0;
+    d_BC_Fz[idxScalarBlock(threadIdx.x, threadIdx.y, threadIdx.z,blockIdx.x, blockIdx.y, blockIdx.z)] = 0.0; 
+}
 
 void read_xyz_file(
     const std::string& filename,
@@ -1010,7 +1005,6 @@ void read_xyz_file(
 
 
         index = idxScalarBlock(x % BLOCK_NX, y % BLOCK_NY, z % BLOCK_NZ, x / BLOCK_NX, y / BLOCK_NY, z / BLOCK_NZ);
-        //printf("x %d y %d z %d \n",x,y,z); fflush(stdout);
         dNodeType[idxScalarBlock(x % BLOCK_NX, y % BLOCK_NY, z % BLOCK_NZ, x / BLOCK_NX, y / BLOCK_NY, z / BLOCK_NZ)] = SOLID_NODE;
 
 
@@ -1038,22 +1032,6 @@ void read_xyz_file(
     printf("voxels imported \n");
 }
 
-/*
-void define_voxel_bc(
-    unsigned int *dNodeType
-){
-    for(int x= 0;x<NX;x++){
-        for(int y =0; y<NY;y++){
-            for(int z =0; z<NZ_TOTAL;z++){
-                unsigned int index = idxScalarBlock(x%BLOCK_NX, y%BLOCK_NY, z%BLOCK_NZ, x/BLOCK_NX, y/BLOCK_NY, z/BLOCK_NZ);
-                if(dNodeType[index] == MISSING_DEFINITION){
-                    dNodeType[index] = bc_id(dNodeType,x,y,z);
-                }
-            }
-        }
-    }
-}
-*/
 
 __global__ 
 void define_voxel_bc(

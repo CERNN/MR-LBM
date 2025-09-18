@@ -1,3 +1,14 @@
+/**
+ *  @file var.h
+ *  Contributors history:
+ *  @author Waine Jr. (waine@alunos.utfpr.edu.br)
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @brief Global variables
+ *  @version 0.4.0
+ *  @date 01/09/2025
+ */
+
+
 #ifndef __VAR_H
 #define __VAR_H
 
@@ -14,17 +25,25 @@
 #ifdef SINGLE_PRECISION
     typedef float dfloat;      // single precision
     #define VTK_DFLOAT_TYPE "float"
-#endif
+#endif //SINGLE_PRECISION
 #ifdef DOUBLE_PRECISION
     typedef double dfloat;      // double precision
     #define VTK_DFLOAT_TYPE "double"
-#endif
+#endif //DOUBLE_PRECISION
 
+// Pow function to use
+#ifdef SINGLE_PRECISION
+    #define POW_FUNCTION powf 
+#else
+    #define POW_FUNCTION pow
+#endif //SINGLE_PRECISION
 
 
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
-#define BC_PROBLEM circularDuct
+
+#define BC_PROBLEM benchmark_ibm
+
                                 
 constexpr bool console_flush = false;
 
@@ -32,6 +51,8 @@ constexpr bool console_flush = false;
 
 
 /* --------------------------  SIMULATION DEFINES -------------------------- */
+constexpr unsigned int N_GPUS = 1;    // Number of GPUS to use
+constexpr unsigned int GPUS_TO_USE[N_GPUS] = {0};    // Which GPUs to use
 
 #define STR_IMPL(A) #A
 #define STR(A) STR_IMPL(A)
@@ -79,15 +100,17 @@ constexpr bool console_flush = false;
 #define COLREC_AZZ_COLLISION STR(COLREC_DIRECTORY/AIJ_SCALAR/collision.inc)
 
 
+#define CASE_PARTICLE_CREATE STR(../../CASE_DIRECTORY/BC_PROBLEM/particleCreation.inc)
+
 // Some compiler timer functions and auxiliaty compute macros
 
 #ifndef myMax
 #define myMax(a,b)            (((a) > (b)) ? (a) : (b))
-#endif
+#endif //!myMax
 
 #ifndef myMin
 #define myMin(a,b)            (((a) < (b)) ? (a) : (b))
-#endif
+#endif //!myMin
 
 
 constexpr dfloat constexprSqrt(dfloat x, dfloat curr, dfloat prev) {
@@ -108,6 +131,20 @@ constexpr dfloat invSqrtt(dfloat x) {
     return (x > 0 && x < std::numeric_limits<dfloat>::infinity())
         ? invSqrtNewton(x, 1.0 / x, 0)
         : std::numeric_limits<dfloat>::quiet_NaN();
+}
+
+// Use log(x) = 2 * ((x-1)/(x+1) + 1/3*((x-1)/(x+1))^3 + 1/5*((x-1)/(x+1))^5 + ...)
+constexpr dfloat constexprLn(dfloat x) {
+    return (x > 0) ? 2.0 * [&]() {
+        dfloat y = (x - 1.0) / (x + 1.0);
+        dfloat y_pow = y;
+        dfloat sum = y;
+        for (int n = 1; n < 50; ++n) {  // 50 terms
+            y_pow *= y * y;
+            sum += y_pow / (2*n + 1);
+        }
+        return sum;
+    }() : std::numeric_limits<dfloat>::quiet_NaN();
 }
 
 // Compile-time power of 2 checker
@@ -160,7 +197,7 @@ constexpr BlockDim findOptimalBlockDimensions(size_t maxElements) {
     return {bestX, bestY, bestZ};
 }
 
-// swap 32‐bit word
+// swap 32-bit word
 static inline uint32_t swap32(uint32_t v) {
     return  (v<<24) | 
            ((v<<8)&0x00FF0000) |
@@ -168,7 +205,7 @@ static inline uint32_t swap32(uint32_t v) {
             (v>>24);
 }
 
-// swap 64‐bit word
+// swap 64-bit word
 static inline uint64_t swap64(uint64_t v) {
     return  (v<<56) |
            ((v<<40)&0x00FF000000000000ULL) |
@@ -181,11 +218,12 @@ static inline uint64_t swap64(uint64_t v) {
 }
 
 
-#include CASE_MODEL
 #include CASE_CONSTANTS
+#include CASE_MODEL
 #include CASE_OUTPUTS
 
-#include "nnf.h"
+
 #include "definitions.h"
+#include "nnf.h"
 
 #endif //__VAR_H

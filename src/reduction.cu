@@ -30,6 +30,17 @@ https://docs.nvidia.com/cuda/eula/index.html
 
 */
 
+/**
+ *  @file reduction.cu
+ *  @brief Modified version of NVIDIA's parallel reduction sample
+ *  Contributors history:
+ *  @author Marco Aurelio Ferrari (e.marcoferrari@utfpr.edu.br)
+ *  @date 2025-08-31
+ *
+ * This file is based on NVIDIA sample code (parallel reduction),
+ * with modifications allow compute different flow metrics
+ */
+
 
 
 #include "reduction.cuh"
@@ -184,8 +195,8 @@ void sumReductionThread_SE(dfloat* g_idata, dfloat* g_odata)
         g_odata[bid] = sdata[0];
     }
 }
-#endif
-#endif
+#endif //CONFORMATION_TENSOR
+#endif //CONVECTION_DIFFUSION_TRANSPORT
 
 __global__ 
 void sumReductionScalar(dfloat* g_idata, dfloat* g_odata)

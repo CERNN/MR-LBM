@@ -58,24 +58,14 @@ dfloat Gxy =  ADU_DUTA_xy_t30/F_M_I_SCALE - inv_lambda * aa * AxyVar;
 dfloat Gxz =  ADU_DUTA_xz_t30/F_M_I_SCALE - inv_lambda * aa * AxzVar;
 dfloat Gyz =  ADU_DUTA_yz_t30/F_M_I_SCALE - inv_lambda * aa * AyzVar;
 
-//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XX_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xx;
-//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xy;
-//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_xz;
-//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_yy;
-//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_yz;
-//fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, G_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = switch_conf*G_zz;
-
-//if(x == 60 && y == 60 && z == 60)
-//    printf("step %d xx %f \n", step,G_xx);
-
 //compute the soource term for mass-momentum transport, eq36 malaspinas
 // rho.g = div * PI =  (mu/lambda)*(a*A - b*I)
 //F = (mu/lambda) * div(A) - div(I); but div(I) = 0
 //F = (mu/lambda)*div(A)
 
-L_Fx += (dAxxdx + dAxydy + dAxzdz)*(nu_p*inv_lambda)*switch_conf; //zero just to debug for now
-L_Fy += (dAxydx + dAyydy + dAyzdz)*(nu_p*inv_lambda)*switch_conf; //zero just to debug for now
-L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(nu_p*inv_lambda)*switch_conf; //zero just to debug for now
+L_Fx += (dAxxdx + dAxydy + dAxzdz)*(nu_p*inv_lambda)*switch_conf;
+L_Fy += (dAxydx + dAyydy + dAyzdz)*(nu_p*inv_lambda)*switch_conf;
+L_Fz += (dAxzdx + dAyzdy + dAzzdz)*(nu_p*inv_lambda)*switch_conf;
 
 
 AxxVar += CONF_ZERO;

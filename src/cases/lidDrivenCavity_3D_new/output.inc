@@ -1,6 +1,6 @@
 /* ----------------------------- OUTPUT DEFINES ---------------------------- */
 #define ID_SIM "000"            // prefix for simulation's files
-#define PATH_FILES "TEST"  // path to save simulation's files
+#define PATH_FILES "Turbulent_Bingham"  // path to save simulation's files
 #define TREATFIELD (false) //treat data over the entire field
 #define TREATPOINT (false) //treat data in a single or several points
 #define TREATLINE (false) //save the macro in a line
@@ -17,5 +17,3 @@
 //#define BC_FORCES //create scalar field to export the reaction forces from BC;
 //#define SAVE_BC_FORCES // define if it will export BC force field to bin
 
-//#define PARTICLE_TRACER  // define if will traces massless particles inside the flow
-#define PARTICLE_TRACER_SAVE false

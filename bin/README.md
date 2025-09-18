@@ -1,0 +1,1 @@
+Dummy file to keep the bin folder, so it doesnt create errors when compiling the first time
