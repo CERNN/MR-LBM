@@ -74,6 +74,7 @@ __global__ void gpuMomCollisionStream(
    // dfloat yy = 2.0 * M_PI * y / L;
    // dfloat zz = 2.0 * M_PI * z / L;
 
+
     #ifdef LOCAL_FORCES
     dfloat L_Fx = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]; // F_0 * sin(K_const*x) * cos(K_const*y) ;
     dfloat L_Fy = fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, M_FY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)]; //-F_0 * sin(K_const*y) * cos(K_const*x) ;

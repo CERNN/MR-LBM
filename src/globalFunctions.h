@@ -36,6 +36,7 @@ __host__ __device__
     return (rhow * (p1_muu + uc3 * (1.0 + uc3 * 0.5)));
 }   
 
+
 // ****************************************************************************
 // ***************************   INDEX FUNCTIONS  *****************************
 // ****************************************************************************
@@ -66,6 +67,31 @@ __host__ __device__
     return tx + BLOCK_NX * (ty + BLOCK_NY * (tz + BLOCK_NZ * (mom + NUMBER_MOMENTS * (bx + NUM_BLOCK_X * (by + NUM_BLOCK_Y * (bz))))));
 }
 
+
+
+__host__ __device__
+    dfloat __forceinline__
+    getMom(
+        const int x,
+        const int y,
+        const int z,
+        const int mom,
+        dfloat *fMom)
+{
+
+    const int tx = x%BLOCK_NX;
+    const int ty = y%BLOCK_NY;
+    const int tz = z%BLOCK_NZ;
+    const int bx = x/BLOCK_NX; 
+    const int by = y/BLOCK_NY; 
+    const int bz = z/BLOCK_NZ; 
+
+
+
+    return fMom[idxMom(tx, ty, tz, mom, bx, by, bz)];
+}
+
+
 /**
  * @brief Compute the index for population array in x direction of the interface
  * @param ty: thread y index
@@ -76,6 +102,7 @@ __host__ __device__
  * @param bz: block z index
  * @return linear index for population array
  */
+
 __device__ int __forceinline__
 idxPopX(
     const int ty,
@@ -708,7 +735,17 @@ __host__ __device__
 dfloat6 rotate_inertia_by_quart(dfloat4 q, dfloat6 I6);
 
 
+__host__ __device__
 
+dfloat mom_trilinear_interp(dfloat x, dfloat y, dfloat z, const int mom , dfloat *fMom);
+__host__ __device__
+dfloat cubic_interp(dfloat p0, dfloat p1, dfloat p2, dfloat p3, dfloat t);
+__host__ __device__
+dfloat mom_tricubic_interp(dfloat x, dfloat y, dfloat z, const int mom, dfloat *fMom) ;
 
+__host__ __forceinline__  uint32_t set_top12_bits_host(uint32_t base, dfloat x) {return (base & 0x000FFFFF) | (static_cast<uint32_t>(x * 4095.0f + 0.5f) << 20);}
+__host__ __forceinline__  dfloat get_from_top12_bits_host(uint32_t value) {return static_cast<dfloat>(value >> 20) * 0.0002442002f;}
+__device__ __forceinline__  uint32_t set_top12_bits_device(uint32_t base, dfloat x) {return (base & 0x000FFFFF) | (__float2uint_rn(x * 4095.0f) << 20);}
+__device__ __forceinline__  dfloat get_from_top12_bits_device(uint32_t value) {return __uint2float_rn(value >> 20) * 0.0002442002f;}
 
 #endif // !__GLOBAL_FUNCTIONS_H
