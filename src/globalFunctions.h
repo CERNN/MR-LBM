@@ -68,7 +68,14 @@ __host__ __device__
 }
 
 
-
+/**
+ * @brief Return moment value based in the spatial location and moment index
+ * @param x: thread x index
+ * @param y: thread y index
+ * @param z: thread z index
+ * @param mom: moment index (0 to NUMBER_MOMENTS-1)
+ * @return linear index for moment array
+ */
 __host__ __device__
     dfloat __forceinline__
     getMom(

@@ -42,7 +42,7 @@
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
 
-#define BC_PROBLEM benchmark_ibm
+#define BC_PROBLEM benchmark
 
                                 
 constexpr bool console_flush = false;
