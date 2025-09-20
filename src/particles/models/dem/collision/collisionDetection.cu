@@ -237,12 +237,12 @@ void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
     wallData = wall(dfloat3(1, 0, 0), 0);
     distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
     if (distanceWall < 0) {
-        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
     }
     wallData = wall(dfloat3(-1, 0, 0), NX-1);
     distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
     if (distanceWall < 0) {
-        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
     }
     #endif //BC_X_WALL
 
@@ -250,13 +250,13 @@ void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
     wallData = wall(dfloat3(0, 1, 0), 0);
     distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
     if (distanceWall < 0) {
-        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
     }
 
     wallData = wall(dfloat3(0, -1, 0), NY-1);
     distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
     if (distanceWall < 0) {
-        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
     }
     #endif //BC_Y_WALL
     
@@ -264,13 +264,13 @@ void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
     wallData = wall(dfloat3(0, 0, 1), 0);
     distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
     if (distanceWall < 0) {
-        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
     }
     
     wallData = wall(dfloat3(0, 0, -1), NZ-1);
     distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
     if (distanceWall < 0) {
-        ellipsoidWallCollision(pc_i,wallData,-distanceWall,contactPoint2[0],cr,step);
+        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
     }
     #endif //BC_Z_WALL
 }

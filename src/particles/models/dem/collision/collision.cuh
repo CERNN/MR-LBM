@@ -184,7 +184,7 @@ void capsuleWallCollisionCap(const CollisionContext& ctx);
  *  @param step: The current simulation step or time index.
  */
 __device__
-void ellipsoidWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, dfloat cr[1],int step);
+void ellipsoidWallCollision(const CollisionContext& ctx, dfloat cr[1]);
 
 /**
  *  @brief Calculate the distance between an ellipsoid particle and a wall, and find the contact point.
