@@ -133,18 +133,24 @@ constexpr dfloat invSqrtt(dfloat x) {
         : std::numeric_limits<dfloat>::quiet_NaN();
 }
 
-// Use log(x) = 2 * ((x-1)/(x+1) + 1/3*((x-1)/(x+1))^3 + 1/5*((x-1)/(x+1))^5 + ...)
-constexpr dfloat constexprLn(dfloat x) {
-    return (x > 0) ? 2.0 * [&]() {
-        dfloat y = (x - 1.0) / (x + 1.0);
-        dfloat y_pow = y;
-        dfloat sum = y;
-        for (int n = 1; n < 50; ++n) {  // 50 terms
-            y_pow *= y * y;
-            sum += y_pow / (2*n + 1);
-        }
+
+constexpr dfloat constexprLnHelper(dfloat y, int n, dfloat sum) {
+    if (n > 10) {
         return sum;
-    }() : std::numeric_limits<dfloat>::quiet_NaN();
+    }
+    dfloat term = y;
+    for (int i = 0; i < n - 1; ++i) {
+        term *= y * y;
+    }
+    return constexprLnHelper(y, n + 1, sum + term / (2.0 * n - 1.0));
+}
+
+constexpr dfloat constexprLn(dfloat x) {
+    if (x <= 0.0) {
+        return std::numeric_limits<dfloat>::quiet_NaN();
+    }
+    dfloat y = (x - 1.0) / (x + 1.0);
+    return 2.0 * constexprLnHelper(y, 1, 0.0);
 }
 
 // Compile-time power of 2 checker

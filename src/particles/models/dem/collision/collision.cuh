@@ -20,6 +20,59 @@
 #ifdef PARTICLE_MODEL
 
 // ****************************************************************************
+// ************************   FORCE COMPUTATION   *****************************
+// ****************************************************************************
+
+/**
+ * @brief Compute the normal force during a collision.
+ * @param n: The normal vector at the point of contact.
+ * @param G: The relative velocity vector at the contact point.
+ * @param displacement: The displacement value representing the overlap or penetration depth.
+ * @param stiffness: The stiffness coefficient for the normal force calculation.
+ * @param damping: The damping coefficient for the normal force calculation.
+ * @return The computed normal force vector.
+ */
+__device__ 
+dfloat3 computeNormalForce(const dfloat3& n, const dfloat3& G, dfloat displacement, dfloat stiffness, dfloat damping); 
+
+/**
+ * @brief Compute the tangential force during a collision, updating tangential displacement if slip occurs.
+ * @param tang_disp: The current tangential displacement vector, which will be updated if slip occurs.
+ * @param G_ct: The relative tangential velocity vector at the contact point.
+ * @param stiffness: The stiffness coefficient for the tangential force calculation.
+ * @param damping: The damping coefficient for the tangential force calculation.
+ * @param friction_coef: The coefficient of friction between the colliding bodies.
+ * @param f_n: The normal force magnitude.
+ * @param t: The tangential direction vector at the contact point.
+ * @param pc_i: Pointer to the ParticleCenter structure representing the particle.
+ * @param tang_index: The index of the tangential displacement record for the collision.
+ * @param step: The current simulation step or time index.
+ * @return The computed tangential force vector.
+ */
+__device__ 
+dfloat3 computeTangentialForce(
+    dfloat3& tang_disp, // will be updated if slip occurs
+    const dfloat3& G_ct,
+    dfloat stiffness,
+    dfloat damping,
+    dfloat friction_coef,
+    dfloat f_n,
+    const dfloat3& t,
+    ParticleCenter* pc_i,
+    int tang_index,
+    int step
+); 
+
+/**
+ * @brief Accumulate forces and torques on a particle atomically.
+ * @param pc_i: Pointer to the ParticleCenter structure representing the particle.
+ * @param f_dirs: The force vector to be accumulated.
+ * @param m_dirs: The torque vector to be accumulated.
+ */
+__device__ 
+void accumulateForceAndTorque(ParticleCenter* pc_i, const dfloat3& f_dirs, const dfloat3& m_dirs);
+
+// ****************************************************************************
 // ************************   COLLISION TRACKING   ****************************
 // ****************************************************************************
 
@@ -70,6 +123,29 @@ __device__
 void endCollision(CollisionData &collisionData, int index, int currentTimeStep);
 
 
+/**
+ * @brief Retrieve or update the tangential displacement for a collision, starting a new collision if necessary.
+ * @param pc_i: Pointer to the ParticleCenter structure representing the particle.
+ * @param identifier: The ID of the collision partner (another particle or wall).
+ * @param isWall: Boolean indicating whether the collision involves a wall.
+ * @param step: The current simulation step or time index.
+ * @param G_ct: The relative tangential velocity vector at the contact point.
+ * @param G: The relative velocity vector at the contact point.
+ * @param tang_index_out: Reference to an integer to store the index of the tangential displacement record.
+ * @param wallNormal: The normal vector of the wall (only used if isWall is true).
+ * @return The tangential displacement vector associated with the collision.
+ */
+__device__ 
+dfloat3 getOrUpdateTangentialDisplacement(
+    ParticleCenter* pc_i,
+    int identifier, // wall index or partner ID
+    bool isWall, //true if wall, false if particle-particle collision
+    int step,
+    const dfloat3& G_ct,
+    const dfloat3& G,
+    int& tang_index_out,
+    const dfloat3& wallNormal = dfloat3{0,0,0} // only used for wall
+);
 
 // ****************************************************************************
 // ****************************   WALL COLLISION   ****************************
@@ -85,7 +161,7 @@ void endCollision(CollisionData &collisionData, int index, int currentTimeStep);
  *  @param step: The current time step for collision processing.
  */
 __device__
-void sphereWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,int step);
+void sphereWallCollision(const CollisionContext& ctx);
 
 /**
  *  @brief Handle collision mechanics between a capsule's end cap and a wall.

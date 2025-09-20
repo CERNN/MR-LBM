@@ -100,37 +100,36 @@ void checkCollisionWallsSphere(ParticleCenter* pc_i,unsigned int step){
         wallData = wall(dfloat3( 1,0,0),0);
         distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
         if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
+            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
         }
         wallData = wall(dfloat3( -1,0,0),(NX - 1));
-        //for this case the dot product will be always negative, while the first term will be always better, hence we have to invert and use + signal
         distanceWall = wallData.distance + dot_product(pos_i,wallData.normal);
         if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
+            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
         }
     #endif //BC_X_WALL
     #ifdef BC_Y_WALL
         wallData = wall(dfloat3(0,1,0),0);
         distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
         if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
+            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
         }
         wallData = wall(dfloat3( 0,-1,0),(NY - 1));
         distanceWall = wallData.distance + dot_product(pos_i,wallData.normal);
         if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
+            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
         }
     #endif //BC_Y_WALL
     #ifdef BC_Z_WALL
         wallData = wall(dfloat3(0,0,1),0);
         distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
         if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision(pc_i,wallData,pc_i->getRadius() -  distanceWall,step);
+            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
         }
         wallData = wall(dfloat3( 0,0,-1),(NZ_TOTAL - 1));
         distanceWall = wallData.distance + dot_product(pos_i,wallData.normal); 
         if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision(pc_i,wallData,pc_i->getRadius() - distanceWall,step);
+            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
         }
     #endif //BC_Z_WALL
 

@@ -353,4 +353,5 @@ typedef struct wall{
     }
 } Wall;
 
+
 #endif //__GLOBAL_STRUCTS_H

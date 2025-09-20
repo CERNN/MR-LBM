@@ -361,6 +361,19 @@ protected:
     CollisionData collision;
 }; 
 
+
+struct CollisionContext {
+    ParticleCenter* pc_i;      // Main particle (i)
+    Wall wall;                 // Wall info (for wall collisions)
+    dfloat displacement;       // Overlap/displacement
+    unsigned int step;         // Current timestep
+    ParticleCenter* pc_j;      // Partner particle (j), nullptr for wall collisions
+    dfloat3 contactPoint;      // For capsule/ellipsoid
+    int partnerID;             // Partner particle ID (for pairwise collisions)
+};
+
+
+
 #endif //PARTICLE_MODEL
 #endif //!__PARTICLE_CENTER_H
 

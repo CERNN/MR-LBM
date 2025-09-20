@@ -3,6 +3,50 @@
 
 #ifdef PARTICLE_MODEL
 
+// ****************************************************************************
+// ************************   FORCE COMPUTATION   *****************************
+// ****************************************************************************
+
+__device__ 
+dfloat3 computeNormalForce(const dfloat3& n, const dfloat3& G, dfloat displacement, dfloat stiffness, dfloat damping) {
+    dfloat f_kn = -stiffness * sqrt(abs(displacement*displacement*displacement));
+    return f_kn * n - damping * dot_product(G, n) * n * POW_FUNCTION(abs(displacement), 0.25);
+}
+
+__device__ dfloat3 computeTangentialForce(
+    dfloat3& tang_disp, // will be updated if slip occurs
+    const dfloat3& G_ct,
+    dfloat stiffness,
+    dfloat damping,
+    dfloat friction_coef,
+    dfloat f_n,
+    const dfloat3& t,
+    ParticleCenter* pc_i,
+    int tang_index,
+    int step
+) {
+    dfloat3 f_tang = -stiffness * tang_disp - damping * G_ct * POW_FUNCTION(abs(vector_length(tang_disp)), 0.25);
+    f_tang.x = - stiffness * tang_disp.x - damping * G_ct.x* POW_FUNCTION(abs(tang_disp.x) ,0.25);
+    f_tang.y = - stiffness * tang_disp.y - damping * G_ct.y* POW_FUNCTION(abs(tang_disp.y) ,0.25);
+    f_tang.z = - stiffness * tang_disp.z - damping * G_ct.z* POW_FUNCTION(abs(tang_disp.z) ,0.25);
+    dfloat mag = vector_length(f_tang);
+    if (mag > friction_coef * fabsf(f_n)) {
+        tang_disp = updateTangentialDisplacement(pc_i->getCollision(), tang_index, -G_ct, step);
+        f_tang = -friction_coef * f_n * t;
+    }
+    return f_tang;
+}
+
+__device__ void accumulateForceAndTorque(ParticleCenter* pc_i, const dfloat3& f_dirs, const dfloat3& m_dirs) {
+    atomicAdd(&(pc_i->getFXatomic()), f_dirs.x);
+    atomicAdd(&(pc_i->getFYatomic()), f_dirs.y);
+    atomicAdd(&(pc_i->getFZatomic()), f_dirs.z);
+    atomicAdd(&(pc_i->getMXatomic()), m_dirs.x);
+    atomicAdd(&(pc_i->getMYatomic()), m_dirs.y);
+    atomicAdd(&(pc_i->getMZatomic()), m_dirs.z);
+}
+
+
 
 // ****************************************************************************
 // ************************   COLLISION TRACKING   ****************************
@@ -84,127 +128,108 @@ void endCollision(CollisionData &collisionData, int index, int currentTimeStep) 
     }
 }
 
+
+__device__ 
+dfloat3 getOrUpdateTangentialDisplacement(
+    ParticleCenter* pc_i,
+    int identifier, // wall index or partner ID
+    bool isWall, //true if wall, false if particle-particle collision
+    int step,
+    const dfloat3& G_ct,
+    const dfloat3& G,
+    int& tang_index_out,
+    const dfloat3& wallNormal // only used for wall
+) {
+    dfloat3 tang_disp;
+    int tang_index = -1;
+    
+    //get the collision index 
+    if (isWall) {
+        tang_index = calculateWallIndex(wallNormal);
+    } else {
+        tang_index = getCollisionIndexByPartnerID(pc_i->getCollision(), identifier, step);
+    }
+
+    //check if there is a current collision
+    if (tang_index == -1) {
+        tang_index = startCollision(pc_i->getCollision(), identifier, isWall, wallNormal, step);
+        tang_disp = G_ct;
+    } else {
+        //check if the collision already exited in the past
+        if (step - pc_i->getCollision().getLastCollisionStep(tang_index) > 1) {
+            endCollision(pc_i->getCollision(), tang_index, step); //erase previous collision
+            tang_index = startCollision(pc_i->getCollision(), identifier, isWall, wallNormal, step); //start collision and retrive collision index
+            tang_disp = G_ct;
+        } else {
+            tang_disp = updateTangentialDisplacement(pc_i->getCollision(), tang_index, G, step);
+        }
+    }
+    //return the index by address
+    tang_index_out = tang_index;
+    //return the tangential displacement
+    return tang_disp;
+}
+
+
 // ****************************************************************************
 // **************************   WALL COLLISION   ******************************
 // ****************************************************************************
 
 // -------------------------- SPHERE COLLISION --------------------------------
 __device__
-void sphereWallCollision(ParticleCenter* pc_i,Wall wallData,dfloat displacement,int step){
+void sphereWallCollision(const CollisionContext& ctx){
 
-    //particle information
-    const dfloat m_i = pc_i->getVolume() * pc_i ->getDensity();
+    ParticleCenter* pc_i = ctx.pc_i;
+    Wall wallData = ctx.wall;
+    dfloat displacement = ctx.displacement;
+    int step = ctx.step;
+
+    // Particle info
+    const dfloat m_i = pc_i->getVolume() * pc_i->getDensity();
     const dfloat r_i = pc_i->getRadius();
-
     const dfloat3 v_i = pc_i->getVel();
     const dfloat3 w_i = pc_i->getW();
 
-    //wall information        
-    dfloat3 wall_speed = dfloat3(0,0,0); // relative velocity vector
+    // Wall info
+    dfloat3 wall_speed = dfloat3(0,0,0);
     dfloat3 n = wallData.normal;
+    n = n * -1.0f; //invert collision direction since is from sphere to wall
 
-    //invert collision direction since is from sphere to wall
-    n.x = -n.x;
-    n.y = -n.y;
-    n.z = -n.z;
-
-    //relative velocity
+    // Relative velocity
     dfloat3 G = v_i - wall_speed;
 
-    //constants 
-    //effective radius and mass
-    const dfloat effective_radius = r_i; //wall is r = infinity
-    const dfloat effective_mass = m_i; //wall has infinite mass
-    //collision constants
-    const dfloat STIFFNESS_NORMAL = SPHERE_WALL_STIFFNESS_NORMAL_CONST * sqrt(abs(effective_radius));
-    const dfloat STIFFNESS_TANGENTIAL = SPHERE_WALL_STIFFNESS_TANGENTIAL_CONST * sqrt(effective_radius) * sqrt (abs(displacement));
-    const dfloat damping_const = (- 2.0 * log(PW_REST_COEF)  / (sqrt(M_PI*M_PI + log(PW_REST_COEF)*log(PW_REST_COEF)))); //TODO FIND A WAY TO PROCESS IN COMPILE TIME
-    const dfloat DAMPING_NORMAL = damping_const * sqrt (effective_mass * STIFFNESS_NORMAL );
-    const dfloat DAMPING_TANGENTIAL = damping_const * sqrt (effective_mass * STIFFNESS_TANGENTIAL);
+    //Collision constants
+    const dfloat STIFFNESS_NORMAL = SPHERE_WALL_STIFFNESS_NORMAL_CONST * sqrt(abs(r_i));
+    const dfloat STIFFNESS_TANGENTIAL = SPHERE_WALL_STIFFNESS_TANGENTIAL_CONST * sqrt(r_i) * sqrt(abs(displacement));
+    const dfloat DAMPING_NORMAL = SPHERE_WALL_DAMPING_CONST * sqrt(m_i * STIFFNESS_NORMAL);
+    const dfloat DAMPING_TANGENTIAL = SPHERE_WALL_DAMPING_CONST * sqrt(m_i * STIFFNESS_TANGENTIAL);
 
-    //normal force
-    dfloat f_kn = -STIFFNESS_NORMAL * sqrt(abs(displacement*displacement*displacement));
-    dfloat3 f_normal;
-    f_normal.x = f_kn * n.x - DAMPING_NORMAL * (G.x*n.x + G.y*n.y + G.z*n.z)*n.x * POW_FUNCTION(abs(displacement),0.25);
-    f_normal.y = f_kn * n.y - DAMPING_NORMAL * (G.x*n.x + G.y*n.y + G.z*n.z)*n.y * POW_FUNCTION(abs(displacement),0.25); 
-    f_normal.z = f_kn * n.z - DAMPING_NORMAL * (G.x*n.x + G.y*n.y + G.z*n.z)*n.z * POW_FUNCTION(abs(displacement),0.25); 
-    dfloat f_n = sqrt(f_normal.x*f_normal.x + f_normal.y*f_normal.y + f_normal.z*f_normal.z);
+    // Normal force
+    dfloat3 f_normal = computeNormalForce(n, G, displacement, STIFFNESS_NORMAL, DAMPING_NORMAL);
+    dfloat f_n = vector_length(f_normal);
 
-    //tangential force
-    dfloat3 G_ct; //relative tangential velocity
-    G_ct.x = G.x + r_i*(w_i.y*n.z - w_i.z*n.y) - (G.x*n.x + G.y*n.y + G.z*n.z) * n.x;
-    G_ct.y = G.y + r_i*(w_i.z*n.x - w_i.x*n.z) - (G.x*n.x + G.y*n.y + G.z*n.z) * n.y;
-    G_ct.z = G.z + r_i*(w_i.x*n.y - w_i.y*n.x) - (G.x*n.x + G.y*n.y + G.z*n.z) * n.z;
-    
-    dfloat mag = G_ct.x*G_ct.x+G_ct.y*G_ct.y+G_ct.z*G_ct.z;
-    mag=sqrt(mag);
+    // Relative tangential velocity
+    dfloat3 G_ct = G + r_i * cross_product(w_i, n) - dot_product(G, n) * n;
+    dfloat mag = vector_length(G_ct);
+    dfloat3 t = (mag != 0) ? (G_ct / mag) : dfloat3{0.0, 0.0, 0.0}; //tangential velocity vector
 
-    dfloat3 t;//tangential velocity vector
-    if (mag != 0){
-        //tangential vector
-        t.x = G_ct.x/mag;
-        t.y = G_ct.y/mag;
-        t.z = G_ct.z/mag;
-    }else{
-        t.x = 0.0;
-        t.y = 0.0;
-        t.z = 0.0;
-    }
 
-    //retrive stored displacedment 
+    //retrive and update tangential displacement
     int tang_index = calculateWallIndex(n); //wall can be directly computed
-    dfloat3 tang_disp; //total tangential displacement
+    dfloat3 tang_disp = getOrUpdateTangentialDisplacement(pc_i, 0, true, step, G_ct, G, tang_index, n);
 
-    int last_step = pc_i->getCollision().getLastCollisionStep(tang_index);
-    if(step - last_step > 1){ //there is no prior collision
-        //first need to erase previous collision
-        endCollision(pc_i->getCollision(),tang_index,step);
-        //now we start the new collision tracking
-        startCollision(pc_i->getCollision(),tang_index,true,n,step);
-        tang_disp = G_ct;
-    }else{//there is already a collision in progress
-        tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,G_ct,step);
-    }
-    
-
-    //tangential force
-    dfloat3 f_tang;
-    f_tang.x = - STIFFNESS_TANGENTIAL * tang_disp.x - DAMPING_TANGENTIAL * G_ct.x* POW_FUNCTION(abs(tang_disp.x) ,0.25);
-    f_tang.y = - STIFFNESS_TANGENTIAL * tang_disp.y - DAMPING_TANGENTIAL * G_ct.y* POW_FUNCTION(abs(tang_disp.y) ,0.25);
-    f_tang.z = - STIFFNESS_TANGENTIAL * tang_disp.z - DAMPING_TANGENTIAL * G_ct.z* POW_FUNCTION(abs(tang_disp.z) ,0.25);
-
-    mag = sqrt(f_tang.x*f_tang.x + f_tang.y*f_tang.y + f_tang.z*f_tang.z);
-
-    //determine if slip or not
-    if(  mag > PW_FRICTION_COEF * fabsf(f_n) ){
-        tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,-G_ct,step);
-        f_tang.x = - PW_FRICTION_COEF * f_n * t.x;
-        f_tang.y = - PW_FRICTION_COEF * f_n * t.y;
-        f_tang.z = - PW_FRICTION_COEF * f_n * t.z;
-    }
-
-    //sum the forces
-    dfloat3 f_dirs = dfloat3(
-        f_normal.x + f_tang.x,
-        f_normal.y + f_tang.y,
-        f_normal.z + f_tang.z
+    //Comput
+    dfloat3 f_tang = computeTangentialForce(
+        tang_disp, G_ct, STIFFNESS_TANGENTIAL, DAMPING_TANGENTIAL,
+        PW_FRICTION_COEF, f_n, t, pc_i, tang_index, step
     );
 
-    //calculate moments
-    dfloat3 m_dirs = dfloat3(
-        r_i * (n.y*f_tang.z - n.z*f_tang.y),
-        r_i * (n.z*f_tang.x - n.x*f_tang.z),
-        r_i * (n.x*f_tang.y - n.y*f_tang.x)
-    );
+    //Total forces and torque in the particle
+    dfloat3 f_dirs = f_normal + f_tang;
+    dfloat3 m_dirs = r_i * cross_product(n, f_tang);
 
-    //save data in the particle information
-    atomicAdd(&(pc_i->getFXatomic()), f_dirs.x);
-    atomicAdd(&(pc_i->getFYatomic()), f_dirs.y);
-    atomicAdd(&(pc_i->getFZatomic()), f_dirs.z);
-
-    atomicAdd(&(pc_i->getMXatomic()), m_dirs.x);
-    atomicAdd(&(pc_i->getMYatomic()), m_dirs.y);
-    atomicAdd(&(pc_i->getMZatomic()), m_dirs.z);
+    //Save data in the particle information
+    accumulateForceAndTorque(pc_i, f_dirs, m_dirs);
 }
 
 // ------------------------- CAPSULE COLLISIONS -------------------------------
