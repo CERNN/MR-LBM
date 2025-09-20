@@ -430,196 +430,62 @@ dfloat ellipsoidWallCollisionDistance( ParticleCenter* pc_i, Wall wallData,dfloa
 
 // -------------------------- SPHERE COLLISION --------------------------------
 __device__
-void sphereSphereCollision(unsigned int column,unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, int step){
-    // Particle i info (column)
-    const dfloat3 pos_i = pc_i->getPos();
+void sphereSphereCollision(const CollisionContext& ctx){
+    ParticleCenter* pc_i = ctx.pc_i;
+    ParticleCenter* pc_j = ctx.pc_j;
+    int step = ctx.step;
+    dfloat displacement = ctx.displacement;
+    int partnerID = ctx.partnerID;
+    // Particle i info
     const dfloat r_i = pc_i->getRadius();
-    const dfloat m_i = pc_i ->getVolume() * pc_i ->getDensity();
+    const dfloat m_i = pc_i->getVolume() * pc_i->getDensity();
     const dfloat3 v_i = pc_i->getVel();
     const dfloat3 w_i = pc_i->getW();
-   
-    // Particle j info (row)
-    const dfloat3 pos_j = pc_j->getPos();
+    // Particle j info
     const dfloat r_j = pc_j->getRadius();
-    const dfloat m_j = pc_j ->getVolume() * pc_j ->getDensity();
+    const dfloat m_j = pc_j->getVolume() * pc_j->getDensity();
     const dfloat3 v_j = pc_j->getVel();
     const dfloat3 w_j = pc_j->getW();
 
+    // Use normal direction from context (set in wall.normal)
+    const dfloat3 n = ctx.wall.normal;
+    // Relative velocity
+    dfloat3 G = v_i - v_j;
 
-
-    //first check if they will collide
-    const dfloat3 diff_pos = dfloat3(
-        #ifdef BC_X_WALL
-            pos_i.x - pos_j.x
-        #endif //BC_X_WALL
-        #ifdef BC_X_PERIODIC 
-        abs(pos_i.x - pos_j.x) > ((NX-1) / 2.0) ? 
-        (pos_i.x < pos_j.x ?
-            (pos_i.x + (NX-1) - pos_j.x)
-            : 
-            (pos_i.x - (NX-1) - pos_j.x)
-        )
-        : pos_i.x - pos_j.x
-        #endif //BC_X_PERIODIC
-        , 
-        #ifdef BC_Y_WALL
-           (pos_i.y - pos_j.y)
-        #endif //BC_Y_WALL
-        #ifdef BC_Y_PERIODIC
-        abs(pos_i.y - pos_j.y) > ((NY-1) / 2.0) ? 
-        (pos_i.y < pos_j.y ?
-            (pos_i.y + (NY-1) - pos_j.y)
-            : 
-            (pos_i.y - (NY-1) - pos_j.y)
-        )
-        : pos_i.y - pos_j.y
-        #endif //BC_Y_PERIODIC
-        , 
-        #ifdef BC_Z_WALL
-            pos_i.z - pos_j.z
-        #endif //BC_Z_WALL
-        #ifdef BC_Z_PERIODIC
-            abs(pos_i.z - pos_j.z) > ((NZ-1) / 2.0) ? 
-            (pos_i.z < pos_j.z ?
-                (pos_i.z + (NZ-1) - pos_j.z)
-                : 
-                (pos_i.z - (NZ-1) - pos_j.z)
-            )
-            : pos_i.z - pos_j.z
-        #endif //BC_Z_PERIODIC
-    );
-
-    const dfloat mag_dist = sqrt(
-        diff_pos.x*diff_pos.x
-        + diff_pos.y*diff_pos.y
-        + diff_pos.z*diff_pos.z);
-
-    if(mag_dist > r_i+r_j) //they dont collide
-        return;
-
-    //but if they collide, we can do some calculations
-
-    //normal collision vector
-    const dfloat3 n = dfloat3(diff_pos.x/mag_dist,diff_pos.y/mag_dist,diff_pos.z/mag_dist);
-
-    //normal deformation
-    dfloat displacement = r_i + r_j - mag_dist;
-    // relative velocity vector
-    dfloat3 G = v_i-v_j;
-
-    //HERTZ CONTACT THEORY
-
-    dfloat effective_radius = 1.0/((r_i +r_j)/(r_i*r_j));
-    dfloat effective_mass = 1.0/((m_i +m_j)/(m_i*m_j));
-
+    // Hertz contact theory
+    dfloat effective_radius = 1.0 / ((r_i + r_j) / (r_i * r_j));
+    dfloat effective_mass = 1.0 / ((m_i + m_j) / (m_i * m_j));
     const dfloat STIFFNESS_NORMAL = SPHERE_SPHERE_STIFFNESS_NORMAL_CONST * sqrt(effective_radius);
-    const dfloat STIFFNESS_TANGENTIAL = SPHERE_SPHERE_STIFFNESS_TANGENTIAL_CONST * sqrt(effective_radius) * sqrt (abs(displacement));
-    const dfloat damping_const = (- 2.0 * log(PP_REST_COEF)  / (sqrt(M_PI*M_PI + log(PP_REST_COEF)*log(PP_REST_COEF)))); //TODO FIND A WAY TO PROCESS IN COMPILE TIME
-    const dfloat DAMPING_NORMAL = damping_const * sqrt (effective_mass * STIFFNESS_NORMAL );
-    const dfloat DAMPING_TANGENTIAL = damping_const * sqrt (effective_mass * STIFFNESS_TANGENTIAL);
+    const dfloat STIFFNESS_TANGENTIAL = SPHERE_SPHERE_STIFFNESS_TANGENTIAL_CONST * sqrt(effective_radius) * sqrt(abs(displacement));
+    const dfloat DAMPING_NORMAL = SPHERE_SPHERE_DAMPING_CONST * sqrt(effective_mass * STIFFNESS_NORMAL);
+    const dfloat DAMPING_TANGENTIAL = SPHERE_SPHERE_DAMPING_CONST * sqrt(effective_mass * STIFFNESS_TANGENTIAL);
 
-    //normal force
-    dfloat f_kn = -STIFFNESS_NORMAL * sqrt(abs(displacement*displacement*displacement));
-    dfloat3 f_normal;
-    f_normal.x = f_kn * n.x - DAMPING_NORMAL * (G.x*n.x + G.y*n.y + G.z*n.z)*n.x * POW_FUNCTION(abs(displacement),0.25);
-    f_normal.y = f_kn * n.y - DAMPING_NORMAL * (G.x*n.x + G.y*n.y + G.z*n.z)*n.y * POW_FUNCTION(abs(displacement),0.25);
-    f_normal.z = f_kn * n.z - DAMPING_NORMAL * (G.x*n.x + G.y*n.y + G.z*n.z)*n.z * POW_FUNCTION(abs(displacement),0.25);
-    dfloat f_n;
-    f_n = sqrt(f_normal.x*f_normal.x + f_normal.y*f_normal.y + f_normal.z*f_normal.z);
+    // Normal force
+    dfloat3 f_normal = computeNormalForce(n, G, displacement, STIFFNESS_NORMAL, DAMPING_NORMAL);
+    dfloat f_n = vector_length(f_normal);
 
-    //tangential force
-    dfloat3 G_ct;       
-    G_ct.x = G.x + r_i*(w_i.y*n.z - w_i.z*n.y) + r_j*(w_j.y*n.z - w_j.z*n.y) - (G.x*n.x + G.y*n.y + G.z*n.z) * n.x;
-    G_ct.y = G.y + r_i*(w_i.z*n.x - w_i.x*n.z) + r_j*(w_j.z*n.x - w_j.x*n.z) - (G.x*n.x + G.y*n.y + G.z*n.z) * n.y;
-    G_ct.z = G.z + r_i*(w_i.x*n.y - w_i.y*n.x) + r_j*(w_j.x*n.y - w_j.y*n.x) - (G.x*n.x + G.y*n.y + G.z*n.z) * n.z;
+    // Relative tangential velocity
+    dfloat3 G_ct = G + r_i * cross_product(w_i, n) - dot_product(G, n) * n;
+    dfloat mag = vector_length(G_ct);
+    dfloat3 t = (mag != 0) ? (G_ct / mag) : dfloat3{0.0, 0.0, 0.0}; //tangential velocity vector
 
-    dfloat mag = G_ct.x*G_ct.x+G_ct.y*G_ct.y+G_ct.z*G_ct.z;
-    mag=sqrt(mag);
+    int tang_index = -1;
+    dfloat3 tang_disp = getOrUpdateTangentialDisplacement(pc_i, partnerID, false, step, G_ct, G, tang_index, dfloat3(0, 0, 0));
 
-    //calculate tangential vector
-    dfloat3 t;
-    if (mag != 0){
-        //tangential vector
-        t.x = G_ct.x/mag;
-        t.y = G_ct.y/mag;
-        t.z = G_ct.z/mag;
-    }else{
-        t.x = 0.0;
-        t.y = 0.0;
-        t.z = 0.0;
-    }
-
-    //retrive stored displacedment 
-    dfloat3 tang_disp; //total tangential displacement
-    int tang_index = getCollisionIndexByPartnerID(pc_i->getCollision(),row,step);
-    if(tang_index == -1){ //no previous collision was detected
-        tang_index = startCollision(pc_i->getCollision(),row,false,dfloat3(0,0,0),step);
-        tang_disp = G_ct;
-    }else{
-        //check if the collision already exited in the past
-        if(step - pc_i->getCollision().getLastCollisionStep(tang_index) > 1){ //already existed but ended
-            endCollision(pc_i->getCollision(),tang_index,step); //end current one
-            tang_index = startCollision(pc_i->getCollision(),row,false,dfloat3(0,0,0),step);
-            tang_disp = G_ct;
-        }else{ //collision is still ongoing
-            tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,G,step);
-        }
-    }
-
-    dfloat3 f_tang;
-    f_tang.x = - STIFFNESS_TANGENTIAL * tang_disp.x - DAMPING_TANGENTIAL * G_ct.x* POW_FUNCTION(abs(tang_disp.x) ,0.25);
-    f_tang.y = - STIFFNESS_TANGENTIAL * tang_disp.y - DAMPING_TANGENTIAL * G_ct.y* POW_FUNCTION(abs(tang_disp.y) ,0.25);
-    f_tang.z = - STIFFNESS_TANGENTIAL * tang_disp.z - DAMPING_TANGENTIAL * G_ct.z* POW_FUNCTION(abs(tang_disp.z) ,0.25);
-
-    mag = sqrt(f_tang.x*f_tang.x + f_tang.y*f_tang.y + f_tang.z*f_tang.z);
-
-    //calculate if will slip
-    if(  mag > PP_FRICTION_COEF * abs(f_n) ){
-        tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,-G_ct,step);
-        f_tang.x = - PP_FRICTION_COEF * f_n * t.x;
-        f_tang.y = - PP_FRICTION_COEF * f_n * t.y;
-        f_tang.z = - PP_FRICTION_COEF * f_n * t.z;
-    }
-    //FINAL FORCE RESULTS
-
-
-    // Force in each direction
-    dfloat3 f_dirs = dfloat3(
-        f_normal.x + f_tang.x,
-        f_normal.y + f_tang.y,
-        f_normal.z + f_tang.z
-    );
-    //Torque in each direction
-    dfloat3 m_dirs_i = dfloat3(
-        r_i * (n.y*f_tang.z - n.z*f_tang.y),
-        r_i * (n.z*f_tang.x - n.x*f_tang.z),
-        r_i * (n.x*f_tang.y - n.y*f_tang.x)
-    );
-    dfloat3 m_dirs_j = dfloat3(
-        r_j * (n.y*f_tang.z - n.z*f_tang.y),
-        r_j * (n.z*f_tang.x - n.x*f_tang.z),
-        r_j * (n.x*f_tang.y - n.y*f_tang.x)
+    // Compute tangential force
+    dfloat3 f_tang = computeTangentialForce(
+        tang_disp, G_ct, STIFFNESS_TANGENTIAL, DAMPING_TANGENTIAL,
+        PW_FRICTION_COEF, f_n, t, pc_i, tang_index, step
     );
 
-    // Force positive in particle i (column)
-    atomicAdd(&(pc_i->getFXatomic()), -f_dirs.x);
-    atomicAdd(&(pc_i->getFYatomic()), -f_dirs.y);
-    atomicAdd(&(pc_i->getFZatomic()), -f_dirs.z);
+    // Final force results
+    dfloat3 f_dirs = f_normal + f_tang;
+    dfloat3 m_dirs_i = r_i * cross_product(n, f_tang);
+    dfloat3 m_dirs_j = r_j * cross_product(n, f_tang);
 
-    atomicAdd(&(pc_i->getMXatomic()), m_dirs_i.x);
-    atomicAdd(&(pc_i->getMYatomic()), m_dirs_i.y);
-    atomicAdd(&(pc_i->getMZatomic()), m_dirs_i.z);
-
-    // Force negative in particle j (row)
-    atomicAdd(&(pc_j->getFXatomic()), f_dirs.x);
-    atomicAdd(&(pc_j->getFYatomic()), f_dirs.y);
-    atomicAdd(&(pc_j->getFZatomic()), f_dirs.z);
-
-    atomicAdd(&(pc_j->getMXatomic()), m_dirs_j.x); //normal vector takes care of negative sign
-    atomicAdd(&(pc_j->getMYatomic()), m_dirs_j.y);
-    atomicAdd(&(pc_j->getMZatomic()), m_dirs_j.z); 
-
-
+    //Save data in the particle information
+    accumulateForceAndTorque(pc_i, -f_dirs, m_dirs_i);
+    accumulateForceAndTorque(pc_j,  f_dirs, m_dirs_j);
 }
 
 // ------------------------- CAPSULE COLLISIONS -------------------------------

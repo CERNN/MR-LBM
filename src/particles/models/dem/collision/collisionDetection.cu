@@ -1,5 +1,3 @@
-
-
 //functions to determine if the particle will collide
 #include "collisionDetection.cuh"
 
@@ -228,9 +226,7 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
         case SPHERE:
             switch (*shape_j) {
             case SPHERE:
-                if(sphereSphereGap( pc_i, pc_j)<0){
-                    sphereSphereCollision(column,row, pc_i, pc_j,step);
-                }
+                sphereSphereCollisionCheck(column,row,pc_i,pc_j,step);
                 break;
             case CAPSULE:
                 capsuleSphereCollisionCheck(column,row,shape_i,pc_i,pc_j,step);
@@ -281,6 +277,26 @@ void checkCollisionBetweenParticles( unsigned int column,unsigned int row,Partic
 // ------------------------------------------------------------------------ 
 // -------------------- INTER PARTICLE COLLISION CHECK---------------------
 // ------------------------------------------------------------------------ 
+
+
+__device__
+void sphereSphereCollisionCheck(unsigned int column,unsigned int row,ParticleCenter* pc_i, ParticleCenter* pc_j, int step){
+    dfloat gap = sphereSphereGap(pc_i, pc_j);
+    if (gap < 0) {
+        dfloat3 diff_pos = getDiffPeriodic(pc_i->getPos(), pc_j->getPos());
+        dfloat mag_dist = vector_length(diff_pos);
+        dfloat3 normal = (mag_dist != 0) ? (diff_pos / mag_dist) : dfloat3{0.0, 0.0, 0.0};
+
+        CollisionContext ctx = {};
+        ctx.pc_i = pc_i;
+        ctx.pc_j = pc_j;
+        ctx.displacement = -gap; // overlap
+        ctx.step = step;
+        ctx.partnerID = row;
+        ctx.wall.normal = normal;
+        sphereSphereCollision(ctx);
+    }
+}
 
 __device__
 void capsuleCapsuleCollisionCheck(    unsigned int column,    unsigned int row,ParticleCenter* pc_i, ParticleCenter* pc_j, int step, dfloat3 cylA1, dfloat3 cylA2, dfloat radiusA, dfloat3 cylB1, dfloat3 cylB2, dfloat radiusB) {

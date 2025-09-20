@@ -495,6 +495,14 @@ dfloat3 vector_normalize(dfloat3 v);
 __device__
 dfloat point_to_point_distance_periodic(dfloat3 p1, dfloat3 p2);
 
+/**
+ * @brief Compute the difference vector between two points considering periodic conditions.
+ * @param p1: First point.
+ * @param p2: Second point.
+ * @return The difference vector p2 - p1 considering periodic boundaries.
+ */
+__device__ dfloat3 getDiffPeriodic(const dfloat3& p1, const dfloat3& p2);
+
 
 /**
  *  @brief Compute the shortest distance from a point to a segment considering periodic conditions.

@@ -82,7 +82,8 @@ constexpr int INI_STEP = 0; // initial simulation step (0 default)
         constexpr dfloat WALL_POISSON_RATIO = 0.3; //-- case
 
         // Sphere-wall collision constants (compile-time)
-        constexpr dfloat SPHERE_WALL_DAMPING_CONST = (-2.0 * constexprLn(PW_REST_COEF) / (sqrtt(M_PI*M_PI + constexprLn(PW_REST_COEF)*constexprLn(PW_REST_COEF))));
+        constexpr dfloat SPHERE_WALL_DAMPING_CONST = (-2.0 * constexprLn(PW_REST_COEF) / (sqrtt(M_PI * M_PI + constexprLn(PW_REST_COEF) * constexprLn(PW_REST_COEF))));
+        constexpr dfloat SPHERE_SPHERE_DAMPING_CONST = (-2.0 * constexprLn(PP_REST_COEF) / (sqrtt(M_PI * M_PI + constexprLn(PP_REST_COEF) * constexprLn(PP_REST_COEF))));
 
     #endif //DEM_METHOD
 #endif //PARTICLE_MODEL

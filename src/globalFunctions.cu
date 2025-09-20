@@ -101,6 +101,37 @@ dfloat point_to_point_distance_periodic(dfloat3 p1, dfloat3 p2) {
     return sqrtf(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
 }
 
+// Helper function to compute vector difference with periodic/wall BCs
+__device__ dfloat3 getDiffPeriodic(const dfloat3& p1, const dfloat3& p2) {
+    dfloat dx, dy, dz;
+    // X direction
+    #ifdef BC_X_PERIODIC
+    dx = abs(p1.x - p2.x) > ((NX-1) / 2.0) ?
+        (p1.x < p2.x ? (p1.x + (NX-1) - p2.x) : (p1.x - (NX-1) - p2.x))
+        : p1.x - p2.x;
+    #else
+    dx = p1.x - p2.x;
+    #endif
+    // Y direction
+    #ifdef BC_Y_PERIODIC
+    dy = abs(p1.y - p2.y) > ((NY-1) / 2.0) ?
+        (p1.y < p2.y ? (p1.y + (NY-1) - p2.y) : (p1.y - (NY-1) - p2.y))
+        : p1.y - p2.y;
+    #else
+    dy = p1.y - p2.y;
+    #endif
+    // Z direction
+    #ifdef BC_Z_PERIODIC
+    dz = abs(p1.z - p2.z) > ((NZ-1) / 2.0) ?
+        (p1.z < p2.z ? (p1.z + (NZ-1) - p2.z) : (p1.z - (NZ-1) - p2.z))
+        : p1.z - p2.z;
+    #else
+    dz = p1.z - p2.z;
+    #endif
+    return dfloat3(dx, dy, dz);
+}
+
+
 __device__
 dfloat point_to_segment_distance_periodic(dfloat3 p, dfloat3 segA, dfloat3 segB, dfloat3 closestOnAB[1]) {
     dfloat minDist = 1E+37f;

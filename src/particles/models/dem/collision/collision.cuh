@@ -211,7 +211,7 @@ dfloat ellipsoidWallCollisionDistance( ParticleCenter* pc_i, Wall wallData, dflo
  *  @param step: The current time step for collision processing.
  */
 __device__
-void sphereSphereCollision(unsigned int column, unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, int step);
+void sphereSphereCollision(const CollisionContext& ctx);
 
 /**
  *  @brief Handle collision mechanics between two capsules.

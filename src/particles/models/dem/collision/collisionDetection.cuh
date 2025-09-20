@@ -72,6 +72,17 @@ __device__
 void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step);
 
 /**
+ * @brief Handle collision type between two spheres.
+ * @param column: The column index in a grid or matrix representing the particles' positions.
+ * @param row: The row index in a grid or matrix representing the particles' positions.
+ * @param pc_i: Pointer to the `ParticleCenter` structure containing information about the first sphere.
+ * @param pc_j: Pointer to the `ParticleCenter` structure containing information about the second sphere.
+ * @param step: The current time step for collision processing.
+ */
+__device__
+void sphereSphereCollisionCheck(unsigned int column,unsigned int row,ParticleCenter* pc_i, ParticleCenter* pc_j, int step);
+
+/**
  *  @brief Handle collision type between two capsules.
  *  @param pc_i: Pointer to the `ParticleCenter` structure containing information about the first capsule.
  *  @param pc_j: Pointer to the `ParticleCenter` structure containing information about the second capsule.
