@@ -92,187 +92,129 @@ void checkCollisionWalls(ParticleShape *shape, ParticleCenter* pc_i, unsigned in
 }
 
 __device__
-void checkCollisionWallsSphere(ParticleCenter* pc_i,unsigned int step){
+void checkCollisionWallsSphere(ParticleCenter* pc_i, unsigned int step) {
     const dfloat3 pos_i = pc_i->getPos();
-    Wall wallData = wall(dfloat3( 0,0,0),0);
-    dfloat distanceWall = 0;
-    #ifdef BC_X_WALL
-        wallData = wall(dfloat3( 1,0,0),0);
-        distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
-        if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
-        }
-        wallData = wall(dfloat3( -1,0,0),(NX - 1));
-        distanceWall = wallData.distance + dot_product(pos_i,wallData.normal);
-        if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
-        }
-    #endif //BC_X_WALL
-    #ifdef BC_Y_WALL
-        wallData = wall(dfloat3(0,1,0),0);
-        distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
-        if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
-        }
-        wallData = wall(dfloat3( 0,-1,0),(NY - 1));
-        distanceWall = wallData.distance + dot_product(pos_i,wallData.normal);
-        if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
-        }
-    #endif //BC_Y_WALL
-    #ifdef BC_Z_WALL
-        wallData = wall(dfloat3(0,0,1),0);
-        distanceWall = dot_product(pos_i,wallData.normal) - wallData.distance;
-        if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
-        }
-        wallData = wall(dfloat3( 0,0,-1),(NZ_TOTAL - 1));
-        distanceWall = wallData.distance + dot_product(pos_i,wallData.normal); 
-        if (distanceWall < pc_i->getRadius()){
-            sphereWallCollision({pc_i, wallData, pc_i->getRadius() - distanceWall, step});
-        }
-    #endif //BC_Z_WALL
-
-}
-
-__device__
-void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
-    const dfloat halfLength = vector_length(pc_i->getSemiAxis1());
     const dfloat radius = pc_i->getRadius();
 
-    // Calculate capsule endpoints using the orientation vector
-    dfloat3 endpoint1 = pc_i->getSemiAxis1();
-    dfloat3 endpoint2 = pc_i->getSemiAxis2();
-
-    Wall wallData = wall(dfloat3(0, 0, 0), 0);
-    dfloat distanceWall1 = 0;
-    dfloat distanceWall2 = 0;
+    const int maxWalls = 6;
+    Wall walls[maxWalls];
+    int wallCount = 0;
 
     #ifdef BC_X_WALL
-        wallData = wall(dfloat3(1, 0, 0), 0);
-        distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
-        distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
+    walls[wallCount++] = wall(dfloat3(1, 0, 0), 0);
+    walls[wallCount++] = wall(dfloat3(-1, 0, 0), (NX - 1));
+    #endif
 
-        if (distanceWall1 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
-        }
-        if (distanceWall2 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
-        }
-
-        wallData = wall(dfloat3(-1, 0, 0), (NX - 1));
-        distanceWall1 = wallData.distance +  dot_product(endpoint1, wallData.normal);
-        distanceWall2 = wallData.distance +  dot_product(endpoint2, wallData.normal);
-
-
-        if (distanceWall1 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
-        }
-        if (distanceWall2 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
-        }
-
-    #endif //BC_X_WALL
     #ifdef BC_Y_WALL
-        wallData = wall(dfloat3( 0,1,0),0);
-        distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
-        distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
+    walls[wallCount++] = wall(dfloat3(0, 1, 0), 0);
+    walls[wallCount++] = wall(dfloat3(0, -1, 0), (NY - 1));
+    #endif
 
-        if (distanceWall1 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
-        }
-        if (distanceWall2 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
-        }
-
-        
-        wallData = wall(dfloat3(0, 1, 0), (NY - 1));
-        distanceWall1 = wallData.distance +  dot_product(endpoint1, wallData.normal);
-        distanceWall2 = wallData.distance +  dot_product(endpoint2, wallData.normal);
-
-
-        if (distanceWall1 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
-        }
-        if (distanceWall2 < radius) {;
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
-        }
-
-    #endif //BC_Y_WALL
     #ifdef BC_Z_WALL
-        wallData = wall(dfloat3( 0,0,1),0);
-        distanceWall1 = dot_product(endpoint1, wallData.normal) - wallData.distance;
-        distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
+    walls[wallCount++] = wall(dfloat3(0, 0, 1), 0);
+    walls[wallCount++] = wall(dfloat3(0, 0, -1), (NZ_TOTAL - 1));
+    #endif
 
-        if (distanceWall1 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
-        }
-        if (distanceWall2 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
-        }
+    for (int i = 0; i < wallCount; ++i) {
+        dfloat distanceWall;
         
-        wallData = wall(dfloat3(0, 0, -1), (NZ - 1));
-        distanceWall1 = wallData.distance +  dot_product(endpoint1, wallData.normal);
-        distanceWall2 = wallData.distance +  dot_product(endpoint2, wallData.normal);
+        // Check the direction of the wall normal to use the correct distance calculation
+        // The positive normal vectors point inward from a boundary at 0, while
+        // the negative normal vectors point inward from a boundary at N-1.
+        if (walls[i].normal.x + walls[i].normal.y + walls[i].normal.z > 0) {
+            distanceWall = dot_product(pos_i, walls[i].normal) - walls[i].distance;
+        } else {
+            distanceWall = walls[i].distance + dot_product(pos_i, walls[i].normal);
+        }
 
-        if (distanceWall1 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
+        if (distanceWall < radius) {
+            sphereWallCollision({pc_i, walls[i], radius - distanceWall, step});
         }
-        if (distanceWall2 < radius) {
-            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
-        }
-    #endif //BC_Z_WALL
+    }
 }
-__device__
-void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step){
 
-    Wall wallData;
-    dfloat distanceWall = 0;
-    dfloat3 intersectionPoint;
-    dfloat3 contactPoint2[1];
-    
-    dfloat cr[1];
+__device__
+void checkCollisionWallsCapsule(ParticleCenter* pc_i, unsigned int step) {
+    const dfloat halfLength = vector_length(pc_i->getSemiAxis1());
+    const dfloat radius = pc_i->getRadius();
+    const dfloat3 endpoint1 = pc_i->getSemiAxis1();
+    const dfloat3 endpoint2 = pc_i->getSemiAxis2();
+
+    const int maxWalls = 6;
+    Wall walls[maxWalls];
+    int wallCount = 0;
 
     #ifdef BC_X_WALL
-    wallData = wall(dfloat3(1, 0, 0), 0);
-    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
-    if (distanceWall < 0) {
-        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
-    }
-    wallData = wall(dfloat3(-1, 0, 0), NX-1);
-    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
-    if (distanceWall < 0) {
-        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
-    }
-    #endif //BC_X_WALL
+    walls[wallCount++] = wall(dfloat3(1, 0, 0), 0);
+    walls[wallCount++] = wall(dfloat3(-1, 0, 0), (NX - 1));
+    #endif
 
     #ifdef BC_Y_WALL
-    wallData = wall(dfloat3(0, 1, 0), 0);
-    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
-    if (distanceWall < 0) {
-        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
-    }
-
-    wallData = wall(dfloat3(0, -1, 0), NY-1);
-    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
-    if (distanceWall < 0) {
-        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
-    }
-    #endif //BC_Y_WALL
+    walls[wallCount++] = wall(dfloat3(0, 1, 0), 0);
+    walls[wallCount++] = wall(dfloat3(0, -1, 0), (NY - 1));
+    #endif
     
     #ifdef BC_Z_WALL
-    wallData = wall(dfloat3(0, 0, 1), 0);
-    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
-    if (distanceWall < 0) {
-        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
+    walls[wallCount++] = wall(dfloat3(0, 0, 1), 0);
+    walls[wallCount++] = wall(dfloat3(0, 0, -1), (NZ - 1));
+    #endif
+
+    for (int i = 0; i < wallCount; ++i) {
+        //Need to handle the two different distance calculations based on the wall
+        dfloat distanceWall1;
+        dfloat distanceWall2;
+        
+        // We need to determine if it's an inward- or outward-facing wall.
+        // A simple way is to check the normal vector.
+        if (walls[i].normal.x + walls[i].normal.y + walls[i].normal.z > 0) { // Outward facing
+            distanceWall1 = dot_product(endpoint1, walls[i].normal) - walls[i].distance;
+            distanceWall2 = dot_product(endpoint2, walls[i].normal) - walls[i].distance;
+        } else { // Inward facing
+            distanceWall1 = walls[i].distance + dot_product(endpoint1, walls[i].normal);
+            distanceWall2 = walls[i].distance + dot_product(endpoint2, walls[i].normal);
+        }
+
+        if (distanceWall1 < radius) {
+            capsuleWallCollisionCap({pc_i, walls[i], radius - distanceWall1, step, endpoint1});
+        }
+        if (distanceWall2 < radius) {
+            capsuleWallCollisionCap({pc_i, walls[i], radius - distanceWall2, step, endpoint2});
+        }
     }
+}
+
+__device__
+void checkCollisionWallsElipsoid(ParticleCenter* pc_i, unsigned int step) {
+    const int maxWalls = 6;
+    Wall walls[maxWalls];
+    int wallCount = 0;
+
+    #ifdef BC_X_WALL
+    walls[wallCount++] = wall(dfloat3(1, 0, 0), 0);
+    walls[wallCount++] = wall(dfloat3(-1, 0, 0), NX - 1);
+    #endif
+
+    #ifdef BC_Y_WALL
+    walls[wallCount++] = wall(dfloat3(0, 1, 0), 0);
+    walls[wallCount++] = wall(dfloat3(0, -1, 0), NY - 1);
+    #endif
     
-    wallData = wall(dfloat3(0, 0, -1), NZ-1);
-    distanceWall = ellipsoidWallCollisionDistance(pc_i,wallData,contactPoint2,cr,step);
-    if (distanceWall < 0) {
-        ellipsoidWallCollision({pc_i,wallData,-distanceWall,step,contactPoint2[0]},cr);
+    #ifdef BC_Z_WALL
+    walls[wallCount++] = wall(dfloat3(0, 0, 1), 0);
+    walls[wallCount++] = wall(dfloat3(0, 0, -1), NZ - 1);
+    #endif
+
+    // Loop through all defined walls and check for collision
+    for (int i = 0; i < wallCount; ++i) {
+        dfloat distanceWall = 0;
+        dfloat3 contactPoint2[1];
+        dfloat cr[1];
+
+        distanceWall = ellipsoidWallCollisionDistance(pc_i, walls[i], contactPoint2, cr, step);
+        if (distanceWall < 0) {
+            ellipsoidWallCollision({pc_i, walls[i], -distanceWall, step, contactPoint2[0]}, cr);
+        }
     }
-    #endif //BC_Z_WALL
 }
 
 // ------------------------------------------------------------------------
