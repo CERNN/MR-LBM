@@ -44,7 +44,76 @@
 #ifdef BC_Z_PERIODIC
     #define INTERFACE_BC_FRONT  INTERFACE_BC_FRONT_PERIO
     #define INTERFACE_BC_BACK   INTERFACE_BC_BACK_PERIO
-#endif /BC_Z_PERIODIC
+#endif //BC_Z_PERIODIC
+
+
+
+// Define the periodic offsets based on the compilation flags
+#if defined(BC_X_PERIODIC) && defined(BC_Y_PERIODIC) && defined(BC_Z_PERIODIC)
+    // Case: All 3 periodic boundaries
+    #define NUM_PERIODIC_DOMAIN_OFFSET 27
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3] = {
+        {-1, -1, -1}, {-1, -1, 0}, {-1, -1, 1},
+        {-1, 0, -1},  {-1, 0, 0},  {-1, 0, 1},
+        {-1, 1, -1},  {-1, 1, 0},  {-1, 1, 1},
+
+        {0, -1, -1},  {0, -1, 0},  {0, -1, 1},
+        {0, 0, -1},   {0, 0, 0},   {0, 0, 1},
+        {0, 1, -1},   {0, 1, 0},   {0, 1, 1},
+
+        {1, -1, -1},  {1, -1, 0},  {1, -1, 1},
+        {1, 0, -1},   {1, 0, 0},   {1, 0, 1},
+        {1, 1, -1},   {1, 1, 0},   {1, 1, 1}
+    };
+
+#elif defined(BC_X_PERIODIC) && defined(BC_Y_PERIODIC)
+    // Case: X and Y periodic
+    #define NUM_PERIODIC_DOMAIN_OFFSET 9
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3] = {
+        {-1, -1, 0}, {-1, 0, 0}, {-1, 1, 0},
+        {0, -1, 0},  {0, 0, 0},  {0, 1, 0},
+        {1, -1, 0},  {1, 0, 0},  {1, 1, 0}
+    };
+
+#elif defined(BC_X_PERIODIC) && defined(BC_Z_PERIODIC)
+    // Case: X and Z periodic
+    #define NUM_PERIODIC_DOMAIN_OFFSET 9
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3] = {
+        {-1, 0, -1}, {-1, 0, 0}, {-1, 0, 1},
+        {0, 0, -1},  {0, 0, 0},  {0, 0, 1},
+        {1, 0, -1},  {1, 0, 0},  {1, 0, 1}
+    };
+
+#elif defined(BC_Y_PERIODIC) && defined(BC_Z_PERIODIC)
+    // Case: Y and Z periodic
+    #define NUM_PERIODIC_DOMAIN_OFFSET 9
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3] = {
+        {0, -1, -1}, {0, -1, 0}, {0, -1, 1},
+        {0, 0, -1},  {0, 0, 0},  {0, 0, 1},
+        {0, 1, -1},  {0, 1, 0},  {0, 1, 1}
+    };
+
+#elif defined(BC_X_PERIODIC)
+    // Case: X periodic only
+    #define NUM_PERIODIC_DOMAIN_OFFSET 3
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3] = {{-1, 0, 0}, {0, 0, 0}, {1, 0, 0}};
+
+#elif defined(BC_Y_PERIODIC)
+    // Case: Y periodic only
+    #define NUM_PERIODIC_DOMAIN_OFFSET 3
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3]= {{0, -1, 0}, {0, 0, 0}, {0, 1, 0}};
+
+#elif defined(BC_Z_PERIODIC)
+    // Case: Z periodic only
+    #define NUM_PERIODIC_DOMAIN_OFFSET 3
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3] = {{0, 0, -1}, {0, 0, 0}, {0, 0, 1}};
+
+#else
+    // Case: No periodic boundaries
+    #define NUM_PERIODIC_DOMAIN_OFFSET 1
+    __device__ const int PERIODIC_DOMAIN_OFFSET[NUM_PERIODIC_DOMAIN_OFFSET][3] = {{0, 0, 0}};
+
+#endif
 
 
 

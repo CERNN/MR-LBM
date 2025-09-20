@@ -25,7 +25,7 @@ __device__ dfloat3 computeTangentialForce(
     int tang_index,
     int step
 ) {
-    dfloat3 f_tang = -stiffness * tang_disp - damping * G_ct * POW_FUNCTION(abs(vector_length(tang_disp)), 0.25);
+    dfloat3 f_tang;
     f_tang.x = - stiffness * tang_disp.x - damping * G_ct.x* POW_FUNCTION(abs(tang_disp.x) ,0.25);
     f_tang.y = - stiffness * tang_disp.y - damping * G_ct.y* POW_FUNCTION(abs(tang_disp.y) ,0.25);
     f_tang.z = - stiffness * tang_disp.z - damping * G_ct.z* POW_FUNCTION(abs(tang_disp.z) ,0.25);

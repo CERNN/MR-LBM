@@ -314,92 +314,58 @@ void capsuleSphereCollisionCheck(unsigned int column,unsigned int row,  Particle
 }
 
 __device__
-void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, ParticleCenter* pc_i,ParticleCenter* pc_j, int step){
-    dfloat3 closestOnA[1];
-    dfloat3 closestOnB[1];
-    dfloat cr1[1];
-    dfloat cr2[1];
-
-    dfloat minDist = 1E+37;  // Initialize to a large value
-    dfloat3 bestClosestOnA;
-    dfloat3 bestClosestOnB;
+void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, int step) {
+    dfloat minDist = 1E+37f;
+    dfloat3 bestClosestOnA, bestClosestOnB;
     dfloat bestcr1, bestcr2;
-    int dx = 0, dy = 0, dz = 0;
+    dfloat3 bestTranslation;
     dfloat dist;
-    dfloat3 translation, bestTranslation;
 
-    // Loop over periodic offsets in x, y, and z if periodic boundary conditions are enabled
-    #ifdef BC_X_PERIODIC
-    for (dx = -1; dx <= 1; dx++) {
-    #endif //BC_X_PERIODIC
-        #ifdef BC_Y_PERIODIC
-        for (dy = -1; dy <= 1; dy++) {
-        #endif //BC_Y_PERIODIC
-            #ifdef BC_Z_PERIODIC
-            for (dz = -1; dz <= 1; dz++) {
-            #endif //BC_Z_PERIODIC
-                translation = dfloat3(dx * (NX-1), dy * (NY-1), dz * (NZ-1));
-                dist = ellipsoidEllipsoidCollisionDistance(pc_i, pc_j,closestOnA,closestOnB,cr1, cr2,translation,step);
-                // Update the minimum distance and store the closest point
-                if (dist < minDist) {
-                    minDist = dist;
-                    bestClosestOnA = closestOnA[0];
-                    bestClosestOnB = closestOnB[0];
-                    bestcr1 = cr1[0];
-                    bestcr2 = cr2[0];
-                    bestTranslation = translation;
-                }
+    // The temporary arrays must be declared to pass to the called function
+    dfloat3 closestOnA[1], closestOnB[1];
+    dfloat cr1[1], cr2[1];
 
+    for (int i = 0; i < NUM_PERIODIC_DOMAIN_OFFSET; ++i) {
+        int dx = PERIODIC_DOMAIN_OFFSET[i][0];
+        int dy = PERIODIC_DOMAIN_OFFSET[i][1];
+        int dz = PERIODIC_DOMAIN_OFFSET[i][2];
 
-            #ifdef BC_Z_PERIODIC
-            } // End Z loop
-            #endif //BC_Z_PERIODIC
-        #ifdef BC_Y_PERIODIC
-        } // End Y loop
-        #endif //BC_Y_PERIODIC
-    #ifdef BC_X_PERIODIC
-    } // End X loop
-    #endif //BC_X_PERIODIC
+        dfloat3 translation = dfloat3(dx * NX, dy * NY, dz * NZ);
+        dist = ellipsoidEllipsoidCollisionDistance(pc_i, pc_j, closestOnA, closestOnB, cr1, cr2, translation, step);
 
-    // Store the closest point on the segment
+        if (dist < minDist) {
+            minDist = dist;
+            bestClosestOnA = closestOnA[0];
+            bestClosestOnB = closestOnB[0];
+            bestcr1 = cr1[0];
+            bestcr2 = cr2[0];
+            bestTranslation = translation;
+        }
+    }
+
     closestOnA[0] = bestClosestOnA;
-    closestOnB[0] = bestClosestOnB-bestTranslation;
+    closestOnB[0] = bestClosestOnB - bestTranslation;
     cr1[0] = bestcr1;
     cr2[0] = bestcr2;
     dist = minDist;
 
-    if(dist<0){
-        ellipsoidEllipsoidCollision(column, row,pc_i,pc_j,closestOnA,closestOnB,dist,cr1, cr2,bestTranslation,step);
+    if (dist < 0) {
+        ellipsoidEllipsoidCollision(column, row, pc_i, pc_j, closestOnA, closestOnB, dist, cr1, cr2, bestTranslation, step);
     }
-
-
 }
 
 __device__
-dfloat sphereSphereGap(ParticleCenter*  pc_i, ParticleCenter*  pc_j) {
+dfloat sphereSphereGap(ParticleCenter* pc_i, ParticleCenter* pc_j) {
     dfloat3 p1 = pc_i->getPos();
     dfloat3 p2 = pc_j->getPos();
 
     dfloat r1 = pc_i->getRadius();
     dfloat r2 = pc_j->getRadius();
 
-    dfloat3 delta = p1 - p2;
-
-    #ifdef BC_X_PERIODIC
-        if(delta.x > NX / 2.0) delta.x -= NX;
-        if(delta.x < -NX / 2.0) delta.x += NX;
-    #endif //BC_X_PERIODIC
-    #ifdef BC_Y_PERIODIC
-        if(delta.y > NY / 2.0) delta.y -= NY;
-        if(delta.y < -NY / 2.0) delta.y += NY;
-    #endif //BC_Y_PERIODIC
-    #ifdef BC_Z_PERIODIC
-        if(delta.z > NZ / 2.0) delta.z -= NZ;
-        if(delta.z < -NZ / 2.0) delta.z += NZ;
-    #endif //BC_Z_PERIODIC
-
-    dfloat dist = sqrtf(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
+    // Calculate the distance between the particle centers, accounting for periodic boundaries.
+    dfloat dist = point_to_point_distance_periodic(p1, p2);
     
+    // Return the gap between the spheres.
     return dist - (r1 + r2);
 }
 

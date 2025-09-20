@@ -16,6 +16,7 @@
 #include <builtin_types.h> // for device variables
 #include "var.h"
 #include "globalStructs.h"
+#include "./includeFiles/interface.h"
 #ifdef PARTICLE_MODEL
 #include "particles/models/ibm/ibmVar.h"
 #endif //PARTICLE_MODEL
@@ -484,6 +485,15 @@ dfloat vector_length(dfloat3 v);
  */
 __host__ __device__
 dfloat3 vector_normalize(dfloat3 v);
+
+/**
+ * @brief Compute the distance between two points considering periodic conditions.
+ * @param p1: First point.
+ * @param p2: Second point.
+ * @return The distance between p1 and p2 considering periodic boundaries.
+ */
+__device__
+dfloat point_to_point_distance_periodic(dfloat3 p1, dfloat3 p2);
 
 
 /**
