@@ -401,7 +401,20 @@ void ellipsoidEllipsoidCollisionCheck(unsigned int column, unsigned int row, Par
     dist = minDist;
 
     if (dist < 0) {
-        ellipsoidEllipsoidCollision(column, row, pc_i, pc_j, closestOnA, closestOnB, dist, cr1, cr2, bestTranslation, step);
+        dfloat3 diff_pos = getDiffPeriodic(closestOnA[0], closestOnB[0]);
+        dfloat mag_dist = vector_length(diff_pos);
+        dfloat3 normal = (mag_dist != 0) ? (diff_pos / mag_dist) : dfloat3{0.0, 0.0, 0.0};
+
+        CollisionContext ctx = {};
+        ctx.pc_i = pc_i;
+        ctx.pc_j = pc_j;
+        ctx.displacement = dist;
+        ctx.step = step;
+        ctx.partnerID = row;
+        ctx.wall.normal = normal;
+
+
+        ellipsoidEllipsoidCollision(ctx,closestOnA, closestOnB, cr1, cr2, bestTranslation);
     }
 }
 

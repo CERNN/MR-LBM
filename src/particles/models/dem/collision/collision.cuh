@@ -240,7 +240,7 @@ void capsuleCapsuleCollision(const CollisionContext& ctx, dfloat3 closestOnA[1],
  *  @param step: The current simulation time step for collision processing.
  */
 __device__
-void ellipsoidEllipsoidCollision(unsigned int column, unsigned int row, ParticleCenter*  pc_i, ParticleCenter*  pc_j,dfloat3 closestOnA[1], dfloat3 closestOnB[1], dfloat dist,  dfloat cr1[1], dfloat cr2[1], dfloat3 translation, int step);
+void ellipsoidEllipsoidCollision(const CollisionContext& ctx,dfloat3 closestOnA[1], dfloat3 closestOnB[1],dfloat cr1[1], dfloat cr2[1], dfloat3 translation);
 
 // ****************************************************************************
 // ******************   AUXILIARY COLLISION FUNCTIONS  ************************
