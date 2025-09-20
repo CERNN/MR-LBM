@@ -299,33 +299,68 @@ void sphereSphereCollisionCheck(unsigned int column,unsigned int row,ParticleCen
 }
 
 __device__
-void capsuleCapsuleCollisionCheck(    unsigned int column,    unsigned int row,ParticleCenter* pc_i, ParticleCenter* pc_j, int step, dfloat3 cylA1, dfloat3 cylA2, dfloat radiusA, dfloat3 cylB1, dfloat3 cylB2, dfloat radiusB) {
+void capsuleCapsuleCollisionCheck(unsigned int column, unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, int step, dfloat3 cylA1, dfloat3 cylA2, dfloat radiusA, dfloat3 cylB1, dfloat3 cylB2, dfloat radiusB) {
     dfloat3 closestOnA[1];
     dfloat3 closestOnB[1];
 
-    if(segment_segment_closest_points_periodic(cylA1, cylA2, cylB1, cylB2, closestOnA, closestOnB) < radiusA + radiusB){
-        capsuleCapsuleCollision(column, row,pc_i,pc_j,closestOnA,closestOnB,step);
-    }
+    dfloat dist = segment_segment_closest_points_periodic(cylA1, cylA2, cylB1, cylB2, closestOnA, closestOnB);
+    if (dist < radiusA + radiusB) {
+        // Compute normal direction
+        dfloat3 diff_pos = getDiffPeriodic(closestOnA[0], closestOnB[0]);
+        dfloat mag_dist = vector_length(diff_pos);
+        dfloat3 normal = (mag_dist != 0) ? (diff_pos / mag_dist) : dfloat3{0.0, 0.0, 0.0};
 
+        CollisionContext ctx = {};
+        ctx.pc_i = pc_i;
+        ctx.pc_j = pc_j;
+        ctx.displacement = radiusA + radiusB - mag_dist; // overlap
+        ctx.step = step;
+        ctx.partnerID = row;
+        ctx.wall.normal = normal;
+        capsuleCapsuleCollision(ctx,closestOnA,closestOnB);
+    }
     return;
 }
 
 __device__
-void capsuleSphereCollisionCheck(unsigned int column,unsigned int row,  ParticleShape *shape, ParticleCenter* pc_i, ParticleCenter* pc_j, int step){
-
+void capsuleSphereCollisionCheck(unsigned int column, unsigned int row, ParticleShape *shape, ParticleCenter* pc_i, ParticleCenter* pc_j, int step) {
     dfloat3 closestOnAB[1];
-    
-    if(*shape == SPHERE){
-        dfloat3 pos_i = pc_i->getPos();
-        if(point_to_segment_distance_periodic(pc_i->getPos(), pc_j->getSemiAxis1(), pc_j->getSemiAxis2(),closestOnAB) < pc_i->getRadius() + pc_j->getRadius())
-            capsuleCapsuleCollision(column,row,pc_i,pc_j,&pos_i,closestOnAB,step);
-    }else{
-        dfloat3 pos_j = pc_j->getPos();
-        if(point_to_segment_distance_periodic(pc_j->getPos(), pc_i->getSemiAxis1(), pc_i->getSemiAxis2(),closestOnAB) < pc_i->getRadius() + pc_j->getRadius())
-            capsuleCapsuleCollision(column,row,pc_i,pc_j,&pos_j,closestOnAB,step);
-    }
-    
 
+    if (*shape == SPHERE) {
+        dfloat3 pos_i = pc_i->getPos();
+        dfloat dist = point_to_segment_distance_periodic(pc_i->getPos(), pc_j->getSemiAxis1(), pc_j->getSemiAxis2(), closestOnAB);
+        if (dist < pc_i->getRadius() + pc_j->getRadius()) {
+            dfloat3 diff_pos = getDiffPeriodic(pos_i, closestOnAB[0]);
+            dfloat mag_dist = vector_length(diff_pos);
+            dfloat3 normal = (mag_dist != 0) ? (diff_pos / mag_dist) : dfloat3{0.0, 0.0, 0.0};
+
+            CollisionContext ctx = {};
+            ctx.pc_i = pc_i;
+            ctx.pc_j = pc_j;
+            ctx.displacement = pc_i->getRadius() + pc_j->getRadius() - mag_dist;
+            ctx.step = step;
+            ctx.partnerID = row;
+            ctx.wall.normal = normal;
+            capsuleCapsuleCollision(ctx,&pos_i,closestOnAB);
+        }
+    } else {
+        dfloat3 pos_j = pc_j->getPos();
+        dfloat dist = point_to_segment_distance_periodic(pc_j->getPos(), pc_i->getSemiAxis1(), pc_i->getSemiAxis2(), closestOnAB);
+        if (dist < pc_i->getRadius() + pc_j->getRadius()) {
+            dfloat3 diff_pos = getDiffPeriodic(pos_j, closestOnAB[0]);
+            dfloat mag_dist = vector_length(diff_pos);
+            dfloat3 normal = (mag_dist != 0) ? (diff_pos / mag_dist) : dfloat3{0.0, 0.0, 0.0};
+
+            CollisionContext ctx = {};
+            ctx.pc_i = pc_i;
+            ctx.pc_j = pc_j;
+            ctx.displacement = pc_i->getRadius() + pc_j->getRadius() - mag_dist;
+            ctx.step = step;
+            ctx.partnerID = row;
+            ctx.wall.normal = normal;
+            capsuleCapsuleCollision(ctx,&pos_j,closestOnAB);
+        }
+    }
     return;
 }
 

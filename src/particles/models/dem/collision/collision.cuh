@@ -224,7 +224,7 @@ void sphereSphereCollision(const CollisionContext& ctx);
  *  @param step: The current time step for collision processing.
  */
 __device__
-void capsuleCapsuleCollision(unsigned int column, unsigned int row, ParticleCenter* pc_i, ParticleCenter* pc_j, dfloat3* closestOnA, dfloat3* closestOnB, int step);
+void capsuleCapsuleCollision(const CollisionContext& ctx, dfloat3 closestOnA[1], dfloat3 closestOnB[1]) ;
 
 /**
  *  @brief Process the collision between two ellipsoids by determining their closest points and applying collision response.
