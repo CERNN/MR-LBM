@@ -367,8 +367,8 @@ struct CollisionContext {
     Wall wall;                 // Wall info (for wall collisions)
     dfloat displacement;       // Overlap/displacement
     unsigned int step;         // Current timestep
-    ParticleCenter* pc_j;      // Partner particle (j), nullptr for wall collisions
     dfloat3 contactPoint;      // For capsule/ellipsoid
+    ParticleCenter* pc_j;      // Partner particle (j), nullptr for wall collisions
     int partnerID;             // Partner particle ID (for pairwise collisions)
 };
 

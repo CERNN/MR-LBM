@@ -218,7 +218,7 @@ void sphereWallCollision(const CollisionContext& ctx){
     int tang_index = calculateWallIndex(n); //wall can be directly computed
     dfloat3 tang_disp = getOrUpdateTangentialDisplacement(pc_i, 0, true, step, G_ct, G, tang_index, n);
 
-    //Comput
+    // Compute tangential force
     dfloat3 f_tang = computeTangentialForce(
         tang_disp, G_ct, STIFFNESS_TANGENTIAL, DAMPING_TANGENTIAL,
         PW_FRICTION_COEF, f_n, t, pc_i, tang_index, step
@@ -234,110 +234,61 @@ void sphereWallCollision(const CollisionContext& ctx){
 
 // ------------------------- CAPSULE COLLISIONS -------------------------------
 __device__
-void capsuleWallCollisionCap(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, int step){
-
-    //particle information
-    const dfloat3 pos_i = pc_i->getPos(); //center position
-    const dfloat3 pos_c_i = endpoint; //cap position
-
-    const dfloat m_i = pc_i ->getVolume() * pc_i ->getDensity();
+void capsuleWallCollisionCap(const CollisionContext& ctx) {
+    ParticleCenter* pc_i = ctx.pc_i;
+    Wall wallData = ctx.wall;
+    dfloat displacement = ctx.displacement;
+    int step = ctx.step;
+    dfloat3 endpoint = ctx.contactPoint;
+    // Particle info
+    const dfloat3 center_pos = pc_i->getPos();      // Particle center position
+    const dfloat3 cap_pos = endpoint;               // Capsule cap position
+    const dfloat m_i = pc_i->getVolume() * pc_i->getDensity();
     const dfloat r_i = pc_i->getRadius();
-
-    const dfloat3 v_i = pc_i->getVel(); //VELOCITY OF THE CENTER OF MASS
+    const dfloat3 v_i = pc_i->getVel();             // Center of mass velocity
     const dfloat3 w_i = pc_i->getW();
+    // Wall info
+    dfloat3 wall_speed = dfloat3(0, 0, 0);          // Wall velocity (assumed zero)
+    dfloat3 n = wallData.normal * -1.0f;            // Invert normal: collision from sphere to wall
 
-    //wall information        
-    dfloat3 wall_speed = dfloat3(0,0,0); // relative velocity vector
-    dfloat3 n = wallData.normal;
+    
+    // Relative velocity
+    dfloat3 rr = cap_pos - center_pos;              // Vector from center to cap
+    dfloat3 G = v_i - wall_speed;                   // Relative velocity
 
-    //invert collision direction since is from sphere to wall
-    n.x = -n.x;
-    n.y = -n.y;
-    n.z = -n.z;
+    //Collision constants
+    const dfloat STIFFNESS_NORMAL = SPHERE_WALL_STIFFNESS_NORMAL_CONST * sqrt(abs(r_i));
+    const dfloat STIFFNESS_TANGENTIAL = SPHERE_WALL_STIFFNESS_TANGENTIAL_CONST * sqrt(r_i) * sqrt(abs(displacement));
+    const dfloat DAMPING_NORMAL = SPHERE_WALL_DAMPING_CONST * sqrt(m_i * STIFFNESS_NORMAL);
+    const dfloat DAMPING_TANGENTIAL = SPHERE_WALL_DAMPING_CONST * sqrt(m_i * STIFFNESS_TANGENTIAL);
 
-
-    //vector center-> cap
-    dfloat3 rr = pos_c_i - pos_i;
-
-    dfloat3 G = v_i - wall_speed;
-
-
-    //constants 
-    //effective radius and mass
-    const dfloat effective_radius = r_i; //wall is r = infinity
-    const dfloat effective_mass = m_i; //wall has infinite mass
-    //collision constants
-    const dfloat STIFFNESS_NORMAL = SPHERE_WALL_STIFFNESS_NORMAL_CONST * sqrt(abs(effective_radius));
-    const dfloat STIFFNESS_TANGENTIAL = SPHERE_WALL_STIFFNESS_TANGENTIAL_CONST * sqrt(effective_radius) * sqrt (abs(displacement));
-    const dfloat damping_const = (- 2.0 * log(PW_REST_COEF)  / (sqrt(M_PI*M_PI + log(PW_REST_COEF)*log(PW_REST_COEF)))); //TODO FIND A WAY TO PROCESS IN COMPILE TIME
-    const dfloat DAMPING_NORMAL = damping_const * sqrt (effective_mass * STIFFNESS_NORMAL );
-    const dfloat DAMPING_TANGENTIAL = damping_const * sqrt (effective_mass * STIFFNESS_TANGENTIAL);
-
-    //normal force
-    dfloat f_kn = -STIFFNESS_NORMAL * sqrt(abs(displacement*displacement*displacement));
-    dfloat3 f_normal = f_kn * n - DAMPING_NORMAL *  dot_product(G,n) * n * POW_FUNCTION(abs(displacement),0.25);
+    // Normal force
+    dfloat3 f_normal = computeNormalForce(n, G, displacement, STIFFNESS_NORMAL, DAMPING_NORMAL);
     dfloat f_n = vector_length(f_normal);
 
-    //tangential force
-    dfloat3 G_ct = G + r_i * cross_product(w_i,n+rr) - dot_product(G,n)*n;
+    // Relative tangential velocity
+    dfloat3 G_ct = G + r_i * cross_product(w_i, n + rr) - dot_product(G, n) * n;
     dfloat mag = vector_length(G_ct);
+    dfloat3 t = (mag != 0) ? (G_ct / mag) : dfloat3{0.0, 0.0, 0.0}; // Tangential velocity vector
 
-
-    dfloat3 t;//tangential velocity vector
-    if (mag != 0){
-        //tangential vector
-        t = G_ct / mag;
-    }else{
-        t.x = 0.0;
-        t.y = 0.0;
-        t.z = 0.0;
-    }
-
-    //retrive stored displacedment 
+    // Tangential displacement tracking
+    //retrive and update tangential displacement
     int tang_index = calculateWallIndex(n); //wall can be directly computed
-    dfloat3 tang_disp; //total tangential displacement
+    dfloat3 tang_disp = getOrUpdateTangentialDisplacement(pc_i, 0, true, step, G_ct, G, tang_index, n);
 
-    int last_step = pc_i->getCollision().getLastCollisionStep(tang_index);
-    if(step - last_step > 1){ //there is no prior collision
-        //first need to erase previous collision
-        endCollision(pc_i->getCollision(),tang_index,step);
-        //now we start the new collision tracking
-        startCollision(pc_i->getCollision(),tang_index,true,n,step);
-        tang_disp = G_ct;
-    }else{//there is already a collision in progress
-        tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,G_ct,step);
-    }
 
-    //tangential force
-    dfloat3 f_tang;
-    f_tang.x = - STIFFNESS_TANGENTIAL * tang_disp.x - DAMPING_TANGENTIAL * G_ct.x* POW_FUNCTION(abs(tang_disp.x) ,0.25);
-    f_tang.y = - STIFFNESS_TANGENTIAL * tang_disp.y - DAMPING_TANGENTIAL * G_ct.y* POW_FUNCTION(abs(tang_disp.y) ,0.25);
-    f_tang.z = - STIFFNESS_TANGENTIAL * tang_disp.z - DAMPING_TANGENTIAL * G_ct.z* POW_FUNCTION(abs(tang_disp.z) ,0.25);
+    // Compute tangential force
+    dfloat3 f_tang = computeTangentialForce(
+        tang_disp, G_ct, STIFFNESS_TANGENTIAL, DAMPING_TANGENTIAL,
+        PW_FRICTION_COEF, f_n, t, pc_i, tang_index, step
+    );
 
-    mag = vector_length(f_tang);
-
-    //determine if slip or not,
-    if(  mag > PW_FRICTION_COEF * fabsf(f_n) ){
-         tang_disp = updateTangentialDisplacement(pc_i->getCollision(),tang_index,-G_ct,step);
-        f_tang = - PW_FRICTION_COEF * f_n * t;
-    }
-
-    //sum the forces
+    //Total forces and torque in the particle
     dfloat3 f_dirs = f_normal + f_tang;
+    dfloat3 m_dirs = cross_product((n * r_i) + rr, f_dirs);
 
-    //calculate moments
-    dfloat3 m_dirs = cross_product((n*r_i) + rr,f_dirs);
-
-    //save date in the particle information
-    atomicAdd(&(pc_i->getFXatomic()), f_dirs.x);
-    atomicAdd(&(pc_i->getFYatomic()), f_dirs.y);
-    atomicAdd(&(pc_i->getFZatomic()), f_dirs.z);
-
-    atomicAdd(&(pc_i->getMXatomic()), m_dirs.x);
-    atomicAdd(&(pc_i->getMYatomic()), m_dirs.y);
-    atomicAdd(&(pc_i->getMZatomic()), m_dirs.z);
-    
-
+    //Save data in the particle information
+    accumulateForceAndTorque(pc_i, f_dirs, m_dirs);
 }
 
 // ------------------------ ELLIPSOID COLLISIONS ------------------------------

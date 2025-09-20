@@ -154,10 +154,10 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
         distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
 
         if (distanceWall1 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
         }
         if (distanceWall2 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
         }
 
         wallData = wall(dfloat3(-1, 0, 0), (NX - 1));
@@ -166,10 +166,10 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
 
 
         if (distanceWall1 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
         }
         if (distanceWall2 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
         }
 
     #endif //BC_X_WALL
@@ -179,10 +179,10 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
         distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
 
         if (distanceWall1 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
         }
         if (distanceWall2 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
         }
 
         
@@ -192,10 +192,10 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
 
 
         if (distanceWall1 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
         }
         if (distanceWall2 < radius) {;
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
         }
 
     #endif //BC_Y_WALL
@@ -205,10 +205,10 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
         distanceWall2 = dot_product(endpoint2, wallData.normal) - wallData.distance;
 
         if (distanceWall1 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
         }
         if (distanceWall2 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
         }
         
         wallData = wall(dfloat3(0, 0, -1), (NZ - 1));
@@ -216,10 +216,10 @@ void checkCollisionWallsCapsule(ParticleCenter* pc_i,unsigned int step){
         distanceWall2 = wallData.distance +  dot_product(endpoint2, wallData.normal);
 
         if (distanceWall1 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall1,endpoint1,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint1});
         }
         if (distanceWall2 < radius) {
-            capsuleWallCollisionCap(pc_i,wallData,radius-distanceWall2,endpoint2,step);
+            capsuleWallCollisionCap({pc_i,wallData,radius-distanceWall2,step,endpoint2});
         }
     #endif //BC_Z_WALL
 }

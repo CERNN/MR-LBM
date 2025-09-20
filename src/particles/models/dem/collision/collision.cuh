@@ -168,11 +168,11 @@ void sphereWallCollision(const CollisionContext& ctx);
  *  @param pc_i: Pointer to the `ParticleCenter` structure containing capsule information.
  *  @param wallData: The data structure representing the wall.
  *  @param displacement: The displacement value for the capsule's end cap.
- *  @param endpoint: The endpoint of the capsule's end cap.
  *  @param step: The current time step for collision processing.
+ *  @param endpoint: The endpoint of the capsule's end cap.
  */
 __device__
-void capsuleWallCollisionCap(ParticleCenter* pc_i,Wall wallData,dfloat displacement,dfloat3 endpoint, int step);
+void capsuleWallCollisionCap(const CollisionContext& ctx);
 
 /**
  *  @brief Handle collision mechanics between an ellipsoid particle and a wall.
