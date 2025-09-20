@@ -28,7 +28,7 @@
  *  @param step: The current time step for collision processing.
  */
 __global__
-void gpuParticlesCollisionHandler(ParticleShape *shape, ParticleCenter *pArray, unsigned int step);
+void particlesCollisionHandler(ParticleShape *shape, ParticleCenter *pArray, unsigned int step);
 
 // collision between particles themselves
 /**

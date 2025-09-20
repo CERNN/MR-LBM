@@ -6,7 +6,7 @@
 
 #ifdef PARTICLE_MODEL
 __global__
-void gpuUpdateParticleOldValues(
+void updateParticleOldValues(
     ParticleCenter *pArray,
     int firstIndex,
     int lastIndex,    
@@ -50,12 +50,12 @@ void gpuUpdateParticleOldValues(
     pc_i->setDLInternalZ(0.0);
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuUpdateParticleOldValues 2 pos  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
-    printf("gpuUpdateParticleOldValues 3 pos  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
-    printf("gpuUpdateParticleOldValues 4 pos  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
-    printf("gpuUpdateParticleOldValues 5 pos  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
-    printf("gpuUpdateParticleOldValues 6 pos  x: %e y: %e z: %e\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
-    printf("gpuUpdateParticleOldValues 7 pos  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
+    printf("updateParticleOldValues 2 pos  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
+    printf("updateParticleOldValues 3 pos  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
+    printf("updateParticleOldValues 4 pos  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
+    printf("updateParticleOldValues 5 pos  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
+    printf("updateParticleOldValues 6 pos  x: %e y: %e z: %e\n",pc_i->getFX(),pc_i->getFY(),pc_i->getFZ());
+    printf("updateParticleOldValues 7 pos  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
     #endif //PARTICLE_DEBUG
 
     pc_i->setPos_old(pc_i->getPos());
@@ -69,7 +69,7 @@ void gpuUpdateParticleOldValues(
 }
 
 __global__ 
-void gpuUpdateParticleCenterVelocityAndRotation(
+void updateParticleCenterVelocityAndRotation(
     ParticleCenter *pArray,
     int firstIndex,
     int lastIndex,    
@@ -97,19 +97,19 @@ void gpuUpdateParticleCenterVelocityAndRotation(
         return;
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 f  x: %e y: %e z: %e\n",pc_i->getF().x,pc_i->getF().y,pc_i->getF().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 m  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 DP  x: %e y: %e z: %e\n",pc_i->getDP_internal().x,pc_i->getDP_internal().y,pc_i->getDP_internal().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 pos_old  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 vel_old  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 w_old  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 f_old  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 m_old  x: %e y: %e z: %e\n",pc_i->getMOldX(),pc_i->getMOldY(),pc_i->getMOldZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 volume %e\n",pc_i->getVolume());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 1 density %e\n",pc_i->getDensity());
+    printf("updateParticleCenterVelocityAndRotation 1 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("updateParticleCenterVelocityAndRotation 1 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("updateParticleCenterVelocityAndRotation 1 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    printf("updateParticleCenterVelocityAndRotation 1 f  x: %e y: %e z: %e\n",pc_i->getF().x,pc_i->getF().y,pc_i->getF().z);
+    printf("updateParticleCenterVelocityAndRotation 1 m  x: %e y: %e z: %e\n",pc_i->getMX(),pc_i->getMY(),pc_i->getMZ());
+    printf("updateParticleCenterVelocityAndRotation 1 DP  x: %e y: %e z: %e\n",pc_i->getDP_internal().x,pc_i->getDP_internal().y,pc_i->getDP_internal().z);
+    printf("updateParticleCenterVelocityAndRotation 1 pos_old  x: %e y: %e z: %e\n",pc_i->getPosOldX(),pc_i->getPosOldY(),pc_i->getPosOldZ());
+    printf("updateParticleCenterVelocityAndRotation 1 vel_old  x: %e y: %e z: %e\n",pc_i->getVelOldX(),pc_i->getVelOldY(),pc_i->getVelOldZ());
+    printf("updateParticleCenterVelocityAndRotation 1 w_old  x: %e y: %e z: %e\n",pc_i->getWOldX(),pc_i->getWOldY(),pc_i->getWOldZ());
+    printf("updateParticleCenterVelocityAndRotation 1 f_old  x: %e y: %e z: %e\n",pc_i->getFOldX(),pc_i->getFOldY(),pc_i->getFOldZ());
+    printf("updateParticleCenterVelocityAndRotation 1 m_old  x: %e y: %e z: %e\n",pc_i->getMOldX(),pc_i->getMOldY(),pc_i->getMOldZ());
+    printf("updateParticleCenterVelocityAndRotation 1 volume %e\n",pc_i->getVolume());
+    printf("updateParticleCenterVelocityAndRotation 1 density %e\n",pc_i->getDensity());
     #endif //PARTICLE_DEBUG
 
     // Update particle center velocity using its surface forces and the body forces
@@ -185,14 +185,14 @@ void gpuUpdateParticleCenterVelocityAndRotation(
     pc_i->setIYZ(Iaux6.yz);
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuUpdateParticleCenterVelocityAndRotation 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    printf("gpuUpdateParticleCenterVelocityAndRotation 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
-    printf("gpuUpdateParticleCenterVelocityAndRotation 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    printf("updateParticleCenterVelocityAndRotation 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("updateParticleCenterVelocityAndRotation 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("updateParticleCenterVelocityAndRotation 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
     #endif //PARTICLE_DEBUG
 }
 
 __global__
-void gpuParticleMovement(
+void updateParticlePosition(
     ParticleCenter *pArray,
     int firstIndex,
     int lastIndex,    
@@ -220,9 +220,9 @@ void gpuParticleMovement(
         return;
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuParticleMovement 1 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    printf("gpuParticleMovement 1 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
-    printf("gpuParticleMovement 1 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    printf("updateParticlePosition 1 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("updateParticlePosition 1 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("updateParticlePosition 1 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
     #endif //PARTICLE_DEBUG
 
     #ifdef BC_X_WALL
@@ -256,9 +256,9 @@ void gpuParticleMovement(
     pc_i->setW_pos(pc_i->getW_pos() + pc_i->getW_avg());
 
     #ifdef PARTICLE_DEBUG
-    printf("gpuParticleMovement 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
-    printf("gpuParticleMovement 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
-    printf("gpuParticleMovement 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
+    printf("updateParticlePosition 2 pos  x: %e y: %e z: %e\n",pc_i->getPosX(),pc_i->getPosY(),pc_i->getPosZ());
+    printf("updateParticlePosition 2 vel  x: %e y: %e z: %e\n",pc_i->getVel().x,pc_i->getVel().y,pc_i->getVel().z);
+    printf("updateParticlePosition 2 w  x: %e y: %e z: %e\n",pc_i->getWX(),pc_i->getWY(),pc_i->getWZ());
     #endif //PARTICLE_DEBUG
 
 

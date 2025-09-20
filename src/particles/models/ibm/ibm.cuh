@@ -46,7 +46,7 @@ void ibmSimulation(
  *  @param step: The current simulation time step for collision checking.
  */
 __global__ 
-void gpuResetNodesForces(
+void ibmResetNodesForces(
     IbmNodesSoA* particlesNodes,
     unsigned int step
 );
@@ -60,7 +60,7 @@ void gpuResetNodesForces(
  *  @param step: The current simulation time step for collision checking.
  */
 __global__
-void gpuForceInterpolationSpread(
+void ibmForceInterpolationSpread(
     IbmNodesSoA* particlesNodes,
     ParticleCenter *pArray,
     dfloat *fMom,
@@ -76,7 +76,7 @@ void gpuForceInterpolationSpread(
  *  @param step: The current simulation time step for collision checking.
  */
 __global__
-void gpuParticleNodeMovement(
+void ibmParticleNodeMovement(
     IbmNodesSoA* particlesNodes,
     ParticleCenter *pArray,
     int firstIndex,

@@ -32,7 +32,7 @@
  *  @param step: The current simulation time step for collision checking.
  */
 __global__
-void gpuUpdateParticleOldValues(
+void updateParticleOldValues(
     ParticleCenter *pArray,
     int firstIndex,
     int lastIndex,    
@@ -47,7 +47,7 @@ void gpuUpdateParticleOldValues(
  *  @param step: The current simulation time step for collision checking.
  */
 __global__ 
-void gpuUpdateParticleCenterVelocityAndRotation(
+void updateParticleCenterVelocityAndRotation(
     ParticleCenter *pArray,
     int firstIndex,
     int lastIndex,    
@@ -62,7 +62,7 @@ void gpuUpdateParticleCenterVelocityAndRotation(
  *  @param step: The current simulation time step for collision checking.
  */
 __global__
-void gpuParticleMovement(
+void updateParticlePosition(
     ParticleCenter *pArray,
     int firstIndex,
     int lastIndex,    

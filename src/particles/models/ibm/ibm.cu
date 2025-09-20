@@ -40,25 +40,26 @@ void ibmSimulation(
 
 
     // Update particle center position and its old values
-    gpuUpdateParticleOldValues<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
+    updateParticleOldValues<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
 
     // Reset forces in all IBM nodes;
-    gpuResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,step);
+    ibmResetNodesForces<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,step);
 
+    //TODO: move particlesCollisionHandler to particleSimulation so it can handle from different sources
     // Calculate collision force between particles
     ParticleShape* shape = particles->getPShape();
-    gpuParticlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamParticles>>>(shape,pArray,step);
+    particlesCollisionHandler<<<GRID_PCOLLISION_IBM, THREADS_PCOLLISION_IBM, 0, streamParticles>>>(shape,pArray,step);
  
 
     // Make the interpolation of LBM and spreading of IBM forces
-    gpuForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0],step);
+    ibmForceInterpolationSpread<<<gridNodesIBM, threadsNodesIBM,0, streamParticles>>>(d_nodes,pArray, &fMom[0],step);
 
     // Update particle velocity using body center force and constant forces
-    gpuUpdateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
+    updateParticleCenterVelocityAndRotation<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
  
     // Update particle center position and its old values
-    gpuParticleMovement<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
-    gpuParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,pArray,range.first,range.last,step);
+    updateParticlePosition<<<GRID_PARTICLES_IBM, THREADS_PARTICLES_IBM, 0, streamParticles>>>(pArray,range.first,range.last,step);
+    ibmParticleNodeMovement<<<gridNodesIBM, threadsNodesIBM, 0, streamParticles>>>(d_nodes,pArray,range.first,range.last,step);
     
     checkCudaErrors(cudaStreamSynchronize(streamParticles));
     cudaFree(d_nodes);
@@ -69,7 +70,7 @@ void ibmSimulation(
 
 
 __global__ 
-void gpuResetNodesForces(IbmNodesSoA* particlesNodes, unsigned int step)
+void ibmResetNodesForces(IbmNodesSoA* particlesNodes, unsigned int step)
 {
     int idx = threadIdx.x + blockDim.x * blockIdx.x;
     if (idx >= particlesNodes->getNumNodes())
@@ -88,7 +89,7 @@ void gpuResetNodesForces(IbmNodesSoA* particlesNodes, unsigned int step)
 
 
 __global__
-void gpuParticleNodeMovement(
+void ibmParticleNodeMovement(
     IbmNodesSoA* particlesNodes,
     ParticleCenter *pArray,
     int firstIndex,
@@ -244,7 +245,7 @@ void gpuParticleNodeMovement(
 }
 
 __global__
-void gpuForceInterpolationSpread(
+void ibmForceInterpolationSpread(
     IbmNodesSoA* particlesNodes,
     ParticleCenter *pArray,
     dfloat *fMom,

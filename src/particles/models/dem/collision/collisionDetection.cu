@@ -9,7 +9,7 @@
 
 //collision
 __global__
-void gpuParticlesCollisionHandler(ParticleShape *shape, ParticleCenter *pArray, unsigned int step){
+void particlesCollisionHandler(ParticleShape *shape, ParticleCenter *pArray, unsigned int step){
     /* Maps a 1D array to a Floyd triangle, where the last row is for checking
     collision against the wall and the other ones to check collision between 
     particles, with index given by row/column. Example for 7 particles:
