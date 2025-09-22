@@ -395,37 +395,6 @@ void saveVarVTK(
     #endif //NODE_TYPE_SAVE
 }
 
-
-void folderSetup()
-{
-// Windows
-#if defined(_WIN32)
-    std::string strPath;
-    strPath = PATH_FILES;
-    strPath += "\\\\"; // adds "\\"
-    strPath += ID_SIM;
-    std::string cmd = "md ";
-    cmd += strPath;
-    system(cmd.c_str());
-    return;
-#endif // !_WIN32
-
-// Unix
-#if defined(__APPLE__) || defined(__MACH__) || defined(__linux__)
-    std::string strPath;
-    strPath = PATH_FILES;
-    strPath += "/";
-    strPath += ID_SIM;
-    std::string cmd = "mkdir -p ";
-    cmd += strPath;
-    system(cmd.c_str());
-    return;
-#endif // !Unix
-    printf("Operational system not supported\n");
-    return;
-}
-
-
 std::string getVarFilename(
     const std::string varName, 
     unsigned int step,
@@ -441,13 +410,13 @@ std::string getVarFilename(
         n_zeros = 6;
 
     // generates the file name as "PATH_FILES/id/id_varName000000.bin"
-    std::string strFile = PATH_FILES;
-    strFile += "/";
-    strFile += ID_SIM;
-    strFile += "/";
-    strFile += ID_SIM;
-    strFile += "_";
-    strFile += varName;
+    
+    std::filesystem::path baseDir = folderSetup();
+
+    std::string baseName = ID_SIM + std::string("_") + varName;
+
+    std::string strFile = (baseDir / baseName).string();
+
     for (unsigned int i = 0; i < n_zeros; i++)
         strFile += "0";
     strFile += std::to_string(step);
@@ -580,15 +549,14 @@ std::string getSimInfoString(int step,dfloat MLUPS)
 
 void saveSimInfo(int step,dfloat MLUPS)
 {
-    std::string strInf = PATH_FILES;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += "_info.txt"; // generate file name (with path)
+    std::filesystem::path baseDir = folderSetup();
+
+    std::string baseName = ID_SIM + std::string("_info.txt");
+    std::filesystem::path strInf =  (baseDir / baseName).string();
+
     FILE* outFile = nullptr;
 
-    outFile = fopen(strInf.c_str(), "w");
+    outFile = fopen(strInf.string().c_str(), "w");
     if(outFile != nullptr)
     {
         std::string strSimInfo = getSimInfoString(step,MLUPS);
@@ -597,7 +565,7 @@ void saveSimInfo(int step,dfloat MLUPS)
     }
     else
     {
-        printf("Error saving \"%s\" \nProbably wrong path!\n", strInf.c_str());
+        printf("Error saving \"%s\" \nProbably wrong path!\n", strInf.string().c_str());
     }
     
 }
@@ -607,13 +575,10 @@ void saveSimInfo(int step,dfloat MLUPS)
 void saveTreatData(std::string fileName, std::string dataString, int step)
 {
     #if SAVEDATA
-    std::string strInf = PATH_FILES;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += "/";
-    strInf += ID_SIM;
-    strInf += fileName;
-    strInf += ".txt"; // generate file name (with path)
+    std::filesystem::path baseDir = folderSetup();;
+
+    std::filesystem::path strInf = baseDir / (ID_SIM + fileName + ".txt");
+
     std::ifstream file(strInf.c_str());
     std::ofstream outfile;
 

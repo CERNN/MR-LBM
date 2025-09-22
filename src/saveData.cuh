@@ -176,11 +176,6 @@ void saveVarVTK(
 );
 
 /**
- *  @brief Setup folder to save variables
-*/
-void folderSetup();
-
-/**
  *  @brief Get variable filename
  *  @param var_name: name of the variable
  *  @param step: steps number of the file

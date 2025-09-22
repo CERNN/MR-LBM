@@ -384,11 +384,8 @@ void saveSimCheckpoint(
     ghostInterfaceData ghostInterface,
     int *step
     ){
-    std::string foldername = PATH_FILES; 
-    foldername += "\\\\";
-    foldername += ID_SIM;
-    foldername += "\\\\checkpoint";
-    createFolder(foldername);
+    folderCheckpoint();
+
     operateSimCheckpoint(__SAVE_CHECKPOINT, fMom,ghostInterface, step);
 }
 
@@ -494,11 +491,8 @@ void saveSimCheckpointParticle(
     ParticlesSoA& particlesSoA,
     int *step
     ){
-    std::string foldername = PATH_FILES; 
-    foldername += "\\\\";
-    foldername += ID_SIM;
-    foldername += "\\\\checkpoint";
-    createFolder(foldername);
+    folderCheckpoint();
+
     operateSimCheckpointParticle(__SAVE_CHECKPOINT, particlesSoA, step);
 }
 #endif //PARTICLE_MODEL
