@@ -21,6 +21,15 @@
 #include <builtin_types.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <filesystem>
+
+#if defined(_WIN32)
+    #include <windows.h>
+#elif defined(__linux__)
+    #include <unistd.h>
+#elif defined(__APPLE__)
+    #include <mach-o/dyld.h>
+#endif
 
 #include "errorDef.h"
 #include "globalFunctions.h"
@@ -44,6 +53,13 @@
 void createFolder(
     std::string foldername
 );
+
+__host__
+std::filesystem::path getExecutablePathCheckpoint();
+
+__host__
+std::filesystem::path folderCheckpoint();
+
 
 /**
  *  @brief Get the filesize of file  

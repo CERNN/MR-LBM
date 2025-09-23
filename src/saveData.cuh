@@ -26,6 +26,15 @@
 #include <iostream>     // std::cout, std::fixed
 #include <iomanip>      // std::setprecision
 #include <vector>
+#include <filesystem>
+#if defined(_WIN32)
+    #include <windows.h>
+#elif defined(__linux__)
+    #include <unistd.h>
+#elif defined(__APPLE__)
+    #include <mach-o/dyld.h>
+#endif
+
 
 #include "globalFunctions.h"
 #include <cuda.h>
@@ -34,6 +43,12 @@
 #include <builtin_types.h>
 #include "errorDef.h"
 #include "globalStructs.h"
+
+__host__
+std::filesystem::path getExecutablePath();
+
+__host__
+std::filesystem::path folderSetup();
 
 template<typename T>
 void writeBigEndian(std::ofstream& ofs, const T* data, size_t count);
@@ -174,11 +189,6 @@ void saveVarVTK(
     BC_FORCES_PARAMS_DECLARATION(h_) 
     unsigned int nSteps
 );
-
-/**
- *  @brief Setup folder to save variables
-*/
-void folderSetup();
 
 /**
  *  @brief Get variable filename
