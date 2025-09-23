@@ -23,6 +23,14 @@
 #include <sys/types.h>
 #include <filesystem>
 
+#if defined(_WIN32)
+    #include <windows.h>
+#elif defined(__linux__)
+    #include <unistd.h>
+#elif defined(__APPLE__)
+    #include <mach-o/dyld.h>
+#endif
+
 #include "errorDef.h"
 #include "globalFunctions.h"
 #include "var.h"

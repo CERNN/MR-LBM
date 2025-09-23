@@ -3,14 +3,6 @@
 #include "nnf.h"
 #endif //OMEGA_FIELD
 
-#if defined(_WIN32)
-    #include <windows.h>
-#elif defined(__linux__)
-    #include <unistd.h>
-#elif defined(__APPLE__)
-    #include <mach-o/dyld.h>
-#endif
-
 std::filesystem::path getExecutablePath() {
     #if defined(_WIN32)
         char result[MAX_PATH];
