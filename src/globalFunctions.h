@@ -14,7 +14,6 @@
 #define __GLOBAL_FUNCTIONS_H
 
 #include <builtin_types.h> // for device variables
-#include <filesystem>
 #include "var.h"
 #include "globalStructs.h"
 #include "./includeFiles/interface.h"
@@ -773,14 +772,5 @@ __host__ __forceinline__  uint32_t set_top12_bits_host(uint32_t base, dfloat x) 
 __host__ __forceinline__  dfloat get_from_top12_bits_host(uint32_t value) {return static_cast<dfloat>(value >> 20) * 0.0002442002f;}
 __device__ __forceinline__  uint32_t set_top12_bits_device(uint32_t base, dfloat x) {return (base & 0x000FFFFF) | (__float2uint_rn(x * 4095.0f) << 20);}
 __device__ __forceinline__  dfloat get_from_top12_bits_device(uint32_t value) {return __uint2float_rn(value >> 20) * 0.0002442002f;}
- 
-__host__
-std::filesystem::path getExecutablePath();
-
-__host__
-std::filesystem::path folderSetup();
-
-__host__
-std::filesystem::path folderCheckpoint();
 
 #endif // !__GLOBAL_FUNCTIONS_H

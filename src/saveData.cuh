@@ -26,6 +26,7 @@
 #include <iostream>     // std::cout, std::fixed
 #include <iomanip>      // std::setprecision
 #include <vector>
+#include <filesystem>
 
 #include "globalFunctions.h"
 #include <cuda.h>
@@ -34,6 +35,12 @@
 #include <builtin_types.h>
 #include "errorDef.h"
 #include "globalStructs.h"
+
+__host__
+std::filesystem::path getExecutablePath();
+
+__host__
+std::filesystem::path folderSetup();
 
 template<typename T>
 void writeBigEndian(std::ofstream& ofs, const T* data, size_t count);

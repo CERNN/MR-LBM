@@ -43,7 +43,47 @@ void createFolder(std::string foldername)
     #endif //_WIN32
 }
 
+#if defined(_WIN32)
+    #include <windows.h>
+#elif defined(__linux__)
+    #include <unistd.h>
+#elif defined(__APPLE__)
+    #include <mach-o/dyld.h>
+#endif
 
+std::filesystem::path getExecutablePathCheckpoint() {
+    #if defined(_WIN32)
+        char result[MAX_PATH];
+        DWORD count = GetModuleFileNameA(NULL, result, MAX_PATH);
+        if (count == 0) throw std::runtime_error("Error obtaining path to executable (Windows).");
+        return std::filesystem::path(std::string(result, count));
+    #elif defined(__linux__)
+        char result[1024];
+        ssize_t count = readlink("/proc/self/exe", result, sizeof(result));
+        if (count == -1) throw std::runtime_error("Error obtaining path to executable (Linux).");
+        return std::filesystem::path(std::string(result, count));
+    #elif defined(__APPLE__)
+        char result[1024];
+        uint32_t size = sizeof(result);
+        if (_NSGetExecutablePath(result, &size) != 0)
+            throw std::runtime_error("Error obtaining path to executable  (macOS).");
+        return std::filesystem::path(result);
+    #else
+        #error "Platform not supported"
+    #endif
+}
+
+std::filesystem::path folderCheckpoint()
+{
+    std::filesystem::path exePath = getExecutablePathCheckpoint();   
+    std::filesystem::path binDir = exePath.parent_path();
+
+    std::filesystem::path foldername = binDir / PATH_FILES / ID_SIM / "checkpoint";
+
+    std::filesystem::create_directories(foldername);
+
+    return foldername;
+}
 
 size_t getFileSize(
     std::string filename
