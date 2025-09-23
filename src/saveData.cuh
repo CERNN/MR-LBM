@@ -20,6 +20,8 @@
 #include <cuda_runtime.h>
 #include <builtin_types.h>
 
+#include <map>
+#include <cstddef>
 #include <string>
 #include <fstream>
 #include <sstream>
@@ -152,6 +154,96 @@ void saveVarBin(
     bool append
 );
 
+/**
+ *  @brief Compute linear index in a 3D structured grid
+ *  @param x: x-coordinate index
+ *  @param y: y-coordinate index
+ *  @param z: z-coordinate index
+ *  @param NX: number of grid points in X direction
+ *  @param NY: number of grid points in Y direction
+ *  @return Linearized index corresponding to (x, y, z)
+*/
+inline size_t idx(
+    size_t x, 
+    size_t y, 
+    size_t z, 
+    size_t NX, 
+    size_t NY
+);
+
+/**
+ *  @brief Convert point-based scalar data into cell-centered scalar data
+ *  @param pointField: pointer to array of scalar values defined at grid points
+ *  @param NX: number of grid points in X direction
+ *  @param NY: number of grid points in Y direction
+ *  @param NZ: number of grid points in Z direction
+ *  @return Vector with scalar values averaged/interpolated at cell centers
+*/
+std::vector<float> convertPointToCellScalar(
+    const float* pointField,
+    size_t NX,
+    size_t NY,
+    size_t NZ
+);
+
+/**
+ *  @brief Convert point-based vector field into cell-centered vector field
+ *  @param ux: pointer to array with X-component of velocity/field at grid points
+ *  @param uy: pointer to array with Y-component of velocity/field at grid points
+ *  @param uz: pointer to array with Z-component of velocity/field at grid points
+ *  @param NX: number of grid points in X direction
+ *  @param NY: number of grid points in Y direction
+ *  @param NZ: number of grid points in Z direction
+ *  @return Vector of dfloat3 objects with interpolated values at cell centers
+*/
+std::vector<dfloat3> convertPointToCellVector(
+    const float* ux,
+    const float* uy,
+    const float* uz,
+    size_t NX,
+    size_t NY,
+    size_t NZ
+);
+
+/**
+ *  @brief Converts point-based tensors (point grid) to cell-based tensors
+ *  @param Axx Pointer to the array containing the xx component values at points
+ *  @param Ayy Pointer to the array containing the yy component values at points
+ *  @param Azz Pointer to the array containing the zz component values at points
+ *  @param Axy Pointer to the array containing the xy component values at points
+ *  @param Ayz Pointer to the array containing the yz component values at points
+ *  @param Axz Pointer to the array containing the xz component values at points
+ *  @param NX: number of grid points in X direction
+ *  @param NY: number of grid points in Y direction
+ *  @param NZ: number of grid points in Z direction
+ *  @return std::vector<dfloat6> Vector containing the averaged tensors of each cell
+ */
+std::vector<dfloat6> convertPointToCellTensor6(
+    const float* Axx, 
+    const float* Ayy,
+    const float* Azz,
+    const float* Axy,
+    const float* Ayz, 
+    const float* Axz,
+    size_t NX, 
+    size_t NY, 
+    size_t NZ
+);
+
+/**
+ *  @brief Converts point-based integer data into cell-centered integer data
+ *  @param pointField Pointer to the array of integer values defined at grid points
+ *  @param NX Number of points in the X direction
+ *  @param NY Number of points in the Y direction
+ *  @param NZ Number of points in the Z direction
+ *  @return std::vector<int> Vector containing integer values aggregated at cell centers
+ */
+std::vector<int> convertPointToCellIntMode(
+    const int* pointField,
+    size_t NX,
+    size_t NY,
+    size_t NZ
+);
 
 /*
  *  @brief Save field on vtk file

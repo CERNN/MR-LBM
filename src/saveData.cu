@@ -331,7 +331,105 @@ void saveVarBin(
     }
 }
 
+inline size_t idx(size_t x, size_t y, size_t z, size_t NX, size_t NY) {
+    return x + y*NX + z*NX*NY;
+}
 
+
+std::vector<float> convertPointToCellScalar(
+    const float* pointField, size_t NX, size_t NY, size_t NZ)
+{
+    size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
+    std::vector<float> cellField(Ncells, 0.0f);
+
+    for (size_t z=0; z<NZ-1; z++)
+    for (size_t y=0; y<NY-1; y++)
+    for (size_t x=0; x<NX-1; x++) {
+        size_t cidx = x + y*(NX-1) + z*(NX-1)*(NY-1);
+        float sum=0.0f;
+        for(int dz=0; dz<=1; dz++)
+        for(int dy=0; dy<=1; dy++)
+        for(int dx=0; dx<=1; dx++)
+            sum += pointField[idx(x+dx, y+dy, z+dz, NX, NY)];
+        cellField[cidx] = sum/8.0f;
+    }
+    return cellField;
+}
+
+std::vector<dfloat3> convertPointToCellVector(
+    const float* ux, const float* uy, const float* uz,
+    size_t NX, size_t NY, size_t NZ)
+{
+    size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
+    std::vector<dfloat3> cellField(Ncells);
+
+    for (size_t z=0; z<NZ-1; z++)
+    for (size_t y=0; y<NY-1; y++)
+    for (size_t x=0; x<NX-1; x++) {
+        size_t cidx = x + y*(NX-1) + z*(NX-1)*(NY-1);
+        float sumx=0.0f, sumy=0.0f, sumz=0.0f;
+        for(int dz=0; dz<=1; dz++)
+        for(int dy=0; dy<=1; dy++)
+        for(int dx=0; dx<=1; dx++) {
+            size_t pidx = idx(x+dx, y+dy, z+dz, NX, NY);
+            sumx += ux[pidx]; sumy += uy[pidx]; sumz += uz[pidx];
+        }
+        cellField[cidx] = { sumx/8.0f, sumy/8.0f, sumz/8.0f };
+    }
+    return cellField;
+}
+
+std::vector<dfloat6> convertPointToCellTensor6(
+    const float* Axx, const float* Ayy, const float* Azz,
+    const float* Axy, const float* Ayz, const float* Axz,
+    size_t NX, size_t NY, size_t NZ)
+{
+    size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
+    std::vector<dfloat6> cellField(Ncells);
+
+    for (size_t z=0; z<NZ-1; z++)
+    for (size_t y=0; y<NY-1; y++)
+    for (size_t x=0; x<NX-1; x++) {
+        size_t cidx = x + y*(NX-1) + z*(NX-1)*(NY-1);
+        float sumxx=0,sumyy=0,sumzz=0,sumxy=0,sumyz=0,sumxz=0;
+        for(int dz=0; dz<=1; dz++)
+        for(int dy=0; dy<=1; dy++)
+        for(int dx=0; dx<=1; dx++) {
+            size_t pidx = idx(x+dx, y+dy, z+dz, NX, NY);
+            sumxx += Axx[pidx]; sumyy += Ayy[pidx]; sumzz += Azz[pidx];
+            sumxy += Axy[pidx]; sumyz += Ayz[pidx]; sumxz += Axz[pidx];
+        }
+        cellField[cidx] = { sumxx/8.0f, sumyy/8.0f, sumzz/8.0f,
+                            sumxy/8.0f, sumyz/8.0f, sumxz/8.0f };
+    }
+    return cellField;
+}
+
+std::vector<int> convertPointToCellIntMode(
+    const int* pointField, size_t NX, size_t NY, size_t NZ)
+{
+    size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
+    std::vector<int> cellField(Ncells, 0);
+
+    for (size_t z=0; z<NZ-1; z++)
+    for (size_t y=0; y<NY-1; y++)
+    for (size_t x=0; x<NX-1; x++) {
+        size_t cidx = x + y*(NX-1) + z*(NX-1)*(NY-1);
+        std::map<int,int> counts;
+
+        for(int dz=0; dz<=1; dz++)
+        for(int dy=0; dy<=1; dy++)
+        for(int dx=0; dx<=1; dx++)
+            counts[pointField[idx(x+dx, y+dy, z+dz, NX, NY)]]++;
+
+        int mode=0,maxCount=0;
+        for(auto &kv : counts)
+            if(kv.second>maxCount) { maxCount=kv.second; mode=kv.first; }
+
+        cellField[cidx] = mode;
+    }
+    return cellField;
+}
 
 void saveVarVTK(
     std::string filename, 
@@ -367,65 +465,138 @@ void saveVarVTK(
     )
 {
 
-    const size_t N = NX*NY*NZ;
-    std::ofstream ofs(filename, std::ios::binary);
-    if (!ofs) throw std::runtime_error("Cannot open " + filename);
+    if(!CELLDATA_SAVE){
+        printf("Saving VTK in POINT_DATA format");
+        const size_t N = NX*NY*NZ;
+        std::ofstream ofs(filename, std::ios::binary);
+        if (!ofs) throw std::runtime_error("Cannot open " + filename);
 
-    //Header 
-    ofs << "# vtk DataFile Version 3.0\n"
-        << "LBM output (binary)\n"
-        << "BINARY\n"                               // ← here!
-        << "DATASET STRUCTURED_POINTS\n"
-        << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
-        << "ORIGIN 0 0 0\n"
-        << "SPACING 1 1 1\n"
-        << "POINT_DATA " << N << "\n";
-    ofs << "SCALARS rho float 1\n"
-        << "LOOKUP_TABLE default\n";
-    writeBigEndian(ofs, rho, N);
-
-    ofs << "VECTORS velocity float\n";
-    for (size_t i = 0; i < N; ++i) {
-        dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
-        writeBigEndian(ofs, v, 3);
-    }
-
-    #ifdef OMEGA_FIELD
-        ofs << "SCALARS omega float 1\n"
+        //Header 
+        ofs << "# vtk DataFile Version 3.0\n"
+            << "LBM output (binary)\n"
+            << "BINARY\n"                               // ← here!
+            << "DATASET STRUCTURED_POINTS\n"
+            << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
+            << "ORIGIN 0 0 0\n"
+            << "SPACING 1 1 1\n"
+            << "POINT_DATA " << N << "\n";
+        ofs << "SCALARS rho float 1\n"
             << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, omega, N);
-    #endif //OMEGA_FIELD
+        writeBigEndian(ofs, rho, N);
 
-    #ifdef SECOND_DIST
-        ofs << "SCALARS C float 1\n"
-            << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, C, N);
-    #endif //SECOND_DIST
-
-    #ifdef CONFORMATION_TENSOR
-        ofs << "TENSORS6 Aij float\n";
+        ofs << "VECTORS velocity float\n";
         for (size_t i = 0; i < N; ++i) {
-            dfloat tensor[6] = {
-                Axx[i], Ayy[i], Azz[i],
-                Axy[i], Ayz[i], Axz[i]
-            };
-            writeBigEndian(ofs, tensor, 6);
+            dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
+            writeBigEndian(ofs, v, 3);
         }
-    #endif //CONFORMATION_TENSOR
 
-    #ifdef SAVE_BC_FORCES
-        ofs << "VECTORS forces float\n";
-        for (size_t i = 0; i < N; ++i) {
-            dfloat f[3] = { fx[i], fy[i], fz[i] };
-            writeBigEndian(ofs, f, 3);
-        }
-    #endif //SAVE_BC_FORCES
+        #ifdef OMEGA_FIELD
+            ofs << "SCALARS omega float 1\n"
+                << "LOOKUP_TABLE default\n";
+            writeBigEndian(ofs, omega, N);
+        #endif //OMEGA_FIELD
 
-    #if NODE_TYPE_SAVE
-        ofs << "SCALARS bc int 1\n"
+        #ifdef SECOND_DIST
+            ofs << "SCALARS C float 1\n"
+                << "LOOKUP_TABLE default\n";
+            writeBigEndian(ofs, C, N);
+        #endif //SECOND_DIST
+
+        #ifdef CONFORMATION_TENSOR
+            ofs << "TENSORS6 Aij float\n";
+            for (size_t i = 0; i < N; ++i) {
+                dfloat tensor[6] = {
+                    Axx[i], Ayy[i], Azz[i],
+                    Axy[i], Ayz[i], Axz[i]
+                };
+                writeBigEndian(ofs, tensor, 6);
+            }
+        #endif //CONFORMATION_TENSOR
+
+        #ifdef SAVE_BC_FORCES
+            ofs << "VECTORS forces float\n";
+            for (size_t i = 0; i < N; ++i) {
+                dfloat f[3] = { fx[i], fy[i], fz[i] };
+                writeBigEndian(ofs, f, 3);
+            }
+        #endif //SAVE_BC_FORCES
+
+        #if NODE_TYPE_SAVE
+            ofs << "SCALARS bc int 1\n"
+                << "LOOKUP_TABLE default\n";
+            writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N);
+        #endif //NODE_TYPE_SAVE
+    }else{ 
+        printf("Saving VTK in CELL_DATA format");
+        const size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
+        std::ofstream ofs(filename, std::ios::binary);
+        if (!ofs) throw std::runtime_error("Cannot open " + filename);
+
+        //Header 
+        ofs << "# vtk DataFile Version 3.0\n"
+            << "LBM output (binary)\n"
+            << "BINARY\n"                               // ← here!
+            << "DATASET STRUCTURED_POINTS\n"
+            << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
+            << "ORIGIN 0 0 0\n"
+            << "SPACING 1 1 1\n"
+            << "CELL_DATA " << Ncells << "\n";
+        auto rho_cell = convertPointToCellScalar(rho,NX,NY,NZ);
+        ofs << "SCALARS rho float 1\n"
             << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N);
-    #endif //NODE_TYPE_SAVE
+        writeBigEndian(ofs, rho_cell.data(), rho_cell.size());
+
+        auto vel_cell = convertPointToCellVector(ux,uy,uz,NX,NY,NZ);
+        ofs << "VECTORS velocity float\n";
+        for(size_t i=0;i<Ncells;i++){
+            float v[3] = { vel_cell[i].x/F_M_I_SCALE,
+                        vel_cell[i].y/F_M_I_SCALE,
+                        vel_cell[i].z/F_M_I_SCALE };
+            writeBigEndian(ofs,v,3);
+        }
+
+        #ifdef OMEGA_FIELD
+            auto omega_cell = convertPointToCellScalar(omega,NX,NY,NZ);
+            ofs << "SCALARS omega float 1\n"
+                << "LOOKUP_TABLE default\n";
+            writeBigEndian(ofs, omega_cell.data(), omega_cell.size());
+        #endif //OMEGA_FIELD
+
+        #ifdef SECOND_DIST
+            auto C_cell = convertPointToCellScalar(C,NX,NY,NZ);
+            ofs << "SCALARS C float 1\n"
+                << "LOOKUP_TABLE default\n";
+            writeBigEndian(ofs, C_cell.data(), Ncells);
+        #endif //SECOND_DIST
+
+        #ifdef CONFORMATION_TENSOR
+            auto A_cell = convertPointToCellTensor6(Axx,Ayy,Azz,Axy,Ayz,Axz,NX,NY,NZ);
+            ofs << "TENSORS6 Aij float\n";
+            for (size_t i = 0; i < Ncells; ++i) {
+                dfloat tensor[6] = {
+                    A_cell[i].xx,A_cell[i].yy,A_cell[i].zz,
+                    A_cell[i].xy,A_cell[i].yz,A_cell[i].xz
+                };
+                writeBigEndian(ofs, tensor, 6);
+            }
+        #endif //CONFORMATION_TENSOR
+
+        #ifdef SAVE_BC_FORCES
+            auto f_cell = convertPointToCellVector(fx, fy, fz,NX,NY,NZ);
+            ofs << "VECTORS forces float\n";
+            for (size_t i = 0; i < Ncells; ++i) {
+                dfloat f[3] = { fx[i], fy[i], fz[i] };
+                writeBigEndian(ofs, f, 3);
+            }
+        #endif //SAVE_BC_FORCES
+
+        #if NODE_TYPE_SAVE
+            auto bc_cell = convertPointToCellIntMode(NODE_TYPE_SAVE,NX,NY,NZ);
+            ofs << "SCALARS bc int 1\n"
+                << "LOOKUP_TABLE default\n";
+            writeBigEndian(ofs, bc_cell.data(), Ncells);
+        #endif //NODE_TYPE_SAVE
+    }  
 }
 
 std::string getVarFilename(
