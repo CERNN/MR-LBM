@@ -281,8 +281,16 @@ void saveSimInfo(int step,dfloat MLUPS);
  *  @param fileName: primary file name
  *  @param dataString: dataString to be saved
  *  @param step: time step
+ *  @param headerExist: if the header already exists in the file (default is false)
 */
-void saveTreatData(std::string fileName, std::string dataString, int step);
+void saveTreatData(std::string fileName, std::string dataString, int step, bool headerExist = false);
+
+/**
+ * @brief Saves in a ".txt" file the header of the treated data
+ * @param fileName: primary file name
+ * @param headerString: header string to be saved
+ */
+void saveTreatDataHeader(std::string fileName, std::string headerString);
 
 
 #endif //__SAVE_DATA_H

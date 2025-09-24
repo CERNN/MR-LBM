@@ -752,7 +752,7 @@ void saveSimInfo(int step,dfloat MLUPS)
 /**/
 
 
-void saveTreatData(std::string fileName, std::string dataString, int step)
+void saveTreatData(std::string fileName, std::string dataString, int step, bool headerExist)
 {
     #if SAVEDATA
     std::filesystem::path baseDir = folderSetup();;
@@ -762,7 +762,7 @@ void saveTreatData(std::string fileName, std::string dataString, int step)
     std::ifstream file(strInf.c_str());
     std::ofstream outfile;
 
-    if(step == REPORT_SAVE){ //check if first time step to save data
+    if(step == REPORT_SAVE  && !headerExist){ //check if first time step to save data
         outfile.open(strInf.c_str());
     }else{
         if (file.good()) {
@@ -779,4 +779,16 @@ void saveTreatData(std::string fileName, std::string dataString, int step)
     #if CONSOLEPRINT
     printf("%s \n",dataString.c_str());
     #endif //CONSOLEPRINT
+}
+
+void saveTreatDataHeader(std::string fileName, std::string headerString)
+{
+    #if SAVEDATA
+    std::filesystem::path baseDir = folderSetup();
+    std::filesystem::path strInf = baseDir / (ID_SIM + fileName + ".txt");
+
+    std::ofstream outfile(strInf.c_str()); // overwrite file
+    outfile << headerString << std::endl;
+    outfile.close();
+    #endif //SAVEDATA
 }
