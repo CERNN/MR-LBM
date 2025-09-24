@@ -234,4 +234,11 @@ static inline uint64_t swap64(uint64_t v) {
 #include "definitions.h"
 #include "nnf.h"
 
+
+// --- compile-time checks ---
+static_assert(NX >= BLOCK_NX, "NX must be >= BLOCK_NX, Update block size in definitions.h or increase domain in constants.inc");
+static_assert(NY >= BLOCK_NY, "NY must be >= BLOCK_NY, Update block size in definitions.h or increase domain in constants.inc");
+static_assert(NZ >= BLOCK_NZ, "NZ must be >= BLOCK_NZ, Update block size in definitions.h or increase domain in constants.inc");
+
+
 #endif //__VAR_H
