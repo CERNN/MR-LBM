@@ -9,7 +9,7 @@
 #define MEAN_FLOW (false) // store the mean flow of the domain (used to calculate turbulent statistics)
 #define NODE_TYPE_SAVE (false) //save the bc conditions, usefull for drawing the surface
 #define ONLY_FINAL_MACRO (false) //save only the last time step macroscopic
-#define MACR_SAVE (false) // save macroscopic fields every # timestgeps
+#define MACR_SAVE (1000) // save macroscopic fields every # timestgeps
 #define REPORT_SAVE (false) // save report data every # timestgeps
 #define VTK_SAVE (true) // save in vtk file
 #define BIN_SAVE (false) //save in binary file

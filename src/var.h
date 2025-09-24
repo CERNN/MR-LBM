@@ -39,6 +39,8 @@
 #endif //SINGLE_PRECISION
 
 
+#define CELLDATA_SAVE false
+
 /* ----------------------------- PROBLEM DEFINE ---------------------------- */
 
 

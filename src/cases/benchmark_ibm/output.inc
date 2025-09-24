@@ -25,7 +25,5 @@
 
 #define IBM_PARTICLES_NODES_SAVE false      // Saves particles nodes data
 
-#define CELLDATA_SAVE true       //save vtk in celldata
-
 //#define PARTICLE_DEBUG
 /* ------------------------------------------------------------------------- */

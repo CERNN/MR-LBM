@@ -154,22 +154,6 @@ void saveVarBin(
     bool append
 );
 
-/**
- *  @brief Compute linear index in a 3D structured grid
- *  @param x: x-coordinate index
- *  @param y: y-coordinate index
- *  @param z: z-coordinate index
- *  @param NX: number of grid points in X direction
- *  @param NY: number of grid points in Y direction
- *  @return Linearized index corresponding to (x, y, z)
-*/
-inline size_t idx(
-    size_t x, 
-    size_t y, 
-    size_t z, 
-    size_t NX, 
-    size_t NY
-);
 
 /**
  *  @brief Convert point-based scalar data into cell-centered scalar data

@@ -331,10 +331,6 @@ void saveVarBin(
     }
 }
 
-inline size_t idx(size_t x, size_t y, size_t z, size_t NX, size_t NY) {
-    return x + y*NX + z*NX*NY;
-}
-
 
 std::vector<float> convertPointToCellScalar(
     const float* pointField, size_t NX, size_t NY, size_t NZ)
@@ -350,7 +346,7 @@ std::vector<float> convertPointToCellScalar(
         for(int dz=0; dz<=1; dz++)
         for(int dy=0; dy<=1; dy++)
         for(int dx=0; dx<=1; dx++)
-            sum += pointField[idx(x+dx, y+dy, z+dz, NX, NY)];
+            sum += pointField[idxScalarGlobal(x+dx, y+dy, z+dz)];
         cellField[cidx] = sum/8.0f;
     }
     return cellField;
@@ -371,7 +367,7 @@ std::vector<dfloat3> convertPointToCellVector(
         for(int dz=0; dz<=1; dz++)
         for(int dy=0; dy<=1; dy++)
         for(int dx=0; dx<=1; dx++) {
-            size_t pidx = idx(x+dx, y+dy, z+dz, NX, NY);
+            size_t pidx = idxScalarGlobal(x+dx, y+dy, z+dz);
             sumx += ux[pidx]; sumy += uy[pidx]; sumz += uz[pidx];
         }
         cellField[cidx] = { sumx/8.0f, sumy/8.0f, sumz/8.0f };
@@ -395,7 +391,7 @@ std::vector<dfloat6> convertPointToCellTensor6(
         for(int dz=0; dz<=1; dz++)
         for(int dy=0; dy<=1; dy++)
         for(int dx=0; dx<=1; dx++) {
-            size_t pidx = idx(x+dx, y+dy, z+dz, NX, NY);
+            size_t pidx = idxScalarGlobal(x+dx, y+dy, z+dz);
             sumxx += Axx[pidx]; sumyy += Ayy[pidx]; sumzz += Azz[pidx];
             sumxy += Axy[pidx]; sumyz += Ayz[pidx]; sumxz += Axz[pidx];
         }
@@ -420,7 +416,7 @@ std::vector<int> convertPointToCellIntMode(
         for(int dz=0; dz<=1; dz++)
         for(int dy=0; dy<=1; dy++)
         for(int dx=0; dx<=1; dx++)
-            counts[pointField[idx(x+dx, y+dy, z+dz, NX, NY)]]++;
+            counts[pointField[idxScalarGlobal(x+dx, y+dy, z+dz)]]++;
 
         int mode=0,maxCount=0;
         for(auto &kv : counts)
@@ -466,7 +462,7 @@ void saveVarVTK(
 {
 
     if(!CELLDATA_SAVE){
-        printf("Saving VTK in POINT_DATA format");
+        //printf("Saving VTK in POINT_DATA format");
         const size_t N = NX*NY*NZ;
         std::ofstream ofs(filename, std::ios::binary);
         if (!ofs) throw std::runtime_error("Cannot open " + filename);
@@ -527,7 +523,7 @@ void saveVarVTK(
             writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N);
         #endif //NODE_TYPE_SAVE
     }else{ 
-        printf("Saving VTK in CELL_DATA format");
+        //printf("Saving VTK in CELL_DATA format");
         const size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
         std::ofstream ofs(filename, std::ios::binary);
         if (!ofs) throw std::runtime_error("Cannot open " + filename);
