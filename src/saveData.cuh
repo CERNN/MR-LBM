@@ -143,8 +143,8 @@ void saveVarBin(
  *  @param NZ: number of grid points in Z direction
  *  @return Vector with scalar values averaged/interpolated at cell centers
 */
-std::vector<float> convertPointToCellScalar(
-    const float* pointField,
+std::vector<dfloat> convertPointToCellScalar(
+    const dfloat* pointField,
     size_t NX,
     size_t NY,
     size_t NZ
@@ -161,9 +161,9 @@ std::vector<float> convertPointToCellScalar(
  *  @return Vector of dfloat3 objects with interpolated values at cell centers
 */
 std::vector<dfloat3> convertPointToCellVector(
-    const float* ux,
-    const float* uy,
-    const float* uz,
+    const dfloat* ux,
+    const dfloat* uy,
+    const dfloat* uz,
     size_t NX,
     size_t NY,
     size_t NZ
@@ -183,12 +183,12 @@ std::vector<dfloat3> convertPointToCellVector(
  *  @return std::vector<dfloat6> Vector containing the averaged tensors of each cell
  */
 std::vector<dfloat6> convertPointToCellTensor6(
-    const float* Axx, 
-    const float* Ayy,
-    const float* Azz,
-    const float* Axy,
-    const float* Ayz, 
-    const float* Axz,
+    const dfloat* Axx, 
+    const dfloat* Ayy,
+    const dfloat* Azz,
+    const dfloat* Axy,
+    const dfloat* Ayz, 
+    const dfloat* Axz,
     size_t NX, 
     size_t NY, 
     size_t NZ

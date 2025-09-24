@@ -4,7 +4,7 @@
 
 __host__
 void initializationRandomNumbers(
-    float* randomNumbers, int seed)
+    dfloat* randomNumbers, int seed)
 {
     curandGenerator_t gen;
 
@@ -18,8 +18,14 @@ void initializationRandomNumbers(
     
     // Generate NX*NY*NZ floats on device, using normal distribution
     // with mean=0 and std_dev=NORMAL_STD_DEV
+    #ifdef SINGLE_PRECISION 
     checkCurandStatus(curandGenerateNormal(gen, randomNumbers, NUMBER_LBM_NODES,
         0, CURAND_STD_DEV));
+    #endif //SINGLE_PRECISION
+    #ifdef DOUBLE_PRECISION
+    checkCurandStatus(curandGenerateNormalDouble (gen, randomNumbers, NUMBER_LBM_NODES,
+        0, CURAND_STD_DEV));
+    #endif
 
     checkCurandStatus(curandDestroyGenerator(gen));
 }

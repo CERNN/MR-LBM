@@ -809,12 +809,12 @@ void initializeDomain(
     // Random numbers initialization
     #ifdef RANDOM_NUMBERS 
         if(console_flush) fflush(stdout);
-        checkCudaErrors(cudaMallocManaged((void**)&randomNumbers[0], sizeof(float) * NUMBER_LBM_NODES));
+        checkCudaErrors(cudaMallocManaged((void**)&randomNumbers[0], sizeof(dfloat) * NUMBER_LBM_NODES));
         initializationRandomNumbers(randomNumbers[0], CURAND_SEED);
         checkCudaErrors(cudaDeviceSynchronize());
         getLastCudaError("random numbers transfer error");
         printf("Random numbers initialized - Seed used: %u\n", CURAND_SEED); 
-        printf("Device memory allocated for random numbers: %.2f MB\n", (float)(sizeof(float) * NUMBER_LBM_NODES) / (1024.0 * 1024.0));
+        printf("Device memory allocated for random numbers: %.2f MB\n", (float)(sizeof(dfloat) * NUMBER_LBM_NODES) / (1024.0 * 1024.0));
         if(console_flush) fflush(stdout);
     #endif //RANDOM_NUMBERS
 

@@ -312,17 +312,17 @@ void saveVarBin(
 }
 
 
-std::vector<float> convertPointToCellScalar(
-    const float* pointField, size_t NX, size_t NY, size_t NZ)
+std::vector<dfloat> convertPointToCellScalar(
+    const dfloat* pointField, size_t NX, size_t NY, size_t NZ)
 {
     size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
-    std::vector<float> cellField(Ncells, 0.0f);
+    std::vector<dfloat> cellField(Ncells, 0.0f);
 
     for (size_t z=0; z<NZ-1; z++)
     for (size_t y=0; y<NY-1; y++)
     for (size_t x=0; x<NX-1; x++) {
         size_t cidx = x + y*(NX-1) + z*(NX-1)*(NY-1);
-        float sum=0.0f;
+        dfloat sum=0.0f;
         for(int dz=0; dz<=1; dz++)
         for(int dy=0; dy<=1; dy++)
         for(int dx=0; dx<=1; dx++)
@@ -333,7 +333,7 @@ std::vector<float> convertPointToCellScalar(
 }
 
 std::vector<dfloat3> convertPointToCellVector(
-    const float* ux, const float* uy, const float* uz,
+    const dfloat* ux, const dfloat* uy, const dfloat* uz,
     size_t NX, size_t NY, size_t NZ)
 {
     size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
@@ -343,7 +343,7 @@ std::vector<dfloat3> convertPointToCellVector(
     for (size_t y=0; y<NY-1; y++)
     for (size_t x=0; x<NX-1; x++) {
         size_t cidx = x + y*(NX-1) + z*(NX-1)*(NY-1);
-        float sumx=0.0f, sumy=0.0f, sumz=0.0f;
+        dfloat sumx=0.0f, sumy=0.0f, sumz=0.0f;
         for(int dz=0; dz<=1; dz++)
         for(int dy=0; dy<=1; dy++)
         for(int dx=0; dx<=1; dx++) {
@@ -356,8 +356,8 @@ std::vector<dfloat3> convertPointToCellVector(
 }
 
 std::vector<dfloat6> convertPointToCellTensor6(
-    const float* Axx, const float* Ayy, const float* Azz,
-    const float* Axy, const float* Ayz, const float* Axz,
+    const dfloat* Axx, const dfloat* Ayy, const dfloat* Azz,
+    const dfloat* Axy, const dfloat* Ayz, const dfloat* Axz,
     size_t NX, size_t NY, size_t NZ)
 {
     size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
@@ -367,7 +367,7 @@ std::vector<dfloat6> convertPointToCellTensor6(
     for (size_t y=0; y<NY-1; y++)
     for (size_t x=0; x<NX-1; x++) {
         size_t cidx = x + y*(NX-1) + z*(NX-1)*(NY-1);
-        float sumxx=0,sumyy=0,sumzz=0,sumxy=0,sumyz=0,sumxz=0;
+        dfloat sumxx=0,sumyy=0,sumzz=0,sumxy=0,sumyz=0,sumxz=0;
         for(int dz=0; dz<=1; dz++)
         for(int dy=0; dy<=1; dy++)
         for(int dx=0; dx<=1; dx++) {
@@ -525,7 +525,7 @@ void saveVarVTK(
         auto vel_cell = convertPointToCellVector(ux,uy,uz,NX,NY,NZ);
         ofs << "VECTORS velocity float\n";
         for(size_t i=0;i<Ncells;i++){
-            float v[3] = { vel_cell[i].x/F_M_I_SCALE,
+            dfloat v[3] = { vel_cell[i].x/F_M_I_SCALE,
                         vel_cell[i].y/F_M_I_SCALE,
                         vel_cell[i].z/F_M_I_SCALE };
             writeBigEndian(ofs,v,3);

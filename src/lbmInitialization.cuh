@@ -35,7 +35,7 @@
  */
 __host__
 void initializationRandomNumbers(
-    float* randomNumbers, 
+    dfloat* randomNumbers, 
     int seed
 );
 
