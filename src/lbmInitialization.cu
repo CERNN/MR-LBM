@@ -146,10 +146,6 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XX_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axx_qz_t30;
-    #ifdef LOG_CONFORMATION
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XX_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxx;
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XX_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxx;
-    #endif
     #endif 
     #ifdef A_XY_DIST 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  AxyVar;
@@ -157,10 +153,6 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axy_qz_t30;
-    #ifdef LOG_CONFORMATION
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XY_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxy;
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XY_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxy;
-    #endif
     #endif 
     #ifdef A_XZ_DIST 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  AxzVar;
@@ -168,10 +160,6 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_XZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Axz_qz_t30;
-    #ifdef LOG_CONFORMATION
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XZ_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxz;
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XZ_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cxz;
-    #endif
     #endif
     #ifdef A_YY_DIST 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  AyyVar;
@@ -179,10 +167,6 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YY_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayy_qz_t30;
-    #ifdef LOG_CONFORMATION
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XY_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cyy;
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_XY_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cyy;
-    #endif
     #endif
     #ifdef A_YZ_DIST 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  AyzVar;
@@ -190,10 +174,6 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_YZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Ayz_qz_t30;
-    #ifdef LOG_CONFORMATION
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_YZ_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cyz;
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_YZ_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Cyz;
-    #endif
     #endif
     #ifdef A_ZZ_DIST 
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_C_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  AzzVar;
@@ -201,10 +181,6 @@ __global__ void gpuInitialization_mom(
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CX_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qx_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qy_t30;
     fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, A_ZZ_CY_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] = Azz_qz_t30;
-    #ifdef LOG_CONFORMATION
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_ZZ_1_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Czz;
-        fMom[idxMom(threadIdx.x, threadIdx.y, threadIdx.z, C_ZZ_2_INDEX, blockIdx.x, blockIdx.y, blockIdx.z)] =  Czz;
-    #endif
     #endif
 
     #ifdef LOCAL_FORCES

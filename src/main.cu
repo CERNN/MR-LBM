@@ -53,26 +53,6 @@ int main() {
     #ifdef A_ZZ_DIST
     dfloat* Azz;
     #endif //A_ZZ_DIST
-    #ifdef LOG_CONFORMATION
-        #ifdef A_XX_DIST
-        dfloat* Cxx;
-        #endif //A_XX_DIST
-        #ifdef A_XY_DIST
-        dfloat* Cxy;
-        #endif //A_XY_DIST
-        #ifdef A_XZ_DIST
-        dfloat* Cxz;
-        #endif //A_XZ_DIST
-        #ifdef A_YY_DIST
-        dfloat* Cyy;
-        #endif //A_XZ_DIST
-        #ifdef A_YZ_DIST
-        dfloat* Cyz;
-        #endif //A_YZ_DIST
-        #ifdef A_ZZ_DIST
-        dfloat* Czz;
-        #endif //A_ZZ_DIST
-    #endif //LOG_CONFORMATION
 
     #ifdef DENSITY_CORRECTION
     dfloat* h_mean_rho;
@@ -337,26 +317,6 @@ int main() {
                     #ifdef A_ZZ_DIST 
                     Azz,
                     #endif //A_ZZ_DIST
-                    #ifdef LOG_CONFORMATION
-                        #ifdef A_XX_DIST
-                        Cxx,
-                        #endif //A_XX_DIST
-                        #ifdef A_XY_DIST
-                        Cxy,
-                        #endif //A_XY_DIST
-                        #ifdef A_XZ_DIST
-                        Cxz,
-                        #endif //A_XZ_DIST
-                        #ifdef A_YY_DIST
-                        Cyy,
-                        #endif //A_YY_DIST
-                        #ifdef A_YZ_DIST
-                        Cyz,
-                        #endif //A_YZ_DIST
-                        #ifdef A_ZZ_DIST
-                        Czz,
-                        #endif //A_ZZ_DIST
-                    #endif //LOG_CONFORMATION
                     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
                 }
             //}
@@ -422,26 +382,6 @@ int main() {
     #ifdef A_ZZ_DIST 
     Azz,
     #endif //A_ZZ_DIST
-    #ifdef LOG_CONFORMATION
-        #ifdef A_XX_DIST
-        Cxx,
-        #endif //A_XX_DIST
-        #ifdef A_XY_DIST
-        Cxy,
-        #endif //A_XY_DIST
-        #ifdef A_XZ_DIST
-        Cxz,
-        #endif //A_XZ_DIST
-        #ifdef A_YY_DIST
-        Cyy,
-        #endif //A_YY_DIST
-        #ifdef A_YZ_DIST
-        Cyz,
-        #endif //A_YZ_DIST
-        #ifdef A_ZZ_DIST
-        Czz,
-        #endif //A_ZZ_DIST
-    #endif //LOG_CONFORMATION
     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
 
 
@@ -526,28 +466,6 @@ int main() {
     #ifdef A_ZZ_DIST 
     cudaFree(Azz);
     #endif //A_ZZ_DIST
-
-
-    #ifdef LOG_CONFORMATION
-        #ifdef A_XX_DIST 
-        cudaFree(Cxx);
-        #endif //A_XX_DIST
-        #ifdef A_XY_DIST 
-        cudaFree(Cxy);
-        #endif //A_XY_DIST
-        #ifdef A_XZ_DIST 
-        cudaFree(Cxz);
-        #endif //A_XZ_DIST
-        #ifdef A_YY_DIST 
-        cudaFree(Cyy);
-        #endif //A_YY_DIST
-        #ifdef A_YZ_DIST 
-        cudaFree(Cyz);
-        #endif //A_YZ_DIST
-        #ifdef A_ZZ_DIST 
-        cudaFree(Czz);
-        #endif //A_ZZ_DIST
-    #endif //LOG_CONFORMATION
 
     interfaceFree(ghostInterface);
 

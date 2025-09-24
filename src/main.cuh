@@ -718,33 +718,6 @@ void allocateHostMemory(
     memAllocated += MEM_SIZE_SCALAR;
     #endif //A_ZZ_DIST
 
-    #ifdef LOG_CONFORMATION
-        #ifdef A_XX_DIST
-        checkCudaErrors(cudaMallocHost((void**)Cxx, MEM_SIZE_SCALAR));
-        memAllocated += MEM_SIZE_SCALAR;
-        #endif //A_XX_DIST
-        #ifdef A_XY_DIST
-        checkCudaErrors(cudaMallocHost((void**)Cxy, MEM_SIZE_SCALAR));
-        memAllocated += MEM_SIZE_SCALAR;
-        #endif //A_XY_DIST
-        #ifdef A_XZ_DIST
-        checkCudaErrors(cudaMallocHost((void**)Cxz, MEM_SIZE_SCALAR));
-        memAllocated += MEM_SIZE_SCALAR;
-        #endif //A_XZ_DIST
-        #ifdef A_YY_DIST
-        checkCudaErrors(cudaMallocHost((void**)Cyy, MEM_SIZE_SCALAR));
-        memAllocated += MEM_SIZE_SCALAR;
-        #endif //A_YY_DIST
-        #ifdef A_YZ_DIST
-        checkCudaErrors(cudaMallocHost((void**)Cyz, MEM_SIZE_SCALAR));
-        memAllocated += MEM_SIZE_SCALAR;
-        #endif //A_YZ_DIST
-        #ifdef A_ZZ_DIST
-        checkCudaErrors(cudaMallocHost((void**)Czz, MEM_SIZE_SCALAR));
-        memAllocated += MEM_SIZE_SCALAR;
-        #endif //A_ZZ_DIST
-    #endif //LOG_CONFORMATION
-
     #if MEAN_FLOW
     checkCudaErrors(cudaMallocHost((void**)m_fMom, MEM_SIZE_MOM));
     checkCudaErrors(cudaMallocHost((void**)m_rho, MEM_SIZE_SCALAR));

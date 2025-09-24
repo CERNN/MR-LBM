@@ -126,65 +126,6 @@ constexpr int M_MZZ_INDEX = 9;
     #define M_OFFSET A_ZZ_CZ_INDEX
 #endif
 
-#ifdef LOG_CONFORMATION
-    #ifdef A_XX_DIST
-        constexpr int C_XX_1_INDEX = (1 + M_OFFSET);
-        constexpr int C_XX_2_INDEX = (2 + M_OFFSET);
-        #ifdef M_OFFSET
-            #undef M_OFFSET
-        #endif
-        #define M_OFFSET C_XX_2_INDEX
-    #endif
-
-    #ifdef A_XY_DIST
-        constexpr int C_XY_1_INDEX = (1 + M_OFFSET);
-        constexpr int C_XY_2_INDEX = (2 + M_OFFSET);
-        #ifdef M_OFFSET
-            #undef M_OFFSET
-        #endif
-        #define M_OFFSET C_XY_2_INDEX
-    #endif
-
-    #ifdef A_XZ_DIST
-        constexpr int C_XZ_1_INDEX = (1 + M_OFFSET);
-        constexpr int C_XZ_2_INDEX = (2 + M_OFFSET);
-        #ifdef M_OFFSET
-            #undef M_OFFSET
-        #endif
-        #define M_OFFSET C_XZ_2_INDEX
-    #endif
-
-    #ifdef A_YY_DIST
-        constexpr int C_YY_1_INDEX = (1 + M_OFFSET);
-        constexpr int C_YY_2_INDEX = (2 + M_OFFSET);
-        #ifdef M_OFFSET
-            #undef M_OFFSET
-        #endif
-        #define M_OFFSET C_YY_2_INDEX
-    #endif
-
-    #ifdef A_YZ_DIST
-        constexpr int C_YZ_1_INDEX = (1 + M_OFFSET);
-        constexpr int C_YZ_2_INDEX = (2 + M_OFFSET);
-        #ifdef M_OFFSET
-            #undef M_OFFSET
-        #endif
-        #define M_OFFSET C_YZ_2_INDEX
-    #endif
-
-    #ifdef A_ZZ_DIST
-        constexpr int C_ZZ_1_INDEX = (1 + M_OFFSET);
-        constexpr int C_ZZ_2_INDEX = (2 + M_OFFSET);
-        #ifdef M_OFFSET
-            #undef M_OFFSET
-        #endif
-        #define M_OFFSET C_ZZ_2_INDEX
-    #endif
-#endif
-
-
-
-
 const size_t NUMBER_MOMENTS = M_OFFSET+1;
 
 __device__ const dfloat MOMENT_SCALE[10]   =  {1, 3, 3, 3, 4.5, 9.0, 9.0, 4.5, 9.0, 4.5};
