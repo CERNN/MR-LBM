@@ -76,7 +76,7 @@ constexpr size_t BYTES_PER_MB = (1 << 20);
 #include  "arrayIndex.h"
 
 // Calculate maximum number of elements in a block
-//#define DYNAMIC_SHARED_MEMORY
+#define DYNAMIC_SHARED_MEMORY
 #ifdef DYNAMIC_SHARED_MEMORY
     #if (defined(SM_90) || defined(SM_100) || defined(SM_120))
         constexpr size_t SHARED_MEMORY_SIZE = 232448;  // sm90

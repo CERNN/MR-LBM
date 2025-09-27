@@ -211,9 +211,9 @@ __host__ __device__ void ParticleCenter::setFX(dfloat x) { this->f.x = x; }
 __host__ __device__ void ParticleCenter::setFY(dfloat y) { this->f.y = y; }
 __host__ __device__ void ParticleCenter::setFZ(dfloat z) { this->f.z = z; }
 
-__host__ __device__ float& ParticleCenter::getFXatomic() { return this->f.x; }
-__host__ __device__ float& ParticleCenter::getFYatomic() { return this->f.y; }
-__host__ __device__ float& ParticleCenter::getFZatomic() { return this->f.z; }
+__host__ __device__ dfloat& ParticleCenter::getFXatomic() { return this->f.x; }
+__host__ __device__ dfloat& ParticleCenter::getFYatomic() { return this->f.y; }
+__host__ __device__ dfloat& ParticleCenter::getFZatomic() { return this->f.z; }
 
 __host__ __device__ dfloat3 ParticleCenter::getF_old() const { return this->f_old; }
 __host__ __device__ dfloat ParticleCenter::getFOldX() const { return this->f_old.x; }
@@ -233,9 +233,9 @@ __host__ __device__ void ParticleCenter::setMX(dfloat x) { this->M.x = x; }
 __host__ __device__ void ParticleCenter::setMY(dfloat y) { this->M.y = y; }
 __host__ __device__ void ParticleCenter::setMZ(dfloat z) { this->M.z = z; }
 
-__host__ __device__ float& ParticleCenter::getMXatomic() { return this->M.x; }
-__host__ __device__ float& ParticleCenter::getMYatomic() { return this->M.y; }
-__host__ __device__ float& ParticleCenter::getMZatomic() { return this->M.z; }
+__host__ __device__ dfloat& ParticleCenter::getMXatomic() { return this->M.x; }
+__host__ __device__ dfloat& ParticleCenter::getMYatomic() { return this->M.y; }
+__host__ __device__ dfloat& ParticleCenter::getMZatomic() { return this->M.z; }
 
 __host__ __device__ dfloat3 ParticleCenter::getM_old() const { return this->M_old; }
 __host__ __device__ dfloat ParticleCenter::getMOldX() const { return this->M_old.x; }
