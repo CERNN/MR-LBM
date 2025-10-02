@@ -454,53 +454,43 @@ void operateSimCheckpointParticle(
 
     // Load/save current step
     f_arr(step, f_filename("curr_step_particle"), sizeof(int), tmp);
+    
+    ParticleMethod* methodArray = particlesSoA.getPMethod();
+    ParticleMethod& method = methodArray[GPU_INDEX];
 
-    #ifdef IBM
-    // Load particles centers positions
+    if(method == IBM){
+        // Load particles centers positions
+        checkCudaErrors(cudaSetDevice(GPU_INDEX));
+        f_arr(particlesSoA.getPCenterArray(), f_filename("IBM_particles_centers"), 
+            NUM_PARTICLES*sizeof(ParticleCenter), tmp);
+    }
+    
     checkCudaErrors(cudaSetDevice(GPU_INDEX));
-    f_arr(particlesSoA.getPCenterArray(), f_filename("IBM_particles_centers"), 
-        NUM_PARTICLES*sizeof(ParticleCenter), tmp);
-    #endif //IBM
 
-    /*for(int i = 0; i < N_GPUS; i++){
-        checkCudaErrors(cudaSetDevice(GPUS_TO_USE[i]));
-        // Load/save pop
-        f_arr(pop[i].pop, f_filename("pop", i), MEM_SIZE_POP, tmp);
-        // Load/save popAux
-        f_arr(pop[i].popAux, f_filename("popAux", i), MEM_SIZE_POP, tmp);
-        // Load/save macroscopics
-        f_arr(macr[i].rho, f_filename("rho", i), MEM_SIZE_IBM_SCALAR, tmp);
-        // Load/save velocities
-        f_dfloat3SoA(macr[i].u, f_filename("u", i), MEM_SIZE_IBM_SCALAR, tmp);
+    if(method == IBM){
 
-        #ifdef NON_NEWTONIAN_FLUID
-        f_arr(macr[i].omega, f_filename("omega", i), MEM_SIZE_SCALAR, tmp);
-        #endif //NON_NEWTONIAN_FLUID
-
-        #ifdef IBM
-        f_dfloat3SoA(macr[i].f, f_filename("f", i), MEM_SIZE_IBM_SCALAR, tmp);
-
-        ParticleNodeSoA nSoA = particlesSoA.nodesSoA[i];
+        IbmNodesSoA* nodesArray = particlesSoA.getNodesSoA();
+        IbmNodesSoA& nSoA = nodesArray[GPU_INDEX];
 
         // IBM nodes bytes size
         if(oper == __LOAD_CHECKPOINT){
-            size_t filesize = getFileSize(f_filename("IBM_nodes_centers_idx.bin", i));
-            nSoA.numNodes = (filesize) / sizeof(unsigned int);
+            size_t filesize = getFileSize(f_filename("IBM_nodes_centers_idx.bin"));
+            nSoA.setNumNodes(filesize / sizeof(unsigned int));
         }
-        size_t ibm_nodes_arr_size = nSoA.numNodes * sizeof(dfloat);
-        size_t ibm_nodes_arr_size_uint = nSoA.numNodes * sizeof(unsigned int);
+        size_t ibm_nodes_arr_size = nSoA.getNumNodes() * sizeof(dfloat);
+        size_t ibm_nodes_arr_size_uint = nSoA.getNumNodes() * sizeof(unsigned int);
         // Load/save IBM nodes values
-        f_arr(nSoA.particleCenterIdx, f_filename("IBM_nodes_centers_idx", i), ibm_nodes_arr_size_uint, tmp);
-        f_dfloat3SoA(nSoA.pos, f_filename("IBM_nodes_pos", i), ibm_nodes_arr_size, tmp);
-        f_dfloat3SoA(nSoA.vel, f_filename("IBM_nodes_vel", i), ibm_nodes_arr_size, tmp);
-        f_dfloat3SoA(nSoA.vel_old, f_filename("IBM_nodes_vel_old", i), ibm_nodes_arr_size, tmp);
-        f_dfloat3SoA(nSoA.f, f_filename("IBM_nodes_f", i), ibm_nodes_arr_size, tmp);
-        f_dfloat3SoA(nSoA.deltaF, f_filename("IBM_nodes_deltaF", i), ibm_nodes_arr_size, tmp);
-        f_arr(nSoA.S, f_filename("IBM_nodes_S", i), ibm_nodes_arr_size, tmp);
-        #endif //IBM
-    }*/
-
+        f_arr(nSoA.getParticleCenterIdx(), f_filename("IBM_nodes_centers_idx"), ibm_nodes_arr_size_uint, tmp);
+        f_dfloat3SoA(nSoA.getPos(), f_filename("IBM_nodes_pos"), ibm_nodes_arr_size, tmp);
+        f_dfloat3SoA(nSoA.getVel(), f_filename("IBM_nodes_vel"), ibm_nodes_arr_size, tmp);
+        f_dfloat3SoA(nSoA.getVelOld(), f_filename("IBM_nodes_vel_old"), ibm_nodes_arr_size, tmp);
+        f_dfloat3SoA(nSoA.getF(), f_filename("IBM_nodes_f"), ibm_nodes_arr_size, tmp);
+        f_dfloat3SoA(nSoA.getDeltaF(), f_filename("IBM_nodes_deltaF"), ibm_nodes_arr_size, tmp);
+        f_arr(nSoA.getS(), f_filename("IBM_nodes_S"), ibm_nodes_arr_size, tmp);
+    }
+    
     free(tmp);
+    
 }
 __host__
 int loadSimCheckpointParticle( 

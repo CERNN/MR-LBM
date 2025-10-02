@@ -234,7 +234,7 @@ int main() {
             printf("\n--------------------------- Saving checkpoint %06d ---------------------------\n", step);fflush(stdout);
             // throwing a warning for being used without being initialized. But does not matter since we are overwriting it;
             checkCudaErrors(cudaMemcpy(h_fMom, d_fMom, sizeof(dfloat) * NUMBER_LBM_NODES*NUMBER_MOMENTS, cudaMemcpyDeviceToHost));
-            interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.fGhost,cudaMemcpyDeviceToHost,QF);       
+            interfaceCudaMemcpy(ghostInterface,ghostInterface.h_fGhost,ghostInterface.fGhost,cudaMemcpyDeviceToHost,QF); 
             #ifdef SECOND_DIST 
             interfaceCudaMemcpy(ghostInterface,ghostInterface.g_h_fGhost,ghostInterface.g_fGhost,cudaMemcpyDeviceToHost,GF);
             #endif //SECOND_DIST
@@ -255,9 +255,9 @@ int main() {
             #endif //A_YZ_DIST      
             #ifdef A_ZZ_DIST 
             interfaceCudaMemcpy(ghostInterface,ghostInterface.Azz_h_fGhost,ghostInterface.Azz_fGhost,cudaMemcpyDeviceToHost,GF);
-            #endif //A_ZZ_DIST              
+            #endif //A_ZZ_DIST       
             saveSimCheckpoint(h_fMom, ghostInterface, &step);
-
+            
             #ifdef PARTICLE_MODEL
                 printf("Starting saveSimCheckpointParticle...\t"); fflush(stdout);
                 saveSimCheckpointParticle(particlesSoA, &step);
