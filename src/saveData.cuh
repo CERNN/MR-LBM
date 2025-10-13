@@ -36,7 +36,7 @@
 #elif defined(__APPLE__)
     #include <mach-o/dyld.h>
 #endif
-
+#include <thread>
 
 #include "globalFunctions.h"
 #include <cuda.h>
@@ -117,7 +117,9 @@ void saveMacr(dfloat* h_fMom, dfloat* rho, dfloat* ux, dfloat* uy, dfloat* uz, u
     #endif //A_ZZ_DIST
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
-    unsigned int nSteps
+    unsigned int nSteps,
+    std::atomic<bool>& savingMacrVtk,
+    std::vector<std::atomic<bool>>& savingMacrBin
 );
 
 /*
@@ -131,7 +133,8 @@ void saveVarBin(
     std::string strFile, 
     dfloat* var, 
     size_t memSize,
-    bool append
+    bool append,
+    std::atomic<bool>& savingMacrBin
 );
 
 
@@ -243,7 +246,8 @@ void saveVarVTK(
     #endif //A_ZZ_DIST
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
-    unsigned int nSteps
+    unsigned int nSteps,
+    std::atomic<bool>& savingMacrVtk
 );
 
 /**

@@ -16,8 +16,11 @@ int main() {
     unsigned int* dNodeType;
     unsigned int* hNodeType;
 
+    int NThread = 4;
+
     #if NODE_TYPE_SAVE
-    unsigned int* nodeTypeSave;
+    unsigned int* nodeTypeSave; 
+    NThread++;
     #endif //NODE_TYPE_SAVE
 
     dfloat* h_fMom;
@@ -28,30 +31,38 @@ int main() {
     
     
     #ifdef OMEGA_FIELD
-    dfloat* omega;
+    dfloat* omega; 
+    NThread++;
     #endif //OMEGA_FIELD
 
     #ifdef SECOND_DIST
-    dfloat* C;
+    dfloat* C; 
+    NThread++;
     #endif //SECOND_DIST
 
     #ifdef A_XX_DIST
-    dfloat* Axx;
+    dfloat* Axx; 
+    NThread++;
     #endif //A_XX_DIST
     #ifdef A_XY_DIST
-    dfloat* Axy;
+    dfloat* Axy; 
+    NThread++;
     #endif //A_XY_DIST
     #ifdef A_XZ_DIST
-    dfloat* Axz;
+    dfloat* Axz; 
+    NThread++;
     #endif //A_XZ_DIST
     #ifdef A_YY_DIST
-    dfloat* Ayy;
+    dfloat* Ayy; 
+    NThread++;
     #endif //A_YY_DIST
     #ifdef A_YZ_DIST
-    dfloat* Ayz;
+    dfloat* Ayz; 
+    NThread++;
     #endif //A_YZ_DIST
     #ifdef A_ZZ_DIST
-    dfloat* Azz;
+    dfloat* Azz; 
+    NThread++;
     #endif //A_ZZ_DIST
 
     #ifdef DENSITY_CORRECTION
@@ -75,6 +86,7 @@ int main() {
         dfloat* h_BC_Fx;
         dfloat* h_BC_Fy;
         dfloat* h_BC_Fz;
+        NThread += 3;
         #endif //SAVE_BC_FORCES
 
         dfloat* d_BC_Fx;
@@ -136,6 +148,11 @@ int main() {
     #endif //PARTICLE_MODEL
 
     step=INI_STEP;
+    std::atomic<bool> savingMacrVtk(false);
+    std::vector<std::atomic<bool>> savingMacrBin(NThread);
+
+    for (int i = 0; i < NThread; i++)
+        savingMacrBin[i].store(false);
 
     initializeDomain(ghostInterface,     
                      d_fMom, h_fMom, 
@@ -317,7 +334,7 @@ int main() {
                     #ifdef A_ZZ_DIST 
                     Azz,
                     #endif //A_ZZ_DIST
-                    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
+                    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step, savingMacrVtk, savingMacrBin);
                 }
             //}
 
@@ -359,7 +376,6 @@ int main() {
 
 
     if(console_flush){fflush(stdout);}
-    
     saveMacr(h_fMom,rho,ux,uy,uz, hNodeType, OMEGA_FIELD_PARAMS 
     #ifdef SECOND_DIST 
     C,
@@ -382,7 +398,7 @@ int main() {
     #ifdef A_ZZ_DIST 
     Azz,
     #endif //A_ZZ_DIST
-    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step);
+    NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) step, savingMacrVtk, savingMacrBin);
 
 
     /*if(CHECKPOINT_SAVE){
@@ -419,7 +435,7 @@ int main() {
             #ifdef SECOND_DIST 
             m_c,
             #endif  //SECOND_DIST
-            NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) INT_MAX);
+            NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) INT_MAX, savingMacrVtk, savingMacrBin);
     #endif //MEAN_FLOW
 
 
@@ -427,6 +443,10 @@ int main() {
     //save info file
     saveSimInfo(step,MLUPS);
 
+    while (savingMacrVtk) std::this_thread::yield();
+    for (size_t i = 0; i < savingMacrBin.size(); ++i) {
+        while (savingMacrBin[i]) std::this_thread::yield();
+    }
 
     /* ------------------------------ FREE ------------------------------ */
     cudaFree(d_fMom);

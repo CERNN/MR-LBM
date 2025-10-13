@@ -87,7 +87,9 @@ void saveMacr(
     #endif //A_ZZ_DIST
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
-    unsigned int nSteps
+    unsigned int nSteps,
+    std::atomic<bool>& savingMacrVtk,
+    std::vector<std::atomic<bool>>& savingMacrBin
 ){
 
 
@@ -181,7 +183,7 @@ void saveMacr(
     if (VTK_SAVE){
         std::string strFileVtk, strFileVtr;
         strFileVtk = getVarFilename("vtk", nSteps, ".vtk");
-
+        while (savingMacrVtk) std::this_thread::yield();
         saveVarVTK(
                 strFileVtk, 
                 rho,ux,uy,uz, OMEGA_FIELD_PARAMS
@@ -207,7 +209,8 @@ void saveMacr(
                     Azz,
                     #endif //A_ZZ_DIST
                     NODE_TYPE_SAVE_PARAMS BC_FORCES_PARAMS(h_) 
-                    nSteps     
+                    nSteps,
+                    savingMacrVtk   
                 );
     }
     if (BIN_SAVE){
@@ -249,43 +252,88 @@ void saveMacr(
         strFileFz = getVarFilename("fz", nSteps, ".bin");
         #endif //BC_FORCES &&  SAVE_BC_FORCES
         // saving files
-        saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
-        saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
-        saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
-        saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+        std::vector<dfloat*> varArray;
+        std::vector<std::string> fileArray;
+
+        varArray.push_back(rho); fileArray.push_back(strFileRho);
+        varArray.push_back(ux);  fileArray.push_back(strFileUx);
+        varArray.push_back(uy);  fileArray.push_back(strFileUy);
+        varArray.push_back(uz);  fileArray.push_back(strFileUz);
         #ifdef OMEGA_FIELD
-        saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
-        #endif //OMEGA_FIELD
+        varArray.push_back(omega); fileArray.push_back(strFileOmega);
+        #endif
         #ifdef SECOND_DIST
-        saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
-        #endif //SECOND_DIST
-        #ifdef A_XX_DIST 
-        saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
-        #endif //A_XX_DIST
-        #ifdef A_XY_DIST 
-        saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
-        #endif //A_XY_DIST
-        #ifdef A_XZ_DIST 
-        saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
-        #endif //A_XZ_DIST
-        #ifdef A_YY_DIST 
-        saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
-        #endif //A_YY_DIST
-        #ifdef A_YZ_DIST 
-        saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
-        #endif //A_YZ_DIST
-        #ifdef A_ZZ_DIST 
-        saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
-        #endif //A_ZZ_DIST
-        
+        varArray.push_back(C); fileArray.push_back(strFileC);
+        #endif
+        #ifdef A_XX_DIST
+        varArray.push_back(Axx); fileArray.push_back(strFileAxx);
+        #endif
+        #ifdef A_XY_DIST
+        varArray.push_back(Axy); fileArray.push_back(strFileAxy);
+        #endif
+        #ifdef A_XZ_DIST
+        varArray.push_back(Axz); fileArray.push_back(strFileAxz);
+        #endif
+        #ifdef A_YY_DIST
+        varArray.push_back(Ayy); fileArray.push_back(strFileAyy);
+        #endif
+        #ifdef A_YZ_DIST
+        varArray.push_back(Ayz); fileArray.push_back(strFileAyz);
+        #endif
+        #ifdef A_ZZ_DIST
+        varArray.push_back(Azz); fileArray.push_back(strFileAzz);
+        #endif
+
         #if NODE_TYPE_SAVE
-        saveVarBin(strFileBc, (dfloat*)nodeTypeSave, MEM_SIZE_SCALAR, false);
-        #endif //NODE_TYPE_SAVE
-        #if defined BC_FORCES && defined SAVE_BC_FORCES
-        saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
-        saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
-        saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
-        #endif //BC_FORCES && SAVE_BC_FORCES
+        varArray.push_back((dfloat*)nodeTypeSave);  fileArray.push_back(strFileBc);
+        #endif
+        #if defined(BC_FORCES) && defined(SAVE_BC_FORCES)
+        varArray.push_back(h_BC_Fx);  fileArray.push_back(strFileFx);
+        varArray.push_back(h_BC_Fy);  fileArray.push_back(strFileFy);
+        varArray.push_back(h_BC_Fz);  fileArray.push_back(strFileFz);
+        #endif
+        for(size_t i = 0; i < varArray.size(); ++i){
+            while (savingMacrBin[i]) std::this_thread::yield();
+            saveVarBin(fileArray[i], varArray[i], MEM_SIZE_SCALAR, false, savingMacrBin[i]);
+        }
+
+        // saveVarBin(strFileRho, rho, MEM_SIZE_SCALAR, false);
+        // saveVarBin(strFileUx, ux, MEM_SIZE_SCALAR, false);
+        // saveVarBin(strFileUy, uy, MEM_SIZE_SCALAR, false);
+        // saveVarBin(strFileUz, uz, MEM_SIZE_SCALAR, false);
+        // #ifdef OMEGA_FIELD
+        // saveVarBin(strFileOmega, omega, MEM_SIZE_SCALAR, false);
+        // #endif //OMEGA_FIELD
+        // #ifdef SECOND_DIST
+        // saveVarBin(strFileC, C, MEM_SIZE_SCALAR, false);
+        // #endif //SECOND_DIST
+        // #ifdef A_XX_DIST 
+        // saveVarBin(strFileAxx, Axx, MEM_SIZE_SCALAR, false);
+        // #endif //A_XX_DIST
+        // #ifdef A_XY_DIST 
+        // saveVarBin(strFileAxy, Axy, MEM_SIZE_SCALAR, false);
+        // #endif //A_XY_DIST
+        // #ifdef A_XZ_DIST 
+        // saveVarBin(strFileAxz, Axz, MEM_SIZE_SCALAR, false);
+        // #endif //A_XZ_DIST
+        // #ifdef A_YY_DIST 
+        // saveVarBin(strFileAyy, Ayy, MEM_SIZE_SCALAR, false);
+        // #endif //A_YY_DIST
+        // #ifdef A_YZ_DIST 
+        // saveVarBin(strFileAyz, Ayz, MEM_SIZE_SCALAR, false);
+        // #endif //A_YZ_DIST
+        // #ifdef A_ZZ_DIST 
+        // saveVarBin(strFileAzz, Azz, MEM_SIZE_SCALAR, false);
+        // #endif //A_ZZ_DIST
+        
+        // #if NODE_TYPE_SAVE
+        // saveVarBin(strFileBc, (dfloat*)nodeTypeSave, MEM_SIZE_SCALAR, false);
+        // #endif //NODE_TYPE_SAVE
+        // #if defined BC_FORCES && defined SAVE_BC_FORCES
+        // saveVarBin(strFileFx, h_BC_Fx, MEM_SIZE_SCALAR, false);
+        // saveVarBin(strFileFy, h_BC_Fy, MEM_SIZE_SCALAR, false);
+        // saveVarBin(strFileFz, h_BC_Fz, MEM_SIZE_SCALAR, false);
+        // #endif //BC_FORCES && SAVE_BC_FORCES
     }
 }
 
@@ -293,22 +341,27 @@ void saveVarBin(
     std::string strFile, 
     dfloat* var, 
     size_t memSize,
-    bool append)
+    bool append,
+    std::atomic<bool>& savingMacrBin)
 {
-    FILE* outFile = nullptr;
-    if(append)
-        outFile = fopen(strFile.c_str(), "ab");
-    else
-        outFile = fopen(strFile.c_str(), "wb");
-    if(outFile != nullptr)
-    {
-        fwrite(var, memSize, 1, outFile);
-        fclose(outFile);
-    }
-    else
-    {
-        printf("Error saving \"%s\" \nProbably wrong path!\n", strFile.c_str());
-    }
+    savingMacrBin = true;
+    std::thread([=, &savingMacrBin]() {
+        FILE* outFile = nullptr;
+        if(append)
+            outFile = fopen(strFile.c_str(), "ab");
+        else
+            outFile = fopen(strFile.c_str(), "wb");
+        if(outFile != nullptr)
+        {
+            fwrite(var, memSize, 1, outFile);
+            fclose(outFile);
+        }
+        else
+        {
+            printf("Error saving \"%s\" \nProbably wrong path!\n", strFile.c_str());
+        }
+        savingMacrBin = false;
+    }).detach();
 }
 
 
@@ -437,7 +490,8 @@ void saveVarVTK(
     #endif //A_ZZ_DIST
     NODE_TYPE_SAVE_PARAMS_DECLARATION
     BC_FORCES_PARAMS_DECLARATION(h_) 
-    unsigned int nSteps 
+    unsigned int nSteps,
+    std::atomic<bool>& savingMacrVtk
     )
 {
     const char* VTK_TYPE = nullptr;
