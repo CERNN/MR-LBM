@@ -149,6 +149,7 @@ int main() {
 
     step=INI_STEP;
     std::atomic<bool> savingMacrVtk(false);
+    std::atomic<bool> savingMacrParticle(false);
     std::vector<std::atomic<bool>> savingMacrBin(NThread);
 
     for (int i = 0; i < NThread; i++)
@@ -177,8 +178,8 @@ int main() {
         
         // particle initialization with position, velocity, and solver method
         initializeParticle(particlesSoA, particles, &step, gridBlock, threadBlock);
-
-        saveParticlesInfo(&particlesSoA, step);
+        while (savingMacrParticle) std::this_thread::yield();
+        saveParticlesInfo(&particlesSoA, step, savingMacrParticle);
 
     #endif //PARTICLE_MODEL
 
@@ -198,7 +199,7 @@ int main() {
             cudaFuncSetAttribute(&gpuMomCollisionStream, cudaFuncAttributeMaxDynamicSharedMemorySize DYNAMIC_SHARED_MEMORY_PARAMS); // DOESNT WORK: DYNAMICALLY SHARED MEMORY HAS WORSE PERFORMANCE
         }
     #endif //DYNAMIC_SHARED_MEMORY
-
+   
     /* --------------------------------------------------------------------- */
     /* ---------------------------- BEGIN LOOP ----------------------------- */
     /* --------------------------------------------------------------------- */
@@ -347,7 +348,7 @@ int main() {
             if (particleSave){
                 printf("\n------------------------- Saving particles %06d -------------------------\n", step);
                 if(console_flush){fflush(stdout);}
-                saveParticlesInfo(&particlesSoA, step);
+                saveParticlesInfo(&particlesSoA, step, savingMacrParticle);
             }
         #endif //PARTICLE_MODEL
 
@@ -444,6 +445,7 @@ int main() {
     saveSimInfo(step,MLUPS);
 
     while (savingMacrVtk) std::this_thread::yield();
+    while (savingMacrParticle) std::this_thread::yield();
     for (size_t i = 0; i < savingMacrBin.size(); ++i) {
         while (savingMacrBin[i]) std::this_thread::yield();
     }

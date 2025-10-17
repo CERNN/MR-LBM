@@ -504,135 +504,143 @@ void saveVarVTK(
 
     if(!CELLDATA_SAVE){
         //printf("Saving VTK in POINT_DATA format");
-        const size_t N = NX*NY*NZ;
-        std::ofstream ofs(filename, std::ios::binary);
-        if (!ofs) throw std::runtime_error("Cannot open " + filename);
+        savingMacrVtk = true;
+            std::thread([=, &savingMacrVtk]() {
+            const size_t N = NX*NY*NZ;
+            std::ofstream ofs(filename, std::ios::binary);
+            if (!ofs) throw std::runtime_error("Cannot open " + filename);
 
-        //Header 
-        ofs << "# vtk DataFile Version 3.0\n"
-            << "LBM output (binary)\n"
-            << "BINARY\n"                               // ← here!
-            << "DATASET STRUCTURED_POINTS\n"
-            << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
-            << "ORIGIN 0 0 0\n"
-            << "SPACING 1 1 1\n"
-            << "POINT_DATA " << N << "\n";
-        ofs << "SCALARS rho " << VTK_TYPE << " 1\n"
-            << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, rho, N);
-
-        ofs << "VECTORS velocity " << VTK_TYPE << "\n";
-        for (size_t i = 0; i < N; ++i) {
-            dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
-            writeBigEndian(ofs, v, 3);
-        }
-
-        #ifdef OMEGA_FIELD
-            ofs << "SCALARS omega " << VTK_TYPE << " 1\n"
+            //Header 
+            ofs << "# vtk DataFile Version 3.0\n"
+                << "LBM output (binary)\n"
+                << "BINARY\n"                               // ← here!
+                << "DATASET STRUCTURED_POINTS\n"
+                << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
+                << "ORIGIN 0 0 0\n"
+                << "SPACING 1 1 1\n"
+                << "POINT_DATA " << N << "\n";
+            ofs << "SCALARS rho " << VTK_TYPE << " 1\n"
                 << "LOOKUP_TABLE default\n";
-            writeBigEndian(ofs, omega, N);
-        #endif //OMEGA_FIELD
+            writeBigEndian(ofs, rho, N);
 
-        #ifdef SECOND_DIST
-            ofs << "SCALARS C " << VTK_TYPE << " 1\n"
-                << "LOOKUP_TABLE default\n";
-            writeBigEndian(ofs, C, N);
-        #endif //SECOND_DIST
-
-        #ifdef CONFORMATION_TENSOR
-            ofs << "TENSORS6 Aij " << VTK_TYPE << "\n";
+            ofs << "VECTORS velocity " << VTK_TYPE << "\n";
             for (size_t i = 0; i < N; ++i) {
-                dfloat tensor[6] = {
-                    Axx[i], Ayy[i], Azz[i],
-                    Axy[i], Ayz[i], Axz[i]
-                };
-                writeBigEndian(ofs, tensor, 6);
+                dfloat v[3] = { ux[i]/F_M_I_SCALE, uy[i]/F_M_I_SCALE, uz[i]/F_M_I_SCALE};
+                writeBigEndian(ofs, v, 3);
             }
-        #endif //CONFORMATION_TENSOR
 
-        #ifdef SAVE_BC_FORCES
-            ofs << "VECTORS forces " << VTK_TYPE << "\n";
-            for (size_t i = 0; i < N; ++i) {
-                dfloat f[3] = { fx[i], fy[i], fz[i] };
-                writeBigEndian(ofs, f, 3);
-            }
-        #endif //SAVE_BC_FORCES
+            #ifdef OMEGA_FIELD
+                ofs << "SCALARS omega " << VTK_TYPE << " 1\n"
+                    << "LOOKUP_TABLE default\n";
+                writeBigEndian(ofs, omega, N);
+            #endif //OMEGA_FIELD
 
-        #if NODE_TYPE_SAVE
-            ofs << "SCALARS bc int 1\n"
-                << "LOOKUP_TABLE default\n";
-            writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N);
-        #endif //NODE_TYPE_SAVE
+            #ifdef SECOND_DIST
+                ofs << "SCALARS C " << VTK_TYPE << " 1\n"
+                    << "LOOKUP_TABLE default\n";
+                writeBigEndian(ofs, C, N);
+            #endif //SECOND_DIST
+
+            #ifdef CONFORMATION_TENSOR
+                ofs << "TENSORS6 Aij " << VTK_TYPE << "\n";
+                for (size_t i = 0; i < N; ++i) {
+                    dfloat tensor[6] = {
+                        Axx[i], Ayy[i], Azz[i],
+                        Axy[i], Ayz[i], Axz[i]
+                    };
+                    writeBigEndian(ofs, tensor, 6);
+                }
+            #endif //CONFORMATION_TENSOR
+
+            #ifdef SAVE_BC_FORCES
+                ofs << "VECTORS forces " << VTK_TYPE << "\n";
+                for (size_t i = 0; i < N; ++i) {
+                    dfloat f[3] = { fx[i], fy[i], fz[i] };
+                    writeBigEndian(ofs, f, 3);
+                }
+            #endif //SAVE_BC_FORCES
+
+            #if NODE_TYPE_SAVE
+                ofs << "SCALARS bc int 1\n"
+                    << "LOOKUP_TABLE default\n";
+                writeBigEndian(ofs, NODE_TYPE_SAVE_PARAMS N);
+            #endif //NODE_TYPE_SAVE
+            savingMacrVtk = false;
+        }).detach();
     }else{ 
         //printf("Saving VTK in CELL_DATA format");
-        const size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
-        std::ofstream ofs(filename, std::ios::binary);
-        if (!ofs) throw std::runtime_error("Cannot open " + filename);
+        savingMacrVtk = true;
+            std::thread([=, &savingMacrVtk]() {
+            const size_t Ncells = (NX-1)*(NY-1)*(NZ-1);
+            std::ofstream ofs(filename, std::ios::binary);
+            if (!ofs) throw std::runtime_error("Cannot open " + filename);
 
-        //Header 
-        ofs << "# vtk DataFile Version 3.0\n"
-            << "LBM output (binary)\n"
-            << "BINARY\n"                               // ← here!
-            << "DATASET STRUCTURED_POINTS\n"
-            << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
-            << "ORIGIN 0 0 0\n"
-            << "SPACING 1 1 1\n"
-            << "CELL_DATA " << Ncells << "\n";
-        auto rho_cell = convertPointToCellScalar(rho,NX,NY,NZ);
-        ofs << "SCALARS rho  " << VTK_TYPE << " 1\n"
-            << "LOOKUP_TABLE default\n";
-        writeBigEndian(ofs, rho_cell.data(), rho_cell.size());
-
-        auto vel_cell = convertPointToCellVector(ux,uy,uz,NX,NY,NZ);
-        ofs << "VECTORS velocity  " << VTK_TYPE << "\n";
-        for(size_t i=0;i<Ncells;i++){
-            dfloat v[3] = { vel_cell[i].x/F_M_I_SCALE,
-                        vel_cell[i].y/F_M_I_SCALE,
-                        vel_cell[i].z/F_M_I_SCALE };
-            writeBigEndian(ofs,v,3);
-        }
-
-        #ifdef OMEGA_FIELD
-            auto omega_cell = convertPointToCellScalar(omega,NX,NY,NZ);
-            ofs << "SCALARS omega  " << VTK_TYPE << " 1\n"
+            //Header 
+            ofs << "# vtk DataFile Version 3.0\n"
+                << "LBM output (binary)\n"
+                << "BINARY\n"                               // ← here!
+                << "DATASET STRUCTURED_POINTS\n"
+                << "DIMENSIONS " << NX << " " << NY << " " << NZ << "\n"
+                << "ORIGIN 0 0 0\n"
+                << "SPACING 1 1 1\n"
+                << "CELL_DATA " << Ncells << "\n";
+            auto rho_cell = convertPointToCellScalar(rho,NX,NY,NZ);
+            ofs << "SCALARS rho  " << VTK_TYPE << " 1\n"
                 << "LOOKUP_TABLE default\n";
-            writeBigEndian(ofs, omega_cell.data(), omega_cell.size());
-        #endif //OMEGA_FIELD
+            writeBigEndian(ofs, rho_cell.data(), rho_cell.size());
 
-        #ifdef SECOND_DIST
-            auto C_cell = convertPointToCellScalar(C,NX,NY,NZ);
-            ofs << "SCALARS C  " << VTK_TYPE << " 1\n"
-                << "LOOKUP_TABLE default\n";
-            writeBigEndian(ofs, C_cell.data(), Ncells);
-        #endif //SECOND_DIST
-
-        #ifdef CONFORMATION_TENSOR
-            auto A_cell = convertPointToCellTensor6(Axx,Ayy,Azz,Axy,Ayz,Axz,NX,NY,NZ);
-            ofs << "TENSORS6 Aij  " << VTK_TYPE << "\n";
-            for (size_t i = 0; i < Ncells; ++i) {
-                dfloat tensor[6] = {
-                    A_cell[i].xx,A_cell[i].yy,A_cell[i].zz,
-                    A_cell[i].xy,A_cell[i].yz,A_cell[i].xz
-                };
-                writeBigEndian(ofs, tensor, 6);
+            auto vel_cell = convertPointToCellVector(ux,uy,uz,NX,NY,NZ);
+            ofs << "VECTORS velocity  " << VTK_TYPE << "\n";
+            for(size_t i=0;i<Ncells;i++){
+                dfloat v[3] = { vel_cell[i].x/F_M_I_SCALE,
+                            vel_cell[i].y/F_M_I_SCALE,
+                            vel_cell[i].z/F_M_I_SCALE };
+                writeBigEndian(ofs,v,3);
             }
-        #endif //CONFORMATION_TENSOR
 
-        #ifdef SAVE_BC_FORCES
-            auto f_cell = convertPointToCellVector(fx, fy, fz,NX,NY,NZ);
-            ofs << "VECTORS forces  " << VTK_TYPE << "\n";
-            for (size_t i = 0; i < Ncells; ++i) {
-                dfloat f[3] = { fx[i], fy[i], fz[i] };
-                writeBigEndian(ofs, f, 3);
-            }
-        #endif //SAVE_BC_FORCES
+            #ifdef OMEGA_FIELD
+                auto omega_cell = convertPointToCellScalar(omega,NX,NY,NZ);
+                ofs << "SCALARS omega  " << VTK_TYPE << " 1\n"
+                    << "LOOKUP_TABLE default\n";
+                writeBigEndian(ofs, omega_cell.data(), omega_cell.size());
+            #endif //OMEGA_FIELD
 
-        #if NODE_TYPE_SAVE
-            auto bc_cell = convertPointToCellIntMode(NODE_TYPE_SAVE,NX,NY,NZ);
-            ofs << "SCALARS bc int 1\n"
-                << "LOOKUP_TABLE default\n";
-            writeBigEndian(ofs, bc_cell.data(), Ncells);
-        #endif //NODE_TYPE_SAVE
+            #ifdef SECOND_DIST
+                auto C_cell = convertPointToCellScalar(C,NX,NY,NZ);
+                ofs << "SCALARS C  " << VTK_TYPE << " 1\n"
+                    << "LOOKUP_TABLE default\n";
+                writeBigEndian(ofs, C_cell.data(), Ncells);
+            #endif //SECOND_DIST
+
+            #ifdef CONFORMATION_TENSOR
+                auto A_cell = convertPointToCellTensor6(Axx,Ayy,Azz,Axy,Ayz,Axz,NX,NY,NZ);
+                ofs << "TENSORS6 Aij  " << VTK_TYPE << "\n";
+                for (size_t i = 0; i < Ncells; ++i) {
+                    dfloat tensor[6] = {
+                        A_cell[i].xx,A_cell[i].yy,A_cell[i].zz,
+                        A_cell[i].xy,A_cell[i].yz,A_cell[i].xz
+                    };
+                    writeBigEndian(ofs, tensor, 6);
+                }
+            #endif //CONFORMATION_TENSOR
+
+            #ifdef SAVE_BC_FORCES
+                auto f_cell = convertPointToCellVector(fx, fy, fz,NX,NY,NZ);
+                ofs << "VECTORS forces  " << VTK_TYPE << "\n";
+                for (size_t i = 0; i < Ncells; ++i) {
+                    dfloat f[3] = { fx[i], fy[i], fz[i] };
+                    writeBigEndian(ofs, f, 3);
+                }
+            #endif //SAVE_BC_FORCES
+
+            #if NODE_TYPE_SAVE
+                auto bc_cell = convertPointToCellIntMode(NODE_TYPE_SAVE,NX,NY,NZ);
+                ofs << "SCALARS bc int 1\n"
+                    << "LOOKUP_TABLE default\n";
+                writeBigEndian(ofs, bc_cell.data(), Ncells);
+            #endif //NODE_TYPE_SAVE
+            savingMacrVtk = false;
+        }).detach();
     }  
 }
 

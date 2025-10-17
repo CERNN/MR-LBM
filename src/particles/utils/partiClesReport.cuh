@@ -52,7 +52,7 @@ std::string getStrDfloat6(dfloat6 val, std::string sep);
  *  @param particles: Pointer to the ParticlesSoA structure containing particle data.
  *  @param step: Current time step
 */
-void saveParticlesInfo(ParticlesSoA *particles, unsigned int step);
+void saveParticlesInfo(ParticlesSoA *particles, unsigned int step, std::atomic<bool>& savingMacrParticle);
 
 /**
  *  @brief Print particles information 
