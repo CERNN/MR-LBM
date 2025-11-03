@@ -1,3 +1,7 @@
+The project was renamed.
+Updates can be found in [HEPHFLOW](https://github.com/CERNN/Hephflow)
+This old version will be kept in archive mode.
+
 # MR-LBM for GPU
 
 This repository contains a moment-based implementation of the Lattice Boltzmann Method (LBM), where the collision is performed across moments from 0th to 2nd order. The method is designed for GPU acceleration using CUDA. 
