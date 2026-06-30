@@ -1,5 +1,7 @@
+# UPDATED REPOSITORY CODE (READ BELOW)
+
 The project was renamed.
-Updates can be found in [HEPHFLOW](https://github.com/CERNN/Hephflow)
+Updates can be found in the repository [HEPHFLOW](https://github.com/CERNN/Hephflow)
 This old version will be kept in archive mode.
 
 # MR-LBM for GPU
